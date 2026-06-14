@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { BarChart3, Bitcoin, ChevronDown } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,8 +11,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const NAV_ITEMS = [
+  { label: "자산 현황", href: "/", icon: BarChart3 },
+  { label: "비트코인 지표", href: "/bitcoin", icon: Bitcoin },
+];
 
 type BreadcrumbEntry = { label: string; href?: string };
 
@@ -18,6 +34,10 @@ type Props = {
 };
 
 export function AppHeader({ breadcrumbs, updateCycle }: Props) {
+  const isMobile = useIsMobile();
+  const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
@@ -30,7 +50,27 @@ export function AppHeader({ breadcrumbs, updateCycle }: Props) {
               <span key={item.label} className="flex items-center gap-1.5">
                 {i > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
-                  {isLast ? (
+                  {isLast && isMobile ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="flex items-center gap-1 font-medium outline-none">
+                        {item.label}
+                        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        {NAV_ITEMS.filter((n) => n.href !== pathname).map(
+                          ({ label, href, icon: Icon }) => (
+                            <DropdownMenuItem
+                              key={href}
+                              onClick={() => router.push(href)}
+                            >
+                              <Icon className="h-4 w-4" />
+                              {label}
+                            </DropdownMenuItem>
+                          ),
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : isLast ? (
                     <BreadcrumbPage>{item.label}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
