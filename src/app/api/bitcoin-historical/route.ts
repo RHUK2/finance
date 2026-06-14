@@ -2,34 +2,42 @@ import { NextResponse } from "next/server";
 
 export const revalidate = 86400;
 
-// Binance BTCUSDT 상장일: 2017-08-17
-const BINANCE_START_MS = 1502928000000;
+// Coinbase BTC-USD 상장일: 2015-07-20
+const COINBASE_START_MS = 1437436800000;
+const CHUNK_DAYS = 300;
+const DAY_MS = 86_400_000;
 
 export async function GET() {
   try {
     const history: { time: string; value: number }[] = [];
-    let startTime = BINANCE_START_MS;
+    let startMs = COINBASE_START_MS;
+    const nowMs = Date.now();
 
-    while (true) {
-      const url = `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=${startTime}&limit=1000`;
+    while (startMs < nowMs) {
+      const endMs = Math.min(startMs + CHUNK_DAYS * DAY_MS, nowMs);
+      const start = new Date(startMs).toISOString();
+      const end = new Date(endMs).toISOString();
+      const url = `https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=${start}&end=${end}`;
+
       const res = await fetch(url, { next: { revalidate: 86400 } });
+      if (!res.ok) throw new Error(`Coinbase error: ${res.status}`);
 
-      if (!res.ok) throw new Error(`Binance error: ${res.status}`);
-
-      // [openTime, open, high, low, close, volume, closeTime, ...]
-      const candles: [number, string, string, string, string, ...unknown[]][] =
+      // [timestamp_sec, low, high, open, close, volume] — 내림차순 반환
+      const candles: [number, number, number, number, number, number][] =
         await res.json();
-      if (!candles.length) break;
 
-      for (const candle of candles) {
-        const time = new Date(candle[0]).toISOString().slice(0, 10);
-        const close = parseFloat(candle[4]);
-        history.push({ time, value: close });
+      for (const [tSec, , , , close] of candles) {
+        history.push({
+          time: new Date(tSec * 1000).toISOString().slice(0, 10),
+          value: close,
+        });
       }
 
-      if (candles.length < 1000) break;
-      startTime = candles[candles.length - 1][0] + 86_400_000;
+      startMs = endMs + DAY_MS;
     }
+
+    // Coinbase는 내림차순이므로 날짜 오름차순으로 정렬
+    history.sort((a, b) => a.time.localeCompare(b.time));
 
     return NextResponse.json({ history });
   } catch (error) {
