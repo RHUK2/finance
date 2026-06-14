@@ -26,6 +26,7 @@ export function useChart(
   setupRef.current = setup;
 
   const resetView = useCallback(() => {
+    chartRef.current?.priceScale("right").applyOptions({ autoScale: true });
     chartRef.current?.timeScale().fitContent();
   }, []);
 
