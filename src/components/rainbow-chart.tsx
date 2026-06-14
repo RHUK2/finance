@@ -15,24 +15,22 @@ import {
 } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
+const _twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
+  .toISOString()
+  .slice(0, 10);
+const _dates = generateModelDates("2012-01-01", _twoYearsLater, 14);
+const BAND_DATA = RAINBOW_BANDS.map((band) =>
+  _dates.flatMap((time) => {
+    const value = powerLawPrice(daysSinceGenesis(time)) * band.upper;
+    return value >= 0.01 ? [{ time, value }] : [];
+  }),
+);
+
 type Props = {
   data: BitcoinHistoricalData;
 };
 
 export function RainbowChart({ data }: Props) {
-  const bandData = useMemo(() => {
-    const twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
-      .toISOString()
-      .slice(0, 10);
-    const dates = generateModelDates("2012-01-01", twoYearsLater, 14);
-    return RAINBOW_BANDS.map((band) =>
-      dates.flatMap((time) => {
-        const value = powerLawPrice(daysSinceGenesis(time)) * band.upper;
-        return value >= 0.01 ? [{ time, value }] : [];
-      }),
-    );
-  }, []);
-
   const { containerRef, resetView } = useChart(
     (chart) => {
       for (let i = RAINBOW_BANDS.length - 1; i >= 0; i--) {
@@ -46,7 +44,7 @@ export function RainbowChart({ data }: Props) {
           lastValueVisible: false,
           crosshairMarkerVisible: false,
         });
-        series.setData(bandData[i]);
+        series.setData(BAND_DATA[i]);
       }
       const priceSeries = chart.addSeries(LineSeries, {
         color: "#ffffff",
@@ -56,7 +54,7 @@ export function RainbowChart({ data }: Props) {
       });
       priceSeries.setData(data.history);
     },
-    [data.history, bandData],
+    [data.history],
     { height: 320, logScale: true },
   );
 

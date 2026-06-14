@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { LineSeries, LineStyle } from "lightweight-charts";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,26 +13,22 @@ import {
 } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
+const _twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
+  .toISOString()
+  .slice(0, 10);
+const _dates = generateModelDates("2012-01-01", _twoYearsLater, 7);
+const _make = (mult: number) =>
+  _dates.flatMap((time) => {
+    const value = powerLawPrice(daysSinceGenesis(time)) * mult;
+    return value >= 0.01 ? [{ time, value }] : [];
+  });
+const MODEL_LINES = { center: _make(1), upper: _make(5), lower: _make(0.2) };
+
 type Props = {
   data: BitcoinHistoricalData;
 };
 
 export function PowerLawChart({ data }: Props) {
-  const modelLines = useMemo(() => {
-    const twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
-      .toISOString()
-      .slice(0, 10);
-    const dates = generateModelDates("2012-01-01", twoYearsLater, 7);
-
-    const make = (mult: number) =>
-      dates.flatMap((time) => {
-        const value = powerLawPrice(daysSinceGenesis(time)) * mult;
-        return value >= 0.01 ? [{ time, value }] : [];
-      });
-
-    return { center: make(1), upper: make(5), lower: make(0.2) };
-  }, []);
-
   const { containerRef, resetView } = useChart(
     (chart) => {
       const upperSeries = chart.addSeries(LineSeries, {
@@ -44,7 +39,7 @@ export function PowerLawChart({ data }: Props) {
         lastValueVisible: false,
         crosshairMarkerVisible: false,
       });
-      upperSeries.setData(modelLines.upper);
+      upperSeries.setData(MODEL_LINES.upper);
 
       const lowerSeries = chart.addSeries(LineSeries, {
         color: "#22c55e",
@@ -54,7 +49,7 @@ export function PowerLawChart({ data }: Props) {
         lastValueVisible: false,
         crosshairMarkerVisible: false,
       });
-      lowerSeries.setData(modelLines.lower);
+      lowerSeries.setData(MODEL_LINES.lower);
 
       const centerSeries = chart.addSeries(LineSeries, {
         color: "#a78bfa",
@@ -65,7 +60,7 @@ export function PowerLawChart({ data }: Props) {
         crosshairMarkerVisible: false,
         title: "모델",
       });
-      centerSeries.setData(modelLines.center);
+      centerSeries.setData(MODEL_LINES.center);
 
       const priceSeries = chart.addSeries(LineSeries, {
         color: "#f59e0b",
@@ -76,7 +71,7 @@ export function PowerLawChart({ data }: Props) {
       });
       priceSeries.setData(data.history);
     },
-    [data.history, modelLines],
+    [data.history],
     { height: 320, logScale: true },
   );
 

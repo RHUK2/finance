@@ -22,6 +22,7 @@ export function useChart(
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const setupRef = useRef(setup);
+  // eslint-disable-next-line react-hooks/refs
   setupRef.current = setup;
 
   const resetView = useCallback(() => {
