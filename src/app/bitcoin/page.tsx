@@ -15,6 +15,7 @@ import {
   StockToFlowChart,
   StockToFlowChartSkeleton,
 } from "@/components/stock-to-flow-chart";
+import { useEffect } from "react";
 import {
   useBitcoinHistorical,
   useFearGreed,
@@ -22,6 +23,15 @@ import {
 } from "@/hooks/use-crypto";
 
 export default function BitcoinPage() {
+  useEffect(() => {
+    const isPwa = window.matchMedia("(display-mode: standalone)").matches;
+    if (!isPwa) return;
+    const orientation = screen.orientation as ScreenOrientation & {
+      lock?: (o: string) => Promise<void>;
+    };
+    orientation.lock?.("landscape").catch(() => {});
+    return () => orientation.unlock?.();
+  }, []);
   const { data: fearGreed, isLoading: fearGreedLoading } = useFearGreed();
   const { data: mvrv, isLoading: mvrvLoading } = useMvrv();
   const { data: historical, isLoading: historicalLoading } =
