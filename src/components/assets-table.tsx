@@ -173,9 +173,17 @@ export function AssetsTable({ data, isLoading }: Props) {
   );
 
   const mobileSorted = useMemo(() => {
-    if (mobileSortKey === "default") return filtered;
+    const q = globalFilter.trim().toLowerCase();
+    const searched = q
+      ? filtered.filter(
+          (item) =>
+            item.label.toLowerCase().includes(q) ||
+            item.ticker.toLowerCase().includes(q),
+        )
+      : filtered;
+    if (mobileSortKey === "default") return searched;
     const [col, dir] = mobileSortKey.split("-") as [string, "asc" | "desc"];
-    return filtered.toSorted((a, b) => {
+    return searched.toSorted((a, b) => {
       const av =
         (a[col as keyof MarketItem] as number | string | null) ??
         (dir === "asc" ? Infinity : -Infinity);
@@ -190,7 +198,7 @@ export function AssetsTable({ data, isLoading }: Props) {
         ? (av as number) - (bv as number)
         : (bv as number) - (av as number);
     });
-  }, [filtered, mobileSortKey]);
+  }, [filtered, globalFilter, mobileSortKey]);
 
   const columns = useMemo(
     () => [
