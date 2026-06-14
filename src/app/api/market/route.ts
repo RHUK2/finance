@@ -125,7 +125,7 @@ const SYMBOLS = [
     ticker: "KS11",
     label: "코스피",
     type: "index",
-    gfUrl: `${GF}/.KS11:INDEXKRX`,
+    gfUrl: `${GF}/KOSPI:KRX`,
   },
   {
     symbol: "GC=F",
