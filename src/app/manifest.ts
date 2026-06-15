@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "개인 경제 지표 대시보드",
     start_url: "/",
     display: "standalone",
-    background_color: "#0f172a",
-    theme_color: "#0f172a",
+    background_color: "#000000",
+    theme_color: "#000000",
     orientation: "any",
     icons: [
       {

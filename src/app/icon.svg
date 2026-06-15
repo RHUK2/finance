@@ -1,23 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <!-- Background -->
-  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  <rect width="512" height="512" rx="96" fill="#000000"/>
 
-  <!-- Bar chart bars -->
-  <!-- Bar 1 (left, shortest) -->
-  <rect x="72" y="304" width="88" height="152" rx="10" fill="#3b82f6"/>
-  <!-- Bar 2 (middle, tallest) -->
-  <rect x="192" y="192" width="88" height="264" rx="10" fill="#60a5fa"/>
-  <!-- Bar 3 (right, medium) -->
-  <rect x="312" y="248" width="88" height="208" rx="10" fill="#3b82f6"/>
+  <!-- Scaled content group (65%, centered) -->
+  <g transform="translate(89.6, 80.5) scale(0.65)">
+    <!-- Bar chart bars -->
+    <rect x="72" y="304" width="88" height="152" rx="10" fill="#60a5fa"/>
+    <rect x="192" y="192" width="88" height="264" rx="10" fill="#93c5fd"/>
+    <rect x="312" y="248" width="88" height="208" rx="10" fill="#60a5fa"/>
 
-  <!-- Magnifying glass -->
-  <!-- Lens circle -->
-  <circle cx="300" cy="184" r="100" fill="none" stroke="#f8fafc" stroke-width="32"/>
-  <!-- Lens inner tint -->
-  <circle cx="300" cy="184" r="84" fill="#f8fafc" fill-opacity="0.08"/>
-  <!-- Handle -->
-  <line x1="372" y1="256" x2="440" y2="328" stroke="#f8fafc" stroke-width="36" stroke-linecap="round"/>
-
-  <!-- Shine on lens (optional subtle highlight) -->
-  <circle cx="268" cy="152" r="22" fill="#f8fafc" fill-opacity="0.18"/>
+    <!-- Magnifying glass -->
+    <circle cx="300" cy="184" r="100" fill="none" stroke="#ffffff" stroke-width="32"/>
+    <circle cx="300" cy="184" r="84" fill="#ffffff" fill-opacity="0.08"/>
+    <line x1="372" y1="256" x2="440" y2="328" stroke="#ffffff" stroke-width="36" stroke-linecap="round"/>
+    <circle cx="268" cy="152" r="22" fill="#ffffff" fill-opacity="0.18"/>
+  </g>
 </svg>
