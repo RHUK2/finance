@@ -30,10 +30,18 @@ export async function GET() {
 
     if (rows.length === 0) throw new Error("No MVRV data");
 
-    const history = rows.map((row) => ({
-      time: row.time.slice(0, 10),
-      value: Number(row.CapMVRVCur),
-    }));
+    const seen = new Set<string>();
+    const history = rows
+      .map((row) => ({
+        time: row.time.slice(0, 10),
+        value: Number(row.CapMVRVCur),
+      }))
+      .filter((row) => {
+        if (!isFinite(row.value) || seen.has(row.time)) return false;
+        seen.add(row.time);
+        return true;
+      })
+      .sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
 
     const latest = history[history.length - 1];
 
