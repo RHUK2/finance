@@ -1,6 +1,7 @@
 "use client";
 
 import { AppHeader } from "@/components/app-header";
+import { PageMain } from "@/components/page-main";
 import {
   FearGreedChart,
   FearGreedChartSkeleton,
@@ -15,7 +16,6 @@ import {
   StockToFlowChart,
   StockToFlowChartSkeleton,
 } from "@/components/stock-to-flow-chart";
-import { useEffect } from "react";
 import {
   useBitcoinHistorical,
   useFearGreed,
@@ -23,15 +23,6 @@ import {
 } from "@/hooks/use-crypto";
 
 export default function BitcoinPage() {
-  useEffect(() => {
-    const isPwa = window.matchMedia("(display-mode: standalone)").matches;
-    if (!isPwa) return;
-    const orientation = screen.orientation as ScreenOrientation & {
-      lock?: (o: string) => Promise<void>;
-    };
-    orientation.lock?.("landscape").catch(() => {});
-    return () => orientation.unlock?.();
-  }, []);
   const { data: fearGreed, isLoading: fearGreedLoading } = useFearGreed();
   const { data: mvrv, isLoading: mvrvLoading } = useMvrv();
   const { data: historical, isLoading: historicalLoading } =
@@ -43,7 +34,7 @@ export default function BitcoinPage() {
         breadcrumbs={[{ label: "비트코인 지표" }]}
         updateCycle="24시간 갱신"
       />
-      <main className="min-h-screen p-6 md:p-10">
+      <PageMain>
         <div className="flex flex-col gap-3">
           {fearGreedLoading ? (
             <FearGreedChartSkeleton />
@@ -71,7 +62,7 @@ export default function BitcoinPage() {
             historical && <StockToFlowChart data={historical} />
           )}
         </div>
-      </main>
+      </PageMain>
     </>
   );
 }

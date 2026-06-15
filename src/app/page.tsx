@@ -2,6 +2,7 @@
 
 import { AppHeader } from "@/components/app-header";
 import { AssetsTable } from "@/components/assets-table";
+import { PageMain } from "@/components/page-main";
 import { useMarket } from "@/hooks/use-market";
 
 export default function AssetsPage() {
@@ -22,9 +23,9 @@ export default function AssetsPage() {
         breadcrumbs={[{ label: "자산 현황" }]}
         updateCycle="15분 갱신"
       />
-      <main className="min-h-screen p-6 md:p-10">
+      <PageMain>
         <AssetsTable data={items} isLoading={isLoading} />
-      </main>
+      </PageMain>
     </>
   );
 }
