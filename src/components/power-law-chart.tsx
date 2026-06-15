@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { LineSeries, LineStyle } from "lightweight-charts";
-import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/chart-skeleton";
+import { ChartContainer } from "@/components/chart-container";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useChart } from "@/hooks/use-chart";
 import {
   daysSinceGenesis,
@@ -13,22 +14,23 @@ import {
 } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
-const _twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
+const twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
   .toISOString()
   .slice(0, 10);
-const _dates = generateModelDates("2012-01-01", _twoYearsLater, 7);
-const _make = (mult: number) =>
-  _dates.flatMap((time) => {
+const modelDates = generateModelDates("2012-01-01", twoYearsLater, 7);
+const makeLine = (mult: number) =>
+  modelDates.flatMap((time) => {
     const value = powerLawPrice(daysSinceGenesis(time)) * mult;
     return value >= 0.01 ? [{ time, value }] : [];
   });
-const MODEL_LINES = { center: _make(1), upper: _make(5), lower: _make(0.2) };
+const MODEL_LINES = { center: makeLine(1), upper: makeLine(5), lower: makeLine(0.2) };
 
 type Props = {
   data: BitcoinHistoricalData;
+  resetRef?: React.RefObject<(() => void) | null>;
 };
 
-export function PowerLawChart({ data }: Props) {
+export function PowerLawChart({ data, resetRef }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const upperSeries = chart.addSeries(LineSeries, {
@@ -75,29 +77,20 @@ export function PowerLawChart({ data }: Props) {
     { height: 320, logScale: true },
   );
 
+  useEffect(() => {
+    if (resetRef) resetRef.current = resetView;
+  }, [resetRef, resetView]);
+
   const latest = data.history[data.history.length - 1];
   const modelNow = latest ? powerLawPrice(daysSinceGenesis(latest.time)) : null;
   const ratio = latest && modelNow ? latest.value / modelNow : null;
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            Power Law 모델
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={resetView}
-          >
-            <RotateCcw className="h-3 w-3" />
-          </Button>
-        </div>
-        <p className="text-muted-foreground text-xs">
-          로그 회귀 공정가치 (보라 점선) · 5× 상단 / 0.2× 하단 밴드
-        </p>
+      <CardHeader>
+        <CardTitle className="text-muted-foreground text-sm font-medium">
+          Power Law 모델
+        </CardTitle>
         {ratio != null && (
           <span
             className="text-sm font-semibold"
@@ -108,8 +101,9 @@ export function PowerLawChart({ data }: Props) {
           </span>
         )}
       </CardHeader>
-      <CardContent className="p-0 pb-4">
-        <div ref={containerRef} />
+      <CardContent className="p-0">
+        <ChartContainer containerRef={containerRef} onReset={resetView} />
+        <div className="h-4" />
       </CardContent>
     </Card>
   );
@@ -117,10 +111,8 @@ export function PowerLawChart({ data }: Props) {
 
 export function PowerLawChartSkeleton() {
   return (
-    <ChartSkeleton
-      chartHeight={320}
-      subtitleClassName="w-64"
-      valueClassName="h-4 w-20"
-    />
+    <ChartSkeleton chartHeight={320}>
+      <Skeleton className="h-4 w-24" />
+    </ChartSkeleton>
   );
 }

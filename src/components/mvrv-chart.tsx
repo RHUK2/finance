@@ -1,11 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { LineSeries, LineStyle } from "lightweight-charts";
-import { RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/chart-skeleton";
+import { ChartContainer } from "@/components/chart-container";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useChart } from "@/hooks/use-chart";
 import type { MvrvData } from "@/hooks/use-crypto";
 
@@ -27,9 +28,10 @@ function getMvrvStatus(value: number) {
 
 type Props = {
   data: MvrvData;
+  resetRef?: React.RefObject<(() => void) | null>;
 };
 
-export function MvrvChart({ data }: Props) {
+export function MvrvChart({ data, resetRef }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
@@ -53,28 +55,18 @@ export function MvrvChart({ data }: Props) {
     { timeVisible: true },
   );
 
+  useEffect(() => {
+    if (resetRef) resetRef.current = resetView;
+  }, [resetRef, resetView]);
+
   const status = getMvrvStatus(data.value);
-  const date = new Date(data.date).toLocaleDateString("ko-KR");
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            MVRV Z-Score
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={resetView}
-          >
-            <RotateCcw className="h-3 w-3" />
-          </Button>
-        </div>
-        <p className="text-muted-foreground text-xs">
-          시가총액 ÷ 실현가치 · {date} 기준
-        </p>
+      <CardHeader>
+        <CardTitle className="text-muted-foreground text-sm font-medium">
+          MVRV Z-Score
+        </CardTitle>
         <div className="flex items-end gap-2">
           <span className="text-3xl font-bold">{data.value.toFixed(2)}</span>
           <Badge variant={status.variant} className="mb-1">
@@ -82,13 +74,21 @@ export function MvrvChart({ data }: Props) {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-0 pb-4">
-        <div ref={containerRef} />
+      <CardContent className="p-0">
+        <ChartContainer containerRef={containerRef} onReset={resetView} />
+        <div className="h-4" />
       </CardContent>
     </Card>
   );
 }
 
 export function MvrvChartSkeleton() {
-  return <ChartSkeleton subtitleClassName="w-40" valueClassName="h-9 w-32" />;
+  return (
+    <ChartSkeleton>
+      <div className="flex items-end gap-2">
+        <Skeleton className="h-9 w-16" />
+        <Skeleton className="mb-1 h-5 w-14 rounded-full" />
+      </div>
+    </ChartSkeleton>
+  );
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { AreaSeries, LineSeries } from "lightweight-charts";
-import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/chart-skeleton";
+import { ChartContainer } from "@/components/chart-container";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useChart } from "@/hooks/use-chart";
 import {
   RAINBOW_BANDS,
@@ -15,12 +15,12 @@ import {
 } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
-const _twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
+const twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000)
   .toISOString()
   .slice(0, 10);
-const _dates = generateModelDates("2012-01-01", _twoYearsLater, 14);
+const modelDates = generateModelDates("2012-01-01", twoYearsLater, 14);
 const BAND_DATA = RAINBOW_BANDS.map((band) =>
-  _dates.flatMap((time) => {
+  modelDates.flatMap((time) => {
     const value = powerLawPrice(daysSinceGenesis(time)) * band.upper;
     return value >= 0.01 ? [{ time, value }] : [];
   }),
@@ -28,9 +28,10 @@ const BAND_DATA = RAINBOW_BANDS.map((band) =>
 
 type Props = {
   data: BitcoinHistoricalData;
+  resetRef?: React.RefObject<(() => void) | null>;
 };
 
-export function RainbowChart({ data }: Props) {
+export function RainbowChart({ data, resetRef }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       for (let i = RAINBOW_BANDS.length - 1; i >= 0; i--) {
@@ -58,6 +59,10 @@ export function RainbowChart({ data }: Props) {
     { height: 320, logScale: true },
   );
 
+  useEffect(() => {
+    if (resetRef) resetRef.current = resetView;
+  }, [resetRef, resetView]);
+
   const currentBand = useMemo(() => {
     if (!data.history.length) return null;
     const latest = data.history[data.history.length - 1];
@@ -70,23 +75,10 @@ export function RainbowChart({ data }: Props) {
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            레인보우 차트
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={resetView}
-          >
-            <RotateCcw className="h-3 w-3" />
-          </Button>
-        </div>
-        <p className="text-muted-foreground text-xs">
-          Power Law 기반 9단계 밸류에이션 밴드
-        </p>
+      <CardHeader>
+        <CardTitle className="text-muted-foreground text-sm font-medium">
+          레인보우 차트
+        </CardTitle>
         {currentBand && (
           <span
             className="text-sm font-semibold"
@@ -96,8 +88,9 @@ export function RainbowChart({ data }: Props) {
           </span>
         )}
       </CardHeader>
-      <CardContent className="p-0 pb-4">
-        <div ref={containerRef} />
+      <CardContent className="p-0">
+        <ChartContainer containerRef={containerRef} onReset={resetView} />
+        <div className="h-4" />
       </CardContent>
     </Card>
   );
@@ -105,10 +98,8 @@ export function RainbowChart({ data }: Props) {
 
 export function RainbowChartSkeleton() {
   return (
-    <ChartSkeleton
-      chartHeight={320}
-      subtitleClassName="w-48"
-      valueClassName="h-4 w-16"
-    />
+    <ChartSkeleton chartHeight={320}>
+      <Skeleton className="h-4 w-20" />
+    </ChartSkeleton>
   );
 }
