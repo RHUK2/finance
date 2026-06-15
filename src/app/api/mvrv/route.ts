@@ -4,15 +4,29 @@ export const revalidate = 86400;
 
 export async function GET() {
   try {
-    const res = await fetch(
-      "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=CapMVRVCur&frequency=1d&page_size=2000&start_time=2015-01-01",
-      { next: { revalidate: 86400 } },
-    );
+    const rows: { time: string; CapMVRVCur: string }[] = [];
+    let nextPageToken: string | null = null;
 
-    if (!res.ok) throw new Error(`CoinMetrics error: ${res.status}`);
+    do {
+      const params = new URLSearchParams({
+        assets: "btc",
+        metrics: "CapMVRVCur",
+        frequency: "1d",
+        page_size: "2000",
+        start_time: "2015-01-01",
+      });
+      if (nextPageToken) params.set("next_page_token", nextPageToken);
 
-    const data = await res.json();
-    const rows: { time: string; CapMVRVCur: string }[] = data.data ?? [];
+      const res = await fetch(
+        `https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?${params}`,
+        { next: { revalidate: 86400 } },
+      );
+      if (!res.ok) throw new Error(`CoinMetrics error: ${res.status}`);
+
+      const data = await res.json();
+      rows.push(...((data.data as { time: string; CapMVRVCur: string }[]) ?? []));
+      nextPageToken = (data.next_page_token as string) ?? null;
+    } while (nextPageToken);
 
     if (rows.length === 0) throw new Error("No MVRV data");
 
