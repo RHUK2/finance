@@ -48,7 +48,7 @@ export default function RootLayout({
           <QueryProvider>
             <SidebarProvider>
               <AppSidebar />
-              <SidebarInset>{children}</SidebarInset>
+              <SidebarInset className="min-w-0">{children}</SidebarInset>
             </SidebarProvider>
           </QueryProvider>
           <Toaster position="top-center" richColors />

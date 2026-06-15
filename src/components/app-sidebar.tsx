@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Bitcoin } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,11 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-
-const NAV_ITEMS = [
-  { label: "자산 현황", href: "/", icon: BarChart3 },
-  { label: "비트코인 지표", href: "/bitcoin", icon: Bitcoin },
-];
+import { NAV_ITEMS } from "@/lib/nav";
 
 export function AppSidebar() {
   const pathname = usePathname();

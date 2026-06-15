@@ -21,7 +21,6 @@ export default function AssetsPage() {
     <>
       <AppHeader
         breadcrumbs={[{ label: "자산 현황" }]}
-        updateCycle="15분 갱신"
       />
       <PageMain>
         <AssetsTable data={items} isLoading={isLoading} />

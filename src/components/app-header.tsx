@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Bitcoin, ChevronDown } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,20 +17,18 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-const NAV_ITEMS = [
-  { label: "자산 현황", href: "/", icon: BarChart3 },
-  { label: "비트코인 지표", href: "/bitcoin", icon: Bitcoin },
-];
+import { NAV_ITEMS } from "@/lib/nav";
+import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 type BreadcrumbEntry = { label: string; href?: string };
 
 type Props = {
   breadcrumbs: BreadcrumbEntry[];
-  updateCycle?: string;
 };
 
-export function AppHeader({ breadcrumbs, updateCycle }: Props) {
+export function AppHeader({ breadcrumbs }: Props) {
   const isMobile = useIsMobile();
   const pathname = usePathname();
   const router = useRouter();
@@ -52,7 +47,7 @@ export function AppHeader({ breadcrumbs, updateCycle }: Props) {
                 <BreadcrumbItem>
                   {isLast && isMobile ? (
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="flex items-center gap-1 font-medium outline-none">
+                      <DropdownMenuTrigger className="flex cursor-pointer items-center gap-1 font-medium outline-none">
                         {item.label}
                         <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                       </DropdownMenuTrigger>
@@ -83,11 +78,6 @@ export function AppHeader({ breadcrumbs, updateCycle }: Props) {
           })}
         </BreadcrumbList>
       </Breadcrumb>
-      {updateCycle && (
-        <span className="text-muted-foreground ml-auto text-xs">
-          {updateCycle}
-        </span>
-      )}
     </header>
   );
 }
