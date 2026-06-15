@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useScrollDrag() {
-  const ref = useRef<HTMLDivElement>(null);
+  const elRef = useRef<HTMLDivElement | null>(null);
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
+  const ref = useCallback((node: HTMLDivElement | null) => {
+    elRef.current = node;
+    setEl(node);
+  }, []);
   const drag = useRef({
     active: false,
     startX: 0,
@@ -12,20 +17,16 @@ export function useScrollDrag() {
   });
   const [mask, setMask] = useState<"none" | "left" | "right" | "both">("none");
 
-  const updateMask = () => {
-    const el = ref.current;
-    if (!el) return;
-    const canLeft = el.scrollLeft > 0;
-    const canRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
-    if (canLeft && canRight) setMask("both");
-    else if (canLeft) setMask("left");
-    else if (canRight) setMask("right");
-    else setMask("none");
-  };
-
   useEffect(() => {
-    const el = ref.current;
     if (!el) return;
+    const updateMask = () => {
+      const canLeft = el.scrollLeft > 0;
+      const canRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+      if (canLeft && canRight) setMask("both");
+      else if (canLeft) setMask("left");
+      else if (canRight) setMask("right");
+      else setMask("none");
+    };
     updateMask();
     el.addEventListener("scroll", updateMask, { passive: true });
     const ro = new ResizeObserver(updateMask);
@@ -34,27 +35,27 @@ export function useScrollDrag() {
       el.removeEventListener("scroll", updateMask);
       ro.disconnect();
     };
-  }, []);
+  }, [el]);
 
   const handlers = {
     onMouseDown: (e: React.MouseEvent) => {
-      const el = ref.current;
-      if (!el) return;
+      const node = elRef.current;
+      if (!node) return;
       drag.current = {
         active: true,
-        startX: e.pageX - el.offsetLeft,
-        scrollLeft: el.scrollLeft,
+        startX: e.pageX - node.offsetLeft,
+        scrollLeft: node.scrollLeft,
         moved: false,
       };
     },
     onMouseMove: (e: React.MouseEvent) => {
       if (!drag.current.active) return;
       e.preventDefault();
-      const el = ref.current;
-      if (!el) return;
-      const walk = e.pageX - el.offsetLeft - drag.current.startX;
+      const node = elRef.current;
+      if (!node) return;
+      const walk = e.pageX - node.offsetLeft - drag.current.startX;
       if (Math.abs(walk) > 4) drag.current.moved = true;
-      el.scrollLeft = drag.current.scrollLeft - walk;
+      node.scrollLeft = drag.current.scrollLeft - walk;
     },
     onMouseUp: () => {
       drag.current.active = false;

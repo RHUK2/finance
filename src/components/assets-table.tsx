@@ -209,7 +209,7 @@ export function AssetsTable({ data, isLoading }: Props) {
           return (
             <div className="flex items-center gap-2">
               <span
-                className={`h-2 w-2 shrink-0 rounded-full ${TYPE_DOT_COLORS[type] ?? "bg-muted"}`}
+                className={cn("h-2 w-2 shrink-0 rounded-full", TYPE_DOT_COLORS[type] ?? "bg-muted")}
               />
               <div>
                 <span className="font-medium">{info.getValue()}</span>
@@ -224,11 +224,7 @@ export function AssetsTable({ data, isLoading }: Props) {
       }),
       columnHelper.accessor("price", {
         header: "가격",
-        cell: (info) => (
-          <div>
-            <PriceDisplay item={info.row.original} />
-          </div>
-        ),
+        cell: (info) => <PriceDisplay item={info.row.original} />,
         sortingFn: (a, b) => (a.original.price ?? 0) - (b.original.price ?? 0),
       }),
       columnHelper.accessor("changePercent", {
@@ -256,11 +252,11 @@ export function AssetsTable({ data, isLoading }: Props) {
   const filterTabs = (
     <div
       ref={filterRef}
-      className="cursor-grab [scrollbar-width:none] overflow-x-auto select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+      className="cursor-grab [scrollbar-width:none] overflow-x-auto py-1 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
       style={filterMaskStyle}
       {...filterHandlers}
     >
-      <div className="flex w-max items-center gap-1.5">
+      <div className="flex w-max items-center gap-1.5 px-1">
         {ASSET_TYPES.map((type) => (
           <Button
             key={type}
@@ -358,7 +354,7 @@ export function AssetsTable({ data, isLoading }: Props) {
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={`h-2 w-2 shrink-0 rounded-full ${TYPE_DOT_COLORS[item.type] ?? "bg-muted"}`}
+                    className={cn("h-2 w-2 shrink-0 rounded-full", TYPE_DOT_COLORS[item.type] ?? "bg-muted")}
                   />
                   <div>
                     <div className="font-medium">{item.label}</div>
@@ -402,10 +398,10 @@ export function AssetsTable({ data, isLoading }: Props) {
                       <th
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        className={`text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right ${canSort ? "hover:text-foreground cursor-pointer select-none" : ""}`}
+                        className={cn("text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right", canSort && "hover:text-foreground cursor-pointer select-none")}
                       >
                         <div
-                          className={`flex items-center gap-1 ${header.index > 0 ? "justify-end" : ""}`}
+                          className={cn("flex items-center gap-1", header.index > 0 && "justify-end")}
                         >
                           {flexRender(
                             header.column.columnDef.header,
@@ -476,7 +472,7 @@ export function AssetsTable({ data, isLoading }: Props) {
                       {row.getVisibleCells().map((cell, i) => (
                         <td
                           key={cell.id}
-                          className={`px-4 py-3 ${i > 0 ? "text-right" : ""}`}
+                          className={cn("px-4 py-3", i > 0 && "text-right")}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
