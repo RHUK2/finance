@@ -63,7 +63,7 @@ export function ChartContainer({ containerRef, onReset }: Props) {
       {resetButton}
       {!active && (
         <div
-          className="absolute inset-0 cursor-pointer"
+          className="absolute inset-0 z-10 cursor-pointer"
           onClick={() => setActive(true)}
         >
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs whitespace-nowrap text-white/60">
