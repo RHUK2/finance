@@ -1,10 +1,10 @@
-import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
-import { QueryProvider } from "@/components/query-provider";
 import { AppSidebar } from "@/components/app-sidebar";
+import { QueryProvider } from "@/components/query-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import type { Metadata, Viewport } from "next";
+import { ThemeProvider } from "next-themes";
+import localFont from "next/font/local";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const pretendard = localFont({

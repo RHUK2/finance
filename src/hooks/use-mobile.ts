@@ -13,5 +13,5 @@ function getSnapshot() {
 }
 
 export function useIsMobile() {
-  return useSyncExternalStore(subscribe, getSnapshot, () => false);
+  return useSyncExternalStore(subscribe, getSnapshot, () => undefined);
 }

@@ -139,6 +139,7 @@ const columnHelper = createColumnHelper<MarketItem>();
 type Props = {
   data: MarketItem[];
   isLoading: boolean;
+  updatedLabel?: string;
 };
 
 const ASSET_TYPES = ["all", "crypto", "stock", "index", "commodity", "forex"];
@@ -152,7 +153,7 @@ const MOBILE_SORT_OPTIONS = [
   { value: "changePercent-asc", label: "증감 낮은순" },
 ];
 
-export function AssetsTable({ data, isLoading }: Props) {
+export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   const isMobile = useIsMobile();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -209,7 +210,10 @@ export function AssetsTable({ data, isLoading }: Props) {
           return (
             <div className="flex items-center gap-2">
               <span
-                className={cn("h-2 w-2 shrink-0 rounded-full", TYPE_DOT_COLORS[type] ?? "bg-muted")}
+                className={cn(
+                  "h-2 w-2 shrink-0 rounded-full",
+                  TYPE_DOT_COLORS[type] ?? "bg-muted",
+                )}
               />
               <div>
                 <span className="font-medium">{info.getValue()}</span>
@@ -248,6 +252,10 @@ export function AssetsTable({ data, isLoading }: Props) {
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: "includesString",
   });
+
+  if (isMobile === undefined) {
+    return null;
+  }
 
   const filterTabs = (
     <div
@@ -316,6 +324,11 @@ export function AssetsTable({ data, isLoading }: Props) {
     return (
       <div className="space-y-4">
         {controls}
+        {updatedLabel && (
+          <p className="text-muted-foreground text-right text-xs">
+            {updatedLabel}
+          </p>
+        )}
         <div className="space-y-2">
           {isLoading ? (
             Array.from({ length: 21 }).map((_, i) => (
@@ -354,7 +367,10 @@ export function AssetsTable({ data, isLoading }: Props) {
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={cn("h-2 w-2 shrink-0 rounded-full", TYPE_DOT_COLORS[item.type] ?? "bg-muted")}
+                    className={cn(
+                      "h-2 w-2 shrink-0 rounded-full",
+                      TYPE_DOT_COLORS[item.type] ?? "bg-muted",
+                    )}
                   />
                   <div>
                     <div className="font-medium">{item.label}</div>
@@ -384,7 +400,11 @@ export function AssetsTable({ data, isLoading }: Props) {
   return (
     <div className="space-y-4">
       {controls}
-
+      {updatedLabel && (
+        <p className="text-muted-foreground text-right text-xs">
+          {updatedLabel}
+        </p>
+      )}
       <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] text-sm">
@@ -398,10 +418,17 @@ export function AssetsTable({ data, isLoading }: Props) {
                       <th
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        className={cn("text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right", canSort && "hover:text-foreground cursor-pointer select-none")}
+                        className={cn(
+                          "text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right",
+                          canSort &&
+                            "hover:text-foreground cursor-pointer select-none",
+                        )}
                       >
                         <div
-                          className={cn("flex items-center gap-1", header.index > 0 && "justify-end")}
+                          className={cn(
+                            "flex items-center gap-1",
+                            header.index > 0 && "justify-end",
+                          )}
                         >
                           {flexRender(
                             header.column.columnDef.header,

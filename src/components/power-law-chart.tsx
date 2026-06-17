@@ -23,7 +23,11 @@ const makeLine = (mult: number) =>
     const value = powerLawPrice(daysSinceGenesis(time)) * mult;
     return value >= 0.01 ? [{ time, value }] : [];
   });
-const MODEL_LINES = { center: makeLine(1), upper: makeLine(5), lower: makeLine(0.2) };
+const MODEL_LINES = {
+  center: makeLine(1),
+  upper: makeLine(5),
+  lower: makeLine(0.2),
+};
 
 type Props = {
   data: BitcoinHistoricalData;
