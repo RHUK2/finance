@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 export type MempoolStatsData = {
+  fetchedAt: string;
   pendingTxCount: number;
   mempoolSizeMB: number;
   fastFee: number;
@@ -11,7 +12,9 @@ export type MempoolStatsData = {
 };
 
 export type MiningStatsData = {
+  fetchedAt: string;
   hashrateEHs: number;
+  hashrateChangePct: number;
   blockHeight: number;
   blockRewardBTC: number;
   difficultyChangePct: number;
@@ -25,13 +28,13 @@ export type MiningStatsData = {
 };
 
 export type LightningStatsData = {
+  fetchedAt: string;
   nodeCount: number;
   channelCount: number;
   totalCapacityBTC: number;
-};
-
-export type NodesStatsData = {
-  fullNodeCount: number | null;
+  nodeCountChangePct: number;
+  channelCountChangePct: number;
+  capacityChangePct: number;
 };
 
 export function useMempoolStats() {
@@ -42,6 +45,7 @@ export function useMempoolStats() {
       if (!res.ok) throw new Error("Failed to fetch mempool stats");
       return res.json();
     },
+    staleTime: 60_000,
   });
 }
 
@@ -53,6 +57,7 @@ export function useMiningStats() {
       if (!res.ok) throw new Error("Failed to fetch mining stats");
       return res.json();
     },
+    staleTime: 600_000,
   });
 }
 
@@ -64,16 +69,6 @@ export function useLightningStats() {
       if (!res.ok) throw new Error("Failed to fetch lightning stats");
       return res.json();
     },
-  });
-}
-
-export function useNodesStats() {
-  return useQuery<NodesStatsData>({
-    queryKey: ["nodes-stats"],
-    queryFn: async () => {
-      const res = await fetch("/api/nodes-stats");
-      if (!res.ok) throw new Error("Failed to fetch nodes stats");
-      return res.json();
-    },
+    staleTime: 3_600_000,
   });
 }

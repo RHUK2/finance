@@ -15,13 +15,19 @@ export type MarketItem = {
   currency: string;
 };
 
+export type MarketData = {
+  fetchedAt: string;
+  items: MarketItem[];
+};
+
 export function useMarket() {
-  return useQuery<MarketItem[]>({
+  return useQuery<MarketData>({
     queryKey: ["market"],
     queryFn: async () => {
       const res = await fetch("/api/market");
       if (!res.ok) throw new Error("Failed to fetch market data");
       return res.json();
     },
+    staleTime: 300_000,
   });
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import YahooFinance from "yahoo-finance2";
 
-export const revalidate = 900;
+export const revalidate = 300;
 
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
@@ -177,7 +177,10 @@ export async function GET() {
       }),
     );
 
-    return NextResponse.json(results);
+    return NextResponse.json({
+      fetchedAt: new Date().toISOString(),
+      items: results,
+    });
   } catch (error) {
     console.error("market fetch error:", error);
     return NextResponse.json(

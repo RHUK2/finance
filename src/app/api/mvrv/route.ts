@@ -24,7 +24,9 @@ export async function GET() {
       if (!res.ok) throw new Error(`CoinMetrics error: ${res.status}`);
 
       const data = await res.json();
-      rows.push(...((data.data as { time: string; CapMVRVCur: string }[]) ?? []));
+      rows.push(
+        ...((data.data as { time: string; CapMVRVCur: string }[]) ?? []),
+      );
       nextPageToken = (data.next_page_token as string) ?? null;
     } while (nextPageToken);
 
@@ -46,6 +48,7 @@ export async function GET() {
     const latest = history[history.length - 1];
 
     return NextResponse.json({
+      fetchedAt: new Date().toISOString(),
       value: latest.value,
       date: latest.time,
       history,

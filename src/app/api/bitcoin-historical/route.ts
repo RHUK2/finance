@@ -39,7 +39,7 @@ export async function GET() {
     // Coinbase는 내림차순이므로 날짜 오름차순으로 정렬
     history.sort((a, b) => a.time.localeCompare(b.time));
 
-    return NextResponse.json({ history });
+    return NextResponse.json({ fetchedAt: new Date().toISOString(), history });
   } catch (error) {
     console.error("bitcoin historical fetch error:", error);
     return NextResponse.json(

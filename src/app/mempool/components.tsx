@@ -1,23 +1,24 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import {
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-} from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 export function Section({
   title,
+  relativeTime,
   children,
 }: {
   title: string;
+  relativeTime?: string;
   children: React.ReactNode;
 }) {
   return (
     <section>
-      <h2 className="text-muted-foreground mb-3 text-sm font-semibold">
-        {title}
-      </h2>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-muted-foreground text-sm font-semibold">{title}</h2>
+        {relativeTime && (
+          <span className="text-muted-foreground text-xs">{relativeTime}</span>
+        )}
+      </div>
       {children}
     </section>
   );
@@ -26,19 +27,38 @@ export function Section({
 export function Stat({
   label,
   value,
-  sub,
   valueClassName,
+  change,
 }: {
   label: string;
   value: string;
-  sub?: string;
   valueClassName?: string;
+  change?: number;
 }) {
   return (
-    <div>
+    <div className="text-center">
       <p className="text-muted-foreground text-xs">{label}</p>
       <p className={cn("mt-0.5 font-bold", valueClassName)}>{value}</p>
-      {sub && <p className="text-muted-foreground mt-0.5 text-xs">{sub}</p>}
+      {change !== undefined && (
+        <p
+          className={cn(
+            "mt-0.5 text-xs",
+            change >= 0 ? "text-green-400" : "text-red-400",
+          )}
+        >
+          {change >= 0 ? "▲" : "▼"} {Math.abs(change).toFixed(2)}% 1주 전 대비
+        </p>
+      )}
+    </div>
+  );
+}
+
+export function StatSkeleton({ hasChange = false }: { hasChange?: boolean }) {
+  return (
+    <div className="text-center">
+      <Skeleton className="mx-auto h-3 w-16" />
+      <Skeleton className="mx-auto mt-0.5 h-4 w-12" />
+      {hasChange && <Skeleton className="mx-auto mt-0.5 h-3 w-24" />}
     </div>
   );
 }
@@ -81,7 +101,7 @@ export function DonutRing({
       </ResponsiveContainer>
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5">
         <span
-          className="text-lg font-bold leading-none"
+          className="text-lg leading-none font-bold"
           style={{ color: centerColor }}
         >
           {center}

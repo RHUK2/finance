@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 900;
+export const revalidate = 60;
 
 export async function GET() {
   try {
     const [feesRes, mempoolRes] = await Promise.all([
       fetch("https://mempool.space/api/v1/fees/recommended", {
-        next: { revalidate: 900 },
+        next: { revalidate: 60 },
       }),
       fetch("https://mempool.space/api/mempool", {
-        next: { revalidate: 900 },
+        next: { revalidate: 60 },
       }),
     ]);
 
@@ -21,6 +21,7 @@ export async function GET() {
     const mempool = await mempoolRes.json();
 
     return NextResponse.json({
+      fetchedAt: new Date().toISOString(),
       pendingTxCount: mempool.count as number,
       mempoolSizeMB: Number(((mempool.vsize as number) / 1_000_000).toFixed(2)),
       fastFee: fees.fastestFee as number,

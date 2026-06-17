@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 export type FearGreedData = {
+  fetchedAt: string;
   value: number;
   classification: string;
   timestamp: string;
@@ -10,6 +11,7 @@ export type FearGreedData = {
 };
 
 export type MvrvData = {
+  fetchedAt: string;
   value: number;
   date: string;
   history: { time: string; value: number }[];
@@ -23,6 +25,7 @@ export function useFearGreed() {
       if (!res.ok) throw new Error("Failed to fetch fear & greed data");
       return res.json();
     },
+    staleTime: 86_400_000,
   });
 }
 
@@ -34,10 +37,12 @@ export function useMvrv() {
       if (!res.ok) throw new Error("Failed to fetch MVRV data");
       return res.json();
     },
+    staleTime: 86_400_000,
   });
 }
 
 export type BitcoinHistoricalData = {
+  fetchedAt: string;
   history: { time: string; value: number }[];
 };
 

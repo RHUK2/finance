@@ -30,6 +30,7 @@ export async function GET() {
     const latestRow = rows[0];
 
     return NextResponse.json({
+      fetchedAt: new Date().toISOString(),
       value: latest.value,
       classification: latestRow.value_classification,
       timestamp: latestRow.timestamp,
