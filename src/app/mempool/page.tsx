@@ -8,110 +8,84 @@ import {
   useLightningStats,
   useMempoolStats,
   useMiningStats,
-  useNodesStats,
 } from "@/hooks/use-mempool";
-import {
-  Bar,
-  BarChart,
-  Cell,
-  LabelList,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { DonutRing, Section, Stat } from "./components";
+import { useRelativeTime } from "@/hooks/use-relative-time";
+import { DonutRing, Section, Stat, StatSkeleton } from "./components";
 
 export default function MempoolPage() {
   const { data: mempool, isLoading: mempoolLoading } = useMempoolStats();
   const { data: mining, isLoading: miningLoading } = useMiningStats();
   const { data: lightning, isLoading: lightningLoading } = useLightningStats();
-  const { data: nodes, isLoading: nodesLoading } = useNodesStats();
 
-  const feeData = mempool
-    ? [
-        { name: "느림 (~1시간)", value: mempool.hourFee, fill: "#4ade80" },
-        { name: "보통 (~30분)", value: mempool.halfHourFee, fill: "#fbbf24" },
-        { name: "빠름 (~10분)", value: mempool.fastFee, fill: "#fb923c" },
-      ]
-    : [];
+  const mempoolRelTime = useRelativeTime(mempool?.fetchedAt);
+  const miningRelTime = useRelativeTime(mining?.fetchedAt);
+  const lightningRelTime = useRelativeTime(lightning?.fetchedAt);
 
   return (
     <>
-      <AppHeader
-        breadcrumbs={[{ label: "비트코인 네트워크" }]}
-      />
+      <AppHeader breadcrumbs={[{ label: "비트코인 네트워크" }]} />
       <PageMain>
         <div className="flex flex-col gap-6">
           {/* 멤풀 */}
-          <Section title="멤풀">
+          <Section title="멤풀" relativeTime={mempoolRelTime}>
             {mempoolLoading || !mempool ? (
-              <Skeleton className="h-[240px] rounded-xl" />
+              <Card>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-x-6">
+                    <StatSkeleton />
+                    <StatSkeleton />
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               <Card>
                 <CardContent>
-                  <div className="flex flex-col gap-6">
-                    <div className="grid grid-cols-2 gap-x-6">
-                      <Stat
-                        label="미확인 트랜잭션"
-                        value={mempool.pendingTxCount.toLocaleString()}
-                      />
-                      <Stat
-                        label="멤풀 크기"
-                        value={`${mempool.mempoolSizeMB} MB`}
-                      />
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground mb-2 text-xs">
-                        수수료 비교
-                      </p>
-                      <ResponsiveContainer width="100%" height={108}>
-                        <BarChart
-                          layout="vertical"
-                          data={feeData}
-                          margin={{ left: 0, right: 52, top: 8, bottom: 8 }}
-                        >
-                          <XAxis type="number" domain={[0, "auto"]} hide />
-                          <YAxis
-                            type="category"
-                            dataKey="name"
-                            width={88}
-                            axisLine={false}
-                            tickLine={false}
-                            tick={({ x, y, payload, index }) => (
-                              <text
-                                x={x}
-                                y={y}
-                                textAnchor="end"
-                                dominantBaseline="middle"
-                                fontSize={12}
-                                fill={feeData[index]?.fill ?? "hsl(var(--muted-foreground))"}
-                              >
-                                {payload.value}
-                              </text>
-                            )}
-                          />
-                          <Bar dataKey="value" radius={4} maxBarSize={20}>
-                            {feeData.map((d, i) => (
-                              <Cell key={i} fill={d.fill} />
-                            ))}
-                            <LabelList
-                              dataKey="value"
-                              content={({ x, y, width, height, value, index }) => (
-                                <text
-                                  x={Number(x) + Number(width) + 4}
-                                  y={Number(y) + Number(height) / 2}
-                                  fill={feeData[index as number]?.fill}
-                                  fontSize={12}
-                                  dominantBaseline="middle"
-                                >
-                                  {value} sat/vB
-                                </text>
-                              )}
-                            />
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
+                  <div className="grid grid-cols-2 gap-x-6">
+                    <Stat
+                      label="미확인 트랜잭션"
+                      value={mempool.pendingTxCount.toLocaleString()}
+                    />
+                    <Stat
+                      label="멤풀 크기"
+                      value={`${mempool.mempoolSizeMB} MB`}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </Section>
+
+          {/* 수수료 */}
+          <Section title="수수료" relativeTime={mempoolRelTime}>
+            {mempoolLoading || !mempool ? (
+              <Card>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <StatSkeleton />
+                    <StatSkeleton />
+                    <StatSkeleton />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <Stat
+                      label="느림 (~1시간)"
+                      value={`${mempool.hourFee} sat/vB`}
+                      valueClassName="text-green-400"
+                    />
+                    <Stat
+                      label="보통 (~30분)"
+                      value={`${mempool.halfHourFee} sat/vB`}
+                      valueClassName="text-yellow-400"
+                    />
+                    <Stat
+                      label="빠름 (~10분)"
+                      value={`${mempool.fastFee} sat/vB`}
+                      valueClassName="text-orange-400"
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -119,36 +93,79 @@ export default function MempoolPage() {
           </Section>
 
           {/* 채굴 */}
-          <Section title="채굴">
+          <Section title="채굴" relativeTime={miningRelTime}>
             {miningLoading || !mining ? (
-              <Skeleton className="h-[190px] rounded-xl" />
+              <Card>
+                <CardContent>
+                  <div className="flex flex-col gap-6">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
+                      <StatSkeleton hasChange />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                    </div>
+                    <div>
+                      <div className="mb-1.5 flex justify-between">
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-3 w-8" />
+                      </div>
+                      <Skeleton className="h-2 w-full rounded-full" />
+                      <Skeleton className="mt-1.5 h-3 w-32" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               <Card>
                 <CardContent>
                   <div className="flex flex-col gap-6">
-                    <div className="grid grid-cols-3 gap-x-6 gap-y-4 sm:grid-cols-5">
-                      <Stat label="해시레이트" value={`${mining.hashrateEHs} EH/s`} />
-                      <Stat label="블록 보상" value={`${mining.blockRewardBTC} BTC`} />
-                      <Stat label="남은 블록" value={mining.remainingBlocks.toLocaleString()} />
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
+                      <Stat
+                        label="해시레이트"
+                        value={`${mining.hashrateEHs} EH/s`}
+                        change={mining.hashrateChangePct}
+                      />
+                      <Stat
+                        label="블록 보상"
+                        value={`${mining.blockRewardBTC} BTC`}
+                      />
+                      <Stat
+                        label="남은 블록"
+                        value={mining.remainingBlocks.toLocaleString()}
+                      />
                       <Stat
                         label="예상 변화율"
                         value={`${mining.difficultyChangePct > 0 ? "+" : ""}${mining.difficultyChangePct}%`}
-                        valueClassName={mining.difficultyChangePct >= 0 ? "text-green-500" : "text-red-500"}
+                        valueClassName={
+                          mining.difficultyChangePct >= 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
                       />
                       <Stat
                         label="이전 변화율"
                         value={`${mining.previousDifficultyChangePct > 0 ? "+" : ""}${mining.previousDifficultyChangePct}%`}
-                        valueClassName={mining.previousDifficultyChangePct >= 0 ? "text-green-500" : "text-red-500"}
+                        valueClassName={
+                          mining.previousDifficultyChangePct >= 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
                       />
                     </div>
                     <div>
                       {(() => {
-                        const pct = ((2016 - mining.remainingBlocks) / 2016) * 100;
+                        const pct =
+                          ((2016 - mining.remainingBlocks) / 2016) * 100;
                         return (
                           <>
                             <div className="mb-1.5 flex justify-between text-xs">
-                              <span className="text-muted-foreground">난이도 조정 진행</span>
-                              <span className="font-medium">{pct.toFixed(1)}%</span>
+                              <span className="text-muted-foreground">
+                                난이도 조정 진행
+                              </span>
+                              <span className="font-medium">
+                                {pct.toFixed(1)}%
+                              </span>
                             </div>
                             <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
                               <div
@@ -170,17 +187,30 @@ export default function MempoolPage() {
           </Section>
 
           {/* 반감기 */}
-          <Section title="반감기">
+          <Section title="반감기" relativeTime={miningRelTime}>
             {miningLoading || !mining ? (
-              <Skeleton className="h-[190px] rounded-xl" />
+              <Card>
+                <CardContent>
+                  <div className="flex flex-col items-center gap-6 sm:flex-row">
+                    <Skeleton className="h-[140px] w-[140px] shrink-0 rounded-full" />
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:flex-1">
+                      <StatSkeleton />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                      <StatSkeleton />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               <Card>
                 <CardContent>
                   <div className="flex flex-col items-center gap-6 sm:flex-row">
                     <DonutRing
                       progress={
-                        ((210_000 - mining.remainingHalvingBlocks) /
-                          210_000) *
+                        ((210_000 - mining.remainingHalvingBlocks) / 210_000) *
                         100
                       }
                       color="#f7931a"
@@ -220,32 +250,35 @@ export default function MempoolPage() {
           </Section>
 
           {/* 네트워크 */}
-          <Section title="네트워크">
-            {lightningLoading || nodesLoading || !lightning || !nodes ? (
-              <Skeleton className="h-[88px] rounded-xl" />
+          <Section title="네트워크" relativeTime={lightningRelTime}>
+            {lightningLoading || !lightning ? (
+              <Card>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <StatSkeleton hasChange />
+                    <StatSkeleton hasChange />
+                    <StatSkeleton hasChange />
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               <Card>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
                     <Stat
                       label="라이트닝 노드"
                       value={lightning.nodeCount.toLocaleString()}
+                      change={lightning.nodeCountChangePct}
                     />
                     <Stat
                       label="라이트닝 채널"
                       value={lightning.channelCount.toLocaleString()}
+                      change={lightning.channelCountChangePct}
                     />
                     <Stat
                       label="라이트닝 용량"
                       value={`${lightning.totalCapacityBTC.toLocaleString()} BTC`}
-                    />
-                    <Stat
-                      label="풀노드"
-                      value={
-                        nodes.fullNodeCount != null
-                          ? nodes.fullNodeCount.toLocaleString()
-                          : "--"
-                      }
+                      change={lightning.capacityChangePct}
                     />
                   </div>
                 </CardContent>

@@ -1,18 +1,19 @@
+import { pctChange } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-export const revalidate = 900;
+export const revalidate = 600;
 
 export async function GET() {
   try {
     const [hashrateRes, difficultyRes, blockHeightRes] = await Promise.all([
       fetch("https://mempool.space/api/v1/mining/hashrate/1w", {
-        next: { revalidate: 900 },
+        next: { revalidate: 600 },
       }),
       fetch("https://mempool.space/api/v1/difficulty-adjustment", {
-        next: { revalidate: 900 },
+        next: { revalidate: 600 },
       }),
       fetch("https://mempool.space/api/blocks/tip/height", {
-        next: { revalidate: 900 },
+        next: { revalidate: 600 },
       }),
     ]);
 
@@ -27,10 +28,11 @@ export async function GET() {
     const difficulty = await difficultyRes.json();
     const blockHeight = (await blockHeightRes.json()) as number;
 
-    const latestHashrate =
-      hashrateData.hashrates[hashrateData.hashrates.length - 1]?.avgHashrate ??
-      0;
+    const hashrates = hashrateData.hashrates as { avgHashrate: number }[];
+    const latestHashrate = hashrates[hashrates.length - 1]?.avgHashrate ?? 0;
+    const oldestHashrate = hashrates[0]?.avgHashrate ?? latestHashrate;
     const hashrateEHs = Number((latestHashrate / 1e18).toFixed(2));
+    const hashrateChangePct = pctChange(latestHashrate, oldestHashrate);
 
     const epoch = Math.floor(blockHeight / 210_000);
     const blockRewardBTC = 50 / Math.pow(2, epoch);
@@ -44,12 +46,16 @@ export async function GET() {
       .toISOString()
       .slice(0, 10);
 
-    const estimatedRetargetDate = new Date(difficulty.estimatedRetargetDate as number)
+    const estimatedRetargetDate = new Date(
+      difficulty.estimatedRetargetDate as number,
+    )
       .toISOString()
       .slice(0, 10);
 
     return NextResponse.json({
+      fetchedAt: new Date().toISOString(),
       hashrateEHs,
+      hashrateChangePct,
       blockHeight,
       blockRewardBTC,
       difficultyChangePct: Number(
