@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcw } from "lucide-react";
+import { MousePointer2, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -20,9 +20,11 @@ export function ChartContainer({ containerRef, onReset }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!active || !isTouch) return;
+    if (!active) return;
 
-    function handleTouchStart(e: TouchEvent) {
+    const eventType = isTouch ? "touchstart" : "mousedown";
+
+    function handleOutside(e: Event) {
       if (
         wrapperRef.current &&
         !wrapperRef.current.contains(e.target as Node)
@@ -31,31 +33,20 @@ export function ChartContainer({ containerRef, onReset }: Props) {
       }
     }
 
-    document.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-    return () => document.removeEventListener("touchstart", handleTouchStart);
+    document.addEventListener(eventType, handleOutside, { passive: true });
+    return () => document.removeEventListener(eventType, handleOutside);
   }, [active, isTouch]);
 
   const resetButton = onReset && (
     <Button
       variant="ghost"
       size="icon"
-      className="absolute top-2 left-2 z-10 h-6 w-6 bg-background/60 backdrop-blur-sm hover:bg-background/80"
+      className="bg-background/60 hover:bg-background/80 absolute top-2 left-2 z-10 h-6 w-6 backdrop-blur-sm"
       onClick={onReset}
     >
       <RotateCcw className="h-3 w-3" />
     </Button>
   );
-
-  if (!isTouch) {
-    return (
-      <div className="relative overflow-hidden border-y">
-        <div ref={containerRef} />
-        {resetButton}
-      </div>
-    );
-  }
 
   return (
     <div ref={wrapperRef} className="relative overflow-hidden border-y">
@@ -63,11 +54,14 @@ export function ChartContainer({ containerRef, onReset }: Props) {
       {resetButton}
       {!active && (
         <div
-          className="absolute inset-0 z-10 cursor-pointer"
+          className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center bg-black/20 backdrop-blur-[1px] transition-opacity"
           onClick={() => setActive(true)}
         >
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs whitespace-nowrap text-white/60">
-            탭하여 차트 조작
+          <div className="flex flex-col items-center gap-1.5 rounded-xl border border-white/20 bg-black/50 px-5 py-3 text-white/80 backdrop-blur-sm">
+            <MousePointer2 className="h-4 w-4" />
+            <span className="text-xs font-medium">
+              {isTouch ? "탭하여 차트 조작" : "클릭하여 차트 조작"}
+            </span>
           </div>
         </div>
       )}

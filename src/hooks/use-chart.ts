@@ -22,18 +22,23 @@ export function useChart(
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const setupRef = useRef(setup);
+  const dirtyRef = useRef(false);
   // eslint-disable-next-line react-hooks/refs
   setupRef.current = setup;
 
   const resetView = useCallback(() => {
+    if (!dirtyRef.current) return;
+    dirtyRef.current = false;
     chartRef.current?.priceScale("right").applyOptions({ autoScale: true });
     chartRef.current?.timeScale().fitContent();
   }, []);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
+    dirtyRef.current = false;
 
-    const chart = createChart(containerRef.current, {
+    const chart = createChart(container, {
       autoSize: true,
       height,
       layout: {
@@ -62,12 +67,28 @@ export function useChart(
     chartRef.current = chart;
     setupRef.current(chart);
 
+    const markDirty = () => {
+      dirtyRef.current = true;
+    };
+    container.addEventListener("wheel", markDirty, { passive: true });
+    container.addEventListener("pointerdown", markDirty, { passive: true });
+
+    let resizeObserver: ResizeObserver | null = null;
     const rafId = requestAnimationFrame(() => {
       chart.timeScale().fitContent();
+      resizeObserver = new ResizeObserver(() => {
+        if (!dirtyRef.current) {
+          chartRef.current?.timeScale().fitContent();
+        }
+      });
+      resizeObserver.observe(container);
     });
 
     return () => {
       cancelAnimationFrame(rafId);
+      resizeObserver?.disconnect();
+      container.removeEventListener("wheel", markDirty);
+      container.removeEventListener("pointerdown", markDirty);
       chart.remove();
       chartRef.current = null;
     };

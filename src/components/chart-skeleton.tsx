@@ -10,11 +10,14 @@ export function ChartSkeleton({ chartHeight = 280, children }: Props) {
   return (
     <Card>
       <CardHeader>
-        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-5 w-28" />
         {children}
       </CardHeader>
       <CardContent className="p-0">
-        <Skeleton className="w-full rounded-none" style={{ height: chartHeight }} />
+        <Skeleton
+          className="w-full rounded-none"
+          style={{ height: chartHeight + 2 }}
+        />
         <div className="h-4" />
       </CardContent>
     </Card>
