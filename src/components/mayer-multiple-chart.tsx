@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { LineSeries, LineStyle } from "lightweight-charts";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,38 +8,44 @@ import { ChartSkeleton } from "@/components/chart-skeleton";
 import { ChartContainer } from "@/components/chart-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChart } from "@/hooks/use-chart";
-import type { MvrvData } from "@/hooks/use-crypto";
+import { movingAverage } from "@/lib/bitcoin-models";
+import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
 const ZONE_LINES = [
-  { price: 1, label: "극도 저평가", color: "#ef4444" },
-  { price: 2, label: "저평가", color: "#f97316" },
-  { price: 3.5, label: "적정", color: "#22c55e" },
-  { price: 7, label: "버블 위험", color: "#eab308" },
+  { price: 2.4, label: "과열", color: "#ef4444" },
+  { price: 1, label: "저평가", color: "#22c55e" },
 ];
 
-function getMvrvStatus(value: number) {
-  if (value < 1)
-    return { label: "극도 저평가", variant: "destructive" as const };
-  if (value < 2) return { label: "저평가", variant: "secondary" as const };
-  if (value < 3.5) return { label: "적정", variant: "outline" as const };
-  if (value < 7) return { label: "고평가", variant: "secondary" as const };
-  return { label: "버블 위험", variant: "destructive" as const };
+function getMayerStatus(value: number) {
+  if (value >= 2.4) return { label: "과열", variant: "destructive" as const };
+  if (value >= 1.5) return { label: "고평가", variant: "secondary" as const };
+  if (value >= 1) return { label: "적정", variant: "outline" as const };
+  return { label: "저평가", variant: "secondary" as const };
 }
 
 type Props = {
-  data: MvrvData;
+  data: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
 };
 
-export function MvrvChart({ data, resetRef }: Props) {
+export function MayerMultipleChart({ data, resetRef }: Props) {
+  const mayer = useMemo(() => {
+    const sma = movingAverage(data.history, 200);
+    const smaMap = new Map(sma.map((p) => [p.time, p.value]));
+    return data.history.flatMap((p) => {
+      const ma = smaMap.get(p.time);
+      return ma ? [{ time: p.time, value: p.value / ma }] : [];
+    });
+  }, [data.history]);
+
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
-        color: "#3b82f6",
+        color: "#a78bfa",
         lineWidth: 2,
         priceLineVisible: false,
       });
-      lineSeries.setData(data.history);
+      lineSeries.setData(mayer);
       ZONE_LINES.forEach((zone) => {
         lineSeries.createPriceLine({
           price: zone.price,
@@ -51,28 +57,30 @@ export function MvrvChart({ data, resetRef }: Props) {
         });
       });
     },
-    [data.history],
-    { timeVisible: true },
+    [mayer],
   );
 
   useEffect(() => {
     if (resetRef) resetRef.current = resetView;
   }, [resetRef, resetView]);
 
-  const status = getMvrvStatus(data.value);
+  const current = mayer[mayer.length - 1]?.value;
+  const status = current != null ? getMayerStatus(current) : null;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-muted-foreground text-sm font-medium">
-          MVRV
+          Mayer Multiple
         </CardTitle>
-        <div className="flex items-end gap-2">
-          <span className="text-3xl font-bold">{data.value.toFixed(2)}</span>
-          <Badge variant={status.variant} className="mb-1">
-            {status.label}
-          </Badge>
-        </div>
+        {current != null && status && (
+          <div className="flex items-end gap-2">
+            <span className="text-3xl font-bold">{current.toFixed(2)}</span>
+            <Badge variant={status.variant} className="mb-1">
+              {status.label}
+            </Badge>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
@@ -82,7 +90,7 @@ export function MvrvChart({ data, resetRef }: Props) {
   );
 }
 
-export function MvrvChartSkeleton() {
+export function MayerMultipleChartSkeleton() {
   return (
     <ChartSkeleton>
       <div className="flex items-end gap-2">

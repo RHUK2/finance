@@ -64,6 +64,30 @@ function circulatingSupply(dateStr: string): number {
   );
 }
 
+// 일일 신규 발행량 (BTC). 블록당 보상 × 하루 평균 블록 수(144)
+export function dailyIssuanceBtc(dateStr: string): number {
+  return getEra(dateStr).reward * 144;
+}
+
+export type SeriesPoint = { time: string; value: number };
+
+// N일 단순 이동평균. window 미만 구간은 제외하고 정렬된 입력 기준으로 반환
+export function movingAverage(
+  series: SeriesPoint[],
+  window: number,
+): SeriesPoint[] {
+  if (window <= 0) return [];
+  const out: SeriesPoint[] = [];
+  let sum = 0;
+  for (let i = 0; i < series.length; i++) {
+    sum += series[i].value;
+    if (i >= window) sum -= series[i - window].value;
+    if (i >= window - 1)
+      out.push({ time: series[i].time, value: sum / window });
+  }
+  return out;
+}
+
 export function s2fRatio(dateStr: string): number {
   const era = getEra(dateStr);
   const supply = circulatingSupply(dateStr);

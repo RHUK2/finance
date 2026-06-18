@@ -15,6 +15,7 @@ export type MvrvData = {
   value: number;
   date: string;
   history: { time: string; value: number }[];
+  zScore: { time: string; value: number }[];
 };
 
 export function useFearGreed() {

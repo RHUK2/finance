@@ -5,8 +5,21 @@ import {
   FearGreedChart,
   FearGreedChartSkeleton,
 } from "@/components/fear-greed-chart";
+import {
+  MayerMultipleChart,
+  MayerMultipleChartSkeleton,
+} from "@/components/mayer-multiple-chart";
 import { MvrvChart, MvrvChartSkeleton } from "@/components/mvrv-chart";
+import {
+  MvrvZScoreChart,
+  MvrvZScoreChartSkeleton,
+} from "@/components/mvrv-zscore-chart";
 import { PageMain } from "@/components/page-main";
+import { PiCycleChart, PiCycleChartSkeleton } from "@/components/pi-cycle-chart";
+import {
+  PuellMultipleChart,
+  PuellMultipleChartSkeleton,
+} from "@/components/puell-multiple-chart";
 import {
   PowerLawChart,
   PowerLawChartSkeleton,
@@ -34,15 +47,23 @@ export default function BitcoinPage() {
 
   const fearGreedReset = useRef<(() => void) | null>(null);
   const mvrvReset = useRef<(() => void) | null>(null);
+  const mvrvZScoreReset = useRef<(() => void) | null>(null);
+  const mayerReset = useRef<(() => void) | null>(null);
+  const puellReset = useRef<(() => void) | null>(null);
   const rainbowReset = useRef<(() => void) | null>(null);
   const powerLawReset = useRef<(() => void) | null>(null);
+  const piCycleReset = useRef<(() => void) | null>(null);
   const stockToFlowReset = useRef<(() => void) | null>(null);
 
   function resetAll() {
     fearGreedReset.current?.();
     mvrvReset.current?.();
+    mvrvZScoreReset.current?.();
+    mayerReset.current?.();
+    puellReset.current?.();
     rainbowReset.current?.();
     powerLawReset.current?.();
+    piCycleReset.current?.();
     stockToFlowReset.current?.();
   }
 
@@ -87,6 +108,25 @@ export default function BitcoinPage() {
           ) : (
             mvrv && <MvrvChart data={mvrv} resetRef={mvrvReset} />
           )}
+          {mvrvLoading ? (
+            <MvrvZScoreChartSkeleton />
+          ) : (
+            mvrv && <MvrvZScoreChart data={mvrv} resetRef={mvrvZScoreReset} />
+          )}
+          {historicalLoading ? (
+            <MayerMultipleChartSkeleton />
+          ) : (
+            historical && (
+              <MayerMultipleChart data={historical} resetRef={mayerReset} />
+            )
+          )}
+          {historicalLoading ? (
+            <PuellMultipleChartSkeleton />
+          ) : (
+            historical && (
+              <PuellMultipleChart data={historical} resetRef={puellReset} />
+            )
+          )}
           {historicalLoading ? (
             <RainbowChartSkeleton />
           ) : (
@@ -99,6 +139,13 @@ export default function BitcoinPage() {
           ) : (
             historical && (
               <PowerLawChart data={historical} resetRef={powerLawReset} />
+            )
+          )}
+          {historicalLoading ? (
+            <PiCycleChartSkeleton />
+          ) : (
+            historical && (
+              <PiCycleChart data={historical} resetRef={piCycleReset} />
             )
           )}
           {historicalLoading ? (
