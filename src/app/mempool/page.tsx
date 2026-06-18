@@ -1,25 +1,48 @@
 "use client";
 
 import { AppHeader } from "@/components/app-header";
+import { HashrateChart } from "@/components/hashrate-chart";
 import { PageMain } from "@/components/page-main";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  useHashrateHistory,
   useLightningStats,
+  useMempoolBlocks,
   useMempoolStats,
+  useMiningPools,
   useMiningStats,
+  useRecentBlocks,
 } from "@/hooks/use-mempool";
 import { useRelativeTime } from "@/hooks/use-relative-time";
-import { DonutRing, Section, Stat, StatSkeleton } from "./components";
+import {
+  DonutRing,
+  MempoolBlocksViz,
+  PoolShareChart,
+  RecentBlocksList,
+  Section,
+  Stat,
+  StatSkeleton,
+} from "./components";
 
 export default function MempoolPage() {
   const { data: mempool, isLoading: mempoolLoading } = useMempoolStats();
   const { data: mining, isLoading: miningLoading } = useMiningStats();
   const { data: lightning, isLoading: lightningLoading } = useLightningStats();
+  const { data: mempoolBlocks, isLoading: mempoolBlocksLoading } =
+    useMempoolBlocks();
+  const { data: recentBlocks, isLoading: recentBlocksLoading } =
+    useRecentBlocks();
+  const { data: hashrate, isLoading: hashrateLoading } = useHashrateHistory();
+  const { data: pools, isLoading: poolsLoading } = useMiningPools();
 
   const mempoolRelTime = useRelativeTime(mempool?.fetchedAt);
   const miningRelTime = useRelativeTime(mining?.fetchedAt);
   const lightningRelTime = useRelativeTime(lightning?.fetchedAt);
+  const mempoolBlocksRelTime = useRelativeTime(mempoolBlocks?.fetchedAt);
+  const recentBlocksRelTime = useRelativeTime(recentBlocks?.fetchedAt);
+  const hashrateRelTime = useRelativeTime(hashrate?.fetchedAt);
+  const poolsRelTime = useRelativeTime(pools?.fetchedAt);
 
   return (
     <>
@@ -89,6 +112,38 @@ export default function MempoolPage() {
                   </div>
                 </CardContent>
               </Card>
+            )}
+          </Section>
+
+          {/* 멤풀 블록 (예상) */}
+          <Section title="멤풀 블록 (예상)" relativeTime={mempoolBlocksRelTime}>
+            {mempoolBlocksLoading || !mempoolBlocks ? (
+              <Card>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Skeleton className="h-[88px] w-[120px] rounded-md" />
+                    <Skeleton className="h-[88px] w-[120px] rounded-md" />
+                    <Skeleton className="h-[88px] w-[120px] rounded-md" />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <MempoolBlocksViz blocks={mempoolBlocks.blocks} />
+            )}
+          </Section>
+
+          {/* 최근 블록 */}
+          <Section title="최근 블록" relativeTime={recentBlocksRelTime}>
+            {recentBlocksLoading || !recentBlocks ? (
+              <Card>
+                <CardContent className="flex flex-col gap-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Skeleton key={i} className="h-9 w-full" />
+                  ))}
+                </CardContent>
+              </Card>
+            ) : (
+              <RecentBlocksList blocks={recentBlocks.blocks} />
             )}
           </Section>
 
@@ -183,6 +238,48 @@ export default function MempoolPage() {
                   </div>
                 </CardContent>
               </Card>
+            )}
+          </Section>
+
+          {/* 해시레이트 추이 */}
+          <Section title="해시레이트 추이 (1년)" relativeTime={hashrateRelTime}>
+            {hashrateLoading || !hashrate ? (
+              <Card>
+                <CardContent>
+                  <Skeleton className="h-[240px] w-full" />
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <div className="text-muted-foreground flex justify-end gap-4 px-4 py-3 text-xs">
+                    <span>현재 {hashrate.currentHashrateEHs} EH/s</span>
+                    <span>난이도 {hashrate.currentDifficultyT}T</span>
+                  </div>
+                  <HashrateChart data={hashrate} />
+                  <div className="h-2" />
+                </CardContent>
+              </Card>
+            )}
+          </Section>
+
+          {/* 채굴풀 점유율 */}
+          <Section title="채굴풀 점유율 (1주)" relativeTime={poolsRelTime}>
+            {poolsLoading || !pools ? (
+              <Card>
+                <CardContent>
+                  <div className="flex flex-col items-center gap-6 sm:flex-row">
+                    <Skeleton className="h-[160px] w-[160px] shrink-0 rounded-full" />
+                    <div className="grid w-full grid-cols-1 gap-2 sm:flex-1 sm:grid-cols-2">
+                      {Array.from({ length: 8 }).map((_, i) => (
+                        <Skeleton key={i} className="h-4 w-full" />
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <PoolShareChart pools={pools.pools} />
             )}
           </Section>
 
