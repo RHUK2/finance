@@ -280,6 +280,16 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     </div>
   );
 
+  const updatedRow = (
+    <div className="flex justify-end">
+      {isLoading ? (
+        <Skeleton className="h-4 w-16" />
+      ) : updatedLabel ? (
+        <p className="text-muted-foreground text-xs">{updatedLabel}</p>
+      ) : null}
+    </div>
+  );
+
   const controls = isMobile ? (
     <div className="flex flex-col gap-3">
       <div className="relative w-full">
@@ -324,11 +334,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     return (
       <div className="space-y-4">
         {controls}
-        {updatedLabel && (
-          <p className="text-muted-foreground text-right text-xs">
-            {updatedLabel}
-          </p>
-        )}
+        {updatedRow}
         <div className="space-y-2">
           {isLoading ? (
             Array.from({ length: 21 }).map((_, i) => (
