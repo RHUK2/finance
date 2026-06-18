@@ -126,11 +126,6 @@ vercel --prod     # Vercel 프로덕션 배포
 - 모바일: breadcrumb 현재 페이지명이 드롭다운으로 동작해 페이지 이동 가능
 - 데스크탑: 일반 breadcrumb
 
-### PWA
-
-- `src/app/manifest.ts`: orientation `"any"` (가로/세로 모두 허용)
-- 비트코인 지표 페이지(`/bitcoin`): PWA standalone 모드에서 진입 시 가로 방향 강제 (`Screen Orientation API`), 이탈 시 해제. iOS는 미지원으로 무시됨
-
 ## 컨벤션
 
 - **새 자산 추가**: `src/app/api/market/route.ts`의 `SYMBOLS` 배열에 항목 추가
