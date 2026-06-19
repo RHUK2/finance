@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
@@ -23,11 +23,25 @@ function blockTimeAgo(timestampSec: number): string {
 
 export function PoolShareChart({
   pools,
+  title,
+  relativeTime,
+  description,
 }: {
   pools: { name: string; slug: string; blockCount: number; sharePct: number }[];
+  title?: string;
+  relativeTime?: string;
+  description?: string;
 }) {
   return (
     <Card>
+      {title && (
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
+            {relativeTime && <span className="text-muted-foreground text-xs">{relativeTime}</span>}
+          </div>
+        </CardHeader>
+      )}
       <CardContent>
         <div className="flex flex-col items-center gap-6 sm:flex-row">
           <ResponsiveContainer width={160} height={160} className="shrink-0">
@@ -67,6 +81,9 @@ export function PoolShareChart({
             ))}
           </ul>
         </div>
+        {description && (
+          <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">{description}</p>
+        )}
       </CardContent>
     </Card>
   );
@@ -74,6 +91,9 @@ export function PoolShareChart({
 
 export function RecentBlocksList({
   blocks,
+  title,
+  relativeTime,
+  description,
 }: {
   blocks: {
     height: number;
@@ -84,9 +104,20 @@ export function RecentBlocksList({
     rewardBTC: number;
     medianFee: number;
   }[];
+  title?: string;
+  relativeTime?: string;
+  description?: string;
 }) {
   return (
     <Card>
+      {title && (
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
+            {relativeTime && <span className="text-muted-foreground text-xs">{relativeTime}</span>}
+          </div>
+        </CardHeader>
+      )}
       <CardContent className="p-0">
         <ul className="divide-y">
           {blocks.map((b) => (
@@ -111,6 +142,11 @@ export function RecentBlocksList({
             </li>
           ))}
         </ul>
+        {description && (
+          <div className="px-4 pb-4 pt-3">
+            <p className="bg-muted/50 text-muted-foreground rounded-md px-3 py-2.5 text-xs">{description}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -118,6 +154,9 @@ export function RecentBlocksList({
 
 export function MempoolBlocksViz({
   blocks,
+  title,
+  relativeTime,
+  description,
 }: {
   blocks: {
     medianFee: number;
@@ -126,9 +165,20 @@ export function MempoolBlocksViz({
     nTx: number;
     vMB: number;
   }[];
+  title?: string;
+  relativeTime?: string;
+  description?: string;
 }) {
   return (
     <Card>
+      {title && (
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
+            {relativeTime && <span className="text-muted-foreground text-xs">{relativeTime}</span>}
+          </div>
+        </CardHeader>
+      )}
       <CardContent>
         {blocks.length === 0 ? (
           <p className="text-muted-foreground text-sm">대기 중인 블록 없음</p>
@@ -152,31 +202,16 @@ export function MempoolBlocksViz({
             ))}
           </div>
         )}
+        {description && (
+          <p className="bg-muted/50 text-muted-foreground mt-3 rounded-md px-3 py-2.5 text-xs">{description}</p>
+        )}
       </CardContent>
     </Card>
   );
 }
 
-export function Section({
-  title,
-  relativeTime,
-  children,
-}: {
-  title: string;
-  relativeTime?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section>
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-muted-foreground text-sm font-semibold">{title}</h2>
-        {relativeTime && (
-          <span className="text-muted-foreground text-xs">{relativeTime}</span>
-        )}
-      </div>
-      {children}
-    </section>
-  );
+export function Section({ children }: { children: React.ReactNode }) {
+  return <section>{children}</section>;
 }
 
 export function Stat({

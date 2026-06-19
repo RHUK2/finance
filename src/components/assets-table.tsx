@@ -406,11 +406,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   return (
     <div className="space-y-4">
       {controls}
-      {updatedLabel && (
-        <p className="text-muted-foreground text-right text-xs">
-          {updatedLabel}
-        </p>
-      )}
+      {updatedRow}
       <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] text-sm">

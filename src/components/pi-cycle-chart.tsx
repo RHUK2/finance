@@ -14,9 +14,10 @@ import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 type Props = {
   data: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function PiCycleChart({ data, resetRef }: Props) {
+export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
   const { sma111, sma350x2, crossovers } = useMemo(() => {
     const sma111 = movingAverage(data.history, 111);
     const sma350x2 = movingAverage(data.history, 350).map((p) => ({
@@ -102,9 +103,12 @@ export function PiCycleChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          Pi Cycle Top
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            Pi Cycle Top
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         {ratio != null && status && (
           <div className="flex items-end gap-2">
             <span className="text-sm font-semibold">
@@ -118,7 +122,9 @@ export function PiCycleChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          111일 MA가 350일 MA×2를 상향 돌파하면 사이클 천장 신호. 과거 비트코인 고점과 높은 일치율을 보여 단기 매도 타이밍 파악에 활용됩니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -126,7 +132,7 @@ export function PiCycleChart({ data, resetRef }: Props) {
 
 export function PiCycleChartSkeleton() {
   return (
-    <ChartSkeleton chartHeight={320}>
+    <ChartSkeleton chartHeight={320} showUpdatedLabel>
       <div className="flex items-end gap-2">
         <Skeleton className="h-5 w-32" />
         <Skeleton className="mb-0.5 h-5 w-14 rounded-full" />

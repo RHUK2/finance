@@ -4,13 +4,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 type Props = {
   chartHeight?: number;
   children?: React.ReactNode;
+  showUpdatedLabel?: boolean;
 };
 
-export function ChartSkeleton({ chartHeight = 280, children }: Props) {
+export function ChartSkeleton({ chartHeight = 280, children, showUpdatedLabel }: Props) {
   return (
     <Card>
       <CardHeader>
-        <Skeleton className="h-5 w-28" />
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-5 w-28" />
+          {showUpdatedLabel && <Skeleton className="h-3 w-14" />}
+        </div>
         {children}
       </CardHeader>
       <CardContent className="p-0">

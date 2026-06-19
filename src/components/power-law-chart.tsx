@@ -32,9 +32,10 @@ const MODEL_LINES = {
 type Props = {
   data: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function PowerLawChart({ data, resetRef }: Props) {
+export function PowerLawChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const upperSeries = chart.addSeries(LineSeries, {
@@ -92,9 +93,12 @@ export function PowerLawChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          Power Law 모델
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            Power Law 모델
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         {ratio != null && (
           <span
             className="text-sm font-semibold"
@@ -107,7 +111,9 @@ export function PowerLawChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          비트코인 가격이 시간에 따라 로그 함수적으로 성장한다는 모델. 모델 중앙선 대비 현재 가격의 위치로 장기적인 과열·저평가 여부를 판단합니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -115,7 +121,7 @@ export function PowerLawChart({ data, resetRef }: Props) {
 
 export function PowerLawChartSkeleton() {
   return (
-    <ChartSkeleton chartHeight={320}>
+    <ChartSkeleton chartHeight={320} showUpdatedLabel>
       <Skeleton className="h-4 w-24" />
     </ChartSkeleton>
   );

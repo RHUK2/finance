@@ -29,9 +29,10 @@ const BAND_DATA = RAINBOW_BANDS.map((band) =>
 type Props = {
   data: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function RainbowChart({ data, resetRef }: Props) {
+export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       for (let i = RAINBOW_BANDS.length - 1; i >= 0; i--) {
@@ -76,9 +77,12 @@ export function RainbowChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          레인보우 차트
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            레인보우 차트
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         {currentBand && (
           <span
             className="text-sm font-semibold"
@@ -90,7 +94,9 @@ export function RainbowChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          Power Law 모델 기반의 9단계 밸류에이션 밴드. 현재 가격이 어느 색 구간에 위치하는지로 장기 사이클 대비 고평가·저평가 여부를 직관적으로 확인합니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -98,7 +104,7 @@ export function RainbowChart({ data, resetRef }: Props) {
 
 export function RainbowChartSkeleton() {
   return (
-    <ChartSkeleton chartHeight={320}>
+    <ChartSkeleton chartHeight={320} showUpdatedLabel>
       <Skeleton className="h-4 w-20" />
     </ChartSkeleton>
   );

@@ -26,9 +26,10 @@ function getMayerStatus(value: number) {
 type Props = {
   data: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function MayerMultipleChart({ data, resetRef }: Props) {
+export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
   const mayer = useMemo(() => {
     const sma = movingAverage(data.history, 200);
     const smaMap = new Map(sma.map((p) => [p.time, p.value]));
@@ -70,9 +71,12 @@ export function MayerMultipleChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          Mayer Multiple
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            Mayer Multiple
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         {current != null && status && (
           <div className="flex items-end gap-2">
             <span className="text-3xl font-bold">{current.toFixed(2)}</span>
@@ -84,7 +88,9 @@ export function MayerMultipleChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          현재 가격을 200일 이동평균으로 나눈 비율. 2.4 이상이면 단기 과열, 1 미만이면 저평가로 간주하여 사이클 내 진입·청산 타이밍을 파악합니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -92,7 +98,7 @@ export function MayerMultipleChart({ data, resetRef }: Props) {
 
 export function MayerMultipleChartSkeleton() {
   return (
-    <ChartSkeleton>
+    <ChartSkeleton showUpdatedLabel>
       <div className="flex items-end gap-2">
         <Skeleton className="h-9 w-16" />
         <Skeleton className="mb-1 h-5 w-14 rounded-full" />

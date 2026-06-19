@@ -7,7 +7,7 @@ import { useRelativeTime } from "@/hooks/use-relative-time";
 import { useMarket } from "@/hooks/use-market";
 
 export default function AssetsPage() {
-  const { data: market, isLoading } = useMarket();
+  const { data: market, isLoading, isFetching, refetch } = useMarket();
 
   const usdkrw =
     market?.items.find((item) => item.symbol === "USDKRW=X")?.price ?? null;
@@ -23,7 +23,7 @@ export default function AssetsPage() {
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "자산 현황" }]} />
-      <PageMain>
+      <PageMain onRefresh={refetch} isRefreshing={isFetching}>
         <AssetsTable
           data={items}
           isLoading={isLoading}

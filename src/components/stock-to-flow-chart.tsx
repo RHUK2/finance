@@ -18,9 +18,10 @@ import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 type Props = {
   data: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function StockToFlowChart({ data, resetRef }: Props) {
+export function StockToFlowChart({ data, resetRef, updatedLabel }: Props) {
   const modelData = useMemo(
     () =>
       data.history.flatMap(({ time }) => {
@@ -77,9 +78,12 @@ export function StockToFlowChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          Stock-to-Flow 모델
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            Stock-to-Flow 모델
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         <div className="flex items-center gap-3">
           {modelPrice != null && (
             <span className="text-sm font-semibold text-amber-400">
@@ -104,7 +108,9 @@ export function StockToFlowChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          유통량 대비 신규 공급량의 희소성 비율(S2F)로 가격을 예측하는 모델. 반감기마다 공급이 절반으로 줄어들면서 가격이 오른다는 공급 측면의 논리를 시각화합니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -112,7 +118,7 @@ export function StockToFlowChart({ data, resetRef }: Props) {
 
 export function StockToFlowChartSkeleton() {
   return (
-    <ChartSkeleton chartHeight={320}>
+    <ChartSkeleton chartHeight={320} showUpdatedLabel>
       <div className="flex items-center gap-3">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-4 w-20" />

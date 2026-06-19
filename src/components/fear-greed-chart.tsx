@@ -28,9 +28,10 @@ const CLASSIFICATIONS: Record<string, { label: string; color: string }> = {
 type Props = {
   data: FearGreedData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function FearGreedChart({ data, resetRef }: Props) {
+export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
@@ -66,9 +67,12 @@ export function FearGreedChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          공포 & 탐욕 지수
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            공포 & 탐욕 지수
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         <div className="flex items-end gap-2">
           <span className={cn("text-3xl font-bold", info.color)}>
             {data.value}
@@ -80,7 +84,9 @@ export function FearGreedChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          시장 참여자의 심리를 0~100으로 수치화한 지표. 극도의 공포 구간은 역발상 매수 기회로, 극도의 탐욕 구간은 조정 가능성 신호로 활용됩니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -88,7 +94,7 @@ export function FearGreedChart({ data, resetRef }: Props) {
 
 export function FearGreedChartSkeleton() {
   return (
-    <ChartSkeleton>
+    <ChartSkeleton showUpdatedLabel>
       <div className="flex items-end gap-2">
         <Skeleton className="h-9 w-16" />
         <Skeleton className="mb-1 h-4 w-14" />

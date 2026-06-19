@@ -51,7 +51,7 @@ export function AppHeader({ breadcrumbs }: Props) {
                         {item.label}
                         <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start">
+                      <DropdownMenuContent align="start" className="min-w-44">
                         {NAV_ITEMS.filter((n) => n.href !== pathname).map(
                           ({ label, href, icon: Icon }) => (
                             <DropdownMenuItem

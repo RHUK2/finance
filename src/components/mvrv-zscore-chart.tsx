@@ -25,9 +25,10 @@ function getZScoreStatus(value: number) {
 type Props = {
   data: MvrvData;
   resetRef?: React.RefObject<(() => void) | null>;
+  updatedLabel?: string;
 };
 
-export function MvrvZScoreChart({ data, resetRef }: Props) {
+export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
@@ -60,9 +61,12 @@ export function MvrvZScoreChart({ data, resetRef }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          MVRV Z-Score
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            MVRV Z-Score
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         {current != null && status && (
           <div className="flex items-end gap-2">
             <span className="text-3xl font-bold">{current.toFixed(2)}</span>
@@ -74,7 +78,9 @@ export function MvrvZScoreChart({ data, resetRef }: Props) {
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+          시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 지표. 7 이상은 사이클 천장 과열, 0 미만은 역사적 바닥 매수 구간을 의미합니다.
+        </p>
       </CardContent>
     </Card>
   );
@@ -82,7 +88,7 @@ export function MvrvZScoreChart({ data, resetRef }: Props) {
 
 export function MvrvZScoreChartSkeleton() {
   return (
-    <ChartSkeleton>
+    <ChartSkeleton showUpdatedLabel>
       <div className="flex items-end gap-2">
         <Skeleton className="h-9 w-16" />
         <Skeleton className="mb-1 h-5 w-14 rounded-full" />

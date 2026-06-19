@@ -6,6 +6,7 @@ import { ChartSkeleton } from "@/components/chart-skeleton";
 import { ChartContainer } from "@/components/chart-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChart } from "@/hooks/use-chart";
+import { useEffect } from "react";
 
 export type MacroLine = {
   label?: string;
@@ -18,9 +19,12 @@ type Props = {
   currentLabel: string;
   changePercent: number | null;
   lines: MacroLine[];
+  updatedLabel?: string;
+  resetRef?: React.RefObject<(() => void) | null>;
+  description?: string;
 };
 
-export function MacroChart({ title, currentLabel, changePercent, lines }: Props) {
+export function MacroChart({ title, currentLabel, changePercent, lines, updatedLabel, resetRef, description }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       lines.forEach((line) => {
@@ -38,12 +42,19 @@ export function MacroChart({ title, currentLabel, changePercent, lines }: Props)
     { height: 240 },
   );
 
+  useEffect(() => {
+    if (resetRef) resetRef.current = resetView;
+  }, [resetRef, resetView]);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground text-sm font-medium">
-          {title}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            {title}
+          </CardTitle>
+          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+        </div>
         <div className="flex items-end gap-2">
           <span className="text-2xl font-bold">{currentLabel}</span>
           {changePercent != null && (
@@ -59,7 +70,11 @@ export function MacroChart({ title, currentLabel, changePercent, lines }: Props)
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <div className="h-4" />
+        {description ? (
+          <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">{description}</p>
+        ) : (
+          <div className="h-4" />
+        )}
       </CardContent>
     </Card>
   );
@@ -67,7 +82,7 @@ export function MacroChart({ title, currentLabel, changePercent, lines }: Props)
 
 export function MacroChartSkeleton() {
   return (
-    <ChartSkeleton chartHeight={240}>
+    <ChartSkeleton chartHeight={240} showUpdatedLabel>
       <div className="flex items-end gap-2">
         <Skeleton className="h-7 w-20" />
         <Skeleton className="mb-1 h-4 w-12" />

@@ -9,7 +9,6 @@ import {
   MayerMultipleChart,
   MayerMultipleChartSkeleton,
 } from "@/components/mayer-multiple-chart";
-import { MvrvChart, MvrvChartSkeleton } from "@/components/mvrv-chart";
 import {
   MvrvZScoreChart,
   MvrvZScoreChartSkeleton,
@@ -37,16 +36,22 @@ import {
 } from "@/hooks/use-crypto";
 import { useRelativeTime } from "@/hooks/use-relative-time";
 import { RotateCcw } from "lucide-react";
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 
 export default function BitcoinPage() {
-  const { data: fearGreed, isLoading: fearGreedLoading } = useFearGreed();
-  const { data: mvrv, isLoading: mvrvLoading } = useMvrv();
-  const { data: historical, isLoading: historicalLoading } =
+  const { data: fearGreed, isLoading: fearGreedLoading, refetch: refetchFearGreed, isFetching: fearGreedFetching } = useFearGreed();
+  const { data: mvrv, isLoading: mvrvLoading, refetch: refetchMvrv, isFetching: mvrvFetching } = useMvrv();
+  const { data: historical, isLoading: historicalLoading, refetch: refetchHistorical, isFetching: historicalFetching } =
     useBitcoinHistorical();
 
+  const isFetching = fearGreedFetching || mvrvFetching || historicalFetching;
+  function refetchAll() {
+    refetchFearGreed();
+    refetchMvrv();
+    refetchHistorical();
+  }
+
   const fearGreedReset = useRef<(() => void) | null>(null);
-  const mvrvReset = useRef<(() => void) | null>(null);
   const mvrvZScoreReset = useRef<(() => void) | null>(null);
   const mayerReset = useRef<(() => void) | null>(null);
   const puellReset = useRef<(() => void) | null>(null);
@@ -57,7 +62,6 @@ export default function BitcoinPage() {
 
   function resetAll() {
     fearGreedReset.current?.();
-    mvrvReset.current?.();
     mvrvZScoreReset.current?.();
     mayerReset.current?.();
     puellReset.current?.();
@@ -67,92 +71,73 @@ export default function BitcoinPage() {
     stockToFlowReset.current?.();
   }
 
-  // 가장 오래 전에 캐시된 데이터의 fetchedAt 사용
-  const oldestFetchedAt = useMemo(() => {
-    const timestamps = [
-      fearGreed?.fetchedAt,
-      mvrv?.fetchedAt,
-      historical?.fetchedAt,
-    ].filter((t): t is string => Boolean(t));
-    if (!timestamps.length) return undefined;
-    return timestamps.reduce((oldest, t) => (t < oldest ? t : oldest));
-  }, [fearGreed?.fetchedAt, mvrv?.fetchedAt, historical?.fetchedAt]);
-
-  const relativeTime = useRelativeTime(oldestFetchedAt);
+  const fearGreedRelTime = useRelativeTime(fearGreed?.fetchedAt);
+  const mvrvRelTime = useRelativeTime(mvrv?.fetchedAt);
+  const historicalRelTime = useRelativeTime(historical?.fetchedAt);
 
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "비트코인 지표" }]} />
-      <PageMain>
+      <PageMain onRefresh={refetchAll} isRefreshing={isFetching}>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <Button variant="outline" size="sm" onClick={resetAll}>
               <RotateCcw className="h-3.5 w-3.5" />
               <span className="text-xs">전체 스케일 초기화</span>
             </Button>
-            {relativeTime && (
-              <span className="text-muted-foreground text-xs">
-                {relativeTime}
-              </span>
-            )}
           </div>
           {fearGreedLoading ? (
             <FearGreedChartSkeleton />
           ) : (
             fearGreed && (
-              <FearGreedChart data={fearGreed} resetRef={fearGreedReset} />
+              <FearGreedChart data={fearGreed} resetRef={fearGreedReset} updatedLabel={fearGreedRelTime ?? undefined} />
             )
-          )}
-          {mvrvLoading ? (
-            <MvrvChartSkeleton />
-          ) : (
-            mvrv && <MvrvChart data={mvrv} resetRef={mvrvReset} />
           )}
           {mvrvLoading ? (
             <MvrvZScoreChartSkeleton />
           ) : (
-            mvrv && <MvrvZScoreChart data={mvrv} resetRef={mvrvZScoreReset} />
+            mvrv && <MvrvZScoreChart data={mvrv} resetRef={mvrvZScoreReset} updatedLabel={mvrvRelTime ?? undefined} />
           )}
           {historicalLoading ? (
             <MayerMultipleChartSkeleton />
           ) : (
             historical && (
-              <MayerMultipleChart data={historical} resetRef={mayerReset} />
+              <MayerMultipleChart data={historical} resetRef={mayerReset} updatedLabel={historicalRelTime ?? undefined} />
             )
           )}
           {historicalLoading ? (
             <PuellMultipleChartSkeleton />
           ) : (
             historical && (
-              <PuellMultipleChart data={historical} resetRef={puellReset} />
+              <PuellMultipleChart data={historical} resetRef={puellReset} updatedLabel={historicalRelTime ?? undefined} />
             )
           )}
           {historicalLoading ? (
             <RainbowChartSkeleton />
           ) : (
             historical && (
-              <RainbowChart data={historical} resetRef={rainbowReset} />
+              <RainbowChart data={historical} resetRef={rainbowReset} updatedLabel={historicalRelTime ?? undefined} />
             )
           )}
           {historicalLoading ? (
             <PowerLawChartSkeleton />
           ) : (
             historical && (
-              <PowerLawChart data={historical} resetRef={powerLawReset} />
+              <PowerLawChart data={historical} resetRef={powerLawReset} updatedLabel={historicalRelTime ?? undefined} />
             )
           )}
           {historicalLoading ? (
             <PiCycleChartSkeleton />
           ) : (
             historical && (
-              <PiCycleChart data={historical} resetRef={piCycleReset} />
+              <PiCycleChart data={historical} resetRef={piCycleReset} updatedLabel={historicalRelTime ?? undefined} />
             )
           )}
           {historicalLoading ? (
             <StockToFlowChartSkeleton />
           ) : (
             historical && (
-              <StockToFlowChart data={historical} resetRef={stockToFlowReset} />
+              <StockToFlowChart data={historical} resetRef={stockToFlowReset} updatedLabel={historicalRelTime ?? undefined} />
             )
           )}
         </div>
