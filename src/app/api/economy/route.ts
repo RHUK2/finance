@@ -10,6 +10,10 @@ const SYMBOLS = [
   { key: "us10y", symbol: "^TNX" },
   { key: "us30y", symbol: "^TYX" },
   { key: "vix", symbol: "^VIX" },
+  { key: "nasdaq", symbol: "^IXIC" },
+  { key: "kospi", symbol: "^KS11" },
+  { key: "usdkrw", symbol: "USDKRW=X" },
+  { key: "jpykrw", symbol: "JPYKRW=X" },
 ] as const;
 
 type Series = {

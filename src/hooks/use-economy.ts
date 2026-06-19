@@ -14,6 +14,10 @@ export type EconomyData = {
   us10y: MacroSeries;
   us30y: MacroSeries;
   vix: MacroSeries;
+  nasdaq: MacroSeries;
+  kospi: MacroSeries;
+  usdkrw: MacroSeries;
+  jpykrw: MacroSeries;
 };
 
 export function useEconomy() {
@@ -33,6 +37,9 @@ export type FredData = {
   available: boolean;
   m2?: MacroSeries;
   fedFunds?: MacroSeries;
+  us2y?: MacroSeries;
+  cpi?: MacroSeries;
+  ppi?: MacroSeries;
 };
 
 export function useFred() {
