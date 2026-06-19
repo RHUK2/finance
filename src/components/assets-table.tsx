@@ -37,17 +37,11 @@ const TYPE_LABELS: Record<string, string> = {
   all: "전체",
   crypto: "가상화폐",
   stock: "주식",
-  index: "지수",
-  commodity: "원자재",
-  forex: "환율",
 };
 
 const TYPE_DOT_COLORS: Record<string, string> = {
   crypto: "bg-amber-500",
   stock: "bg-blue-500",
-  index: "bg-purple-500",
-  commodity: "bg-yellow-500",
-  forex: "bg-teal-500",
 };
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -89,20 +83,11 @@ function PriceDisplay({
 }) {
   if (item.price === null)
     return <span className="text-muted-foreground">-</span>;
-  const symbol = currencySymbol(item.currency);
-  const krw = item.currency !== "KRW" ? item.priceKrw : null;
   return (
-    <>
-      <div className={cn("tabular-nums", priceClassName)}>
-        {symbol}
-        {formatPrice(item.price, item.currency)}
-      </div>
-      {krw != null && (
-        <div className="text-muted-foreground text-xs tabular-nums">
-          ₩{formatPrice(krw, "KRW")}
-        </div>
-      )}
-    </>
+    <div className={cn("tabular-nums", priceClassName)}>
+      {currencySymbol(item.currency)}
+      {formatPrice(item.price, item.currency)}
+    </div>
   );
 }
 
@@ -142,7 +127,7 @@ type Props = {
   updatedLabel?: string;
 };
 
-const ASSET_TYPES = ["all", "crypto", "stock", "index", "commodity", "forex"];
+const ASSET_TYPES = ["all", "crypto", "stock"];
 
 const MOBILE_SORT_OPTIONS = [
   { value: "default", label: "기본" },
@@ -337,23 +322,13 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
         {updatedRow}
         <div className="space-y-2">
           {isLoading ? (
-            Array.from({ length: 21 }).map((_, i) => (
+            Array.from({ length: 15 }).map((_, i) => (
               <div
                 key={i}
                 className="bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm"
               >
-                <div className="flex items-center gap-2.5">
-                  <Skeleton className="h-2 w-2 shrink-0 rounded-full" />
-                  <div className="space-y-1.5">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-3 w-12" />
-                  </div>
-                </div>
-                <div className="flex flex-col items-end space-y-1.5">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-3 w-16" />
-                  <Skeleton className="h-3 w-14" />
-                </div>
+                <Skeleton className="h-10 w-2/5" />
+                <Skeleton className="h-10 w-2/5" />
               </div>
             ))
           ) : mobileSorted.length === 0 ? (
@@ -392,7 +367,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                   />
                   <PercentageChange
                     value={item.changePercent}
-                    className="gap-0.5 text-xs"
+                    className="gap-0.5 text-sm"
                   />
                 </div>
               </div>
@@ -453,27 +428,10 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
             </thead>
             <tbody className="divide-y">
               {isLoading ? (
-                Array.from({ length: 21 }).map((_, i) => (
+                Array.from({ length: 17 }).map((_, i) => (
                   <tr key={i}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Skeleton className="h-2 w-2 shrink-0 rounded-full" />
-                        <div className="space-y-1.5">
-                          <Skeleton className="h-4 w-28" />
-                          <Skeleton className="h-3 w-12" />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col items-end space-y-1.5">
-                        <Skeleton className="h-4 w-20" />
-                        <Skeleton className="h-3 w-16" />
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end">
-                        <Skeleton className="h-4 w-16" />
-                      </div>
+                    <td colSpan={3} className="px-4 py-3">
+                      <Skeleton className="h-5 w-full" />
                     </td>
                   </tr>
                 ))

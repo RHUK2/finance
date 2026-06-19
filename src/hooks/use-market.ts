@@ -6,10 +6,9 @@ export type MarketItem = {
   symbol: string;
   ticker: string;
   label: string;
-  type: "stock" | "index" | "commodity" | "forex" | "crypto";
+  type: "stock" | "crypto";
   gfUrl?: string;
   price: number | null;
-  priceKrw?: number | null;
   change: number | null;
   changePercent: number | null;
   currency: string;

@@ -20,31 +20,22 @@ import {
   MempoolBlocksViz,
   PoolShareChart,
   RecentBlocksList,
-  Section,
   Stat,
-  StatSkeleton,
 } from "./components";
 
 export default function MempoolPage() {
-  const { data: mempool, isLoading: mempoolLoading, refetch: refetchMempool, isFetching: mempoolFetching } = useMempoolStats();
-  const { data: mining, isLoading: miningLoading, refetch: refetchMining, isFetching: miningFetching } = useMiningStats();
-  const { data: lightning, isLoading: lightningLoading, refetch: refetchLightning, isFetching: lightningFetching } = useLightningStats();
-  const { data: mempoolBlocks, isLoading: mempoolBlocksLoading, refetch: refetchMempoolBlocks, isFetching: mempoolBlocksFetching } =
-    useMempoolBlocks();
-  const { data: recentBlocks, isLoading: recentBlocksLoading, refetch: refetchRecentBlocks, isFetching: recentBlocksFetching } =
-    useRecentBlocks();
-  const { data: hashrate, isLoading: hashrateLoading, refetch: refetchHashrate, isFetching: hashrateFetching } = useHashrateHistory();
-  const { data: pools, isLoading: poolsLoading, refetch: refetchPools, isFetching: poolsFetching } = useMiningPools();
+  const { data: mempool, refetch: refetchMempool, isFetching: mempoolFetching } = useMempoolStats();
+  const { data: mining, refetch: refetchMining, isFetching: miningFetching } = useMiningStats();
+  const { data: lightning, refetch: refetchLightning, isFetching: lightningFetching } = useLightningStats();
+  const { data: mempoolBlocks, refetch: refetchMempoolBlocks, isFetching: mempoolBlocksFetching } = useMempoolBlocks();
+  const { data: recentBlocks, refetch: refetchRecentBlocks, isFetching: recentBlocksFetching } = useRecentBlocks();
+  const { data: hashrate, refetch: refetchHashrate, isFetching: hashrateFetching } = useHashrateHistory();
+  const { data: pools, refetch: refetchPools, isFetching: poolsFetching } = useMiningPools();
 
   const isFetching = mempoolFetching || miningFetching || lightningFetching || mempoolBlocksFetching || recentBlocksFetching || hashrateFetching || poolsFetching;
   function refetchAll() {
-    refetchMempool();
-    refetchMining();
-    refetchLightning();
-    refetchMempoolBlocks();
-    refetchRecentBlocks();
-    refetchHashrate();
-    refetchPools();
+    refetchMempool(); refetchMining(); refetchLightning();
+    refetchMempoolBlocks(); refetchRecentBlocks(); refetchHashrate(); refetchPools();
   }
 
   const mempoolRelTime = useRelativeTime(mempool?.fetchedAt);
@@ -55,182 +46,91 @@ export default function MempoolPage() {
   const hashrateRelTime = useRelativeTime(hashrate?.fetchedAt);
   const poolsRelTime = useRelativeTime(pools?.fetchedAt);
 
+  const halvingProgress = mining ? ((210_000 - mining.remainingHalvingBlocks) / 210_000) * 100 : 0;
+  const difficultyProgress = mining ? ((2016 - mining.remainingBlocks) / 2016) * 100 : 0;
+
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "비트코인 네트워크" }]} />
       <PageMain onRefresh={refetchAll} isRefreshing={isFetching}>
         <div className="flex flex-col gap-6">
+
           {/* 멤풀 */}
-          <Section>
-            {mempoolLoading || !mempool ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-10" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-x-6">
-                    <StatSkeleton />
-                    <StatSkeleton />
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-muted-foreground text-sm font-medium">멤풀</CardTitle>
-                    {mempoolRelTime && <span className="text-muted-foreground text-xs">{mempoolRelTime}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">멤풀</CardTitle>
+                  {mempoolRelTime && <span className="text-muted-foreground text-xs">{mempoolRelTime}</span>}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!mempool ? (
+                  <Skeleton className="h-9 w-full" />
+                ) : (
                   <div className="grid grid-cols-2 gap-x-6">
                     <Stat label="미확인 트랜잭션" value={mempool.pendingTxCount.toLocaleString()} />
                     <Stat label="멤풀 크기" value={`${mempool.mempoolSizeMB} MB`} />
                   </div>
-                  <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                    아직 블록에 포함되지 않고 대기 중인 트랜잭션 현황. 미확인 거래가 많을수록 네트워크가 혼잡하며 수수료가 높아집니다.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </Section>
-
+                )}
+                <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
+                  아직 블록에 포함되지 않고 대기 중인 트랜잭션 현황. 미확인 거래가 많을수록 네트워크가 혼잡하며 수수료가 높아집니다.
+                </p>
+              </CardContent>
+            </Card>
           {/* 수수료 */}
-          <Section>
-            {mempoolLoading || !mempool ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
-                    <StatSkeleton />
-                    <StatSkeleton />
-                    <StatSkeleton />
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-muted-foreground text-sm font-medium">수수료</CardTitle>
-                    {mempoolRelTime && <span className="text-muted-foreground text-xs">{mempoolRelTime}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">수수료</CardTitle>
+                  {mempoolRelTime && <span className="text-muted-foreground text-xs">{mempoolRelTime}</span>}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!mempool ? (
+                  <Skeleton className="h-9 w-full" />
+                ) : (
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
                     <Stat label="느림 (~1시간)" value={`${mempool.hourFee} sat/vB`} valueClassName="text-green-400" />
                     <Stat label="보통 (~30분)" value={`${mempool.halfHourFee} sat/vB`} valueClassName="text-yellow-400" />
                     <Stat label="빠름 (~10분)" value={`${mempool.fastFee} sat/vB`} valueClassName="text-orange-400" />
                   </div>
-                  <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                    원하는 시간 내에 트랜잭션을 처리하기 위해 필요한 네트워크 수수료. 네트워크 혼잡도에 따라 실시간으로 변동합니다.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </Section>
-
+                )}
+                <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
+                  원하는 시간 내에 트랜잭션을 처리하기 위해 필요한 네트워크 수수료. 네트워크 혼잡도에 따라 실시간으로 변동합니다.
+                </p>
+              </CardContent>
+            </Card>
           {/* 멤풀 블록 (예상) */}
-          <Section>
-            {mempoolBlocksLoading || !mempoolBlocks ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-28" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-2">
-                    <Skeleton className="h-[88px] w-[120px] rounded-md" />
-                    <Skeleton className="h-[88px] w-[120px] rounded-md" />
-                    <Skeleton className="h-[88px] w-[120px] rounded-md" />
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <MempoolBlocksViz
-                blocks={mempoolBlocks.blocks}
-                title="멤풀 블록 (예상)"
-                relativeTime={mempoolBlocksRelTime ?? undefined}
-                description="현재 멤풀에 대기 중인 트랜잭션들이 향후 몇 개의 블록에 나뉘어 처리될지 예상한 시각화. 왼쪽 블록일수록 먼저 채굴됩니다."
-              />
-            )}
-          </Section>
 
+            <MempoolBlocksViz
+              blocks={mempoolBlocks?.blocks}
+              title="멤풀 블록 (예상)"
+              relativeTime={mempoolBlocksRelTime ?? undefined}
+              description="현재 멤풀에 대기 중인 트랜잭션들이 향후 몇 개의 블록에 나뉘어 처리될지 예상한 시각화. 왼쪽 블록일수록 먼저 채굴됩니다."
+            />
           {/* 최근 블록 */}
-          <Section>
-            {recentBlocksLoading || !recentBlocks ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Skeleton key={i} className="h-9 w-full" />
-                  ))}
-                </CardContent>
-              </Card>
-            ) : (
-              <RecentBlocksList
-                blocks={recentBlocks.blocks}
-                title="최근 블록"
-                relativeTime={recentBlocksRelTime ?? undefined}
-                description="가장 최근에 채굴 완료된 블록 목록. 채굴풀·처리 시간·수수료 등 블록 상세 정보를 통해 네트워크 처리 흐름을 확인할 수 있습니다."
-              />
-            )}
-          </Section>
 
+            <RecentBlocksList
+              blocks={recentBlocks?.blocks}
+              title="최근 블록"
+              relativeTime={recentBlocksRelTime ?? undefined}
+              description="가장 최근에 채굴 완료된 블록 목록. 채굴풀·처리 시간·수수료 등 블록 상세 정보를 통해 네트워크 처리 흐름을 확인할 수 있습니다."
+            />
           {/* 채굴 */}
-          <Section>
-            {miningLoading || !mining ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-8" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-6">
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
-                      <StatSkeleton hasChange />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                    </div>
-                    <div>
-                      <div className="mb-1.5 flex justify-between">
-                        <Skeleton className="h-3 w-20" />
-                        <Skeleton className="h-3 w-8" />
-                      </div>
-                      <Skeleton className="h-2 w-full rounded-full" />
-                      <Skeleton className="mt-1.5 h-3 w-32" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-muted-foreground text-sm font-medium">채굴</CardTitle>
-                    {miningRelTime && <span className="text-muted-foreground text-xs">{miningRelTime}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">채굴</CardTitle>
+                  {miningRelTime && <span className="text-muted-foreground text-xs">{miningRelTime}</span>}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!mining ? (
+                  <Skeleton className="h-[148px] w-full" />
+                ) : (
                   <div className="flex flex-col gap-6">
                     <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
                       <Stat label="해시레이트" value={`${mining.hashrateEHs} EH/s`} change={mining.hashrateChangePct} />
@@ -248,136 +148,74 @@ export default function MempoolPage() {
                       />
                     </div>
                     <div>
-                      {(() => {
-                        const pct = ((2016 - mining.remainingBlocks) / 2016) * 100;
-                        return (
-                          <>
-                            <div className="mb-1.5 flex justify-between text-xs">
-                              <span className="text-muted-foreground">난이도 조정 진행</span>
-                              <span className="font-medium">{pct.toFixed(1)}%</span>
-                            </div>
-                            <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
-                              <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${pct}%` }} />
-                            </div>
-                            <p className="text-muted-foreground mt-1.5 text-xs">예상 조정일: {mining.estimatedRetargetDate}</p>
-                          </>
-                        );
-                      })()}
+                      <div className="mb-1.5 flex justify-between text-xs">
+                        <span className="text-muted-foreground">난이도 조정 진행</span>
+                        <span className="font-medium">{difficultyProgress.toFixed(1)}%</span>
+                      </div>
+                      <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
+                        <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${difficultyProgress}%` }} />
+                      </div>
+                      <p className="text-muted-foreground mt-1.5 text-xs">예상 조정일: {mining.estimatedRetargetDate}</p>
                     </div>
                   </div>
-                  <p className="bg-muted/50 text-muted-foreground rounded-md px-3 py-2.5 text-xs">
-                    네트워크 연산 능력(해시레이트)과 2016블록마다 자동 조정되는 채굴 난이도 현황. 해시레이트가 높을수록 네트워크 보안이 강하고 채굴 경쟁이 치열합니다.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </Section>
-
+                )}
+                <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
+                  네트워크 연산 능력(해시레이트)과 2016블록마다 자동 조정되는 채굴 난이도 현황. 해시레이트가 높을수록 네트워크 보안이 강하고 채굴 경쟁이 치열합니다.
+                </p>
+              </CardContent>
+            </Card>
           {/* 해시레이트 추이 */}
-          <Section>
-            {hashrateLoading || !hashrate ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-[240px] w-full" />
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-muted-foreground text-sm font-medium">해시레이트 추이 (1년)</CardTitle>
-                    {hashrateRelTime && <span className="text-muted-foreground text-xs">{hashrateRelTime}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="text-muted-foreground flex justify-end gap-4 px-4 py-3 text-xs">
-                    <span>현재 {hashrate.currentHashrateEHs} EH/s</span>
-                    <span>난이도 {hashrate.currentDifficultyT}T</span>
-                  </div>
-                  <HashrateChart data={hashrate} />
-                  <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
-                    네트워크 전체 연산 능력의 1년 변화 추이. 해시레이트 상승은 채굴자 신뢰 증가와 네트워크 보안 강화를 의미하며, 급격한 하락은 대규모 채굴자 이탈 신호일 수 있습니다.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </Section>
 
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">해시레이트 추이 (1년)</CardTitle>
+                  {hashrateRelTime && <span className="text-muted-foreground text-xs">{hashrateRelTime}</span>}
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                {!hashrate ? (
+                  <Skeleton className="h-[288px] w-full rounded-none" />
+                ) : (
+                  <>
+                    <div className="text-muted-foreground flex justify-end gap-4 px-4 py-3 text-xs">
+                      <span>현재 {hashrate.currentHashrateEHs} EH/s</span>
+                      <span>난이도 {hashrate.currentDifficultyT}T</span>
+                    </div>
+                    <HashrateChart data={hashrate} />
+                  </>
+                )}
+                <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+                  네트워크 전체 연산 능력의 1년 변화 추이. 해시레이트 상승은 채굴자 신뢰 증가와 네트워크 보안 강화를 의미하며, 급격한 하락은 대규모 채굴자 이탈 신호일 수 있습니다.
+                </p>
+              </CardContent>
+            </Card>
           {/* 채굴풀 점유율 */}
-          <Section>
-            {poolsLoading || !pools ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-28" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center gap-6 sm:flex-row">
-                    <Skeleton className="h-[160px] w-[160px] shrink-0 rounded-full" />
-                    <div className="grid w-full grid-cols-1 gap-2 sm:flex-1 sm:grid-cols-2">
-                      {Array.from({ length: 8 }).map((_, i) => (
-                        <Skeleton key={i} className="h-4 w-full" />
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <PoolShareChart
-                pools={pools.pools}
-                title="채굴풀 점유율 (1주)"
-                relativeTime={poolsRelTime ?? undefined}
-                description="지난 1주 동안 각 채굴풀이 채굴한 블록 수와 비율. 특정 풀의 점유율이 50%를 초과하면 51% 공격 위험성이 높아지므로 분산화 지표로 활용됩니다."
-              />
-            )}
-          </Section>
 
+            <PoolShareChart
+              pools={pools?.pools}
+              title="채굴풀 점유율 (1주)"
+              relativeTime={poolsRelTime ?? undefined}
+              description="지난 1주 동안 각 채굴풀이 채굴한 블록 수와 비율. 특정 풀의 점유율이 50%를 초과하면 51% 공격 위험성이 높아지므로 분산화 지표로 활용됩니다."
+            />
           {/* 반감기 */}
-          <Section>
-            {miningLoading || !mining ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center gap-6 sm:flex-row">
-                    <Skeleton className="h-[140px] w-[140px] shrink-0 rounded-full" />
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:flex-1">
-                      <StatSkeleton />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                      <StatSkeleton />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-muted-foreground text-sm font-medium">반감기</CardTitle>
-                    {miningRelTime && <span className="text-muted-foreground text-xs">{miningRelTime}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">반감기</CardTitle>
+                  {miningRelTime && <span className="text-muted-foreground text-xs">{miningRelTime}</span>}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!mining ? (
+                  <Skeleton className="h-[140px] w-full" />
+                ) : (
                   <div className="flex flex-col items-center gap-6 sm:flex-row">
                     <DonutRing
-                      progress={((210_000 - mining.remainingHalvingBlocks) / 210_000) * 100}
+                      progress={halvingProgress}
                       color="#f7931a"
-                      center={`${(((210_000 - mining.remainingHalvingBlocks) / 210_000) * 100).toFixed(1)}%`}
+                      center={`${halvingProgress.toFixed(1)}%`}
                       centerSub="경과"
                     />
                     <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:flex-1">
@@ -389,53 +227,36 @@ export default function MempoolPage() {
                       <Stat label="반감기 후 보상" value={`${mining.nextRewardBTC} BTC`} />
                     </div>
                   </div>
-                  <p className="bg-muted/50 text-muted-foreground mt-1 rounded-md px-3 py-2.5 text-xs">
-                    약 4년마다 블록 보상이 절반으로 줄어드는 이벤트. 신규 공급량이 감소하면서 희소성이 높아지고, 역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </Section>
+                )}
+                <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
+                  약 4년마다 블록 보상이 절반으로 줄어드는 이벤트. 신규 공급량이 감소하면서 희소성이 높아지고, 역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
+                </p>
+              </CardContent>
+            </Card>
+          {/* 라이트닝 네트워크 */}
 
-          {/* 네트워크 */}
-          <Section>
-            {lightningLoading || !lightning ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-3 w-14" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
-                    <StatSkeleton hasChange />
-                    <StatSkeleton hasChange />
-                    <StatSkeleton hasChange />
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-muted-foreground text-sm font-medium">라이트닝 네트워크</CardTitle>
-                    {lightningRelTime && <span className="text-muted-foreground text-xs">{lightningRelTime}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-muted-foreground text-sm font-medium">라이트닝 네트워크</CardTitle>
+                  {lightningRelTime && <span className="text-muted-foreground text-xs">{lightningRelTime}</span>}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!lightning ? (
+                  <Skeleton className="h-[60px] w-full" />
+                ) : (
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
                     <Stat label="라이트닝 노드" value={lightning.nodeCount.toLocaleString()} change={lightning.nodeCountChangePct} />
                     <Stat label="라이트닝 채널" value={lightning.channelCount.toLocaleString()} change={lightning.channelCountChangePct} />
                     <Stat label="라이트닝 용량" value={`${lightning.totalCapacityBTC.toLocaleString()} BTC`} change={lightning.capacityChangePct} />
                   </div>
-                  <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                    비트코인 레이어2 즉시 결제 네트워크 현황. 노드·채널·용량 증가는 소액결제와 일상 거래를 위한 인프라가 성장하고 있음을 나타냅니다.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </Section>
+                )}
+                <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
+                  비트코인 레이어2 즉시 결제 네트워크 현황. 노드·채널·용량 증가는 소액결제와 일상 거래를 위한 인프라가 성장하고 있음을 나타냅니다.
+                </p>
+              </CardContent>
+            </Card>
         </div>
       </PageMain>
     </>

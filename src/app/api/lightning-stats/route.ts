@@ -21,14 +21,18 @@ function nodeCount(e: LightningEntry) {
 
 export async function GET() {
   try {
-    const res = await fetch(
-      "https://mempool.space/api/v1/lightning/statistics/1w",
-      { next: { revalidate: 3600 } },
-    );
+    const fetchEntries = async (range: string): Promise<LightningEntry[]> => {
+      const res = await fetch(
+        `https://mempool.space/api/v1/lightning/statistics/${range}`,
+        { next: { revalidate: 3600 } },
+      );
+      if (!res.ok) throw new Error(`lightning stats error: ${res.status}`);
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    };
 
-    if (!res.ok) throw new Error(`lightning stats error: ${res.status}`);
-
-    const entries = (await res.json()) as LightningEntry[];
+    let entries = await fetchEntries("1w");
+    if (!entries.length) entries = await fetchEntries("1m");
     if (!entries.length) throw new Error("No lightning stats data");
 
     const latest = entries[0];
