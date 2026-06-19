@@ -4,9 +4,8 @@ import { useEffect, useMemo } from "react";
 import { LineSeries, LineStyle } from "lightweight-charts";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartSkeleton } from "@/components/chart-skeleton";
-import { ChartContainer } from "@/components/chart-container";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChartContainer } from "@/components/chart-container";
 import { useChart } from "@/hooks/use-chart";
 import { dailyIssuanceBtc, movingAverage } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
@@ -24,14 +23,14 @@ function getPuellStatus(value: number) {
 }
 
 type Props = {
-  data: BitcoinHistoricalData;
+  data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
 };
 
 export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
   const puell = useMemo(() => {
-    // 일일 채굴자 수익(USD) = 가격 × 일일 발행량(BTC)
+    if (!data) return [];
     const issuanceUsd = data.history.map((p) => ({
       time: p.time,
       value: p.value * dailyIssuanceBtc(p.time),
@@ -42,7 +41,7 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
       const ma = maMap.get(p.time);
       return ma ? [{ time: p.time, value: p.value / ma }] : [];
     });
-  }, [data.history]);
+  }, [data]);
 
   const { containerRef, resetView } = useChart(
     (chart) => {
@@ -77,37 +76,30 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            Puell Multiple
-          </CardTitle>
+          <CardTitle className="text-muted-foreground text-sm font-medium">Puell Multiple</CardTitle>
           {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
         </div>
-        {current != null && status && (
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold">{current.toFixed(2)}</span>
-            <Badge variant={status.variant} className="mb-1">
-              {status.label}
-            </Badge>
-          </div>
+        {!data ? (
+          <Skeleton className="h-9 w-20" />
+        ) : (
+          current != null && status && (
+            <div className="flex items-end gap-2">
+              <span className="text-3xl font-bold">{current.toFixed(2)}</span>
+              <Badge variant={status.variant} className="mb-1">{status.label}</Badge>
+            </div>
+          )
         )}
       </CardHeader>
       <CardContent className="p-0">
-        <ChartContainer containerRef={containerRef} onReset={resetView} />
+        {!data ? (
+          <Skeleton className="h-[280px] w-full rounded-none" />
+        ) : (
+          <ChartContainer containerRef={containerRef} onReset={resetView} />
+        )}
         <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
           채굴자의 일일 수익을 1년 평균으로 나눈 값. 4 이상이면 채굴자 매도 압력이 극대화된 과열 구간, 0.5 미만이면 채굴자 항복으로 인한 바닥 신호입니다.
         </p>
       </CardContent>
     </Card>
-  );
-}
-
-export function PuellMultipleChartSkeleton() {
-  return (
-    <ChartSkeleton showUpdatedLabel>
-      <div className="flex items-end gap-2">
-        <Skeleton className="h-9 w-16" />
-        <Skeleton className="mb-1 h-5 w-14 rounded-full" />
-      </div>
-    </ChartSkeleton>
   );
 }

@@ -1,48 +1,25 @@
 "use client";
 
 import { AppHeader } from "@/components/app-header";
-import {
-  FearGreedChart,
-  FearGreedChartSkeleton,
-} from "@/components/fear-greed-chart";
-import {
-  MayerMultipleChart,
-  MayerMultipleChartSkeleton,
-} from "@/components/mayer-multiple-chart";
-import {
-  MvrvZScoreChart,
-  MvrvZScoreChartSkeleton,
-} from "@/components/mvrv-zscore-chart";
+import { FearGreedChart } from "@/components/fear-greed-chart";
+import { MayerMultipleChart } from "@/components/mayer-multiple-chart";
+import { MvrvZScoreChart } from "@/components/mvrv-zscore-chart";
 import { PageMain } from "@/components/page-main";
-import { PiCycleChart, PiCycleChartSkeleton } from "@/components/pi-cycle-chart";
-import {
-  PuellMultipleChart,
-  PuellMultipleChartSkeleton,
-} from "@/components/puell-multiple-chart";
-import {
-  PowerLawChart,
-  PowerLawChartSkeleton,
-} from "@/components/power-law-chart";
-import { RainbowChart, RainbowChartSkeleton } from "@/components/rainbow-chart";
-import {
-  StockToFlowChart,
-  StockToFlowChartSkeleton,
-} from "@/components/stock-to-flow-chart";
+import { PiCycleChart } from "@/components/pi-cycle-chart";
+import { PuellMultipleChart } from "@/components/puell-multiple-chart";
+import { PowerLawChart } from "@/components/power-law-chart";
+import { RainbowChart } from "@/components/rainbow-chart";
+import { StockToFlowChart } from "@/components/stock-to-flow-chart";
 import { Button } from "@/components/ui/button";
-import {
-  useBitcoinHistorical,
-  useFearGreed,
-  useMvrv,
-} from "@/hooks/use-crypto";
+import { useBitcoinHistorical, useFearGreed, useMvrv } from "@/hooks/use-crypto";
 import { useRelativeTime } from "@/hooks/use-relative-time";
 import { RotateCcw } from "lucide-react";
 import { useRef } from "react";
 
 export default function BitcoinPage() {
-  const { data: fearGreed, isLoading: fearGreedLoading, refetch: refetchFearGreed, isFetching: fearGreedFetching } = useFearGreed();
-  const { data: mvrv, isLoading: mvrvLoading, refetch: refetchMvrv, isFetching: mvrvFetching } = useMvrv();
-  const { data: historical, isLoading: historicalLoading, refetch: refetchHistorical, isFetching: historicalFetching } =
-    useBitcoinHistorical();
+  const { data: fearGreed, refetch: refetchFearGreed, isFetching: fearGreedFetching } = useFearGreed();
+  const { data: mvrv, refetch: refetchMvrv, isFetching: mvrvFetching } = useMvrv();
+  const { data: historical, refetch: refetchHistorical, isFetching: historicalFetching } = useBitcoinHistorical();
 
   const isFetching = fearGreedFetching || mvrvFetching || historicalFetching;
   function refetchAll() {
@@ -86,60 +63,14 @@ export default function BitcoinPage() {
               <span className="text-xs">전체 스케일 초기화</span>
             </Button>
           </div>
-          {fearGreedLoading ? (
-            <FearGreedChartSkeleton />
-          ) : (
-            fearGreed && (
-              <FearGreedChart data={fearGreed} resetRef={fearGreedReset} updatedLabel={fearGreedRelTime ?? undefined} />
-            )
-          )}
-          {mvrvLoading ? (
-            <MvrvZScoreChartSkeleton />
-          ) : (
-            mvrv && <MvrvZScoreChart data={mvrv} resetRef={mvrvZScoreReset} updatedLabel={mvrvRelTime ?? undefined} />
-          )}
-          {historicalLoading ? (
-            <MayerMultipleChartSkeleton />
-          ) : (
-            historical && (
-              <MayerMultipleChart data={historical} resetRef={mayerReset} updatedLabel={historicalRelTime ?? undefined} />
-            )
-          )}
-          {historicalLoading ? (
-            <PuellMultipleChartSkeleton />
-          ) : (
-            historical && (
-              <PuellMultipleChart data={historical} resetRef={puellReset} updatedLabel={historicalRelTime ?? undefined} />
-            )
-          )}
-          {historicalLoading ? (
-            <RainbowChartSkeleton />
-          ) : (
-            historical && (
-              <RainbowChart data={historical} resetRef={rainbowReset} updatedLabel={historicalRelTime ?? undefined} />
-            )
-          )}
-          {historicalLoading ? (
-            <PowerLawChartSkeleton />
-          ) : (
-            historical && (
-              <PowerLawChart data={historical} resetRef={powerLawReset} updatedLabel={historicalRelTime ?? undefined} />
-            )
-          )}
-          {historicalLoading ? (
-            <PiCycleChartSkeleton />
-          ) : (
-            historical && (
-              <PiCycleChart data={historical} resetRef={piCycleReset} updatedLabel={historicalRelTime ?? undefined} />
-            )
-          )}
-          {historicalLoading ? (
-            <StockToFlowChartSkeleton />
-          ) : (
-            historical && (
-              <StockToFlowChart data={historical} resetRef={stockToFlowReset} updatedLabel={historicalRelTime ?? undefined} />
-            )
-          )}
+          <FearGreedChart data={fearGreed} resetRef={fearGreedReset} updatedLabel={fearGreedRelTime ?? undefined} />
+          <MvrvZScoreChart data={mvrv} resetRef={mvrvZScoreReset} updatedLabel={mvrvRelTime ?? undefined} />
+          <MayerMultipleChart data={historical} resetRef={mayerReset} updatedLabel={historicalRelTime ?? undefined} />
+          <PuellMultipleChart data={historical} resetRef={puellReset} updatedLabel={historicalRelTime ?? undefined} />
+          <RainbowChart data={historical} resetRef={rainbowReset} updatedLabel={historicalRelTime ?? undefined} />
+          <PowerLawChart data={historical} resetRef={powerLawReset} updatedLabel={historicalRelTime ?? undefined} />
+          <PiCycleChart data={historical} resetRef={piCycleReset} updatedLabel={historicalRelTime ?? undefined} />
+          <StockToFlowChart data={historical} resetRef={stockToFlowReset} updatedLabel={historicalRelTime ?? undefined} />
         </div>
       </PageMain>
     </>

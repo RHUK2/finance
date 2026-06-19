@@ -3,9 +3,8 @@
 import { useEffect, useMemo } from "react";
 import { AreaSeries, LineSeries } from "lightweight-charts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartSkeleton } from "@/components/chart-skeleton";
-import { ChartContainer } from "@/components/chart-container";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChartContainer } from "@/components/chart-container";
 import { useChart } from "@/hooks/use-chart";
 import {
   RAINBOW_BANDS,
@@ -27,7 +26,7 @@ const BAND_DATA = RAINBOW_BANDS.map((band) =>
 );
 
 type Props = {
-  data: BitcoinHistoricalData;
+  data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
 };
@@ -35,6 +34,7 @@ type Props = {
 export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
+      if (!data) return;
       for (let i = RAINBOW_BANDS.length - 1; i >= 0; i--) {
         const band = RAINBOW_BANDS[i];
         const series = chart.addSeries(AreaSeries, {
@@ -56,7 +56,7 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
       });
       priceSeries.setData(data.history);
     },
-    [data.history],
+    [data],
     { height: 320, logScale: true },
   );
 
@@ -65,47 +65,42 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
   }, [resetRef, resetView]);
 
   const currentBand = useMemo(() => {
-    if (!data.history.length) return null;
+    if (!data?.history.length) return null;
     const latest = data.history[data.history.length - 1];
     const ratio = latest.value / powerLawPrice(daysSinceGenesis(latest.time));
     return (
       RAINBOW_BANDS.find((b) => ratio < b.upper) ??
       RAINBOW_BANDS[RAINBOW_BANDS.length - 1]
     );
-  }, [data.history]);
+  }, [data]);
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            레인보우 차트
-          </CardTitle>
+          <CardTitle className="text-muted-foreground text-sm font-medium">레인보우 차트</CardTitle>
           {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
         </div>
-        {currentBand && (
-          <span
-            className="text-sm font-semibold"
-            style={{ color: currentBand.color }}
-          >
-            {currentBand.label}
-          </span>
+        {!data ? (
+          <Skeleton className="h-5 w-24" />
+        ) : (
+          currentBand && (
+            <span className="text-sm font-semibold" style={{ color: currentBand.color }}>
+              {currentBand.label}
+            </span>
+          )
         )}
       </CardHeader>
       <CardContent className="p-0">
-        <ChartContainer containerRef={containerRef} onReset={resetView} />
+        {!data ? (
+          <Skeleton className="h-[320px] w-full rounded-none" />
+        ) : (
+          <ChartContainer containerRef={containerRef} onReset={resetView} />
+        )}
         <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
           Power Law 모델 기반의 9단계 밸류에이션 밴드. 현재 가격이 어느 색 구간에 위치하는지로 장기 사이클 대비 고평가·저평가 여부를 직관적으로 확인합니다.
         </p>
       </CardContent>
     </Card>
-  );
-}
-
-export function RainbowChartSkeleton() {
-  return (
-    <ChartSkeleton chartHeight={320} showUpdatedLabel>
-      <Skeleton className="h-4 w-20" />
-    </ChartSkeleton>
   );
 }
