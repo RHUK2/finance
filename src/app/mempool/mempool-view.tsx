@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   useHashrateHistory,
-  useLightningStats,
   useMempoolBlocks,
   useMempoolStats,
   useMiningPools,
@@ -26,21 +25,19 @@ import {
 export function MempoolView() {
   const { data: mempool, refetch: refetchMempool, isFetching: mempoolFetching } = useMempoolStats();
   const { data: mining, refetch: refetchMining, isFetching: miningFetching } = useMiningStats();
-  const { data: lightning, refetch: refetchLightning, isFetching: lightningFetching } = useLightningStats();
   const { data: mempoolBlocks, refetch: refetchMempoolBlocks, isFetching: mempoolBlocksFetching } = useMempoolBlocks();
   const { data: recentBlocks, refetch: refetchRecentBlocks, isFetching: recentBlocksFetching } = useRecentBlocks();
   const { data: hashrate, refetch: refetchHashrate, isFetching: hashrateFetching } = useHashrateHistory();
   const { data: pools, refetch: refetchPools, isFetching: poolsFetching } = useMiningPools();
 
-  const isFetching = mempoolFetching || miningFetching || lightningFetching || mempoolBlocksFetching || recentBlocksFetching || hashrateFetching || poolsFetching;
+  const isFetching = mempoolFetching || miningFetching || mempoolBlocksFetching || recentBlocksFetching || hashrateFetching || poolsFetching;
   function refetchAll() {
-    refetchMempool(); refetchMining(); refetchLightning();
+    refetchMempool(); refetchMining();
     refetchMempoolBlocks(); refetchRecentBlocks(); refetchHashrate(); refetchPools();
   }
 
   const mempoolRelTime = useRelativeTime(mempool?.fetchedAt);
   const miningRelTime = useRelativeTime(mining?.fetchedAt);
-  const lightningRelTime = useRelativeTime(lightning?.fetchedAt);
   const mempoolBlocksRelTime = useRelativeTime(mempoolBlocks?.fetchedAt);
   const recentBlocksRelTime = useRelativeTime(recentBlocks?.fetchedAt);
   const hashrateRelTime = useRelativeTime(hashrate?.fetchedAt);
@@ -230,30 +227,6 @@ export function MempoolView() {
                 )}
                 <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
                   약 4년마다 블록 보상이 절반으로 줄어드는 이벤트. 신규 공급량이 감소하면서 희소성이 높아지고, 역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
-                </p>
-              </CardContent>
-            </Card>
-          {/* 라이트닝 네트워크 */}
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-muted-foreground text-sm font-medium">라이트닝 네트워크</CardTitle>
-                  {lightningRelTime && <span className="text-muted-foreground text-xs">{lightningRelTime}</span>}
-                </div>
-              </CardHeader>
-              <CardContent>
-                {!lightning ? (
-                  <Skeleton className="h-[60px] w-full" />
-                ) : (
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
-                    <Stat label="라이트닝 노드" value={lightning.nodeCount.toLocaleString()} change={lightning.nodeCountChangePct} />
-                    <Stat label="라이트닝 채널" value={lightning.channelCount.toLocaleString()} change={lightning.channelCountChangePct} />
-                    <Stat label="라이트닝 용량" value={`${lightning.totalCapacityBTC.toLocaleString()} BTC`} change={lightning.capacityChangePct} />
-                  </div>
-                )}
-                <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                  비트코인 레이어2 즉시 결제 네트워크 현황. 노드·채널·용량 증가는 소액결제와 일상 거래를 위한 인프라가 성장하고 있음을 나타냅니다.
                 </p>
               </CardContent>
             </Card>

@@ -14,7 +14,6 @@ export const ENDPOINTS = {
   market: 300,
   "mempool-stats": 60,
   "mining-stats": 600,
-  "lightning-stats": 3600,
   "mining-pools": 600,
   "recent-blocks": 60,
   "hashrate-history": 600,

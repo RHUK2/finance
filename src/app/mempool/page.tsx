@@ -8,7 +8,6 @@ export default async function MempoolPage() {
   const state = await prefetchEndpoints([
     "mempool-stats",
     "mining-stats",
-    "lightning-stats",
     "mempool-blocks",
     "recent-blocks",
     "hashrate-history",

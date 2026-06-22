@@ -29,16 +29,6 @@ export type MiningStatsData = {
   nextRewardBTC: number;
 };
 
-export type LightningStatsData = {
-  fetchedAt: string;
-  nodeCount: number;
-  channelCount: number;
-  totalCapacityBTC: number;
-  nodeCountChangePct: number;
-  channelCountChangePct: number;
-  capacityChangePct: number;
-};
-
 export function useMempoolStats() {
   return useQuery<MempoolStatsData>({
     queryKey: ["mempool-stats"],
@@ -62,19 +52,6 @@ export function useMiningStats() {
     },
     staleTime: cacheMs("mining-stats"),
     refetchInterval: cacheMs("mining-stats"),
-  });
-}
-
-export function useLightningStats() {
-  return useQuery<LightningStatsData>({
-    queryKey: ["lightning-stats"],
-    queryFn: async () => {
-      const res = await fetch("/api/lightning-stats");
-      if (!res.ok) throw new Error("Failed to fetch lightning stats");
-      return res.json();
-    },
-    staleTime: cacheMs("lightning-stats"),
-    refetchInterval: cacheMs("lightning-stats"),
   });
 }
 
