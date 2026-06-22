@@ -214,20 +214,20 @@ export function MempoolBlocksViz({
                     <div className="absolute inset-0 rounded-md bg-purple-950" style={{ transform: "translate(6px, 6px)" }} />
                     <div className="absolute inset-0 rounded-md bg-purple-900/70" style={{ transform: "translate(3px, 3px)" }} />
                     {/* 전면 */}
-                    <div className="relative flex min-w-[128px] flex-col gap-2 rounded-md border border-purple-400/25 bg-gradient-to-b from-purple-700/35 to-purple-900/50 px-3 py-3">
-                      <div className="text-muted-foreground text-[10px]">#{i + 1} 예상 블록</div>
+                    <div className="relative flex min-w-[128px] flex-col gap-2 rounded-md border border-purple-400/40 bg-gradient-to-b from-purple-600 to-purple-800 px-3 py-3 text-purple-100">
+                      <div className="text-purple-200/90 text-[10px]">#{i + 1} 예상 블록</div>
                       <div className="text-center">
-                        <span className="text-xl font-bold tabular-nums leading-none">~{b.medianFee}</span>
-                        <span className="text-muted-foreground ml-1 text-xs">sat/vB</span>
+                        <span className="text-xl font-bold tabular-nums leading-none text-white">~{b.medianFee}</span>
+                        <span className="text-purple-200/90 ml-1 text-xs">sat/vB</span>
                       </div>
-                      <div className="text-muted-foreground text-center text-[10px] tabular-nums">
+                      <div className="text-purple-200/90 text-center text-[10px] tabular-nums">
                         {b.feeMin}–{b.feeMax} sat/vB
                       </div>
                       {/* 블록 충전율 */}
                       <div className="h-1 w-full overflow-hidden rounded-full bg-purple-950/60">
-                        <div className="h-full rounded-full bg-purple-400/70" style={{ width: `${fillPct}%` }} />
+                        <div className="h-full rounded-full bg-purple-300" style={{ width: `${fillPct}%` }} />
                       </div>
-                      <div className="text-muted-foreground flex justify-between text-[10px] tabular-nums">
+                      <div className="text-purple-200/90 flex justify-between text-[10px] tabular-nums">
                         <span>{b.vMB} vMB</span>
                         <span>{b.nTx.toLocaleString()} tx</span>
                       </div>

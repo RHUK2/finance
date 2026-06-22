@@ -254,7 +254,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
           <Button
             key={type}
             size="sm"
-            variant={typeFilter === type ? "default" : "secondary"}
+            variant={typeFilter === type ? "default" : "outline"}
             onClick={() => setTypeFilter(type)}
             className="rounded-full whitespace-nowrap"
           >

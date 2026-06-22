@@ -12,13 +12,19 @@ import type { Line, Sheet } from "./steps";
 const fmt = (n: number) =>
   `${n < 0 ? "−" : ""}${Math.abs(Math.round(n)).toLocaleString("ko-KR")}`;
 
-function AmountRow({ line, side }: { line: Line; side: "asset" | "liability" }) {
+function AmountRow({
+  line,
+  side,
+}: {
+  line: Line;
+  side: "asset" | "liability";
+}) {
   const value = useCountUp(line.amount);
   const isCapital = line.item === "자본";
   return (
     <div
       className={cn(
-        "flex animate-in items-center justify-between gap-2 rounded-md border px-2.5 py-1.5 text-sm duration-300 fade-in slide-in-from-bottom-1",
+        "animate-in fade-in slide-in-from-bottom-1 flex items-center justify-between gap-2 rounded-md border px-2.5 py-1.5 text-sm duration-300",
         side === "asset"
           ? "border-emerald-500/30 bg-emerald-500/5"
           : "border-rose-500/30 bg-rose-500/5",
@@ -48,7 +54,9 @@ export function BalanceSheet({
 }) {
   const assetTotal = totalOf(sheet.asset);
   const liabTotal = totalOf(sheet.liability);
-  const hasCreated = [...sheet.asset, ...sheet.liability].some((l) => l.created);
+  const hasCreated = [...sheet.asset, ...sheet.liability].some(
+    (l) => l.created,
+  );
   const isEmpty = sheet.asset.length === 0 && sheet.liability.length === 0;
 
   return (
@@ -60,7 +68,7 @@ export function BalanceSheet({
     >
       <div className="flex items-baseline justify-between border-b px-3 py-2">
         <span className="font-semibold">{name}</span>
-        <span className="text-xs text-muted-foreground">{sub}</span>
+        <span className="text-muted-foreground text-xs">{sub}</span>
       </div>
 
       <CardContent className="p-3">
@@ -90,12 +98,22 @@ export function BalanceSheet({
         </div>
 
         {!isEmpty && (
-          <div className="mt-3 flex items-center justify-between border-t pt-2 text-xs text-muted-foreground">
-            <span className="font-mono tabular-nums">자산 {fmt(assetTotal)}</span>
-            <span className={cn(assetTotal === liabTotal ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600")}>
+          <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2 text-xs">
+            <span className="font-mono tabular-nums">
+              자산 {fmt(assetTotal)}
+            </span>
+            <span
+              className={cn(
+                assetTotal === liabTotal
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : "text-rose-600",
+              )}
+            >
               {assetTotal === liabTotal ? "균형 ✓" : "불균형"}
             </span>
-            <span className="font-mono tabular-nums">부채·자본 {fmt(liabTotal)}</span>
+            <span className="font-mono tabular-nums">
+              부채·자본 {fmt(liabTotal)}
+            </span>
           </div>
         )}
       </CardContent>
@@ -117,7 +135,7 @@ export function MoneyCounter({
   const animated = useCountUp(value);
   return (
     <Card className="gap-1 p-4">
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-xs">{label}</span>
       <span
         className={cn(
           "font-mono text-2xl font-semibold tabular-nums",
@@ -125,7 +143,9 @@ export function MoneyCounter({
         )}
       >
         {suffix === "배" ? animated.toFixed(1) : fmt(animated)}
-        {suffix && <span className="ml-0.5 text-base font-normal">{suffix}</span>}
+        {suffix && (
+          <span className="ml-0.5 text-base font-normal">{suffix}</span>
+        )}
       </span>
     </Card>
   );
@@ -148,7 +168,12 @@ export function StepControls({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button variant="outline" size="sm" onClick={onPrev} disabled={step === 0}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onPrev}
+        disabled={step === 0}
+      >
         <ChevronLeft className="size-4" /> 이전
       </Button>
       <Button size="sm" onClick={onNext} disabled={step === total - 1}>
@@ -165,7 +190,9 @@ export function StepControls({
             onClick={() => onJump(i)}
             className={cn(
               "size-2.5 rounded-full transition-colors",
-              i === step ? "bg-primary" : "bg-muted hover:bg-muted-foreground/40",
+              i === step
+                ? "bg-primary"
+                : "bg-muted hover:bg-muted-foreground/40",
             )}
           />
         ))}
@@ -186,12 +213,14 @@ export function NarrationCard({
   return (
     <Card className="gap-2 p-4">
       <div className="flex items-center gap-2">
-        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-          {index}
+        <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold">
+          <span className="translate-y-[1px]">{index}</span>
         </span>
         <span className="font-semibold">{title}</span>
       </div>
-      <p className="text-sm leading-relaxed text-muted-foreground">{narration}</p>
+      <p className="text-muted-foreground text-sm leading-relaxed">
+        {narration}
+      </p>
     </Card>
   );
 }
