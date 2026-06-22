@@ -83,7 +83,7 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+        <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
           시장 참여자의 심리를 0~100으로 수치화한 지표. 극도의 공포 구간은 역발상 매수 기회로, 극도의 탐욕 구간은 조정 가능성 신호로 활용됩니다.
         </p>
       </CardContent>

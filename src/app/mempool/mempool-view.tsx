@@ -182,7 +182,7 @@ export function MempoolView() {
                     <HashrateChart data={hashrate} />
                   </>
                 )}
-                <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+                <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
                   네트워크 전체 연산 능력의 1년 변화 추이. 해시레이트 상승은 채굴자 신뢰 증가와 네트워크 보안 강화를 의미하며, 급격한 하락은 대규모 채굴자 이탈 신호일 수 있습니다.
                 </p>
               </CardContent>

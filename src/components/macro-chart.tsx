@@ -73,7 +73,7 @@ export function MacroChart({ title, currentLabel, changePercent, lines, updatedL
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         {description ? (
-          <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">{description}</p>
+          <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">{description}</p>
         ) : (
           <div className="h-4" />
         )}

@@ -125,7 +125,7 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+        <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
           111일 MA가 350일 MA×2를 상향 돌파하면 사이클 천장 신호. 과거 비트코인 고점과 높은 일치율을 보여 단기 매도 타이밍 파악에 활용됩니다.
         </p>
       </CardContent>

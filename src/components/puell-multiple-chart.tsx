@@ -96,7 +96,7 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-        <p className="bg-muted/50 text-muted-foreground border-t px-6 pt-3 pb-4 text-xs">
+        <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
           채굴자의 일일 수익을 1년 평균으로 나눈 값. 4 이상이면 채굴자 매도 압력이 극대화된 과열 구간, 0.5 미만이면 채굴자 항복으로 인한 바닥 신호입니다.
         </p>
       </CardContent>
