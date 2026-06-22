@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 600;
+export const revalidate = 86400;
 
 export async function GET() {
   try {
     const res = await fetch(
       "https://mempool.space/api/v1/mining/hashrate/1y",
-      { next: { revalidate: 600 } },
+      { next: { revalidate: 86400 } },
     );
     if (!res.ok) throw new Error(`hashrate history error: ${res.status}`);
 

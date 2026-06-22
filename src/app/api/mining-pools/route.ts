@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 600;
+export const revalidate = 86400;
 
 type Pool = { name: string; slug: string; blockCount: number };
 
 export async function GET() {
   try {
     const res = await fetch("https://mempool.space/api/v1/mining/pools/1w", {
-      next: { revalidate: 600 },
+      next: { revalidate: 86400 },
     });
     if (!res.ok) throw new Error(`mining pools error: ${res.status}`);
 
