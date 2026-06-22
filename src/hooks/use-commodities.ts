@@ -1,7 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+
 import { type MacroSeries } from "@/hooks/use-economy";
+import { cacheMs } from "@/lib/cache-config";
 
 export type CommoditiesData = {
   fetchedAt: string;
@@ -19,6 +21,7 @@ export function useCommodities() {
       if (!res.ok) throw new Error("Failed to fetch commodities data");
       return res.json();
     },
-    staleTime: 3_600_000,
+    staleTime: cacheMs("commodities"),
+    refetchInterval: cacheMs("commodities"),
   });
 }

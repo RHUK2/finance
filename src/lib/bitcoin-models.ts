@@ -31,17 +31,15 @@ export const RAINBOW_BANDS = [
   { upper: 20.13, color: "#7f1d1d", label: "최대 버블" },
 ] as const;
 
-// S2F Halvings with precise cumulative supply at each era start
+// 반감기별 블록 보상 (일일 발행량 계산용)
 const HALVINGS = [
-  { date: "2009-01-03", supplyAtStart: 0, reward: 50 },
-  { date: "2012-11-28", supplyAtStart: 10_500_000, reward: 25 },
-  { date: "2016-07-09", supplyAtStart: 15_750_000, reward: 12.5 },
-  { date: "2020-05-11", supplyAtStart: 18_375_000, reward: 6.25 },
-  { date: "2024-04-19", supplyAtStart: 19_687_500, reward: 3.125 },
-  { date: "2028-04-20", supplyAtStart: 20_343_750, reward: 1.5625 },
+  { date: "2009-01-03", reward: 50 },
+  { date: "2012-11-28", reward: 25 },
+  { date: "2016-07-09", reward: 12.5 },
+  { date: "2020-05-11", reward: 6.25 },
+  { date: "2024-04-19", reward: 3.125 },
+  { date: "2028-04-20", reward: 1.5625 },
 ] as const;
-
-export const HALVING_DATES = HALVINGS.slice(1).map((h) => h.date);
 
 function getEra(dateStr: string): (typeof HALVINGS)[number] {
   const dateMs = new Date(dateStr).getTime();
@@ -51,17 +49,6 @@ function getEra(dateStr: string): (typeof HALVINGS)[number] {
     else break;
   }
   return era;
-}
-
-function circulatingSupply(dateStr: string): number {
-  const era = getEra(dateStr);
-  const dateMs = new Date(dateStr).getTime();
-  const eraStartMs = new Date(era.date).getTime();
-  const daysSinceEra = (dateMs - eraStartMs) / MS_PER_DAY;
-  return Math.min(
-    era.supplyAtStart + daysSinceEra * 144 * era.reward,
-    21_000_000,
-  );
 }
 
 // 일일 신규 발행량 (BTC). 블록당 보상 × 하루 평균 블록 수(144)
@@ -86,22 +73,6 @@ export function movingAverage(
       out.push({ time: series[i].time, value: sum / window });
   }
   return out;
-}
-
-export function s2fRatio(dateStr: string): number {
-  const era = getEra(dateStr);
-  const supply = circulatingSupply(dateStr);
-  const annualFlow = era.reward * 144 * 365;
-  return supply / annualFlow;
-}
-
-// PlanB original 2019 S2F model: market_cap = exp(14.6) * S2F^3.3
-export function s2fModelPrice(dateStr: string): number {
-  const s2f = s2fRatio(dateStr);
-  if (s2f <= 0) return 0;
-  const marketCap = Math.exp(14.6) * Math.pow(s2f, 3.3);
-  const supply = circulatingSupply(dateStr);
-  return marketCap / supply;
 }
 
 export function generateModelDates(

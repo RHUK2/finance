@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { cacheMs } from "@/lib/cache-config";
+
 export type MacroSeries = {
   history: { time: string; value: number }[];
   current: number | null;
@@ -17,7 +19,6 @@ export type EconomyData = {
   nasdaq: MacroSeries;
   kospi: MacroSeries;
   usdkrw: MacroSeries;
-  jpykrw: MacroSeries;
 };
 
 export function useEconomy() {
@@ -28,7 +29,8 @@ export function useEconomy() {
       if (!res.ok) throw new Error("Failed to fetch economy data");
       return res.json();
     },
-    staleTime: 3_600_000,
+    staleTime: cacheMs("economy"),
+    refetchInterval: cacheMs("economy"),
   });
 }
 
@@ -39,7 +41,6 @@ export type FredData = {
   fedFunds?: MacroSeries;
   us2y?: MacroSeries;
   cpi?: MacroSeries;
-  ppi?: MacroSeries;
 };
 
 export function useFred() {
@@ -50,6 +51,7 @@ export function useFred() {
       if (!res.ok) throw new Error("Failed to fetch FRED data");
       return res.json();
     },
-    staleTime: 86_400_000,
+    staleTime: cacheMs("fred"),
+    refetchInterval: cacheMs("fred"),
   });
 }

@@ -46,12 +46,11 @@ export async function GET() {
   }
 
   try {
-    const [m2, fedFunds, us2y, cpi, ppi] = await Promise.all([
+    const [m2, fedFunds, us2y, cpi] = await Promise.all([
       fetchSeries("M2SL", key),
       fetchSeries("FEDFUNDS", key),
       fetchSeries("DGS2", key),
       fetchSeries("CPIAUCSL", key),
-      fetchSeries("PPIACO", key),
     ]);
 
     return NextResponse.json({
@@ -61,7 +60,6 @@ export async function GET() {
       fedFunds,
       us2y,
       cpi,
-      ppi,
     });
   } catch (error) {
     console.error("fred fetch error:", error);

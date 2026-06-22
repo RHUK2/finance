@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { cacheMs } from "@/lib/cache-config";
+
 export type FearGreedData = {
   fetchedAt: string;
   value: number;
@@ -26,7 +28,8 @@ export function useFearGreed() {
       if (!res.ok) throw new Error("Failed to fetch fear & greed data");
       return res.json();
     },
-    staleTime: 86_400_000,
+    staleTime: cacheMs("fear-greed"),
+    refetchInterval: cacheMs("fear-greed"),
   });
 }
 
@@ -38,7 +41,8 @@ export function useMvrv() {
       if (!res.ok) throw new Error("Failed to fetch MVRV data");
       return res.json();
     },
-    staleTime: 86_400_000,
+    staleTime: cacheMs("mvrv"),
+    refetchInterval: cacheMs("mvrv"),
   });
 }
 
@@ -55,6 +59,7 @@ export function useBitcoinHistorical() {
       if (!res.ok) throw new Error("Failed to fetch bitcoin historical data");
       return res.json();
     },
-    staleTime: 1000 * 60 * 60,
+    staleTime: cacheMs("bitcoin-historical"),
+    refetchInterval: cacheMs("bitcoin-historical"),
   });
 }

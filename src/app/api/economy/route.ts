@@ -13,7 +13,6 @@ const SYMBOLS = [
   { key: "nasdaq", symbol: "^IXIC" },
   { key: "kospi", symbol: "^KS11" },
   { key: "usdkrw", symbol: "USDKRW=X" },
-  { key: "jpykrw", symbol: "JPYKRW=X" },
 ] as const;
 
 type Series = {

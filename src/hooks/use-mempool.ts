@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { cacheMs } from "@/lib/cache-config";
+
 export type MempoolStatsData = {
   fetchedAt: string;
   pendingTxCount: number;
@@ -45,7 +47,8 @@ export function useMempoolStats() {
       if (!res.ok) throw new Error("Failed to fetch mempool stats");
       return res.json();
     },
-    staleTime: 60_000,
+    staleTime: cacheMs("mempool-stats"),
+    refetchInterval: cacheMs("mempool-stats"),
   });
 }
 
@@ -57,7 +60,8 @@ export function useMiningStats() {
       if (!res.ok) throw new Error("Failed to fetch mining stats");
       return res.json();
     },
-    staleTime: 600_000,
+    staleTime: cacheMs("mining-stats"),
+    refetchInterval: cacheMs("mining-stats"),
   });
 }
 
@@ -69,7 +73,8 @@ export function useLightningStats() {
       if (!res.ok) throw new Error("Failed to fetch lightning stats");
       return res.json();
     },
-    staleTime: 3_600_000,
+    staleTime: cacheMs("lightning-stats"),
+    refetchInterval: cacheMs("lightning-stats"),
   });
 }
 
@@ -87,7 +92,8 @@ export function useMiningPools() {
       if (!res.ok) throw new Error("Failed to fetch mining pools");
       return res.json();
     },
-    staleTime: 600_000,
+    staleTime: cacheMs("mining-pools"),
+    refetchInterval: cacheMs("mining-pools"),
   });
 }
 
@@ -113,7 +119,8 @@ export function useRecentBlocks() {
       if (!res.ok) throw new Error("Failed to fetch recent blocks");
       return res.json();
     },
-    staleTime: 60_000,
+    staleTime: cacheMs("recent-blocks"),
+    refetchInterval: cacheMs("recent-blocks"),
   });
 }
 
@@ -132,7 +139,8 @@ export function useHashrateHistory() {
       if (!res.ok) throw new Error("Failed to fetch hashrate history");
       return res.json();
     },
-    staleTime: 600_000,
+    staleTime: cacheMs("hashrate-history"),
+    refetchInterval: cacheMs("hashrate-history"),
   });
 }
 
@@ -155,6 +163,7 @@ export function useMempoolBlocks() {
       if (!res.ok) throw new Error("Failed to fetch mempool blocks");
       return res.json();
     },
-    staleTime: 60_000,
+    staleTime: cacheMs("mempool-blocks"),
+    refetchInterval: cacheMs("mempool-blocks"),
   });
 }

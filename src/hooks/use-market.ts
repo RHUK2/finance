@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { cacheMs } from "@/lib/cache-config";
+
 export type MarketItem = {
   symbol: string;
   ticker: string;
@@ -27,6 +29,7 @@ export function useMarket() {
       if (!res.ok) throw new Error("Failed to fetch market data");
       return res.json();
     },
-    staleTime: 300_000,
+    staleTime: cacheMs("market"),
+    refetchInterval: cacheMs("market"),
   });
 }

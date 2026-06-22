@@ -1,26 +1,15 @@
-"use client";
+import { HydrationBoundary } from "@tanstack/react-query";
 
-import { AppHeader } from "@/components/app-header";
-import { AssetsTable } from "@/components/assets-table";
-import { PageMain } from "@/components/page-main";
-import { useRelativeTime } from "@/hooks/use-relative-time";
-import { useMarket } from "@/hooks/use-market";
+import { prefetchEndpoints } from "@/lib/prefetch";
 
-export default function AssetsPage() {
-  const { data: market, isLoading, isFetching, refetch } = useMarket();
+import { AssetsView } from "./assets-view";
 
-  const relativeTime = useRelativeTime(market?.fetchedAt);
+export default async function AssetsPage() {
+  const state = await prefetchEndpoints(["market"]);
 
   return (
-    <>
-      <AppHeader breadcrumbs={[{ label: "자산 현황" }]} />
-      <PageMain onRefresh={refetch} isRefreshing={isFetching}>
-        <AssetsTable
-          data={market?.items ?? []}
-          isLoading={isLoading}
-          updatedLabel={relativeTime}
-        />
-      </PageMain>
-    </>
+    <HydrationBoundary state={state}>
+      <AssetsView />
+    </HydrationBoundary>
   );
 }
