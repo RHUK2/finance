@@ -35,7 +35,7 @@ export function PageMain({ children, onRefresh, isRefreshing }: Props) {
   }, []);
 
   return (
-    <main className="min-h-dvh p-4 sm:p-6 md:p-8 lg:p-10">
+    <main className="min-h-[calc(100dvh-3rem)] p-4 sm:p-6 md:p-8 lg:p-10">
       {children}
       <div className="fixed right-4 bottom-4 z-50 flex flex-col gap-2">
         {visible && (
