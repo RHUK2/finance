@@ -24,6 +24,8 @@ export const ENDPOINTS = {
   "fear-greed": 86400,
   mvrv: 86400,
   "bitcoin-historical": 86400,
+  "inflation-data": 86400,
+  "inflation-data-kr": 86400,
 } as const;
 
 export type EndpointKey = keyof typeof ENDPOINTS;

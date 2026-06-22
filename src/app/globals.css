@@ -139,6 +139,7 @@ button:not(:disabled),
 [role="tab"],
 [role="combobox"]:not(input),
 [role="checkbox"]:not(:disabled),
-[role="radio"]:not(:disabled) {
+[role="radio"]:not(:disabled),
+[data-slot="slider"]:not([data-disabled]) {
   cursor: pointer;
 }
