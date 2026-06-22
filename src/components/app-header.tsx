@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { NAV_ITEMS } from "@/lib/nav";
 import { ChevronDown } from "lucide-react";
@@ -78,6 +79,9 @@ export function AppHeader({ breadcrumbs }: Props) {
           })}
         </BreadcrumbList>
       </Breadcrumb>
+      <div className="ml-auto">
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
