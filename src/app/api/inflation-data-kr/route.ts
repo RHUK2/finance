@@ -8,8 +8,10 @@ const STAT = {
   // ⚠️ 통계표코드/항목코드는 ECOS "통계코드검색"으로 검증 후 확정할 것.
   //    한국은행이 표를 개편하면 코드가 바뀔 수 있다.
   cpi: { stat: "901Y009", item: "0" }, // 소비자물가지수(총지수)
-  m2: { stat: "101Y004", item: "BBHS00" }, // M2(광의통화) 평잔
-  deposit: { stat: "722Y001", item: "0101000" }, // 예금은행 정기예금 금리
+  m2: { stat: "161Y006", item: "BBHA00" }, // M2(광의통화, 평잔·원계열) 신계열, 2003~
+  deposit: { stat: "722Y001", item: "0101000" }, // 한국은행 기준금리 — 단기 안전금리 근사(미국 TB3MS에 대응)
+  stock: { stat: "901Y014", item: "1070000" }, // KOSPI 종가(월), 배당 제외
+  house: { stat: "901Y062", item: "P63A" }, // KB 주택매매가격지수(총지수)
 } as const;
 
 type Series = {
@@ -64,10 +66,12 @@ export async function GET() {
   }
 
   try {
-    const [cpi, m2, deposit] = await Promise.all([
+    const [cpi, m2, deposit, stock, house] = await Promise.all([
       fetchSeries(key, STAT.cpi.stat, STAT.cpi.item),
       fetchSeries(key, STAT.m2.stat, STAT.m2.item),
       fetchSeries(key, STAT.deposit.stat, STAT.deposit.item),
+      fetchSeries(key, STAT.stock.stat, STAT.stock.item),
+      fetchSeries(key, STAT.house.stat, STAT.house.item),
     ]);
 
     return NextResponse.json({
@@ -76,6 +80,8 @@ export async function GET() {
       cpi,
       m2,
       deposit,
+      stock,
+      house,
     });
   } catch (error) {
     console.error("inflation-data-kr fetch error:", error);

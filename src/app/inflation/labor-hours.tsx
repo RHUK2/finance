@@ -30,6 +30,7 @@ type Props = {
   minYear: number;
   maxYear: number;
   wageTable: { year: number; wage: number }[];
+  stockLabel: string;
 };
 
 export function LaborHours({
@@ -39,6 +40,7 @@ export function LaborHours({
   minYear,
   maxYear,
   wageTable,
+  stockLabel,
 }: Props) {
   const [startYear, setStartYear] = useState(
     Math.max(minYear, Math.min(maxYear, 2000)),
@@ -65,7 +67,7 @@ export function LaborHours({
         },
         {
           key: "stock",
-          label: "주식 (나스닥)",
+          label: stockLabel,
           value: grow(
             wage!,
             valueAt(data.stock?.history, startYear),
@@ -86,7 +88,7 @@ export function LaborHours({
     }
 
     return { wage, currentWage, entries: build() };
-  }, [data, btc, startYear, maxYear, wageTable]);
+  }, [data, btc, startYear, maxYear, wageTable, stockLabel]);
 
   const hi = (text: string, tone: "strong" | "bad" | "good") => (
     <span

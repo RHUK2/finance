@@ -12,7 +12,7 @@
 | **Google Finance**           | `google.com/finance/quote` (스크레이프)       | `market`                                                                                               | Yahoo 보조/폴백 시세                          | 불필요            | 5분          |
 | **Coinbase Exchange**        | `api.exchange.coinbase.com/.../candles`       | `bitcoin-historical`                                                                                   | BTC 일별 OHLC (2015~, 300일 청크)             | 불필요            | 24시간       |
 | **FRED** (세인트루이스 연준) | `api.stlouisfed.org/fred/series/observations` | `fred`, `inflation-data`                                                                               | M2·CPI·금리·나스닥·주택 등 거시 시계열        | 🔑 `FRED_API_KEY` | 24시간       |
-| **BOK ECOS** (한국은행)      | `ecos.bok.or.kr/api/StatisticSearch`          | `inflation-data-kr`                                                                                    | 한국 M2·CPI·예금금리                          | 🔑 `ECOS_API_KEY` | 24시간       |
+| **BOK ECOS** (한국은행)      | `ecos.bok.or.kr/api/StatisticSearch`          | `inflation-data-kr`                                                                                    | 한국 M2·CPI·기준금리·코스피·주택              | 🔑 `ECOS_API_KEY` | 24시간       |
 | **Alternative.me**           | `api.alternative.me/fng/`                     | `fear-greed`                                                                                           | 공포·탐욕 지수                                | 불필요            | 24시간       |
 | **CoinMetrics** (community)  | `community-api.coinmetrics.io/v4/...`         | `mvrv`                                                                                                 | BTC MVRV / Realized Cap                       | 불필요            | 24시간       |
 | **mempool.space**            | `mempool.space/api/...`                       | `hashrate-history`, `mining-stats`, `mining-pools`, `recent-blocks`, `mempool-stats`, `mempool-blocks` | 해시레이트·난이도·채굴풀·블록·수수료·메모리풀 | 불필요            | 1분 ~ 24시간 |
@@ -59,7 +59,7 @@
 | `mining-pools`       | mempool.space  | 채굴 풀 1주 점유율 집계             | —       |
 | `fred`               | FRED           | M2·CPI·금리 (10년)                  | 🔑 FRED |
 | `inflation-data`     | FRED           | M2·CPI·예금금리·나스닥·주택 (1971~) | 🔑 FRED |
-| `inflation-data-kr`  | BOK ECOS       | 한국 M2·CPI·예금금리                | 🔑 ECOS |
+| `inflation-data-kr`  | BOK ECOS       | 한국 M2·CPI·기준금리·코스피·주택    | 🔑 ECOS |
 
 ## 참고
 

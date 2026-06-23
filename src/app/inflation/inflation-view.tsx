@@ -34,6 +34,7 @@ const CONFIG: Record<
     raceBaseYear: number;
     wageTable: { year: number; wage: number }[];
     envKey: string;
+    stockLabel: string;
   }
 > = {
   US: {
@@ -46,11 +47,12 @@ const CONFIG: Record<
     raceBaseYear: 2015,
     wageTable: US_MIN_WAGE,
     envKey: "FRED_API_KEY",
+    stockLabel: "주식 (나스닥)",
   },
   KR: {
     label: "한국",
     currency: "₩",
-    minYear: 2000,
+    minYear: 2003, // M2 신계열(161Y006) 시작연도에 맞춤
     maxYear: 2025,
     principal: {
       min: 1_000_000,
@@ -58,10 +60,11 @@ const CONFIG: Record<
       step: 1_000_000,
       default: 10_000_000,
     },
-    gapBaseYear: 2000,
+    gapBaseYear: 2003,
     raceBaseYear: 2000,
     wageTable: KR_MIN_WAGE,
     envKey: "ECOS_API_KEY",
+    stockLabel: "주식 (코스피)",
   },
 };
 
@@ -158,6 +161,7 @@ function Devices({
         minYear={cfg.minYear}
         maxYear={cfg.maxYear}
         principal={cfg.principal}
+        stockLabel={cfg.stockLabel}
       />
       <LaborHours
         key={`labor-${country}`}
@@ -167,6 +171,7 @@ function Devices({
         minYear={cfg.minYear}
         maxYear={cfg.maxYear}
         wageTable={cfg.wageTable}
+        stockLabel={cfg.stockLabel}
       />
       <CpiM2GapChart key={`gap-${country}`} data={data} baseYear={cfg.gapBaseYear} />
       <AssetRaceChart
@@ -174,6 +179,7 @@ function Devices({
         data={data}
         btc={btc}
         baseYear={cfg.raceBaseYear}
+        stockLabel={cfg.stockLabel}
       />
     </div>
   );

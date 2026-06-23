@@ -41,6 +41,7 @@ type Props = {
   minYear: number;
   maxYear: number;
   principal: { min: number; max: number; step: number; default: number };
+  stockLabel: string;
 };
 
 export function CollapseCalculator({
@@ -50,6 +51,7 @@ export function CollapseCalculator({
   minYear,
   maxYear,
   principal,
+  stockLabel,
 }: Props) {
   const monthlyCfg =
     currency === "$"
@@ -74,7 +76,7 @@ export function CollapseCalculator({
   const r = useMemo(() => {
     const refHist = basis === "M2" ? data.m2?.history : data.cpi?.history;
     const assetDefs = [
-      { key: "stock", label: "주식 (나스닥)", series: data.stock?.history },
+      { key: "stock", label: stockLabel, series: data.stock?.history },
       { key: "house", label: "주택", series: data.house?.history },
       { key: "btc", label: "비트코인", series: btc },
     ] as const;
@@ -122,7 +124,7 @@ export function CollapseCalculator({
     const headline = assets.find((a) => a.value != null);
 
     return { baseAmount, depositNominal, realValue, lossPct, holdLine, ratio, assets, headline };
-  }, [data, btc, startYear, amount, basis, mode]);
+  }, [data, btc, startYear, amount, basis, mode, stockLabel]);
 
   const { ref: refName, real: realLabel, hold: holdLabel } = BASIS_LABELS[basis];
   const productName = mode === "lump" ? "예금" : "적금";

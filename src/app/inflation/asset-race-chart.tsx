@@ -19,16 +19,17 @@ type Props = {
   data: InflationData;
   btc?: Point[];
   baseYear: number;
+  stockLabel: string;
 };
 
-export function AssetRaceChart({ data, btc, baseYear }: Props) {
+export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
   const lines = useMemo<Line[]>(() => {
     const out: Line[] = [];
     const dep = depositIndex(data.deposit?.history, baseYear);
     if (dep.length) out.push({ label: "예금", color: "#9ca3af", data: dep });
 
     const assets: { label: string; color: string; series?: Point[] }[] = [
-      { label: "주식 (나스닥)", color: "#3b82f6", series: data.stock?.history },
+      { label: stockLabel, color: "#3b82f6", series: data.stock?.history },
       { label: "주택", color: "#f59e0b", series: data.house?.history },
       { label: "비트코인", color: "#f7931a", series: btc },
     ];
@@ -49,7 +50,7 @@ export function AssetRaceChart({ data, btc, baseYear }: Props) {
       if (cpi.length) out.push({ label: "물가(CPI)", color: "#22c55e", data: cpi });
     }
     return out;
-  }, [data, btc, baseYear]);
+  }, [data, btc, baseYear, stockLabel]);
 
   const { containerRef, resetView } = useChart(
     (chart) => {
