@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatRelativeTime } from "@/hooks/use-relative-time";
 import { useScrollDrag } from "@/hooks/use-scroll-drag";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -31,10 +32,7 @@ const POOL_COLORS = [
 ];
 
 function blockTimeAgo(timestampSec: number): string {
-  const min = Math.floor((Date.now() - timestampSec * 1000) / 60_000);
-  if (min < 1) return "방금 전";
-  if (min < 60) return `${min}분 전`;
-  return `${Math.floor(min / 60)}시간 전`;
+  return formatRelativeTime(timestampSec * 1000);
 }
 
 export function PoolShareChart({
