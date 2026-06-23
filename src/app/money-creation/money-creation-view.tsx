@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
+import { Slider } from "@/components/ui/slider";
 
 import {
   BalanceSheet,
@@ -53,14 +54,13 @@ export function MoneyCreationView() {
                   {Math.round(reserveRatio * 100)}%
                 </span>
               </div>
-              <input
-                type="range"
+              <Slider
                 min={1}
                 max={50}
                 step={1}
-                value={Math.round(reserveRatio * 100)}
-                onChange={(e) => setReserveRatio(Number(e.target.value) / 100)}
-                className="w-full accent-amber-500"
+                value={[Math.round(reserveRatio * 100)]}
+                onValueChange={([v]) => setReserveRatio(v / 100)}
+                className="w-full"
               />
               <p className="text-xs text-muted-foreground">
                 지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량 = 본원통화 ÷ 지급준비율).
