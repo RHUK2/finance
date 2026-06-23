@@ -32,14 +32,8 @@ function FredGate({
 }
 
 export function EconomyView() {
-  const { data: eco, refetch: refetchEco, isFetching: ecoFetching } = useEconomy();
-  const { data: fred, refetch: refetchFred, isFetching: fredFetching } = useFred();
-
-  const isFetching = ecoFetching || fredFetching;
-  function refetchAll() {
-    refetchEco();
-    refetchFred();
-  }
+  const { data: eco } = useEconomy();
+  const { data: fred } = useFred();
 
   // 로딩 중(undefined)에는 차트를 렌더해 스켈레톤을 보이고, 명시적으로 unavailable일 때만 대체한다.
   const fredAvailable = fred?.available !== false;
@@ -89,7 +83,7 @@ export function EconomyView() {
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "경제 지표" }]} />
-      <PageMain onRefresh={refetchAll} isRefreshing={isFetching}>
+      <PageMain>
         <div className="flex flex-col gap-3">
           <div className="flex items-center">
             <Button variant="outline" size="sm" onClick={resetAll}>

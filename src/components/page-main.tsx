@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ChevronUp, RefreshCw } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function scrollToTop(duration = 300) {
@@ -19,11 +19,9 @@ function scrollToTop(duration = 300) {
 
 type Props = {
   children: React.ReactNode;
-  onRefresh?: () => void;
-  isRefreshing?: boolean;
 };
 
-export function PageMain({ children, onRefresh, isRefreshing }: Props) {
+export function PageMain({ children }: Props) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -46,17 +44,6 @@ export function PageMain({ children, onRefresh, isRefreshing }: Props) {
             onClick={() => scrollToTop()}
           >
             <ChevronUp className="size-6" />
-          </Button>
-        )}
-        {onRefresh && (
-          <Button
-            size="icon"
-            variant="outline"
-            className="h-12 w-12 rounded-full shadow-md"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-          >
-            <RefreshCw className={`size-5 ${isRefreshing ? "animate-spin" : ""}`} />
           </Button>
         )}
       </div>

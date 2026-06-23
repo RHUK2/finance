@@ -23,18 +23,12 @@ import {
 } from "./components";
 
 export function MempoolView() {
-  const { data: mempool, refetch: refetchMempool, isFetching: mempoolFetching } = useMempoolStats();
-  const { data: mining, refetch: refetchMining, isFetching: miningFetching } = useMiningStats();
-  const { data: mempoolBlocks, refetch: refetchMempoolBlocks, isFetching: mempoolBlocksFetching } = useMempoolBlocks();
-  const { data: recentBlocks, refetch: refetchRecentBlocks, isFetching: recentBlocksFetching } = useRecentBlocks();
-  const { data: hashrate, refetch: refetchHashrate, isFetching: hashrateFetching } = useHashrateHistory();
-  const { data: pools, refetch: refetchPools, isFetching: poolsFetching } = useMiningPools();
-
-  const isFetching = mempoolFetching || miningFetching || mempoolBlocksFetching || recentBlocksFetching || hashrateFetching || poolsFetching;
-  function refetchAll() {
-    refetchMempool(); refetchMining();
-    refetchMempoolBlocks(); refetchRecentBlocks(); refetchHashrate(); refetchPools();
-  }
+  const { data: mempool } = useMempoolStats();
+  const { data: mining } = useMiningStats();
+  const { data: mempoolBlocks } = useMempoolBlocks();
+  const { data: recentBlocks } = useRecentBlocks();
+  const { data: hashrate } = useHashrateHistory();
+  const { data: pools } = useMiningPools();
 
   const mempoolRelTime = useRelativeTime(mempool?.fetchedAt);
   const miningRelTime = useRelativeTime(mining?.fetchedAt);
@@ -49,7 +43,7 @@ export function MempoolView() {
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "비트코인 네트워크" }]} />
-      <PageMain onRefresh={refetchAll} isRefreshing={isFetching}>
+      <PageMain>
         <div className="flex flex-col gap-6">
 
           {/* 멤풀 */}

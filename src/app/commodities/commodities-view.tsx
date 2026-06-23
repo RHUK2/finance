@@ -10,7 +10,7 @@ import { RotateCcw } from "lucide-react";
 import { useRef } from "react";
 
 export function CommoditiesView() {
-  const { data, refetch, isFetching } = useCommodities();
+  const { data } = useCommodities();
 
   const goldReset = useRef<(() => void) | null>(null);
   const oilReset = useRef<(() => void) | null>(null);
@@ -27,7 +27,7 @@ export function CommoditiesView() {
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "원자재 시장" }]} />
-      <PageMain onRefresh={refetch} isRefreshing={isFetching}>
+      <PageMain>
         <div className="flex flex-col gap-3">
           <div className="flex items-center">
             <Button variant="outline" size="sm" onClick={resetAll}>

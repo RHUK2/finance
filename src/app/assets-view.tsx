@@ -7,14 +7,14 @@ import { useRelativeTime } from "@/hooks/use-relative-time";
 import { useMarket } from "@/hooks/use-market";
 
 export function AssetsView() {
-  const { data: market, isLoading, isFetching, refetch } = useMarket();
+  const { data: market, isLoading } = useMarket();
 
   const relativeTime = useRelativeTime(market?.fetchedAt);
 
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "자산 현황" }]} />
-      <PageMain onRefresh={refetch} isRefreshing={isFetching}>
+      <PageMain>
         <AssetsTable
           data={market?.items ?? []}
           isLoading={isLoading}

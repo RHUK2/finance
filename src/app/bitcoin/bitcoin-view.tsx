@@ -15,16 +15,9 @@ import { RotateCcw } from "lucide-react";
 import { useRef } from "react";
 
 export function BitcoinView() {
-  const { data: fearGreed, refetch: refetchFearGreed, isFetching: fearGreedFetching } = useFearGreed();
-  const { data: mvrv, refetch: refetchMvrv, isFetching: mvrvFetching } = useMvrv();
-  const { data: historical, refetch: refetchHistorical, isFetching: historicalFetching } = useBitcoinHistorical();
-
-  const isFetching = fearGreedFetching || mvrvFetching || historicalFetching;
-  function refetchAll() {
-    refetchFearGreed();
-    refetchMvrv();
-    refetchHistorical();
-  }
+  const { data: fearGreed } = useFearGreed();
+  const { data: mvrv } = useMvrv();
+  const { data: historical } = useBitcoinHistorical();
 
   const fearGreedReset = useRef<(() => void) | null>(null);
   const mvrvZScoreReset = useRef<(() => void) | null>(null);
@@ -49,7 +42,7 @@ export function BitcoinView() {
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "비트코인 지표" }]} />
-      <PageMain onRefresh={refetchAll} isRefreshing={isFetching}>
+      <PageMain>
         <div className="flex flex-col gap-3">
           <div className="flex items-center">
             <Button variant="outline" size="sm" onClick={resetAll}>
