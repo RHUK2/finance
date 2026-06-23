@@ -54,6 +54,8 @@ export function BalanceSheet({
 }) {
   const assetTotal = totalOf(sheet.asset);
   const liabTotal = totalOf(sheet.liability);
+  const debts = sheet.liability.filter((l) => l.item !== "자본");
+  const capital = sheet.liability.filter((l) => l.item === "자본");
   const hasCreated = [...sheet.asset, ...sheet.liability].some(
     (l) => l.created,
   );
@@ -88,12 +90,26 @@ export function BalanceSheet({
             ))}
           </div>
           <div className="space-y-1.5">
-            <div className="text-xs font-medium text-rose-600 dark:text-rose-400">
-              부채·자본
-            </div>
-            {sheet.liability.map((l) => (
-              <AmountRow key={l.item} line={l} side="liability" />
-            ))}
+            {debts.length > 0 && (
+              <>
+                <div className="text-xs font-medium text-rose-600 dark:text-rose-400">
+                  부채
+                </div>
+                {debts.map((l) => (
+                  <AmountRow key={l.item} line={l} side="liability" />
+                ))}
+              </>
+            )}
+            {capital.length > 0 && (
+              <>
+                <div className="text-muted-foreground text-xs font-medium">
+                  자본(순자산)
+                </div>
+                {capital.map((l) => (
+                  <AmountRow key={l.item} line={l} side="liability" />
+                ))}
+              </>
+            )}
           </div>
         </div>
 
