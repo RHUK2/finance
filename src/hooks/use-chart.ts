@@ -41,6 +41,7 @@ export function useChart(
     const chart = createChart(container, {
       autoSize: true,
       height,
+      hoveredSeriesOnTop: false,
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#9ca3af",
