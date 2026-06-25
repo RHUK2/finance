@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import YahooFinance from "yahoo-finance2";
 
-export const revalidate = 300;
+import { cached } from "@/lib/cache";
+
+export const dynamic = "force-dynamic";
 
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
@@ -131,10 +133,15 @@ const SYMBOLS = [
 
 export async function GET() {
   try {
-    const results = await Promise.all(
-      SYMBOLS.map(async ({ symbol, ticker, label, type, gfUrl }) => {
+    const data = await cached("market", async () => {
+      const quotes = (await yf.quote(
+        SYMBOLS.map((s) => s.symbol),
+        { return: "object" },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const quote = (await yf.quote(symbol)) as any;
+      )) as Record<string, any>;
+
+      const results = SYMBOLS.map(({ symbol, ticker, label, type, gfUrl }) => {
+        const quote = quotes[symbol] ?? {};
         return {
           symbol,
           ticker,
@@ -146,13 +153,12 @@ export async function GET() {
           changePercent: quote.regularMarketChangePercent ?? null,
           currency: quote.currency ?? "USD",
         };
-      }),
-    );
+      });
 
-    return NextResponse.json({
-      fetchedAt: new Date().toISOString(),
-      items: results,
+      return { fetchedAt: new Date().toISOString(), items: results };
     });
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("market fetch error:", error);
     return NextResponse.json(

@@ -6,20 +6,20 @@
  * server prefetch의 `staleTime`을 모두 파생시켜 두 캐싱 레이어가 같은 윈도우로
  * 움직이게 한다.
  *
- * 라우트 핸들러의 `export const revalidate`는 Next 정적 분석 제약상 리터럴만
- * 허용되어 여기서 import해 쓸 수 없다. 각 `route.ts`의 리터럴이 이 표를 미러링하며,
- * 값을 바꿀 땐 양쪽을 함께 수정한다.
+ * 서버 측 신선도는 라우트 핸들러가 `cached()`(src/lib/cache.ts)에서 이 표를
+ * 직접 import해 Upstash 공유 캐시의 TTL로 쓴다. 더 이상 `route.ts`에
+ * `export const revalidate` 리터럴을 미러링하지 않는다.
  */
 export const ENDPOINTS = {
   market: 300,
-  "mempool-stats": 60,
-  "mining-stats": 600,
+  "mempool-stats": 300,
+  "mining-stats": 300,
   "mining-pools": 86400,
-  "recent-blocks": 60,
+  "recent-blocks": 300,
   "hashrate-history": 86400,
-  "mempool-blocks": 60,
-  economy: 3600,
-  commodities: 3600,
+  "mempool-blocks": 300,
+  economy: 86400,
+  commodities: 86400,
   fred: 86400,
   "fear-greed": 86400,
   mvrv: 86400,

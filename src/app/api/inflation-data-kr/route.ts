@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
-// cache-config.ts ENDPOINTS["inflation-data-kr"]와 동기화.
-export const revalidate = 86400;
+import { cached } from "@/lib/cache";
+
+export const dynamic = "force-dynamic";
 
 const START = "199601"; // 예금금리 시계열 시작 시점에 맞춤
 const STAT = {
@@ -31,7 +32,7 @@ async function fetchSeries(
   item: string,
 ): Promise<Series> {
   const url = `https://ecos.bok.or.kr/api/StatisticSearch/${key}/json/kr/1/100000/${stat}/M/${START}/${endMonth()}/${item}`;
-  const res = await fetch(url, { next: { revalidate: 86400 } });
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`ECOS ${stat} error: ${res.status}`);
 
   const data = await res.json();
@@ -57,32 +58,33 @@ async function fetchSeries(
 }
 
 export async function GET() {
-  const key = process.env.ECOS_API_KEY;
-  if (!key) {
-    return NextResponse.json({
-      fetchedAt: new Date().toISOString(),
-      available: false,
-    });
-  }
-
   try {
-    const [cpi, m2, deposit, stock, house] = await Promise.all([
-      fetchSeries(key, STAT.cpi.stat, STAT.cpi.item),
-      fetchSeries(key, STAT.m2.stat, STAT.m2.item),
-      fetchSeries(key, STAT.deposit.stat, STAT.deposit.item),
-      fetchSeries(key, STAT.stock.stat, STAT.stock.item),
-      fetchSeries(key, STAT.house.stat, STAT.house.item),
-    ]);
+    const data = await cached("inflation-data-kr", async () => {
+      const key = process.env.ECOS_API_KEY;
+      if (!key) {
+        return { fetchedAt: new Date().toISOString(), available: false };
+      }
 
-    return NextResponse.json({
-      fetchedAt: new Date().toISOString(),
-      available: true,
-      cpi,
-      m2,
-      deposit,
-      stock,
-      house,
+      const [cpi, m2, deposit, stock, house] = await Promise.all([
+        fetchSeries(key, STAT.cpi.stat, STAT.cpi.item),
+        fetchSeries(key, STAT.m2.stat, STAT.m2.item),
+        fetchSeries(key, STAT.deposit.stat, STAT.deposit.item),
+        fetchSeries(key, STAT.stock.stat, STAT.stock.item),
+        fetchSeries(key, STAT.house.stat, STAT.house.item),
+      ]);
+
+      return {
+        fetchedAt: new Date().toISOString(),
+        available: true,
+        cpi,
+        m2,
+        deposit,
+        stock,
+        house,
+      };
     });
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("inflation-data-kr fetch error:", error);
     return NextResponse.json(

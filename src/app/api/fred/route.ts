@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 86400;
+import { cached } from "@/lib/cache";
+
+export const dynamic = "force-dynamic";
 
 type Series = {
   history: { time: string; value: number }[];
@@ -20,7 +22,7 @@ async function fetchSeries(seriesId: string, key: string): Promise<Series> {
   });
   const res = await fetch(
     `https://api.stlouisfed.org/fred/series/observations?${params}`,
-    { next: { revalidate: 86400 } },
+    { cache: "no-store" },
   );
   if (!res.ok) throw new Error(`FRED ${seriesId} error: ${res.status}`);
 
@@ -40,27 +42,31 @@ async function fetchSeries(seriesId: string, key: string): Promise<Series> {
 }
 
 export async function GET() {
-  const key = process.env.FRED_API_KEY;
-  if (!key) {
-    return NextResponse.json({ fetchedAt: new Date().toISOString(), available: false });
-  }
-
   try {
-    const [m2, fedFunds, us2y, cpi] = await Promise.all([
-      fetchSeries("M2SL", key),
-      fetchSeries("FEDFUNDS", key),
-      fetchSeries("DGS2", key),
-      fetchSeries("CPIAUCSL", key),
-    ]);
+    const data = await cached("fred", async () => {
+      const key = process.env.FRED_API_KEY;
+      if (!key) {
+        return { fetchedAt: new Date().toISOString(), available: false };
+      }
 
-    return NextResponse.json({
-      fetchedAt: new Date().toISOString(),
-      available: true,
-      m2,
-      fedFunds,
-      us2y,
-      cpi,
+      const [m2, fedFunds, us2y, cpi] = await Promise.all([
+        fetchSeries("M2SL", key),
+        fetchSeries("FEDFUNDS", key),
+        fetchSeries("DGS2", key),
+        fetchSeries("CPIAUCSL", key),
+      ]);
+
+      return {
+        fetchedAt: new Date().toISOString(),
+        available: true,
+        m2,
+        fedFunds,
+        us2y,
+        cpi,
+      };
     });
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("fred fetch error:", error);
     return NextResponse.json(
