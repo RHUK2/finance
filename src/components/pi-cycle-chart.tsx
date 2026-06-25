@@ -137,8 +137,9 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          111일 MA가 350일 MA×2를 상향 돌파하면 사이클 천장 신호. 과거 비트코인
-          고점과 높은 일치율을 보여 단기 매도 타이밍 파악에 활용됩니다.
+          111일 이동평균과 350일 이동평균×2의 교차로 읽습니다 — 111일선이 350일선×2를
+          위로 돌파하는 순간이 사이클 천장 신호로, 과거 고점과 며칠 안쪽으로
+          맞아떨어져 단기 고점 경계 신호로 활용됩니다.
         </p>
       </CardContent>
     </Card>

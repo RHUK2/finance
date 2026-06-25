@@ -93,8 +93,10 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 지표. 7 이상은
-          사이클 천장 과열, 0 미만은 역사적 바닥 매수 구간을 의미합니다.
+          시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 이렇게
+          읽습니다 — 7 이상이면 평균 대비 극단적 고평가(사이클 천장 경계), 0
+          미만이면 실현가치보다 싸게 거래되는 역사적 바닥권(장기 매집 구간)으로
+          해석합니다.
         </p>
       </CardContent>
     </Card>

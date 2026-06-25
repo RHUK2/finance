@@ -99,8 +99,10 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          시장 참여자의 심리를 0~100으로 수치화한 지표. 극도의 공포 구간은
-          역발상 매수 기회로, 극도의 탐욕 구간은 조정 가능성 신호로 활용됩니다.
+          시장 심리를 0~100으로 수치화한 지표. 숫자보다 &lsquo;극단&rsquo;을
+          역발상 신호로 읽는 것이 핵심 — 0~25(극도의 공포)는 과매도로 분할 매수
+          기회, 75~100(극도의 탐욕)은 과열로 차익실현·리스크 관리 신호로
+          해석합니다.
         </p>
       </CardContent>
     </Card>

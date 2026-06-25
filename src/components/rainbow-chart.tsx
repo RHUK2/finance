@@ -107,9 +107,10 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          Power Law 모델 기반의 9단계 밸류에이션 밴드. 현재 가격이 어느 색
-          구간에 위치하는지로 장기 사이클 대비 고평가·저평가 여부를 직관적으로
-          확인합니다.
+          Power Law 회귀 기반의 9단계 밸류에이션 밴드. 가격 자체가 아니라 &lsquo;지금
+          어느 색 밴드에 있는지&rsquo;로 읽습니다 — 한색(파랑) 구간은 저평가 매집권,
+          난색(빨강) 구간은 고평가 과열권으로 장기 사이클 위치를 직관적으로
+          가늠합니다.
         </p>
       </CardContent>
     </Card>

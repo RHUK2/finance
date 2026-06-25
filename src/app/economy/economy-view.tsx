@@ -104,7 +104,7 @@ export function EconomyView() {
             }
             updatedLabel={ecoRelTime ?? undefined}
             resetRef={usdkrwReset}
-            description="달러 대비 원화 환율. 원화 약세는 수입 물가 상승과 외국인 자금 유출 압력을 높이며, 달러 강세(DXY 상승) 시 동조하는 경향이 있습니다."
+            description="달러 대비 원화 환율. 상승(원화 약세)하면 수입 물가가 오르고 외국인 자금 유출 압력이 커지며, 하락(원화 강세)하면 수입 물가 안정·외국인 자금 유입 신호로 읽힙니다. 달러 강세(DXY) 국면에 동조해 오르는 경향이 있습니다."
           />
 
           <MacroChart
@@ -116,7 +116,7 @@ export function EconomyView() {
             }
             updatedLabel={ecoRelTime ?? undefined}
             resetRef={dxyReset}
-            description="달러의 주요 6개 통화 대비 강세를 나타내는 지수. 달러 강세는 신흥국 자산과 원자재에 부담을 주며, 비트코인 등 위험자산과 역의 상관관계를 보이는 경향이 있습니다."
+            description="달러의 주요 6개 통화 대비 강세를 나타내는 지수. 상승하면 신흥국 자산·원자재·비트코인 등 위험자산에서 자금 유출 압력이 커지고, 하락하면 위험자산·원자재로 유동성이 유입되는 경향이 있습니다."
           />
 
           <MacroChart
@@ -134,7 +134,7 @@ export function EconomyView() {
             }
             updatedLabel={ecoRelTime ?? undefined}
             resetRef={kospiReset}
-            description="한국 증권시장의 대표 지수. 반도체·자동차 등 수출 중심 대형주 비중이 높아 글로벌 경기와 원화 흐름에 민감합니다."
+            description="한국 증시 대표 지수. 수출 대형주(반도체·자동차) 비중이 높아 상승은 글로벌 경기 호조·위험선호를, 하락은 경기 둔화나 원화 약세 우려를 반영하는 경향이 있습니다."
           />
 
           <MacroChart
@@ -152,7 +152,7 @@ export function EconomyView() {
             }
             updatedLabel={ecoRelTime ?? undefined}
             resetRef={nasdaqReset}
-            description="미국 기술주 중심의 나스닥 종합지수. 빅테크·성장주 흐름을 반영하며 위험선호도와 유동성 상황에 민감하게 반응합니다."
+            description="미국 기술주 중심의 나스닥 종합지수. 상승은 위험선호 확대와 풍부한 유동성(완화 기대)을, 하락은 긴축·경기 우려에 따른 위험회피를 반영하는 경향이 있습니다."
           />
 
           <MacroChart
@@ -164,7 +164,7 @@ export function EconomyView() {
             }
             updatedLabel={ecoRelTime ?? undefined}
             resetRef={vixReset}
-            description="S&P 500 옵션 시장이 예상하는 30일 변동성. '공포지수'라고도 불리며, 20 이상이면 시장 불안, 30 이상이면 극도의 공포 상태를 나타냅니다."
+            description="S&P 500 옵션 시장이 예상하는 30일 변동성, '공포지수'. 상승할수록 시장 불안이 커지며(20 이상 불안, 30 이상 극도의 공포), 낮게 유지되면 시장이 안정·낙관 국면임을 뜻합니다."
           />
 
           <FredGate available={fredAvailable} title="연준 기준금리">
@@ -183,7 +183,7 @@ export function EconomyView() {
               }
               updatedLabel={fredRelTime ?? undefined}
               resetRef={fedFundsReset}
-              description="연방준비제도가 설정하는 단기 금리 목표. 금리 인상은 긴축 국면으로 위험자산에 불리하고, 인하는 완화 신호로 유동성 공급 기대를 높입니다."
+              description="연방준비제도가 설정하는 단기 금리 목표. 인상은 긴축 국면으로 유동성을 죄어 위험자산에 불리하고, 인하는 완화 신호로 유동성 공급 기대를 높여 위험자산에 우호적입니다."
             />
           </FredGate>
 
@@ -219,7 +219,7 @@ export function EconomyView() {
             }
             updatedLabel={ecoRelTime ?? undefined}
             resetRef={us10yReset}
-            description="미국 장기 국채의 수익률. 금리 상승은 무위험 수익률 상승을 의미해 위험자산 매력을 낮추고, 하락 반전은 경기 침체 우려 또는 완화 신호로 해석됩니다."
+            description="미국 장기 국채의 수익률. 상승하면 무위험 수익률이 올라 주식·비트코인 등 위험자산의 상대 매력이 낮아지고, 하락은 경기 침체 우려 또는 완화 기대 신호로 해석됩니다."
           />
 
           <FredGate
@@ -241,7 +241,7 @@ export function EconomyView() {
               }
               updatedLabel={fredRelTime ?? undefined}
               resetRef={yieldSpreadReset}
-              description="미국 10년물과 2년물 국채 금리의 차이. 스프레드가 0 아래로 역전되면 역사적으로 경기침체의 선행지표로 해석됩니다. 2022년 이후 역전이 지속되다 최근 정상화 중입니다."
+              description="미국 10년물−2년물 국채 금리의 차이. 0 아래로 역전(하락)되면 역사적으로 경기침체 선행 신호로, 다시 0 위로 상승(정상화)하면 침체 임박 또는 완화 사이클 진입 신호로 읽힙니다."
             />
           </FredGate>
         </div>

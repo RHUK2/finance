@@ -80,8 +80,9 @@ export function MempoolView() {
                 </div>
               )}
               <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                아직 블록에 포함되지 않고 대기 중인 트랜잭션 현황. 미확인 거래가
-                많을수록 네트워크가 혼잡하며 수수료가 높아집니다.
+                대기 중인 미확인 트랜잭션 현황은 네트워크 혼잡도 지표로
+                활용됩니다. 미확인 거래·멤풀 크기가 클수록 처리 대기가 길고
+                수수료가 오릅니다.
               </p>
             </CardContent>
           </Card>
@@ -123,8 +124,9 @@ export function MempoolView() {
                 </div>
               )}
               <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                원하는 시간 내에 트랜잭션을 처리하기 위해 필요한 네트워크
-                수수료. 네트워크 혼잡도에 따라 실시간으로 변동합니다.
+                구간별 권장 수수료는 네트워크 혼잡도·처리 우선순위 지표로
+                활용됩니다. 혼잡할수록 같은 시간 내 처리에 필요한 sat/vB가
+                올라갑니다.
               </p>
             </CardContent>
           </Card>
@@ -134,7 +136,7 @@ export function MempoolView() {
             blocks={mempoolBlocks?.blocks}
             title="멤풀 블록 (예상)"
             relativeTime={mempoolBlocksRelTime ?? undefined}
-            description="현재 멤풀에 대기 중인 트랜잭션들이 향후 몇 개의 블록에 나뉘어 처리될지 예상한 시각화. 왼쪽 블록일수록 먼저 채굴됩니다."
+            description="대기 트랜잭션이 향후 몇 개 블록으로 처리될지 예측한 시각화로, 단기 처리 적체·수수료 압력 지표로 활용됩니다. 왼쪽 블록일수록 먼저 채굴됩니다."
           />
           {/* 최근 블록 */}
 
@@ -142,7 +144,7 @@ export function MempoolView() {
             blocks={recentBlocks?.blocks}
             title="최근 블록"
             relativeTime={recentBlocksRelTime ?? undefined}
-            description="가장 최근에 채굴 완료된 블록 목록. 채굴풀·처리 시간·수수료 등 블록 상세 정보를 통해 네트워크 처리 흐름을 확인할 수 있습니다."
+            description="최근 채굴된 블록 목록은 블록 생성 간격·수수료 추이·채굴풀 분포를 보는 네트워크 처리 흐름 지표로 활용됩니다."
           />
           {/* 채굴 */}
 
@@ -219,9 +221,9 @@ export function MempoolView() {
                 </div>
               )}
               <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
-                네트워크 연산 능력(해시레이트)과 2016블록마다 자동 조정되는 채굴
-                난이도 현황. 해시레이트가 높을수록 네트워크 보안이 강하고 채굴
-                경쟁이 치열합니다.
+                해시레이트와 2016블록마다 조정되는 난이도는 네트워크 보안 강도와
+                채굴 경쟁 강도 지표로 활용됩니다. 해시레이트가 높을수록 공격
+                비용이 커져 보안이 강합니다.
               </p>
             </CardContent>
           </Card>
@@ -253,9 +255,9 @@ export function MempoolView() {
                 </>
               )}
               <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-                네트워크 전체 연산 능력의 1년 변화 추이. 해시레이트 상승은
-                채굴자 신뢰 증가와 네트워크 보안 강화를 의미하며, 급격한 하락은
-                대규모 채굴자 이탈 신호일 수 있습니다.
+                해시레이트 1년 추이는 채굴자 신뢰와 네트워크 보안 추세 지표로
+                활용됩니다. 꾸준한 상승은 보안 강화를, 급격한 하락은 대규모
+                채굴자 이탈 신호로 읽힙니다.
               </p>
             </CardContent>
           </Card>
@@ -265,7 +267,7 @@ export function MempoolView() {
             pools={pools?.pools}
             title="채굴풀 점유율 (1주)"
             relativeTime={poolsRelTime ?? undefined}
-            description="지난 1주 동안 각 채굴풀이 채굴한 블록 수와 비율. 특정 풀의 점유율이 50%를 초과하면 51% 공격 위험성이 높아지므로 분산화 지표로 활용됩니다."
+            description="채굴풀별 블록 점유율은 네트워크 탈중앙화(분산화) 지표로 활용됩니다. 특정 풀이 50%를 초과하면 51% 공격 위험이 커집니다."
           />
           {/* 반감기 */}
 
@@ -322,9 +324,9 @@ export function MempoolView() {
                 </div>
               )}
               <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
-                약 4년마다 블록 보상이 절반으로 줄어드는 이벤트. 신규 공급량이
-                감소하면서 희소성이 높아지고, 역사적으로 반감기 이후 강세장이
-                나타나는 경향이 있습니다.
+                반감기까지의 진행도는 신규 공급 감소 속도와 희소성 지표로
+                활용됩니다. 약 4년마다 보상이 절반으로 줄어 발행량이 감소하고,
+                역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
               </p>
             </CardContent>
           </Card>

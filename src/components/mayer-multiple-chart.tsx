@@ -102,8 +102,9 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          현재 가격을 200일 이동평균으로 나눈 비율. 2.4 이상이면 단기 과열, 1
-          미만이면 저평가로 간주하여 사이클 내 진입·청산 타이밍을 파악합니다.
+          현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다 — 1 미만이면 장기
+          추세 아래의 저평가, 2.4 이상이면 추세를 크게 벗어난 단기 과열로 보고
+          사이클 내 진입·청산 타이밍을 가늠합니다.
         </p>
       </CardContent>
     </Card>

@@ -48,7 +48,7 @@ export function CommoditiesView() {
             }
             updatedLabel={relTime ?? undefined}
             resetRef={goldReset}
-            description="금 현물 선물(COMEX). 대표적인 안전자산으로 달러 약세·인플레이션·지정학적 불안 시 강세를 보이는 경향이 있습니다."
+            description="금 선물(COMEX), 대표적 안전자산. 상승은 달러 약세·인플레이션·지정학 불안 또는 실질금리 하락을, 하락은 위험선호 회복이나 실질금리 상승을 반영하는 경향이 있습니다."
           />
           <MacroChart
             title="원유"
@@ -72,7 +72,7 @@ export function CommoditiesView() {
             }
             updatedLabel={relTime ?? undefined}
             resetRef={oilReset}
-            description="WTI(미국 기준 원유)와 브렌트(국제 기준 원유) 선물 가격. 에너지 비용 및 인플레이션에 직접적인 영향을 미칩니다."
+            description="WTI(미국 기준)·브렌트(국제 기준) 원유 선물 가격. 상승은 수요 강세(경기 호조)나 공급 차질로 인플레 압력을 키우고, 하락은 수요 둔화(경기 위축)나 공급 과잉을 시사하는 경향이 있습니다."
           />
           <MacroChart
             title="옥수수 (Corn)"
@@ -87,7 +87,7 @@ export function CommoditiesView() {
             }
             updatedLabel={relTime ?? undefined}
             resetRef={cornReset}
-            description="옥수수 선물(CBOT). 식품 및 에너지(바이오에탄올) 생산의 핵심 원자재로 기상·수급에 민감하게 반응합니다."
+            description="옥수수 선물(CBOT), 식품·바이오에탄올의 핵심 원자재. 상승은 기상 악화·작황 부진이나 에너지 가격 상승에 따른 식량 인플레 압력을, 하락은 공급 안정을 시사하는 경향이 있습니다."
           />
         </div>
       </PageMain>
