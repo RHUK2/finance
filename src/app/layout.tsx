@@ -48,7 +48,7 @@ export default function RootLayout({
           <QueryProvider>
             <SidebarProvider>
               <AppSidebar />
-              <SidebarInset className="min-w-0 bg-sidebar dark:bg-background">
+              <SidebarInset className="bg-sidebar dark:bg-background min-w-0">
                 {children}
               </SidebarInset>
             </SidebarProvider>

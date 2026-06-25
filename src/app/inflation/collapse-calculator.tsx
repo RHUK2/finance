@@ -29,10 +29,15 @@ type Basis = "M2" | "CPI";
 type Mode = "lump" | "recurring";
 type Tone = "strong" | "bad" | "good" | "amber";
 
-const BASIS_LABELS: Record<Basis, { ref: string; real: string; hold: string }> = {
-  M2: { ref: "통화량(M2)", real: "통화 대비 실질가치", hold: "통화량 가치 유지선" },
-  CPI: { ref: "물가(CPI)", real: "실질 구매력", hold: "구매력 유지선" },
-};
+const BASIS_LABELS: Record<Basis, { ref: string; real: string; hold: string }> =
+  {
+    M2: {
+      ref: "통화량(M2)",
+      real: "통화 대비 실질가치",
+      hold: "통화량 가치 유지선",
+    },
+    CPI: { ref: "물가(CPI)", real: "실질 구매력", hold: "구매력 유지선" },
+  };
 
 type Props = {
   data: InflationData;
@@ -88,14 +93,22 @@ export function CollapseCalculator({
 
     if (mode === "lump") {
       baseAmount = amount;
-      depositNominal = compoundDeposit(amount, data.deposit?.history, startYear);
+      depositNominal = compoundDeposit(
+        amount,
+        data.deposit?.history,
+        startYear,
+      );
       const rStart = valueAt(refHist, startYear);
       const rNow = latestValue(refHist);
       ratio = rStart && rNow ? rNow / rStart : null;
       assets = assetDefs.map((a) => ({
         key: a.key,
         label: a.label,
-        value: grow(amount, valueAt(a.series, startYear), latestValue(a.series)),
+        value: grow(
+          amount,
+          valueAt(a.series, startYear),
+          latestValue(a.series),
+        ),
       }));
     } else {
       const rec = recurringDepositFV(amount, data.deposit?.history, startYear);
@@ -103,7 +116,11 @@ export function CollapseCalculator({
         baseAmount = amount;
         depositNominal = null;
         ratio = null;
-        assets = assetDefs.map((a) => ({ key: a.key, label: a.label, value: null }));
+        assets = assetDefs.map((a) => ({
+          key: a.key,
+          label: a.label,
+          value: null,
+        }));
       } else {
         baseAmount = amount * rec.months.length;
         depositNominal = rec.fv;
@@ -117,16 +134,32 @@ export function CollapseCalculator({
       }
     }
 
-    const realValue = depositNominal != null && ratio ? depositNominal / ratio : null;
+    const realValue =
+      depositNominal != null && ratio ? depositNominal / ratio : null;
     const lossPct =
-      realValue != null && baseAmount ? (realValue / baseAmount - 1) * 100 : null;
+      realValue != null && baseAmount
+        ? (realValue / baseAmount - 1) * 100
+        : null;
     const holdLine = ratio != null ? baseAmount * ratio : null;
     const headline = assets.find((a) => a.value != null);
 
-    return { baseAmount, depositNominal, realValue, lossPct, holdLine, ratio, assets, headline };
+    return {
+      baseAmount,
+      depositNominal,
+      realValue,
+      lossPct,
+      holdLine,
+      ratio,
+      assets,
+      headline,
+    };
   }, [data, btc, startYear, amount, basis, mode, stockLabel]);
 
-  const { ref: refName, real: realLabel, hold: holdLabel } = BASIS_LABELS[basis];
+  const {
+    ref: refName,
+    real: realLabel,
+    hold: holdLabel,
+  } = BASIS_LABELS[basis];
   const productName = mode === "lump" ? "예금" : "적금";
 
   const realTone: Tone = r.lossPct != null && r.lossPct < 0 ? "bad" : "good";
@@ -145,7 +178,10 @@ export function CollapseCalculator({
   );
 
   const ready =
-    r.depositNominal != null && r.realValue != null && r.ratio != null && r.lossPct != null;
+    r.depositNominal != null &&
+    r.realValue != null &&
+    r.ratio != null &&
+    r.lossPct != null;
   const head = r.headline;
 
   return (
@@ -154,8 +190,8 @@ export function CollapseCalculator({
         <CardTitle className="text-base">구매력 붕괴 계산기</CardTitle>
         <p className="text-muted-foreground text-sm">
           과거에 저축한 돈을 예금·적금에 두었다면 오늘 그 가치가 어떻게
-          변했을까요? 기준을 통화량(M2)·물가(CPI)로 바꿔, 같은 돈을 자산에 넣었을
-          경우와 비교합니다.
+          변했을까요? 기준을 통화량(M2)·물가(CPI)로 바꿔, 같은 돈을 자산에
+          넣었을 경우와 비교합니다.
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -214,8 +250,9 @@ export function CollapseCalculator({
             <>
               {mode === "lump" ? (
                 <>
-                  {startYear}년에 {hi(money(amount), "strong")}을 예금에 넣었다면
-                  오늘 통장엔 {hi(money(r.depositNominal!), "strong")}이 찍힙니다.
+                  {startYear}년에 {hi(money(amount), "strong")}을 예금에
+                  넣었다면 오늘 통장엔 {hi(money(r.depositNominal!), "strong")}
+                  이 찍힙니다.
                 </>
               ) : (
                 <>
@@ -224,16 +261,19 @@ export function CollapseCalculator({
                   {hi(money(r.depositNominal!), "strong")}입니다.
                 </>
               )}{" "}
-              하지만 같은 기간 {refName}은 {hi(`${r.ratio!.toFixed(1)}배`, "amber")}{" "}
-              늘어{mode === "recurring" ? "(가중평균)" : ""}, 그 돈의 {realLabel}는{" "}
+              하지만 같은 기간 {refName}은{" "}
+              {hi(`${r.ratio!.toFixed(1)}배`, "amber")} 늘어
+              {mode === "recurring" ? "(가중평균)" : ""}, 그 돈의 {realLabel}는{" "}
               {hi(money(r.realValue!), realTone)} 수준 —{" "}
               {mode === "lump" ? "시작 시점" : "총 납입"} 대비{" "}
               {hi(`${Math.abs(r.lossPct!).toFixed(0)}%`, realTone)}{" "}
               {r.lossPct! < 0 ? "줄었습니다" : "늘었습니다"}.
               {head && head.value != null ? (
                 <>
-                  {" "}같은 돈을 {mode === "recurring" ? "매달 " : ""}
-                  {head.label}에 {mode === "recurring" ? "적립했다면" : "넣었다면"}{" "}
+                  {" "}
+                  같은 돈을 {mode === "recurring" ? "매달 " : ""}
+                  {head.label}에{" "}
+                  {mode === "recurring" ? "적립했다면" : "넣었다면"}{" "}
                   {hi(
                     `${money(head.value)} (×${(head.value / r.baseAmount).toFixed(1)})`,
                     "good",
@@ -249,10 +289,16 @@ export function CollapseCalculator({
 
         <div className="grid gap-3 sm:grid-cols-3">
           <StatCard
-            label={mode === "lump" ? "예금에 넣었다면 (명목)" : "적금 만기 (명목)"}
+            label={
+              mode === "lump" ? "예금에 넣었다면 (명목)" : "적금 만기 (명목)"
+            }
             value={r.depositNominal ?? r.baseAmount}
             format={money}
-            sub={mode === "recurring" ? `총 납입 ${money(r.baseAmount)}` : undefined}
+            sub={
+              mode === "recurring"
+                ? `총 납입 ${money(r.baseAmount)}`
+                : undefined
+            }
           />
           <StatCard
             label={`${productName}의 ${realLabel}`}

@@ -23,7 +23,15 @@ type Props = {
   description?: string;
 };
 
-export function MacroChart({ title, currentLabel, changePercent, lines, updatedLabel, resetRef, description }: Props) {
+export function MacroChart({
+  title,
+  currentLabel,
+  changePercent,
+  lines,
+  updatedLabel,
+  resetRef,
+  description,
+}: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       if (!lines) return;
@@ -50,8 +58,14 @@ export function MacroChart({ title, currentLabel, changePercent, lines, updatedL
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
-          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            {title}
+          </CardTitle>
+          {updatedLabel && (
+            <span className="text-muted-foreground text-xs">
+              {updatedLabel}
+            </span>
+          )}
         </div>
         {!lines ? (
           <Skeleton className="h-8 w-32" />
@@ -59,7 +73,9 @@ export function MacroChart({ title, currentLabel, changePercent, lines, updatedL
           <div className="flex items-end gap-2">
             <span className="text-2xl font-bold">{currentLabel}</span>
             {changePercent != null && (
-              <span className={`mb-1 text-sm font-semibold ${changePercent >= 0 ? "text-green-400" : "text-red-400"}`}>
+              <span
+                className={`mb-1 text-sm font-semibold ${changePercent >= 0 ? "text-green-400" : "text-red-400"}`}
+              >
                 {changePercent >= 0 ? "▲" : "▼"} {Math.abs(changePercent)}%
               </span>
             )}
@@ -73,7 +89,9 @@ export function MacroChart({ title, currentLabel, changePercent, lines, updatedL
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         {description ? (
-          <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">{description}</p>
+          <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
+            {description}
+          </p>
         ) : (
           <div className="h-4" />
         )}

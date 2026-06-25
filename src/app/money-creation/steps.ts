@@ -30,14 +30,7 @@ export const ENTITIES: { id: EntityId; name: string; sub: string }[] = [
 ];
 
 // 대차대조표 행의 표시 순서(처음 등장 순)
-const ITEM_ORDER = [
-  "국채",
-  "지급준비금",
-  "대출",
-  "정부예금",
-  "예금",
-  "자본",
-];
+const ITEM_ORDER = ["국채", "지급준비금", "대출", "정부예금", "예금", "자본"];
 
 const round = (n: number) => Math.round(n);
 
@@ -80,7 +73,13 @@ export function buildSteps(r: number): Step[] {
         "연준이 은행에서 국채를 사들인다. 그 대금으로 연준은 지급준비금을 키보드로 적어넣어 무에서 창조한다 — 자산(국채)과 부채(지준)가 동시에 생겨난다. 이것이 본원통화(M0)의 탄생이다.",
       ops: [
         { entity: "fed", side: "asset", item: "국채", delta: B, created: true },
-        { entity: "fed", side: "liability", item: "지급준비금", delta: B, created: true },
+        {
+          entity: "fed",
+          side: "liability",
+          item: "지급준비금",
+          delta: B,
+          created: true,
+        },
         { entity: "bank", side: "asset", item: "국채", delta: -B },
         { entity: "bank", side: "asset", item: "지급준비금", delta: B },
       ],
@@ -104,8 +103,20 @@ export function buildSteps(r: number): Step[] {
       title: "은행, 대출 실행 (신용창조)",
       narration: `은행이 국민에게 ${L1}을 대출한다. 이때 은행은 보유한 돈을 빌려주는 게 아니라 예금을 새로 창조한다 — 대출(자산)과 예금(부채)이 동시에 생긴다. 지급준비금은 사후에 조달할 뿐이다. (지급준비율 ${pct}% 가정)`,
       ops: [
-        { entity: "bank", side: "asset", item: "대출", delta: L1, created: true },
-        { entity: "bank", side: "liability", item: "예금", delta: L1, created: true },
+        {
+          entity: "bank",
+          side: "asset",
+          item: "대출",
+          delta: L1,
+          created: true,
+        },
+        {
+          entity: "bank",
+          side: "liability",
+          item: "예금",
+          delta: L1,
+          created: true,
+        },
         { entity: "public", side: "asset", item: "예금", delta: L1 },
         { entity: "public", side: "liability", item: "대출", delta: L1 },
       ],
@@ -116,9 +127,19 @@ export function buildSteps(r: number): Step[] {
       narration: `대출금이 다시 예치되고 또 대출되는 과정이 반복된다. 지급준비율 ${pct}%에서 통화량은 본원통화의 ${mult}배까지 확장된다. 아래 슬라이더로 지급준비율을 바꿔 승수가 어떻게 달라지는지 확인해 보라.`,
       ops: [
         { entity: "bank", side: "asset", item: "대출", delta: loanTotal - L1 },
-        { entity: "bank", side: "liability", item: "예금", delta: Mmax - B - L1 },
+        {
+          entity: "bank",
+          side: "liability",
+          item: "예금",
+          delta: Mmax - B - L1,
+        },
         { entity: "public", side: "asset", item: "예금", delta: Mmax - B - L1 },
-        { entity: "public", side: "liability", item: "대출", delta: loanTotal - L1 },
+        {
+          entity: "public",
+          side: "liability",
+          item: "대출",
+          delta: loanTotal - L1,
+        },
       ],
     },
   ];
@@ -137,7 +158,10 @@ function emptySheets(): Record<EntityId, Sheet> {
 }
 
 /** 0~stepIndex 단계를 누적해 각 주체의 대차대조표를 만든다. */
-export function sheetsAt(steps: Step[], stepIndex: number): Record<EntityId, Sheet> {
+export function sheetsAt(
+  steps: Step[],
+  stepIndex: number,
+): Record<EntityId, Sheet> {
   const amounts = new Map<string, number>();
   for (let i = 0; i <= stepIndex; i++) {
     for (const op of steps[i].ops) {

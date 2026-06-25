@@ -31,20 +31,31 @@ export function MoneyCreationView() {
       <PageMain>
         <div className="mx-auto flex max-w-5xl flex-col gap-4">
           <div>
-            <h1 className="text-xl font-semibold">돈은 어떻게 무에서 창조되는가</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              정부 · 연준 · 시중은행 · 국민의 대차대조표를 따라가며, 국채 발행부터 신용창조까지
-              돈이 만들어지는 과정을 한 단계씩 살펴본다. (단위는 개념용 예시)
+            <h1 className="text-xl font-semibold">
+              돈은 어떻게 무에서 창조되는가
+            </h1>
+            <p className="text-muted-foreground mt-1 text-sm">
+              정부 · 연준 · 시중은행 · 국민의 대차대조표를 따라가며, 국채
+              발행부터 신용창조까지 돈이 만들어지는 과정을 한 단계씩 살펴본다.
+              (단위는 개념용 예시)
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <MoneyCounter label="본원통화 (M0)" value={metrics.m0} accent />
             <MoneyCounter label="광의통화 (M2)" value={metrics.m2} accent />
-            <MoneyCounter label="통화승수" value={metrics.multiplier} suffix="배" />
+            <MoneyCounter
+              label="통화승수"
+              value={metrics.multiplier}
+              suffix="배"
+            />
           </div>
 
-          <NarrationCard index={step} title={current.title} narration={current.narration} />
+          <NarrationCard
+            index={step}
+            title={current.title}
+            narration={current.narration}
+          />
 
           {isMultiplierStep && (
             <div className="flex flex-col gap-1.5 rounded-lg border p-4">
@@ -62,15 +73,21 @@ export function MoneyCreationView() {
                 onValueChange={([v]) => setReserveRatio(v / 100)}
                 className="w-full"
               />
-              <p className="text-xs text-muted-foreground">
-                지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량 = 본원통화 ÷ 지급준비율).
+              <p className="text-muted-foreground text-xs">
+                지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량 = 본원통화
+                ÷ 지급준비율).
               </p>
             </div>
           )}
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {ENTITIES.map((e) => (
-              <BalanceSheet key={e.id} name={e.name} sub={e.sub} sheet={sheets[e.id]} />
+              <BalanceSheet
+                key={e.id}
+                name={e.name}
+                sub={e.sub}
+                sheet={sheets[e.id]}
+              />
             ))}
           </div>
 

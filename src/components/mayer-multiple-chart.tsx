@@ -72,16 +72,25 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">Mayer Multiple</CardTitle>
-          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            Mayer Multiple
+          </CardTitle>
+          {updatedLabel && (
+            <span className="text-muted-foreground text-xs">
+              {updatedLabel}
+            </span>
+          )}
         </div>
         {!data ? (
           <Skeleton className="h-9 w-20" />
         ) : (
-          current != null && status && (
+          current != null &&
+          status && (
             <div className="flex items-end gap-2">
               <span className="text-3xl font-bold">{current.toFixed(2)}</span>
-              <Badge variant={status.variant} className="mb-1">{status.label}</Badge>
+              <Badge variant={status.variant} className="mb-1">
+                {status.label}
+              </Badge>
             </div>
           )
         )}
@@ -93,7 +102,8 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          현재 가격을 200일 이동평균으로 나눈 비율. 2.4 이상이면 단기 과열, 1 미만이면 저평가로 간주하여 사이클 내 진입·청산 타이밍을 파악합니다.
+          현재 가격을 200일 이동평균으로 나눈 비율. 2.4 이상이면 단기 과열, 1
+          미만이면 저평가로 간주하여 사이클 내 진입·청산 타이밍을 파악합니다.
         </p>
       </CardContent>
     </Card>

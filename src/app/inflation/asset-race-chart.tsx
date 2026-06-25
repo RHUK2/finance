@@ -45,9 +45,11 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
     // 위험자산 데이터가 없는 시장(예: 한국)에서는 통화팽창·물가를 기준선으로.
     if (!hasAsset) {
       const m2 = normalizeToBase(data.m2?.history, baseYear);
-      if (m2.length) out.push({ label: "통화량(M2)", color: "#ef4444", data: m2 });
+      if (m2.length)
+        out.push({ label: "통화량(M2)", color: "#ef4444", data: m2 });
       const cpi = normalizeToBase(data.cpi?.history, baseYear);
-      if (cpi.length) out.push({ label: "물가(CPI)", color: "#22c55e", data: cpi });
+      if (cpi.length)
+        out.push({ label: "물가(CPI)", color: "#22c55e", data: cpi });
     }
     return out;
   }, [data, btc, baseYear, stockLabel]);

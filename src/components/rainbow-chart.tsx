@@ -78,14 +78,23 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">레인보우 차트</CardTitle>
-          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            레인보우 차트
+          </CardTitle>
+          {updatedLabel && (
+            <span className="text-muted-foreground text-xs">
+              {updatedLabel}
+            </span>
+          )}
         </div>
         {!data ? (
           <Skeleton className="h-5 w-24" />
         ) : (
           currentBand && (
-            <span className="text-sm font-semibold" style={{ color: currentBand.color }}>
+            <span
+              className="text-sm font-semibold"
+              style={{ color: currentBand.color }}
+            >
               {currentBand.label}
             </span>
           )
@@ -98,7 +107,9 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          Power Law 모델 기반의 9단계 밸류에이션 밴드. 현재 가격이 어느 색 구간에 위치하는지로 장기 사이클 대비 고평가·저평가 여부를 직관적으로 확인합니다.
+          Power Law 모델 기반의 9단계 밸류에이션 밴드. 현재 가격이 어느 색
+          구간에 위치하는지로 장기 사이클 대비 고평가·저평가 여부를 직관적으로
+          확인합니다.
         </p>
       </CardContent>
     </Card>

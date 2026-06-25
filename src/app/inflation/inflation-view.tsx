@@ -129,10 +129,10 @@ export function InflationView() {
 
           <p className="text-muted-foreground border-t pt-4 text-xs leading-relaxed">
             CPI는 통계청/BLS 정의에 따른 측정치이며, 통화 팽창·자산가격은 별개
-            지표입니다. 본 페이지는 특정 측정의 오류를 단정하지 않고, 예금 금리와
-            통화·자산 지표 간의 격차를 보여줍니다. M2는 2021년 정의가 변경되었고,
-            예금 금리는 단기 안전금리(미국: 3개월 국채) 근사이며, 자산 수익률은
-            배당·세금·거래비용을 제외한 가격 기준입니다.
+            지표입니다. 본 페이지는 특정 측정의 오류를 단정하지 않고, 예금
+            금리와 통화·자산 지표 간의 격차를 보여줍니다. M2는 2021년 정의가
+            변경되었고, 예금 금리는 단기 안전금리(미국: 3개월 국채) 근사이며,
+            자산 수익률은 배당·세금·거래비용을 제외한 가격 기준입니다.
           </p>
         </div>
       </PageMain>
@@ -173,7 +173,11 @@ function Devices({
         wageTable={cfg.wageTable}
         stockLabel={cfg.stockLabel}
       />
-      <CpiM2GapChart key={`gap-${country}`} data={data} baseYear={cfg.gapBaseYear} />
+      <CpiM2GapChart
+        key={`gap-${country}`}
+        data={data}
+        baseYear={cfg.gapBaseYear}
+      />
       <AssetRaceChart
         key={`race-${country}`}
         data={data}

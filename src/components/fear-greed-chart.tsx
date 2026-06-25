@@ -59,21 +59,36 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
     if (resetRef) resetRef.current = resetView;
   }, [resetRef, resetView]);
 
-  const info = data ? (CLASSIFICATIONS[data.classification] ?? { label: data.classification, color: "text-foreground" }) : null;
+  const info = data
+    ? (CLASSIFICATIONS[data.classification] ?? {
+        label: data.classification,
+        color: "text-foreground",
+      })
+    : null;
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">공포 & 탐욕 지수</CardTitle>
-          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            공포 & 탐욕 지수
+          </CardTitle>
+          {updatedLabel && (
+            <span className="text-muted-foreground text-xs">
+              {updatedLabel}
+            </span>
+          )}
         </div>
         {!data ? (
           <Skeleton className="h-9 w-20" />
         ) : (
           <div className="flex items-end gap-2">
-            <span className={cn("text-3xl font-bold", info!.color)}>{data.value}</span>
-            <span className={cn("mb-1 text-sm font-medium", info!.color)}>{info!.label}</span>
+            <span className={cn("text-3xl font-bold", info!.color)}>
+              {data.value}
+            </span>
+            <span className={cn("mb-1 text-sm font-medium", info!.color)}>
+              {info!.label}
+            </span>
           </div>
         )}
       </CardHeader>
@@ -84,7 +99,8 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          시장 참여자의 심리를 0~100으로 수치화한 지표. 극도의 공포 구간은 역발상 매수 기회로, 극도의 탐욕 구간은 조정 가능성 신호로 활용됩니다.
+          시장 참여자의 심리를 0~100으로 수치화한 지표. 극도의 공포 구간은
+          역발상 매수 기회로, 극도의 탐욕 구간은 조정 가능성 신호로 활용됩니다.
         </p>
       </CardContent>
     </Card>

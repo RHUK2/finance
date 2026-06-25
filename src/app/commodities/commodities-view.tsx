@@ -37,30 +37,54 @@ export function CommoditiesView() {
           </div>
           <MacroChart
             title="금 (Gold)"
-            currentLabel={data?.gold.current != null ? `$${data.gold.current.toFixed(2)}` : "–"}
+            currentLabel={
+              data?.gold.current != null
+                ? `$${data.gold.current.toFixed(2)}`
+                : "–"
+            }
             changePercent={data?.gold.changePercent ?? null}
-            lines={data ? [{ data: data.gold.history, color: "#f59e0b" }] : undefined}
+            lines={
+              data ? [{ data: data.gold.history, color: "#f59e0b" }] : undefined
+            }
             updatedLabel={relTime ?? undefined}
             resetRef={goldReset}
             description="금 현물 선물(COMEX). 대표적인 안전자산으로 달러 약세·인플레이션·지정학적 불안 시 강세를 보이는 경향이 있습니다."
           />
           <MacroChart
             title="원유"
-            currentLabel={data?.wti.current != null ? `$${data.wti.current.toFixed(2)}` : "–"}
+            currentLabel={
+              data?.wti.current != null
+                ? `$${data.wti.current.toFixed(2)}`
+                : "–"
+            }
             changePercent={data?.wti.changePercent ?? null}
-            lines={data ? [
-              { label: "WTI", data: data.wti.history, color: "#6366f1" },
-              { label: "브렌트", data: data.brent.history, color: "#ec4899" },
-            ] : undefined}
+            lines={
+              data
+                ? [
+                    { label: "WTI", data: data.wti.history, color: "#6366f1" },
+                    {
+                      label: "브렌트",
+                      data: data.brent.history,
+                      color: "#ec4899",
+                    },
+                  ]
+                : undefined
+            }
             updatedLabel={relTime ?? undefined}
             resetRef={oilReset}
             description="WTI(미국 기준 원유)와 브렌트(국제 기준 원유) 선물 가격. 에너지 비용 및 인플레이션에 직접적인 영향을 미칩니다."
           />
           <MacroChart
             title="옥수수 (Corn)"
-            currentLabel={data?.corn.current != null ? `$${data.corn.current.toFixed(2)}` : "–"}
+            currentLabel={
+              data?.corn.current != null
+                ? `$${data.corn.current.toFixed(2)}`
+                : "–"
+            }
             changePercent={data?.corn.changePercent ?? null}
-            lines={data ? [{ data: data.corn.history, color: "#84cc16" }] : undefined}
+            lines={
+              data ? [{ data: data.corn.history, color: "#84cc16" }] : undefined
+            }
             updatedLabel={relTime ?? undefined}
             resetRef={cornReset}
             description="옥수수 선물(CBOT). 식품 및 에너지(바이오에탄올) 생산의 핵심 원자재로 기상·수급에 민감하게 반응합니다."

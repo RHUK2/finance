@@ -9,7 +9,11 @@ import { PiCycleChart } from "@/components/pi-cycle-chart";
 import { PuellMultipleChart } from "@/components/puell-multiple-chart";
 import { RainbowChart } from "@/components/rainbow-chart";
 import { Button } from "@/components/ui/button";
-import { useBitcoinHistorical, useFearGreed, useMvrv } from "@/hooks/use-crypto";
+import {
+  useBitcoinHistorical,
+  useFearGreed,
+  useMvrv,
+} from "@/hooks/use-crypto";
 import { useRelativeTime } from "@/hooks/use-relative-time";
 import { RotateCcw } from "lucide-react";
 import { useRef } from "react";
@@ -50,12 +54,36 @@ export function BitcoinView() {
               <span className="text-xs">전체 스케일 초기화</span>
             </Button>
           </div>
-          <FearGreedChart data={fearGreed} resetRef={fearGreedReset} updatedLabel={fearGreedRelTime ?? undefined} />
-          <MvrvZScoreChart data={mvrv} resetRef={mvrvZScoreReset} updatedLabel={mvrvRelTime ?? undefined} />
-          <MayerMultipleChart data={historical} resetRef={mayerReset} updatedLabel={historicalRelTime ?? undefined} />
-          <PuellMultipleChart data={historical} resetRef={puellReset} updatedLabel={historicalRelTime ?? undefined} />
-          <RainbowChart data={historical} resetRef={rainbowReset} updatedLabel={historicalRelTime ?? undefined} />
-          <PiCycleChart data={historical} resetRef={piCycleReset} updatedLabel={historicalRelTime ?? undefined} />
+          <FearGreedChart
+            data={fearGreed}
+            resetRef={fearGreedReset}
+            updatedLabel={fearGreedRelTime ?? undefined}
+          />
+          <MvrvZScoreChart
+            data={mvrv}
+            resetRef={mvrvZScoreReset}
+            updatedLabel={mvrvRelTime ?? undefined}
+          />
+          <MayerMultipleChart
+            data={historical}
+            resetRef={mayerReset}
+            updatedLabel={historicalRelTime ?? undefined}
+          />
+          <PuellMultipleChart
+            data={historical}
+            resetRef={puellReset}
+            updatedLabel={historicalRelTime ?? undefined}
+          />
+          <RainbowChart
+            data={historical}
+            resetRef={rainbowReset}
+            updatedLabel={historicalRelTime ?? undefined}
+          />
+          <PiCycleChart
+            data={historical}
+            resetRef={piCycleReset}
+            updatedLabel={historicalRelTime ?? undefined}
+          />
         </div>
       </PageMain>
     </>

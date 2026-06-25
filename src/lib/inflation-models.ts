@@ -12,7 +12,10 @@ export type Point = { time: string; value: number };
  * 해당 연도 시점의 관측값. 시계열이 그 연도를 포함하지 않으면(데이터가 그 이후
  * 시작) null — 예: BTC를 2010년 시작연도로 조회하면 null(2015년부터 존재).
  */
-export function valueAt(history: Point[] | undefined, year: number): number | null {
+export function valueAt(
+  history: Point[] | undefined,
+  year: number,
+): number | null {
   if (!history || history.length === 0) return null;
   if (history[0].time > `${year}-12-31`) return null;
   const target = `${year}-01-01`;

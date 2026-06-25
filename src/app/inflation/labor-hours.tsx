@@ -77,11 +77,7 @@ export function LaborHours({
         {
           key: "btc",
           label: "비트코인",
-          value: grow(
-            wage!,
-            valueAt(btc, startYear),
-            latestValue(btc),
-          ),
+          value: grow(wage!, valueAt(btc, startYear), latestValue(btc)),
         },
       ];
       return list;
@@ -107,7 +103,8 @@ export function LaborHours({
   const best = r.entries
     .filter((e) => e.key !== "deposit" && e.value != null)
     .sort((a, b) => b.value! - a.value!)[0];
-  const ready = r.wage != null && r.currentWage != null && deposit?.value != null;
+  const ready =
+    r.wage != null && r.currentWage != null && deposit?.value != null;
   const depositHours = ready ? deposit!.value! / r.currentWage! : null;
   const depositTone = depositHours != null && depositHours < 1 ? "bad" : "good";
 
@@ -137,16 +134,21 @@ export function LaborHours({
             <>
               {startYear}년 최저임금 {hi("1시간", "strong")}어치(시급{" "}
               {money(r.wage!)})를 예금에 넣었다면 오늘{" "}
-              {hi(money(deposit!.value!), "strong")} —{" "}
-              오늘 최저임금({money(r.currentWage!)}) 기준{" "}
+              {hi(money(deposit!.value!), "strong")} — 오늘 최저임금(
+              {money(r.currentWage!)}) 기준{" "}
               {hi(fmtHours(depositHours!), depositTone)}어치입니다. 같은 1시간
               노동의 구매력이{" "}
-              {hi(`${Math.abs((depositHours! - 1) * 100).toFixed(0)}%`, depositTone)}{" "}
+              {hi(
+                `${Math.abs((depositHours! - 1) * 100).toFixed(0)}%`,
+                depositTone,
+              )}{" "}
               {depositHours! < 1 ? "줄었습니다" : "늘었습니다"}.
               {best ? (
                 <>
-                  {" "}같은 1시간어치를 {best.label}에 넣었다면{" "}
-                  {hi(fmtHours(best.value! / r.currentWage!), "good")}어치였습니다.
+                  {" "}
+                  같은 1시간어치를 {best.label}에 넣었다면{" "}
+                  {hi(fmtHours(best.value! / r.currentWage!), "good")}
+                  어치였습니다.
                 </>
               ) : null}
             </>

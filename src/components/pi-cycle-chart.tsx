@@ -105,16 +105,27 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">Pi Cycle Top</CardTitle>
-          {updatedLabel && <span className="text-muted-foreground text-xs">{updatedLabel}</span>}
+          <CardTitle className="text-muted-foreground text-sm font-medium">
+            Pi Cycle Top
+          </CardTitle>
+          {updatedLabel && (
+            <span className="text-muted-foreground text-xs">
+              {updatedLabel}
+            </span>
+          )}
         </div>
         {!data ? (
           <Skeleton className="h-5 w-24" />
         ) : (
-          ratio != null && status && (
+          ratio != null &&
+          status && (
             <div className="flex items-end gap-2">
-              <span className="text-sm font-semibold">천장선 도달 {(ratio * 100).toFixed(0)}%</span>
-              <Badge variant={status.variant} className="mb-0.5">{status.label}</Badge>
+              <span className="text-sm font-semibold">
+                천장선 도달 {(ratio * 100).toFixed(0)}%
+              </span>
+              <Badge variant={status.variant} className="mb-0.5">
+                {status.label}
+              </Badge>
             </div>
           )
         )}
@@ -126,7 +137,8 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          111일 MA가 350일 MA×2를 상향 돌파하면 사이클 천장 신호. 과거 비트코인 고점과 높은 일치율을 보여 단기 매도 타이밍 파악에 활용됩니다.
+          111일 MA가 350일 MA×2를 상향 돌파하면 사이클 천장 신호. 과거 비트코인
+          고점과 높은 일치율을 보여 단기 매도 타이밍 파악에 활용됩니다.
         </p>
       </CardContent>
     </Card>
