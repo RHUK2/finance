@@ -75,6 +75,15 @@ export function LaborHours({
           ),
         },
         {
+          key: "house",
+          label: "주택",
+          value: grow(
+            wage!,
+            valueAt(data.house?.history, startYear),
+            latestValue(data.house?.history),
+          ),
+        },
+        {
           key: "btc",
           label: "비트코인",
           value: grow(wage!, valueAt(btc, startYear), latestValue(btc)),

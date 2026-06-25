@@ -7,12 +7,13 @@ import { PageMain } from "@/components/page-main";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useBitcoinHistorical } from "@/hooks/use-crypto";
+import { useRelativeTime } from "@/hooks/use-relative-time";
 import {
   useInflationData,
   useInflationDataKr,
   type InflationData,
 } from "@/hooks/use-inflation";
-import { KR_MIN_WAGE, US_MIN_WAGE } from "@/lib/inflation-models";
+import { KR_MIN_WAGE, US_MIN_WAGE, toKrw } from "@/lib/inflation-models";
 
 import { AssetRaceChart } from "./asset-race-chart";
 import { CollapseCalculator } from "./collapse-calculator";
@@ -29,7 +30,7 @@ const CONFIG: Record<
     currency: Currency;
     minYear: number;
     maxYear: number;
-    principal: { min: number; max: number; step: number; default: number };
+    principal: number;
     gapBaseYear: number;
     raceBaseYear: number;
     wageTable: { year: number; wage: number }[];
@@ -37,47 +38,45 @@ const CONFIG: Record<
     stockLabel: string;
   }
 > = {
-  US: {
-    label: "미국",
-    currency: "$",
-    minYear: 1971,
-    maxYear: 2025,
-    principal: { min: 1000, max: 1_000_000, step: 1000, default: 10_000 },
-    gapBaseYear: 1971,
-    raceBaseYear: 2015,
-    wageTable: US_MIN_WAGE,
-    envKey: "FRED_API_KEY",
-    stockLabel: "주식 (나스닥)",
-  },
   KR: {
     label: "한국",
     currency: "₩",
     minYear: 2003, // M2 신계열(161Y006) 시작연도에 맞춤
     maxYear: 2025,
-    principal: {
-      min: 1_000_000,
-      max: 1_000_000_000,
-      step: 1_000_000,
-      default: 10_000_000,
-    },
+    principal: 1_000_000,
     gapBaseYear: 2003,
     raceBaseYear: 2000,
     wageTable: KR_MIN_WAGE,
     envKey: "ECOS_API_KEY",
     stockLabel: "주식 (코스피)",
   },
+  US: {
+    label: "미국",
+    currency: "$",
+    minYear: 1971,
+    maxYear: 2025,
+    principal: 10_000,
+    gapBaseYear: 1971,
+    raceBaseYear: 2015,
+    wageTable: US_MIN_WAGE,
+    envKey: "FRED_API_KEY",
+    stockLabel: "주식 (나스닥)",
+  },
 };
 
 export function InflationView() {
-  const [country, setCountry] = useState<Country>("US");
+  const [country, setCountry] = useState<Country>("KR");
   const us = useInflationData();
   const kr = useInflationDataKr();
   const btcQuery = useBitcoinHistorical();
 
   const cfg = CONFIG[country];
   const data = country === "US" ? us.data : kr.data;
-  // 미국만 USD 자산(금·주식·BTC)과 통화 단위가 일치하므로 BTC를 합류시킨다.
-  const btc = country === "US" ? btcQuery.data?.history : undefined;
+  // BTC 가격은 USD 기준. 미국은 그대로, 한국은 월별 환율로 원화 환산해 KRW 자산과 단위를 맞춘다.
+  const btc =
+    country === "US"
+      ? btcQuery.data?.history
+      : toKrw(btcQuery.data?.history, data?.fx?.history);
 
   return (
     <>
@@ -151,6 +150,7 @@ function Devices({
   data: InflationData;
   btc?: { time: string; value: number }[];
 }) {
+  const updatedLabel = useRelativeTime(data.fetchedAt);
   return (
     <div className="flex flex-col gap-4">
       <CollapseCalculator
@@ -160,8 +160,14 @@ function Devices({
         currency={cfg.currency}
         minYear={cfg.minYear}
         maxYear={cfg.maxYear}
-        principal={cfg.principal}
+        amount={cfg.principal}
         stockLabel={cfg.stockLabel}
+      />
+      <CpiM2GapChart
+        key={`gap-${country}`}
+        data={data}
+        baseYear={cfg.gapBaseYear}
+        updatedLabel={updatedLabel}
       />
       <LaborHours
         key={`labor-${country}`}
@@ -173,17 +179,13 @@ function Devices({
         wageTable={cfg.wageTable}
         stockLabel={cfg.stockLabel}
       />
-      <CpiM2GapChart
-        key={`gap-${country}`}
-        data={data}
-        baseYear={cfg.gapBaseYear}
-      />
       <AssetRaceChart
         key={`race-${country}`}
         data={data}
         btc={btc}
         baseYear={cfg.raceBaseYear}
         stockLabel={cfg.stockLabel}
+        updatedLabel={updatedLabel}
       />
     </div>
   );

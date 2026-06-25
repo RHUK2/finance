@@ -9,9 +9,10 @@ import { latestValue, normalizeToBase } from "@/lib/inflation-models";
 type Props = {
   data: InflationData;
   baseYear: number;
+  updatedLabel?: string;
 };
 
-export function CpiM2GapChart({ data, baseYear }: Props) {
+export function CpiM2GapChart({ data, baseYear, updatedLabel }: Props) {
   const { lines, gapLabel } = useMemo(() => {
     const cpi = normalizeToBase(data.cpi?.history, baseYear);
     const m2 = normalizeToBase(data.m2?.history, baseYear);
@@ -34,6 +35,7 @@ export function CpiM2GapChart({ data, baseYear }: Props) {
       title="CPI vs M2 — 통화팽창과 물가의 괴리"
       currentLabel={gapLabel}
       lines={lines}
+      updatedLabel={updatedLabel}
       description={`CPI는 소비재 바스켓 가격을, M2는 통화량을 측정합니다. ${baseYear}년을 100으로 맞추면 두 지표가 벌어지는 폭이 드러납니다. 그 격차의 상당 부분은 소비재 대신 자산(주택·주식)으로 흘러가 CPI에는 포착되지 않습니다.`}
     />
   );

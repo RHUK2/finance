@@ -20,11 +20,19 @@ type Props = {
   btc?: Point[];
   baseYear: number;
   stockLabel: string;
+  updatedLabel?: string;
 };
 
-export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
-  const lines = useMemo<Line[]>(() => {
+export function AssetRaceChart({
+  data,
+  btc,
+  baseYear,
+  stockLabel,
+  updatedLabel,
+}: Props) {
+  const { lines, hasLateEntrant } = useMemo(() => {
     const out: Line[] = [];
+    let hasLateEntrant = false;
     const dep = depositIndex(data.deposit?.history, baseYear);
     if (dep.length) out.push({ label: "예금", color: "#9ca3af", data: dep });
 
@@ -35,10 +43,14 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
     ];
     let hasAsset = false;
     for (const a of assets) {
-      const norm = normalizeToBase(a.series, baseYear);
+      // 기준연도에 아직 없던 자산(예: 비트코인)은 등장 연도를 100으로 환산해 합류시킨다.
+      const startYear = a.series?.[0] ? Number(a.series[0].time.slice(0, 4)) : 0;
+      const effBase = Math.max(baseYear, startYear);
+      const norm = normalizeToBase(a.series, effBase);
       if (norm.length) {
         out.push({ label: a.label, color: a.color, data: norm });
         hasAsset = true;
+        if (effBase > baseYear) hasLateEntrant = true;
       }
     }
 
@@ -51,7 +63,7 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
       if (cpi.length)
         out.push({ label: "물가(CPI)", color: "#22c55e", data: cpi });
     }
-    return out;
+    return { lines: out, hasLateEntrant };
   }, [data, btc, baseYear, stockLabel]);
 
   const { containerRef, resetView } = useChart(
@@ -74,7 +86,14 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">예금 vs 자산 레이스</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base">예금 vs 자산 레이스</CardTitle>
+          {updatedLabel && (
+            <span className="text-muted-foreground text-xs">
+              {updatedLabel}
+            </span>
+          )}
+        </div>
         <p className="text-muted-foreground text-sm">
           {baseYear}년에 같은 금액을 각각 넣었다면, 시간에 따라 평가액이 어떻게
           갈라지는지 보여줍니다. (로그 스케일, 시작=100)
@@ -86,6 +105,8 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel }: Props) {
           예금 곡선이 자산 곡선과 벌어지는 폭이 곧 기회비용입니다. 자산 수익률은
           배당·세금·거래비용을 제외한 가격 기준이며, 과거 성과가 미래를 보장하지
           않습니다.
+          {hasLateEntrant &&
+            " 비트코인은 기준연도에 존재하지 않아 등장 시점을 100으로 따로 환산했습니다(원화 환산)."}
         </p>
       </CardContent>
     </Card>

@@ -13,6 +13,7 @@ export type InflationData = {
   deposit?: MacroSeries;
   stock?: MacroSeries;
   house?: MacroSeries;
+  fx?: MacroSeries; // 원/달러 환율(월별). USD 자산을 원화로 환산할 때 사용(한국만 제공)
 };
 
 export function useInflationData() {

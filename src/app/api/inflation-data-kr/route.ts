@@ -13,6 +13,8 @@ const STAT = {
   deposit: { stat: "722Y001", item: "0101000" }, // 한국은행 기준금리 — 단기 안전금리 근사(미국 TB3MS에 대응)
   stock: { stat: "901Y014", item: "1070000" }, // KOSPI 종가(월), 배당 제외
   house: { stat: "901Y062", item: "P63A" }, // KB 주택매매가격지수(총지수)
+  fx: { stat: "731Y004", item: "0000001/0000100" }, // 원/미국달러 환율(매매기준율, 월평균자료) — USD 자산의 원화 환산용. item2=0000100(평균자료)
+
 } as const;
 
 type Series = {
@@ -65,12 +67,13 @@ export async function GET() {
         return { fetchedAt: new Date().toISOString(), available: false };
       }
 
-      const [cpi, m2, deposit, stock, house] = await Promise.all([
+      const [cpi, m2, deposit, stock, house, fx] = await Promise.all([
         fetchSeries(key, STAT.cpi.stat, STAT.cpi.item),
         fetchSeries(key, STAT.m2.stat, STAT.m2.item),
         fetchSeries(key, STAT.deposit.stat, STAT.deposit.item),
         fetchSeries(key, STAT.stock.stat, STAT.stock.item),
         fetchSeries(key, STAT.house.stat, STAT.house.item),
+        fetchSeries(key, STAT.fx.stat, STAT.fx.item),
       ]);
 
       return {
@@ -81,6 +84,7 @@ export async function GET() {
         deposit,
         stock,
         house,
+        fx,
       };
     });
 

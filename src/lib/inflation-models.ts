@@ -61,52 +61,21 @@ export function compoundDeposit(
 }
 
 /**
- * 적립식(적금) 만기 평가액: 매월 monthly를 납입해 금리로 월복리.
- * 납입이 일어난 월 목록("YYYY-MM")도 함께 반환(자산 DCA와 월을 맞추기 위함).
+ * USD 일별 시계열을 월별 환율로 원화 환산. 각 일자에는 그 달의 환율을 적용하며,
+ * 환율이 아직 없는 최근 달은 직전 환율을 이어쓴다(carry-forward). 두 시계열 모두
+ * 시간 오름차순이라고 가정하고 2-포인터로 O(n+m) 처리.
  */
-export function recurringDepositFV(
-  monthly: number,
-  rateHistory: Point[] | undefined,
-  year: number,
-): { fv: number; months: string[] } | null {
-  if (!rateHistory || rateHistory.length === 0) return null;
-  if (rateHistory[0].time > `${year}-12-31`) return null;
-  let bal = 0;
-  const months: string[] = [];
-  for (const p of rateHistory) {
-    if (p.time < `${year}-01-01`) continue;
-    bal = bal * (1 + p.value / 100 / 12) + monthly;
-    months.push(p.time.slice(0, 7));
-  }
-  return months.length ? { fv: bal, months } : null;
-}
-
-/**
- * 적립식 DCA 평가액: 주어진 납입 월마다 monthly만큼 매수했을 때 현재 평가액.
- * 시계열이 첫 납입 월보다 늦게 시작하면(범위 밖) null. 중간 결측 월은 직전값으로 보간.
- */
-export function recurringDCA(
-  monthly: number,
-  series: Point[] | undefined,
-  months: string[],
-): number | null {
-  if (!series || series.length === 0 || months.length === 0) return null;
-  if (series[0].time.slice(0, 7) > months[0]) return null;
-  const byMonth = new Map<string, number>();
-  for (const p of series) {
-    const k = p.time.slice(0, 7);
-    if (!byMonth.has(k)) byMonth.set(k, p.value);
-  }
-  const now = series[series.length - 1].value;
-  let total = 0;
-  let last: number | null = null;
-  for (const m of months) {
-    const v: number | null = byMonth.get(m) ?? last;
-    if (v == null || v === 0) continue;
-    last = v;
-    total += monthly * (now / v);
-  }
-  return total;
+export function toKrw(
+  usd: Point[] | undefined,
+  fx: Point[] | undefined,
+): Point[] | undefined {
+  if (!usd || !fx || fx.length === 0) return undefined;
+  let i = 0;
+  return usd.map((p) => {
+    const month = p.time.slice(0, 7);
+    while (i + 1 < fx.length && fx[i + 1].time.slice(0, 7) <= month) i++;
+    return { time: p.time, value: p.value * fx[i].value };
+  });
 }
 
 /** 시작연도=base로 정규화한 곡선(격차 차트용). */
