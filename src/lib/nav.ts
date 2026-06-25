@@ -6,6 +6,7 @@ import {
   Network,
   TrendingDown,
   Wheat,
+  Zap,
 } from "lucide-react";
 
 export const NAV_ITEMS = [
@@ -16,4 +17,5 @@ export const NAV_ITEMS = [
   { label: "비트코인 네트워크", href: "/mempool", icon: Network },
   { label: "신용창조", href: "/money-creation", icon: Landmark },
   { label: "구매력 붕괴", href: "/inflation", icon: TrendingDown },
+  { label: "전력망 배터리", href: "/grid-battery", icon: Zap },
 ];
