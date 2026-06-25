@@ -145,7 +145,12 @@ export function buildSteps(r: number): Step[] {
   ];
 }
 
-export type Line = { item: string; amount: number; created: boolean };
+export type Line = {
+  item: string;
+  amount: number;
+  created: boolean;
+  flowChanged: boolean;
+};
 export type Sheet = { asset: Line[]; liability: Line[] };
 
 function emptySheets(): Record<EntityId, Sheet> {
@@ -169,10 +174,21 @@ export function sheetsAt(
       amounts.set(key, (amounts.get(key) ?? 0) + op.delta);
     }
   }
-  // 현재 단계에서 새로 생성된 항목만 강조
+  // 현재 단계에서 새로 생성된 항목(amber 강조)과
+  // 이미 있던 돈이 이동·변환된 항목(sky 강조)을 구분해 표시한다.
+  // 흐름 변경은 자동 감지: 이번 단계에 유출(delta<0)이 있으면,
+  // 그 단계에서 건드린 비-생성 항목을 이동·변환으로 본다.
   const createdNow = new Set<string>();
+  const touchedNow = new Set<string>();
+  let hasOutflow = false;
   for (const op of steps[stepIndex].ops) {
-    if (op.created) createdNow.add(`${op.entity}|${op.side}|${op.item}`);
+    const key = `${op.entity}|${op.side}|${op.item}`;
+    if (op.created) {
+      createdNow.add(key);
+    } else {
+      touchedNow.add(key);
+      if (op.delta < 0) hasOutflow = true;
+    }
   }
 
   const result = emptySheets();
@@ -183,7 +199,12 @@ export function sheetsAt(
         const key = `${id}|${side}|${item}`;
         const amount = amounts.get(key) ?? 0;
         if (amount === 0) continue;
-        lines.push({ item, amount, created: createdNow.has(key) });
+        lines.push({
+          item,
+          amount,
+          created: createdNow.has(key),
+          flowChanged: hasOutflow && touchedNow.has(key) && !createdNow.has(key),
+        });
       }
       result[id][side] = lines;
     }

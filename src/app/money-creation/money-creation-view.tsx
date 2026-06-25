@@ -7,10 +7,12 @@ import { PageMain } from "@/components/page-main";
 import { Slider } from "@/components/ui/slider";
 
 import {
+  AssetEquationCard,
   BalanceSheet,
   MoneyCounter,
   NarrationCard,
   StepControls,
+  TrustSection,
 } from "./components";
 import { ENTITIES, buildSteps, metricsAt, sheetsAt } from "./steps";
 
@@ -51,11 +53,13 @@ export function MoneyCreationView() {
             />
           </div>
 
-          <NarrationCard
-            index={step}
-            title={current.title}
-            narration={current.narration}
-          />
+          <div className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-12 z-20 -mx-1 px-1 py-1 backdrop-blur-sm">
+            <NarrationCard
+              index={step}
+              title={current.title}
+              narration={current.narration}
+            />
+          </div>
 
           {isMultiplierStep && (
             <div className="flex flex-col gap-1.5 rounded-lg border p-4">
@@ -80,6 +84,17 @@ export function MoneyCreationView() {
             </div>
           )}
 
+          <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-sm border border-amber-500/70 bg-amber-500/15 ring-1 ring-amber-500/60" />
+              무(無)에서 새로 창조
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-sm border border-sky-500/70 bg-sky-500/15 ring-1 ring-sky-500/60" />
+              기존 돈이 이동·변환
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {ENTITIES.map((e) => (
               <BalanceSheet
@@ -99,6 +114,10 @@ export function MoneyCreationView() {
             onReset={() => setStep(0)}
             onJump={setStep}
           />
+
+          <AssetEquationCard />
+
+          <TrustSection />
         </div>
       </PageMain>
     </>
