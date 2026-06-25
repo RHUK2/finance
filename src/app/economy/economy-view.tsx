@@ -41,25 +41,21 @@ export function EconomyView() {
   const dxyReset = useRef<(() => void) | null>(null);
   const us10yReset = useRef<(() => void) | null>(null);
   const vixReset = useRef<(() => void) | null>(null);
-  const m2Reset = useRef<(() => void) | null>(null);
   const fedFundsReset = useRef<(() => void) | null>(null);
   const nasdaqReset = useRef<(() => void) | null>(null);
   const kospiReset = useRef<(() => void) | null>(null);
   const usdkrwReset = useRef<(() => void) | null>(null);
   const yieldSpreadReset = useRef<(() => void) | null>(null);
-  const cpiReset = useRef<(() => void) | null>(null);
 
   function resetAll() {
     dxyReset.current?.();
     us10yReset.current?.();
     vixReset.current?.();
-    m2Reset.current?.();
     fedFundsReset.current?.();
     nasdaqReset.current?.();
     kospiReset.current?.();
     usdkrwReset.current?.();
     yieldSpreadReset.current?.();
-    cpiReset.current?.();
   }
 
   const ecoRelTime = useRelativeTime(eco?.fetchedAt);
@@ -94,6 +90,82 @@ export function EconomyView() {
               <span className="text-xs">전체 스케일 초기화</span>
             </Button>
           </div>
+
+          <MacroChart
+            title="달러/원 (USD/KRW)"
+            currentLabel={
+              eco?.usdkrw.current != null
+                ? `₩${eco.usdkrw.current.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}`
+                : "–"
+            }
+            changePercent={eco?.usdkrw.changePercent ?? null}
+            lines={
+              eco ? [{ data: eco.usdkrw.history, color: "#22c55e" }] : undefined
+            }
+            updatedLabel={ecoRelTime ?? undefined}
+            resetRef={usdkrwReset}
+            description="달러 대비 원화 환율. 원화 약세는 수입 물가 상승과 외국인 자금 유출 압력을 높이며, 달러 강세(DXY 상승) 시 동조하는 경향이 있습니다."
+          />
+
+          <MacroChart
+            title="달러인덱스"
+            currentLabel={eco?.dxy.current?.toFixed(2) ?? "–"}
+            changePercent={eco?.dxy.changePercent ?? null}
+            lines={
+              eco ? [{ data: eco.dxy.history, color: "#22c55e" }] : undefined
+            }
+            updatedLabel={ecoRelTime ?? undefined}
+            resetRef={dxyReset}
+            description="달러의 주요 6개 통화 대비 강세를 나타내는 지수. 달러 강세는 신흥국 자산과 원자재에 부담을 주며, 비트코인 등 위험자산과 역의 상관관계를 보이는 경향이 있습니다."
+          />
+
+          <MacroChart
+            title="코스피"
+            currentLabel={
+              eco?.kospi.current != null
+                ? eco.kospi.current.toLocaleString("ko-KR", {
+                    maximumFractionDigits: 2,
+                  })
+                : "–"
+            }
+            changePercent={eco?.kospi.changePercent ?? null}
+            lines={
+              eco ? [{ data: eco.kospi.history, color: "#a78bfa" }] : undefined
+            }
+            updatedLabel={ecoRelTime ?? undefined}
+            resetRef={kospiReset}
+            description="한국 증권시장의 대표 지수. 반도체·자동차 등 수출 중심 대형주 비중이 높아 글로벌 경기와 원화 흐름에 민감합니다."
+          />
+
+          <MacroChart
+            title="나스닥"
+            currentLabel={
+              eco?.nasdaq.current != null
+                ? eco.nasdaq.current.toLocaleString("en-US", {
+                    maximumFractionDigits: 2,
+                  })
+                : "–"
+            }
+            changePercent={eco?.nasdaq.changePercent ?? null}
+            lines={
+              eco ? [{ data: eco.nasdaq.history, color: "#38bdf8" }] : undefined
+            }
+            updatedLabel={ecoRelTime ?? undefined}
+            resetRef={nasdaqReset}
+            description="미국 기술주 중심의 나스닥 종합지수. 빅테크·성장주 흐름을 반영하며 위험선호도와 유동성 상황에 민감하게 반응합니다."
+          />
+
+          <MacroChart
+            title="VIX 변동성지수"
+            currentLabel={eco?.vix.current?.toFixed(2) ?? "–"}
+            changePercent={eco?.vix.changePercent ?? null}
+            lines={
+              eco ? [{ data: eco.vix.history, color: "#ef4444" }] : undefined
+            }
+            updatedLabel={ecoRelTime ?? undefined}
+            resetRef={vixReset}
+            description="S&P 500 옵션 시장이 예상하는 30일 변동성. '공포지수'라고도 불리며, 20 이상이면 시장 불안, 30 이상이면 극도의 공포 상태를 나타냅니다."
+          />
 
           <FredGate available={fredAvailable} title="연준 기준금리">
             <MacroChart
@@ -172,116 +244,6 @@ export function EconomyView() {
               description="미국 10년물과 2년물 국채 금리의 차이. 스프레드가 0 아래로 역전되면 역사적으로 경기침체의 선행지표로 해석됩니다. 2022년 이후 역전이 지속되다 최근 정상화 중입니다."
             />
           </FredGate>
-
-          <FredGate available={fredAvailable} title="소비자물가지수 (CPI)">
-            <MacroChart
-              title="소비자물가지수 (CPI)"
-              currentLabel={
-                fred?.cpi?.current != null ? fred.cpi.current.toFixed(1) : "–"
-              }
-              changePercent={fred?.cpi?.changePercent ?? null}
-              lines={
-                fred?.cpi
-                  ? [{ data: fred.cpi.history, color: "#f97316" }]
-                  : undefined
-              }
-              updatedLabel={fredRelTime ?? undefined}
-              resetRef={cpiReset}
-              description="미국 소비자물가지수(CPIAUCSL). 인플레이션의 핵심 척도로, 연준의 통화정책 결정에 가장 큰 영향을 미치는 지표입니다. 목표 인플레이션은 2%입니다."
-            />
-          </FredGate>
-
-          <FredGate available={fredAvailable} title="M2 통화량">
-            <MacroChart
-              title="M2 통화량"
-              currentLabel={
-                fred?.m2?.current != null
-                  ? `$${(fred.m2.current / 1000).toFixed(2)}T`
-                  : "–"
-              }
-              changePercent={fred?.m2?.changePercent ?? null}
-              lines={
-                fred?.m2
-                  ? [{ data: fred.m2.history, color: "#f59e0b" }]
-                  : undefined
-              }
-              updatedLabel={fredRelTime ?? undefined}
-              resetRef={m2Reset}
-              description="유통 중인 현금·예금·단기 금융자산의 합계. M2 팽창은 시중 유동성 증가로 위험자산 상승 압력을 높이고, 수축은 긴축 국면 진입 신호로 해석됩니다."
-            />
-          </FredGate>
-
-          <MacroChart
-            title="달러인덱스 (DXY)"
-            currentLabel={eco?.dxy.current?.toFixed(2) ?? "–"}
-            changePercent={eco?.dxy.changePercent ?? null}
-            lines={
-              eco ? [{ data: eco.dxy.history, color: "#22c55e" }] : undefined
-            }
-            updatedLabel={ecoRelTime ?? undefined}
-            resetRef={dxyReset}
-            description="달러의 주요 6개 통화 대비 강세를 나타내는 지수. 달러 강세는 신흥국 자산과 원자재에 부담을 주며, 비트코인 등 위험자산과 역의 상관관계를 보이는 경향이 있습니다."
-          />
-          <MacroChart
-            title="VIX 변동성지수"
-            currentLabel={eco?.vix.current?.toFixed(2) ?? "–"}
-            changePercent={eco?.vix.changePercent ?? null}
-            lines={
-              eco ? [{ data: eco.vix.history, color: "#ef4444" }] : undefined
-            }
-            updatedLabel={ecoRelTime ?? undefined}
-            resetRef={vixReset}
-            description="S&P 500 옵션 시장이 예상하는 30일 변동성. '공포지수'라고도 불리며, 20 이상이면 시장 불안, 30 이상이면 극도의 공포 상태를 나타냅니다."
-          />
-          <MacroChart
-            title="나스닥 종합지수"
-            currentLabel={
-              eco?.nasdaq.current != null
-                ? eco.nasdaq.current.toLocaleString("en-US", {
-                    maximumFractionDigits: 2,
-                  })
-                : "–"
-            }
-            changePercent={eco?.nasdaq.changePercent ?? null}
-            lines={
-              eco ? [{ data: eco.nasdaq.history, color: "#38bdf8" }] : undefined
-            }
-            updatedLabel={ecoRelTime ?? undefined}
-            resetRef={nasdaqReset}
-            description="미국 기술주 중심의 나스닥 종합지수. 빅테크·성장주 흐름을 반영하며 위험선호도와 유동성 상황에 민감하게 반응합니다."
-          />
-          <MacroChart
-            title="코스피"
-            currentLabel={
-              eco?.kospi.current != null
-                ? eco.kospi.current.toLocaleString("ko-KR", {
-                    maximumFractionDigits: 2,
-                  })
-                : "–"
-            }
-            changePercent={eco?.kospi.changePercent ?? null}
-            lines={
-              eco ? [{ data: eco.kospi.history, color: "#a78bfa" }] : undefined
-            }
-            updatedLabel={ecoRelTime ?? undefined}
-            resetRef={kospiReset}
-            description="한국 증권시장의 대표 지수. 반도체·자동차 등 수출 중심 대형주 비중이 높아 글로벌 경기와 원화 흐름에 민감합니다."
-          />
-          <MacroChart
-            title="달러/원 (USD/KRW)"
-            currentLabel={
-              eco?.usdkrw.current != null
-                ? `₩${eco.usdkrw.current.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}`
-                : "–"
-            }
-            changePercent={eco?.usdkrw.changePercent ?? null}
-            lines={
-              eco ? [{ data: eco.usdkrw.history, color: "#22c55e" }] : undefined
-            }
-            updatedLabel={ecoRelTime ?? undefined}
-            resetRef={usdkrwReset}
-            description="달러 대비 원화 환율. 원화 약세는 수입 물가 상승과 외국인 자금 유출 압력을 높이며, 달러 강세(DXY 상승) 시 동조하는 경향이 있습니다."
-          />
         </div>
       </PageMain>
     </>

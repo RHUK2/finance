@@ -49,20 +49,16 @@ export async function GET() {
         return { fetchedAt: new Date().toISOString(), available: false };
       }
 
-      const [m2, fedFunds, us2y, cpi] = await Promise.all([
-        fetchSeries("M2SL", key),
+      const [fedFunds, us2y] = await Promise.all([
         fetchSeries("FEDFUNDS", key),
         fetchSeries("DGS2", key),
-        fetchSeries("CPIAUCSL", key),
       ]);
 
       return {
         fetchedAt: new Date().toISOString(),
         available: true,
-        m2,
         fedFunds,
         us2y,
-        cpi,
       };
     });
 

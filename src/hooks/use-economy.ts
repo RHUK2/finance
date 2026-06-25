@@ -37,10 +37,8 @@ export function useEconomy() {
 export type FredData = {
   fetchedAt: string;
   available: boolean;
-  m2?: MacroSeries;
   fedFunds?: MacroSeries;
   us2y?: MacroSeries;
-  cpi?: MacroSeries;
 };
 
 export function useFred() {
