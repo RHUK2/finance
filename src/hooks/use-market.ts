@@ -8,8 +8,9 @@ export type MarketItem = {
   symbol: string;
   ticker: string;
   label: string;
-  type: "stock" | "crypto";
+  type: "stock" | "crypto" | "macro";
   gfUrl?: string;
+  hideCurrencySymbol?: boolean;
   price: number | null;
   change: number | null;
   changePercent: number | null;

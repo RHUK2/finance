@@ -11,6 +11,43 @@ const GF = "https://www.google.com/finance/quote";
 
 const SYMBOLS = [
   {
+    symbol: "KRW=X",
+    ticker: "USD/KRW",
+    label: "달러 환율",
+    type: "macro",
+    gfUrl: `${GF}/USD-KRW`,
+  },
+  {
+    symbol: "^KS11",
+    ticker: "KOSPI",
+    label: "코스피",
+    type: "macro",
+    gfUrl: `${GF}/KOSPI:KRX`,
+    hideCurrencySymbol: true,
+  },
+  {
+    symbol: "^IXIC",
+    ticker: "IXIC",
+    label: "나스닥",
+    type: "macro",
+    gfUrl: `${GF}/.IXIC:INDEXNASDAQ`,
+    hideCurrencySymbol: true,
+  },
+  {
+    symbol: "GC=F",
+    ticker: "GC=F",
+    label: "금",
+    type: "macro",
+    gfUrl: `${GF}/GCW00:COMEX`,
+  },
+  {
+    symbol: "CL=F",
+    ticker: "CL=F",
+    label: "원유(WTI)",
+    type: "macro",
+    gfUrl: `${GF}/CLW00:NYMEX`,
+  },
+  {
     symbol: "BTC-USD",
     ticker: "BTC",
     label: "BTC",
@@ -140,20 +177,23 @@ export async function GET() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       )) as Record<string, any>;
 
-      const results = SYMBOLS.map(({ symbol, ticker, label, type, gfUrl }) => {
-        const quote = quotes[symbol] ?? {};
-        return {
-          symbol,
-          ticker,
-          label,
-          type,
-          gfUrl,
-          price: quote.regularMarketPrice ?? null,
-          change: quote.regularMarketChange ?? null,
-          changePercent: quote.regularMarketChangePercent ?? null,
-          currency: quote.currency ?? "USD",
-        };
-      });
+      const results = SYMBOLS.map(
+        ({ symbol, ticker, label, type, gfUrl, hideCurrencySymbol }) => {
+          const quote = quotes[symbol] ?? {};
+          return {
+            symbol,
+            ticker,
+            label,
+            type,
+            gfUrl,
+            hideCurrencySymbol,
+            price: quote.regularMarketPrice ?? null,
+            change: quote.regularMarketChange ?? null,
+            changePercent: quote.regularMarketChangePercent ?? null,
+            currency: quote.currency ?? "USD",
+          };
+        },
+      );
 
       return { fetchedAt: new Date().toISOString(), items: results };
     });

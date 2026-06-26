@@ -37,11 +37,13 @@ const TYPE_LABELS: Record<string, string> = {
   all: "전체",
   crypto: "가상화폐",
   stock: "주식",
+  macro: "지표",
 };
 
 const TYPE_DOT_COLORS: Record<string, string> = {
   crypto: "bg-amber-500",
   stock: "bg-blue-500",
+  macro: "bg-emerald-500",
 };
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -85,7 +87,7 @@ function PriceDisplay({
     return <span className="text-muted-foreground">-</span>;
   return (
     <div className={cn("tabular-nums", priceClassName)}>
-      {currencySymbol(item.currency)}
+      {!item.hideCurrencySymbol && currencySymbol(item.currency)}
       {formatPrice(item.price, item.currency)}
     </div>
   );
@@ -127,7 +129,7 @@ type Props = {
   updatedLabel?: string;
 };
 
-const ASSET_TYPES = ["all", "crypto", "stock"];
+const ASSET_TYPES = ["all", "macro", "crypto", "stock"];
 
 const MOBILE_SORT_OPTIONS = [
   { value: "default", label: "기본" },
@@ -322,7 +324,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
         {updatedRow}
         <div className="space-y-2">
           {isLoading ? (
-            Array.from({ length: 15 }).map((_, i) => (
+            Array.from({ length: 22 }).map((_, i) => (
               <div
                 key={i}
                 className="bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm"
@@ -428,7 +430,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
             </thead>
             <tbody className="divide-y">
               {isLoading ? (
-                Array.from({ length: 17 }).map((_, i) => (
+                Array.from({ length: 22 }).map((_, i) => (
                   <tr key={i}>
                     <td colSpan={3} className="px-4 py-3">
                       <Skeleton className="h-5 w-full" />
