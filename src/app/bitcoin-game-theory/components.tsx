@@ -102,6 +102,7 @@ export function RoundControls({
 export function ControlSlider({
   icon,
   label,
+  hint,
   value,
   onChange,
   min = 0,
@@ -111,6 +112,7 @@ export function ControlSlider({
 }: {
   icon?: React.ReactNode;
   label: string;
+  hint?: string;
   value: number;
   onChange: (v: number) => void;
   min?: number;
@@ -134,6 +136,7 @@ export function ControlSlider({
         value={[value]}
         onValueChange={([v]) => onChange(v)}
       />
+      {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
     </div>
   );
 }

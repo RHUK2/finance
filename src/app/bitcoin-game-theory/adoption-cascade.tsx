@@ -51,7 +51,8 @@ export function AdoptionCascade() {
 
       <Card className="gap-4 p-4">
         <ControlSlider
-          label="평균 임계값 (낮을수록 FOMO 민감)"
+          label="따라 사는 기준 (평균 임계값)"
+          hint="주변에 몇 %가 사야 나도 따라 사는지. 낮출수록 남들 눈치 안 보고 일찍 동참해 더 잘 번진다."
           value={meanThreshold}
           onChange={setMeanThreshold}
           min={0.1}
@@ -61,7 +62,8 @@ export function AdoptionCascade() {
         />
         <ControlSlider
           icon={<Users className="size-4 text-amber-500" />}
-          label="초기 채택자 (시드)"
+          label="처음 사는 사람 수 (시드)"
+          hint="아무도 안 사도 맨 먼저 움직이는 불씨. 이 사람들이 도미노의 첫 장을 쓰러뜨린다."
           value={seedCount}
           onChange={setSeedCount}
           min={1}

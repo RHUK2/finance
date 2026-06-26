@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from "react";
 
 import { Diamond, Zap } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -43,14 +42,16 @@ export function HodlDilemma() {
       <SectionIntro title="홀더의 딜레마 — 던질까, 버틸까">
         모두가 버티면(HODL) 가격은 지켜지지만, 누군가 던지기 시작하면 하락이 또
         다른 매도를 부른다. 확신이 약한 손은 작은 하락에도 패닉 매도하고, 그
-        매도가 가격을 더 끌어내려 연쇄 청산을 일으킨다. <b>공포 충격</b>을 준 뒤
-        평균 확신도에 따라 시장이 붕괴하는지, 흡수하는지 지켜보자.
+        매도가 가격을 더 끌어내려 연쇄 청산을 일으킨다. 재생을 누르면 첫 박자에{" "}
+        <b>−15% 공포 충격</b>이 가해진다. 평균 확신도에 따라 시장이 붕괴하는지,
+        흡수하는지 지켜보자.
       </SectionIntro>
 
       <Card className="gap-4 p-4">
         <ControlSlider
           icon={<Diamond className="size-4 text-emerald-500" />}
-          label="평균 확신도 (높을수록 다이아몬드손)"
+          label="얼마나 잘 버티나 (평균 확신도)"
+          hint="가격이 떨어져도 안 던지고 버티는 정도. 높일수록 다이아몬드손이 많아 작은 충격은 흡수하고, 낮추면 약한 손이 먼저 던져 연쇄 매도가 터진다."
           value={meanConviction}
           onChange={setMeanConviction}
           min={0.2}
@@ -90,21 +91,16 @@ function HodlSim({
   const init = (): Sim => ({ state: initialHodlState(N), history: [100] });
   const [sim, setSim] = useState<Sim>(init);
 
-  // 현재 sim에서 다음 상태를 계산. 새 매도가 끊기면 연쇄가 끝난 것이므로
-  // false를 반환해 엔진이 스스로 멈춘다.
+  // 첫 박자(round 0)에 외생 충격을 주입하고, 이후 라운드는 순수 전파만 한다.
+  // 새 매도가 끊기면 false를 반환해 엔진이 스스로 멈춘다.
   const step = useCallback(() => {
-    const next = hodlStep(sim.state, holders, 0);
+    const shock = sim.state.round === 0 ? SHOCK : 0;
+    const next = hodlStep(sim.state, holders, shock);
     setSim({ state: next, history: [...sim.history, next.price] });
-    return next.newSellers > 0;
+    return shock > 0 || next.newSellers > 0;
   }, [holders, sim]);
 
   const engine = useRoundEngine(step, speedMs);
-
-  const applyShock = useCallback(() => {
-    const next = hodlStep(sim.state, holders, SHOCK);
-    setSim({ state: next, history: [...sim.history, next.price] });
-    if (!engine.playing) engine.toggle();
-  }, [holders, sim, engine]);
 
   const { state, history } = sim;
   const soldCount = state.sold.filter(Boolean).length;
@@ -117,16 +113,13 @@ function HodlSim({
   return (
     <>
       <Card className="gap-3 p-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={applyShock}
-            className="gap-1.5"
-          >
-            <Zap className="size-4" />
-            공포 충격 주입 (−15%)
-          </Button>
+        <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+          <Zap className="size-3.5 text-rose-500" />
+          첫 박자에 외생 공포 충격{" "}
+          <span className="font-mono font-medium text-rose-600 dark:text-rose-400">
+            −{Math.round(SHOCK * 100)}%
+          </span>{" "}
+          자동 적용
         </div>
         <RoundControls
           playing={engine.playing}

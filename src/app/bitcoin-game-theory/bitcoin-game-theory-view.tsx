@@ -50,7 +50,7 @@ export function BitcoinGameTheoryView() {
           </Card>
 
           <Tabs defaultValue="payoff" className="gap-4">
-            <TabsList className="w-full">
+            <TabsList className="grid w-full grid-cols-2 group-data-horizontal/tabs:h-auto">
               {TABS.map((t) => (
                 <TabsTrigger key={t.value} value={t.value}>
                   {t.label}

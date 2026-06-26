@@ -39,13 +39,55 @@ export function payoffMatrix({ u, r, f }: PayoffInput) {
     WW: cell("W", "W"),
   };
 
-  // 채택이 우월전략인가? (상대가 A든 W든 채택이 더 큰 보수)
-  const adoptDominant = u - r + f > 0;
-  const nash: keyof typeof cells = adoptDominant ? "AA" : "WW";
+  // 채택 우월 판정 마진 — 상대 선택과 무관하게 채택이 유리하면 > 0.
+  const margin = u - r + f;
+  const nash: keyof typeof cells = margin > 0 ? "AA" : "WW";
   const dominantStrategy: Choice | null =
-    u - r + f === 0 ? null : adoptDominant ? "A" : "W";
+    margin === 0 ? null : margin > 0 ? "A" : "W";
 
-  return { cells, nash, dominantStrategy };
+  return { cells, nash, dominantStrategy, margin };
+}
+
+// 2×2 행렬의 칸 위치 키. 첫째/둘째 전략의 의미(채택·관망, 협력·배신)는 게임마다 다르다.
+export type CellKey = "AA" | "AW" | "WA" | "WW";
+export type PayoffCells = Record<CellKey, [number, number]>;
+export type BestResponses = {
+  meBest: Record<CellKey, boolean>;
+  themBest: Record<CellKey, boolean>;
+};
+
+// 각 칸에서 두 플레이어의 최적대응(상대 선택을 고정했을 때 더 큰 보수) 여부.
+// 행 플레이어는 같은 열에서 행을, 열 플레이어는 같은 행에서 열을 비교하므로
+// 두 비교의 짝이 다르다. meBest/themBest가 동시에 true인 칸이 곧 내쉬 균형.
+export function bestResponses(cells: PayoffCells): BestResponses {
+  const meBest: Record<CellKey, boolean> = {
+    AA: cells.AA[0] >= cells.WA[0], // 상대=첫째 열: 우리 첫째 vs 둘째
+    WA: cells.WA[0] >= cells.AA[0],
+    AW: cells.AW[0] >= cells.WW[0], // 상대=둘째 열: 우리 첫째 vs 둘째
+    WW: cells.WW[0] >= cells.AW[0],
+  };
+  const themBest: Record<CellKey, boolean> = {
+    AA: cells.AA[1] >= cells.AW[1], // 우리=첫째 행: 상대 첫째 vs 둘째
+    AW: cells.AW[1] >= cells.AA[1],
+    WA: cells.WA[1] >= cells.WW[1], // 우리=둘째 행: 상대 첫째 vs 둘째
+    WW: cells.WW[1] >= cells.WA[1],
+  };
+  return { meBest, themBest };
+}
+
+// 정석 죄수의 딜레마. 행/열 첫째 = 협력(A 자리), 둘째 = 배신(W 자리).
+// 우월전략은 '배신'이라 내쉬 균형은 WW(1,1) — 협력 AA(3,3)보다 모두에게 나쁜
+// 파레토 열등 결과로 수렴한다. 채택 게임과의 대비용.
+export function prisonersDilemma(): { cells: PayoffCells; nash: CellKey } {
+  return {
+    cells: {
+      AA: [3, 3], // 둘 다 협력
+      AW: [0, 5], // 나만 협력 (호구)
+      WA: [5, 0], // 나만 배신 (유혹)
+      WW: [1, 1], // 둘 다 배신
+    },
+    nash: "WW",
+  };
 }
 
 // ── 2. 채택 캐스케이드 (Granovetter 임계값 모델) ──────────────────────────
