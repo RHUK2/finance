@@ -75,6 +75,38 @@ export function movingAverage(
   return out;
 }
 
+// N일 롤링 실현변동성(연율화 %). 일간 로그수익률의 window 구간 표준편차 × √365 × 100.
+// 정렬된 입력 기준이며, window 미만 구간은 제외하고 반환
+export function rollingVolatility(
+  series: SeriesPoint[],
+  window: number,
+): SeriesPoint[] {
+  if (window <= 0 || series.length < 2) return [];
+  const returns: SeriesPoint[] = [];
+  for (let i = 1; i < series.length; i++) {
+    const prev = series[i - 1].value;
+    if (prev > 0)
+      returns.push({ time: series[i].time, value: Math.log(series[i].value / prev) });
+  }
+  const out: SeriesPoint[] = [];
+  for (let i = window - 1; i < returns.length; i++) {
+    let mean = 0;
+    for (let j = i - window + 1; j <= i; j++) mean += returns[j].value;
+    mean /= window;
+    let variance = 0;
+    for (let j = i - window + 1; j <= i; j++) {
+      const d = returns[j].value - mean;
+      variance += d * d;
+    }
+    variance /= window;
+    out.push({
+      time: returns[i].time,
+      value: Math.sqrt(variance) * Math.sqrt(365) * 100,
+    });
+  }
+  return out;
+}
+
 export function generateModelDates(
   startDate: string,
   endDate: string,
