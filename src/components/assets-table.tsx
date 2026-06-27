@@ -228,6 +228,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     [],
   );
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filtered,
     columns,
