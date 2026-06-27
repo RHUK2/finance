@@ -5,17 +5,15 @@ import { useMemo, useState } from "react";
 import { Bitcoin, Cpu, ShieldCheck, Zap } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import {
+  ControlSlider,
+  ExplainCard,
+  Metric,
+  SectionIntro,
+} from "@/components/simulation";
+import { cn, formatUsd } from "@/lib/utils";
 
-import { ControlSlider, ExplainCard, Metric, SectionIntro } from "./components";
 import { attack51 } from "./models";
-
-function usd(n: number) {
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}k`;
-  return `$${Math.round(n)}`;
-}
 
 export function AttackGame() {
   const [btcPrice, setBtcPrice] = useState(100000);
@@ -56,7 +54,7 @@ export function AttackGame() {
           min={10000}
           max={500000}
           step={5000}
-          format={usd}
+          format={formatUsd}
         />
         <ControlSlider
           icon={<Cpu className="size-4 text-sky-500" />}
@@ -103,7 +101,7 @@ export function AttackGame() {
           value={r.attackCost}
           max={max}
           className="bg-rose-500"
-          sub={`장비 ${usd(r.hardwareCost)} · 전기 ${usd(r.energyCost)}`}
+          sub={`장비 ${formatUsd(r.hardwareCost)} · 전기 ${formatUsd(r.energyCost)}`}
         />
         <CostBar
           label="이중지불 이득 (최대 추정)"
@@ -120,8 +118,8 @@ export function AttackGame() {
       </Card>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Metric label="공격 비용" value={usd(r.attackCost)} tone="bad" />
-        <Metric label="이중지불 이득" value={usd(r.doubleSpendGain)} tone="accent" />
+        <Metric label="공격 비용" value={formatUsd(r.attackCost)} tone="bad" />
+        <Metric label="이중지불 이득" value={formatUsd(r.doubleSpendGain)} tone="accent" />
         <Metric
           label="비용 ÷ 이득"
           value={`${r.costToGain >= 10 ? Math.round(r.costToGain) : r.costToGain.toFixed(1)}배`}
@@ -194,7 +192,7 @@ function CostBar({
     <div className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono tabular-nums">{usd(value)}</span>
+        <span className="font-mono tabular-nums">{formatUsd(value)}</span>
       </div>
       <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
         <div

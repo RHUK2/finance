@@ -14,7 +14,7 @@ import {
   Metric,
   RoundControls,
   SectionIntro,
-} from "./components";
+} from "@/components/simulation";
 import {
   type Holder,
   type HodlState,
@@ -22,7 +22,7 @@ import {
   hodlStep,
   initialHodlState,
 } from "./models";
-import { useRoundEngine } from "./use-round-engine";
+import { useRoundEngine } from "@/hooks/use-round-engine";
 
 const N = 180;
 const SEED = 777;

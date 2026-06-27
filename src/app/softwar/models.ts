@@ -1,9 +1,7 @@
 // 비트코인 소프트워(파워 프로젝션) 페이지의 순수 계산 모델을 한 곳에 모은다.
 // 외부 API 없이 클라이언트에서 계산하며, 모든 수치는 개념 설명용 예시다.
 
-import { mulberry32 } from "../bitcoin-game-theory/models";
-
-const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
+import { clamp01, mulberry32 } from "@/lib/utils";
 
 // ── 1. 추상 권력 vs 물리 권력 (약탈자 포획) ────────────────────────────────
 // 합리적 약탈자는 탈취 이득(value) > 탈취 비용일 때 공격한다.

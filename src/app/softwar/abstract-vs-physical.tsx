@@ -5,23 +5,15 @@ import { useMemo, useState } from "react";
 import { Crown, ShieldCheck, Zap } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-
 import {
   ControlSlider,
   ExplainCard,
   Metric,
   SectionIntro,
-} from "../bitcoin-game-theory/components";
-import { powerCapture } from "./models";
+} from "@/components/simulation";
+import { cn, formatUsd } from "@/lib/utils";
 
-function usd(n: number) {
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(1)}T`;
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(0)}k`;
-  return `$${Math.round(n)}`;
-}
+import { powerCapture } from "./models";
 
 function bcraLabel(b: number) {
   return b >= 10 ? `${Math.round(b)}배` : `${b.toFixed(1)}배`;
@@ -56,7 +48,7 @@ export function AbstractVsPhysical() {
           min={1e6}
           max={1e12}
           step={1e6}
-          format={usd}
+          format={formatUsd}
         />
         <ControlSlider
           icon={<Crown className="size-4 text-rose-500" />}
@@ -67,7 +59,7 @@ export function AbstractVsPhysical() {
           min={1e4}
           max={5e7}
           step={1e4}
-          format={usd}
+          format={formatUsd}
         />
         <ControlSlider
           icon={<Zap className="size-4 text-amber-500" />}
@@ -78,7 +70,7 @@ export function AbstractVsPhysical() {
           min={1e6}
           max={2e12}
           step={1e6}
-          format={usd}
+          format={formatUsd}
         />
       </Card>
 
@@ -193,7 +185,7 @@ function Bar({
     <div className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono tabular-nums">{usd(value)}</span>
+        <span className="font-mono tabular-nums">{formatUsd(value)}</span>
       </div>
       <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
         <div

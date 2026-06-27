@@ -12,7 +12,7 @@ import {
   ExplainCard,
   Metric,
   SectionIntro,
-} from "../bitcoin-game-theory/components";
+} from "@/components/simulation";
 import { deterrence } from "./models";
 
 export function SoftwarVsHardwar() {

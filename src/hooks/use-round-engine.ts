@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// 라운드형 시뮬레이션(채택 캐스케이드·홀더 딜레마)의 재생 타이밍을 관리한다.
-// step()은 한 라운드 진행 후 "계속할 게 남았는가"를 boolean으로 반환한다.
+// 스텝형 시뮬레이션의 재생 타이밍을 관리한다.
+// step()은 한 스텝 진행 후 "계속할 게 남았는가"를 boolean으로 반환한다.
 // false면 자동으로 일시정지한다.
 export function useRoundEngine(step: () => boolean, speedMs: number) {
   const [playing, setPlaying] = useState(false);

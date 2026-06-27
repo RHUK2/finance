@@ -14,9 +14,9 @@ import {
   Metric,
   RoundControls,
   SectionIntro,
-} from "./components";
+} from "@/components/simulation";
 import { type CascadeAgent, buildCascadeAgents, cascadeStep } from "./models";
-import { useRoundEngine } from "./use-round-engine";
+import { useRoundEngine } from "@/hooks/use-round-engine";
 
 const N = 180;
 const SEED = 12345;

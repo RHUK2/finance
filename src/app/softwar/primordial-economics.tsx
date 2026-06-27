@@ -14,8 +14,8 @@ import {
   Metric,
   RoundControls,
   SectionIntro,
-} from "../bitcoin-game-theory/components";
-import { useRoundEngine } from "../bitcoin-game-theory/use-round-engine";
+} from "@/components/simulation";
+import { useRoundEngine } from "@/hooks/use-round-engine";
 import {
   type Organism,
   type PredationState,

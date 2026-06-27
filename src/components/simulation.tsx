@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 
+// 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
+
 // 에이전트 격자 — 상태별 배경색 className 배열을 받아 사각형으로 렌더링.
 // 라운드마다 색이 바뀌며 transition-colors로 부드럽게 전환된다.
 export function AgentGrid({ states }: { states: string[] }) {
@@ -28,13 +30,14 @@ export function AgentGrid({ states }: { states: string[] }) {
   );
 }
 
-const SPEEDS = [
+const DEFAULT_SPEEDS = [
   { label: "0.5×", ms: 1100 },
   { label: "1×", ms: 600 },
   { label: "2×", ms: 280 },
 ];
 
-// 라운드 컨트롤 — 재생/일시정지 · 한 라운드 · 리셋 · 속도.
+// 재생 컨트롤 — 재생/일시정지 · 한 스텝 · 리셋 · 속도.
+// unit으로 진행 단위 명칭("라운드"·"스텝"), speeds로 속도 프리셋을 바꿀 수 있다.
 export function RoundControls({
   playing,
   onToggle,
@@ -44,6 +47,8 @@ export function RoundControls({
   speedMs,
   onSpeed,
   done,
+  unit = "라운드",
+  speeds = DEFAULT_SPEEDS,
 }: {
   playing: boolean;
   onToggle: () => void;
@@ -53,6 +58,8 @@ export function RoundControls({
   speedMs: number;
   onSpeed: (ms: number) => void;
   done?: boolean;
+  unit?: string;
+  speeds?: { label: string; ms: number }[];
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -67,7 +74,7 @@ export function RoundControls({
         disabled={playing || done}
         className="gap-1.5"
       >
-        <StepForward className="size-4" />한 라운드
+        <StepForward className="size-4" />한 {unit}
       </Button>
       <Button size="sm" variant="outline" onClick={onReset} className="gap-1.5">
         <RotateCcw className="size-4" />
@@ -75,10 +82,10 @@ export function RoundControls({
       </Button>
       <div className="ml-auto flex items-center gap-2">
         <span className="text-muted-foreground text-sm tabular-nums">
-          라운드 {round}
+          {unit} {round}
         </span>
         <div className="flex overflow-hidden rounded-md border">
-          {SPEEDS.map((s) => (
+          {speeds.map((s) => (
             <button
               key={s.ms}
               onClick={() => onSpeed(s.ms)}

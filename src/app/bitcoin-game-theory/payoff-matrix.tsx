@@ -7,7 +7,7 @@ import { AlertTriangle, Crown, Flag, TrendingUp, UserMinus } from "lucide-react"
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-import { ControlSlider, ExplainCard, SectionIntro } from "./components";
+import { ControlSlider, ExplainCard, SectionIntro } from "@/components/simulation";
 import {
   type BestResponses,
   type CellKey,
