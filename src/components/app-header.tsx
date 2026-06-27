@@ -12,13 +12,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { NAV_ITEMS } from "@/lib/nav";
+import { NAV_GROUPS } from "@/lib/nav";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -53,17 +55,30 @@ export function AppHeader({ breadcrumbs }: Props) {
                         <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start" className="min-w-44">
-                        {NAV_ITEMS.filter((n) => n.href !== pathname).map(
-                          ({ label, href, icon: Icon }) => (
-                            <DropdownMenuItem
-                              key={href}
-                              onClick={() => router.push(href)}
-                            >
-                              <Icon className="h-4 w-4" />
-                              {label}
-                            </DropdownMenuItem>
+                        {NAV_GROUPS.map((group) => ({
+                          label: group.label,
+                          items: group.items.filter(
+                            (n) => n.href !== pathname,
                           ),
-                        )}
+                        }))
+                          .filter((group) => group.items.length > 0)
+                          .map((group, gi) => (
+                            <span key={group.label}>
+                              {gi > 0 && <DropdownMenuSeparator />}
+                              <DropdownMenuLabel className="text-muted-foreground text-xs">
+                                {group.label}
+                              </DropdownMenuLabel>
+                              {group.items.map(({ label, href, icon: Icon }) => (
+                                <DropdownMenuItem
+                                  key={href}
+                                  onClick={() => router.push(href)}
+                                >
+                                  <Icon className="h-4 w-4" />
+                                  {label}
+                                </DropdownMenuItem>
+                              ))}
+                            </span>
+                          ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ) : isLast ? (
