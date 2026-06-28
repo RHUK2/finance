@@ -5,6 +5,7 @@ import { Pause, Play, RotateCcw, StepForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
@@ -196,6 +197,60 @@ export function ExplainCard({
       </span>
       <p className="text-muted-foreground text-sm leading-relaxed">{body}</p>
     </Card>
+  );
+}
+
+// 시뮬레이션 페이지 공용 탭 — 반응형: 모바일 2열(라벨 줄바꿈), 데스크탑 탭 수만큼 한 줄.
+// 탭 수가 홀수면 마지막 탭이 모바일에서 한 줄을 꽉 채운다.
+const MD_GRID_COLS: Record<number, string> = {
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-3",
+  4: "md:grid-cols-4",
+  5: "md:grid-cols-5",
+  6: "md:grid-cols-6",
+};
+
+export type SimTab = {
+  value: string;
+  label: React.ReactNode;
+  node: React.ReactNode;
+};
+
+export function SimTabs({
+  tabs,
+  defaultValue,
+}: {
+  tabs: SimTab[];
+  defaultValue: string;
+}) {
+  const isOdd = tabs.length % 2 === 1;
+  return (
+    <Tabs defaultValue={defaultValue} className="gap-4">
+      <TabsList
+        className={cn(
+          "grid w-full grid-cols-2 group-data-horizontal/tabs:h-auto",
+          MD_GRID_COLS[tabs.length] ?? "md:grid-cols-4",
+        )}
+      >
+        {tabs.map((t, i) => (
+          <TabsTrigger
+            key={t.value}
+            value={t.value}
+            className={cn(
+              "min-h-9 py-1.5 text-center leading-tight whitespace-normal",
+              isOdd && i === tabs.length - 1 && "col-span-2 md:col-span-1",
+            )}
+          >
+            {t.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {tabs.map((t) => (
+        <TabsContent key={t.value} value={t.value}>
+          {t.node}
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 }
 

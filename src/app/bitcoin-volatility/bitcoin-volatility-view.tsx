@@ -3,7 +3,7 @@
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SimTabs } from "@/components/simulation";
 
 import { MaturationCurve } from "./maturation-curve";
 import { TwoRegime } from "./two-regime";
@@ -52,20 +52,7 @@ export function BitcoinVolatilityView() {
             </ul>
           </Card>
 
-          <Tabs defaultValue="regime" className="gap-4">
-            <TabsList className="grid w-full grid-cols-2 group-data-horizontal/tabs:h-auto">
-              {TABS.map((t) => (
-                <TabsTrigger key={t.value} value={t.value}>
-                  {t.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {TABS.map((t) => (
-              <TabsContent key={t.value} value={t.value}>
-                {t.node}
-              </TabsContent>
-            ))}
-          </Tabs>
+          <SimTabs tabs={TABS} defaultValue="regime" />
         </div>
       </PageMain>
     </>
