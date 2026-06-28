@@ -2,6 +2,7 @@ import {
   Activity,
   BarChart3,
   Bitcoin,
+  Coins,
   KeyRound,
   Landmark,
   LineChart,
@@ -34,7 +35,10 @@ export const NAV_GROUPS = [
   },
   {
     label: "비트코인 기술",
-    items: [{ label: "지갑 키 생성", href: "/wallet-keys", icon: KeyRound }],
+    items: [
+      { label: "지갑 키 생성", href: "/wallet-keys", icon: KeyRound },
+      { label: "트랜잭션 해부", href: "/transactions", icon: Coins },
+    ],
   },
   {
     label: "화폐",
