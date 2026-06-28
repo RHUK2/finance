@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ExplainCard, SectionIntro } from "@/components/simulation";
+import { ExplainCard, Field, SectionIntro } from "@/components/simulation";
 import { cn } from "@/lib/utils";
 import {
   buildPath,
@@ -22,7 +22,7 @@ import {
   PURPOSES,
 } from "@/lib/bip-concept";
 
-import { Pipeline } from "./pipeline";
+import { Pipeline } from "@/components/pipeline";
 
 export function KeyTree({ seedHex }: { seedHex: string }) {
   const [purpose, setPurpose] = useState("84");
@@ -220,21 +220,6 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
           </>
         }
       />
-    </div>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium">{label}</span>
-      {children}
     </div>
   );
 }

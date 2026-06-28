@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ExplainCard, SectionIntro } from "@/components/simulation";
 
-import { Pipeline } from "./pipeline";
+import { Pipeline } from "@/components/pipeline";
 
 export function SeedDerivation({
   mnemonic,

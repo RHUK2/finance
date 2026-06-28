@@ -254,6 +254,22 @@ export function SimTabs({
   );
 }
 
+// 라벨 + 입력 컨트롤(Select·Input 등)을 세로로 묶는 폼 필드.
+export function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-sm font-medium">{label}</span>
+      {children}
+    </div>
+  );
+}
+
 // 탭 섹션 상단 제목 + 설명.
 export function SectionIntro({
   title,

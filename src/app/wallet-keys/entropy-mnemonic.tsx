@@ -23,7 +23,7 @@ import {
   type MnemonicWord,
 } from "@/lib/bip-concept";
 
-import { Pipeline } from "./pipeline";
+import { Pipeline } from "@/components/pipeline";
 
 export function EntropyMnemonic({
   bits,

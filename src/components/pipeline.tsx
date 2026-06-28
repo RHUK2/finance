@@ -2,8 +2,8 @@ import { ArrowDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// 암호 변환 과정을 세로 파이프라인으로 시각화 — 박스(값) 사이에 연산(op) 화살표.
-// split은 한 연산이 둘로 쪼개지는 출력(예: HMAC-SHA512 → 개인키 + 체인코드)을 나란히 보여준다.
+// 단계적 변환 과정을 세로 파이프라인으로 시각화 — 박스(값) 사이에 연산(op) 화살표.
+// split은 한 연산이 둘로 쪼개지는 출력(예: 개인키 + 체인코드, 받는 사람 + 잔돈)을 나란히 보여준다.
 type Box = { label: string; value: React.ReactNode; tone?: "accent" | "good" };
 
 export type PipeItem =
