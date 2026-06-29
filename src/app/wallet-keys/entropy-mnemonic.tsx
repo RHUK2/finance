@@ -172,10 +172,7 @@ export function EntropyMnemonic({
           ]}
         />
         <p className="text-muted-foreground text-xs">
-          실제로는{" "}
-          <code className="font-mono">crypto.subtle.digest(&quot;SHA-256&quot;, …)</code>
-          로 계산한다. 이 데모는 의존성 없이 흐름만 보여주려고 해시·체크섬을 결정적
-          가짜 값으로 채웠다.
+          이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.
         </p>
       </Card>
 
@@ -187,6 +184,21 @@ export function EntropyMnemonic({
             계산</b>하고, 끝에 붙은 체크섬과 맞는지 검사한다. 단어를 하나라도 잘못 적으면
             해시가 어긋나 즉시 &lsquo;잘못된 니모닉&rsquo; 오류가 뜬다. 그래서 아무 단어
             12개나 적는다고 유효한 니모닉이 되지 않는다.
+          </>
+        }
+      />
+
+      <ExplainCard
+        title="SHA-256·HMAC·PBKDF2 — 이름이 비슷한 세 함수"
+        body={
+          <>
+            이 페이지엔 해시 계열 함수가 셋 등장하는데 목적이 서로 다르다.{" "}
+            <b>SHA-256</b>은 입력을 고정 256비트로 줄이는 순수 해시다 — 빠르고
+            단방향이라 체크섬·채굴·주소 생성에 쓴다(지금 이 ① 단계). <b>HMAC</b>은 해시에
+            키를 끼워 넣어, 키를 아는 사람이 만들었음을 증명하거나(인증) 두 입력을 잘 섞는
+            믹서로 쓴다. <b>PBKDF2</b>는 그 HMAC을 수천 번 반복해 <b>일부러 느리게</b> 만든
+            키 유도 함수다. 그래서 ②에서 PBKDF2(시드), ③에서 HMAC-SHA512(키 트리)가
+            차례로 나온다.
           </>
         }
       />

@@ -69,10 +69,8 @@ export function SeedDerivation({
           ]}
         />
         <p className="text-muted-foreground text-xs">
-          실제로는{" "}
-          <code className="font-mono">crypto.subtle.deriveBits(PBKDF2 …)</code>로 2048번
-          반복 계산한다. 반복 횟수가 많을수록 무차별 대입이 느려진다. 이 데모의 시드는
-          흐름을 보여주는 결정적 가짜 값이다.
+          반복 횟수가 많을수록 무차별 대입이 느려진다. 이 데모의 시드는 흐름을 보여주는
+          가짜 값이다.
         </p>
       </Card>
 
@@ -84,6 +82,22 @@ export function SeedDerivation({
             그래서 passphrase에 점(.) 하나만 더해도 완전히 다른 지갑이 된다. 같은 단어
             목록 + 다른 passphrase = 서로 무관한 지갑들 — 이를 이용해 &lsquo;위장
             지갑&rsquo;을 만들 수도 있다. (이 데모의 시드는 시연용 값이다.)
+          </>
+        }
+      />
+
+      <ExplainCard
+        title="여기서 HMAC은 '인증'이 아니라 '믹서'다"
+        body={
+          <>
+            HMAC 하면 보통 &lsquo;비밀 키로 메시지를 인증한다&rsquo;를 떠올린다 — 그땐 키가
+            새면 위조되니 비밀성이 생명이다. 하지만 PBKDF2가 HMAC을 부르는 이유는 인증이
+            아니라, 두 입력을 예측 불가능하게 잘 섞어 주는 <b>결정적 믹서(PRF)</b>가
+            필요해서다. 니모닉은 HMAC의 &lsquo;키&rsquo; 자리에 들어가지만 그 비밀성 성질을
+            쓰는 게 아니라 단지 시드의 재료일 뿐이다. 그래서 시드의 보안은 HMAC이 아니라
+            ① <b>니모닉 자체의 엔트로피</b>(12단어 = 128비트)와 ② <b>2048회 반복으로 인한
+            느림</b>에서 나온다. (니모닉은 종이에 적어 두더라도 당신만 아는 비밀이어야
+            한다.)
           </>
         }
       />

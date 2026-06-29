@@ -187,11 +187,30 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
           ]}
         />
         <p className="text-muted-foreground text-xs">
-          공개키 파생(secp256k1)과 RIPEMD-160은 브라우저 내장 암호 API에 없어서, 이
-          데모의 중간 키·체인코드·주소는 결정적 가짜 값이다. 단계 자체는 실제 BIP-32
-          흐름과 같다.
+          이 데모의 중간 키·체인코드·주소는 가짜 값이지만, 단계 자체는 실제 BIP-32 흐름과
+          같다.
         </p>
       </Card>
+
+      <ExplainCard
+        title="CKD 한 단계는 실제로 무슨 계산일까? (∥ 는 이어붙이기)"
+        body={
+          <>
+            트리의 매 가지는 같은 한 줄을 반복한다 —{" "}
+            <span className="font-mono">HMAC-SHA512(키 = 부모 체인코드, data)</span> →
+            결과 64바이트의 왼쪽 32B는 자식 키, 오른쪽 32B는 자식 체인코드. 여기서 data는
+            바이트를 <b>이어붙인</b> 값인데,{" "}
+            <span className="font-mono">∥</span>는 &lsquo;또는&rsquo;이나 비트 연산이 아니라
+            연결(붙이기) 기호다. 하드닝(<span className="font-mono">84&apos;</span>)이면{" "}
+            <span className="font-mono">0x00 ∥ 부모개인키 ∥ index</span>, 일반(
+            <span className="font-mono">0</span>)이면{" "}
+            <span className="font-mono">부모공개키(33B) ∥ index</span>를 이어붙인다. 맨 앞{" "}
+            <span className="font-mono">0x00</span>은 개인키(32B)와 공개키(33B)의 길이를
+            33B로 맞추는 패딩이다. 부모 체인코드가 HMAC 키 자리에 들어가므로, 개인키만
+            알아선 형제·부모 키를 만들 수 없다.
+          </>
+        }
+      />
 
       <ExplainCard
         title="체인코드는 왜 필요할까? — 확장키(xprv/xpub)"
