@@ -1,8 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-
-import { cacheMs } from "@/lib/cache-config";
+import { useEndpoint } from "@/hooks/use-endpoint";
 
 export type MempoolStatsData = {
   fetchedAt: string;
@@ -29,50 +27,11 @@ export type MiningStatsData = {
   nextRewardBTC: number;
 };
 
-export function useMempoolStats() {
-  return useQuery<MempoolStatsData>({
-    queryKey: ["mempool-stats"],
-    queryFn: async () => {
-      const res = await fetch("/api/mempool-stats");
-      if (!res.ok) throw new Error("Failed to fetch mempool stats");
-      return res.json();
-    },
-    staleTime: cacheMs("mempool-stats"),
-    refetchInterval: cacheMs("mempool-stats"),
-  });
-}
-
-export function useMiningStats() {
-  return useQuery<MiningStatsData>({
-    queryKey: ["mining-stats"],
-    queryFn: async () => {
-      const res = await fetch("/api/mining-stats");
-      if (!res.ok) throw new Error("Failed to fetch mining stats");
-      return res.json();
-    },
-    staleTime: cacheMs("mining-stats"),
-    refetchInterval: cacheMs("mining-stats"),
-  });
-}
-
 export type MiningPoolsData = {
   fetchedAt: string;
   totalBlocks: number;
   pools: { name: string; slug: string; blockCount: number; sharePct: number }[];
 };
-
-export function useMiningPools() {
-  return useQuery<MiningPoolsData>({
-    queryKey: ["mining-pools"],
-    queryFn: async () => {
-      const res = await fetch("/api/mining-pools");
-      if (!res.ok) throw new Error("Failed to fetch mining pools");
-      return res.json();
-    },
-    staleTime: cacheMs("mining-pools"),
-    refetchInterval: cacheMs("mining-pools"),
-  });
-}
 
 export type RecentBlocksData = {
   fetchedAt: string;
@@ -88,38 +47,12 @@ export type RecentBlocksData = {
   }[];
 };
 
-export function useRecentBlocks() {
-  return useQuery<RecentBlocksData>({
-    queryKey: ["recent-blocks"],
-    queryFn: async () => {
-      const res = await fetch("/api/recent-blocks");
-      if (!res.ok) throw new Error("Failed to fetch recent blocks");
-      return res.json();
-    },
-    staleTime: cacheMs("recent-blocks"),
-    refetchInterval: cacheMs("recent-blocks"),
-  });
-}
-
 export type HashrateHistoryData = {
   fetchedAt: string;
   history: { time: string; value: number }[];
   currentHashrateEHs: number;
   currentDifficultyT: number;
 };
-
-export function useHashrateHistory() {
-  return useQuery<HashrateHistoryData>({
-    queryKey: ["hashrate-history"],
-    queryFn: async () => {
-      const res = await fetch("/api/hashrate-history");
-      if (!res.ok) throw new Error("Failed to fetch hashrate history");
-      return res.json();
-    },
-    staleTime: cacheMs("hashrate-history"),
-    refetchInterval: cacheMs("hashrate-history"),
-  });
-}
 
 export type MempoolBlocksData = {
   fetchedAt: string;
@@ -132,15 +65,15 @@ export type MempoolBlocksData = {
   }[];
 };
 
-export function useMempoolBlocks() {
-  return useQuery<MempoolBlocksData>({
-    queryKey: ["mempool-blocks"],
-    queryFn: async () => {
-      const res = await fetch("/api/mempool-blocks");
-      if (!res.ok) throw new Error("Failed to fetch mempool blocks");
-      return res.json();
-    },
-    staleTime: cacheMs("mempool-blocks"),
-    refetchInterval: cacheMs("mempool-blocks"),
-  });
-}
+export const useMempoolStats = () =>
+  useEndpoint<MempoolStatsData>("mempool-stats");
+export const useMiningStats = () =>
+  useEndpoint<MiningStatsData>("mining-stats");
+export const useMiningPools = () =>
+  useEndpoint<MiningPoolsData>("mining-pools");
+export const useRecentBlocks = () =>
+  useEndpoint<RecentBlocksData>("recent-blocks");
+export const useHashrateHistory = () =>
+  useEndpoint<HashrateHistoryData>("hashrate-history");
+export const useMempoolBlocks = () =>
+  useEndpoint<MempoolBlocksData>("mempool-blocks");

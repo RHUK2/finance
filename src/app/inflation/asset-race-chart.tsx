@@ -1,17 +1,17 @@
 "use client";
 
 import { useMemo } from "react";
-import { LineSeries } from "lightweight-charts";
 
 import { ChartContainer } from "@/components/chart-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useChart } from "@/hooks/use-chart";
+import { LineSeries, useChart } from "@/hooks/use-chart";
 import type { InflationData } from "@/hooks/use-inflation";
 import {
   depositIndex,
   normalizeToBase,
   type Point,
 } from "@/lib/inflation-models";
+import { BTC_COLOR } from "@/lib/utils";
 
 type Line = { label: string; color: string; data: Point[] };
 
@@ -39,12 +39,14 @@ export function AssetRaceChart({
     const assets: { label: string; color: string; series?: Point[] }[] = [
       { label: stockLabel, color: "#3b82f6", series: data.stock?.history },
       { label: "주택", color: "#f59e0b", series: data.house?.history },
-      { label: "비트코인", color: "#f7931a", series: btc },
+      { label: "비트코인", color: BTC_COLOR, series: btc },
     ];
     let hasAsset = false;
     for (const a of assets) {
       // 기준연도에 아직 없던 자산(예: 비트코인)은 등장 연도를 100으로 환산해 합류시킨다.
-      const startYear = a.series?.[0] ? Number(a.series[0].time.slice(0, 4)) : 0;
+      const startYear = a.series?.[0]
+        ? Number(a.series[0].time.slice(0, 4))
+        : 0;
       const effBase = Math.max(baseYear, startYear);
       const norm = normalizeToBase(a.series, effBase);
       if (norm.length) {

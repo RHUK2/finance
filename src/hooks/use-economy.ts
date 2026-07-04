@@ -1,14 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useEndpoint } from "@/hooks/use-endpoint";
+import type { MacroSeries } from "@/lib/series";
 
-import { cacheMs } from "@/lib/cache-config";
-
-export type MacroSeries = {
-  history: { time: string; value: number }[];
-  current: number | null;
-  changePercent: number | null;
-};
+export type { MacroSeries };
 
 export type EconomyData = {
   fetchedAt: string;
@@ -21,19 +16,6 @@ export type EconomyData = {
   usdkrw: MacroSeries;
 };
 
-export function useEconomy() {
-  return useQuery<EconomyData>({
-    queryKey: ["economy"],
-    queryFn: async () => {
-      const res = await fetch("/api/economy");
-      if (!res.ok) throw new Error("Failed to fetch economy data");
-      return res.json();
-    },
-    staleTime: cacheMs("economy"),
-    refetchInterval: cacheMs("economy"),
-  });
-}
-
 export type FredData = {
   fetchedAt: string;
   available: boolean;
@@ -41,15 +23,5 @@ export type FredData = {
   us2y?: MacroSeries;
 };
 
-export function useFred() {
-  return useQuery<FredData>({
-    queryKey: ["fred"],
-    queryFn: async () => {
-      const res = await fetch("/api/fred");
-      if (!res.ok) throw new Error("Failed to fetch FRED data");
-      return res.json();
-    },
-    staleTime: cacheMs("fred"),
-    refetchInterval: cacheMs("fred"),
-  });
-}
+export const useEconomy = () => useEndpoint<EconomyData>("economy");
+export const useFred = () => useEndpoint<FredData>("fred");

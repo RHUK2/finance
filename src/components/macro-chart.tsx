@@ -1,11 +1,9 @@
 "use client";
 
-import { LineSeries } from "lightweight-charts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartContainer } from "@/components/chart-container";
-import { useChart } from "@/hooks/use-chart";
-import { useEffect } from "react";
+import { LineSeries, useChart } from "@/hooks/use-chart";
 
 export type MacroLine = {
   label?: string;
@@ -47,12 +45,8 @@ export function MacroChart({
       });
     },
     [lines],
-    { height: 240 },
+    { height: 240, resetRef },
   );
-
-  useEffect(() => {
-    if (resetRef) resetRef.current = resetView;
-  }, [resetRef, resetView]);
 
   return (
     <Card>

@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 
+import { ControlSlider, StatCard } from "@/components/simulation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { clamp } from "@/lib/utils";
 import type { InflationData } from "@/hooks/use-inflation";
 import {
   compoundDeposit,
@@ -16,9 +17,8 @@ import {
 
 import {
   EmptyCard,
-  SliderRow,
-  StatCard,
   fmtHours,
+  hi,
   makeMoneyFmt,
   type Currency,
 } from "./components";
@@ -42,71 +42,50 @@ export function LaborHours({
   wageTable,
   stockLabel,
 }: Props) {
-  const [startYear, setStartYear] = useState(
-    Math.max(minYear, Math.min(maxYear, 2000)),
-  );
+  const [startYear, setStartYear] = useState(clamp(2000, minYear, maxYear));
   const money = makeMoneyFmt(currency);
 
   const r = useMemo(() => {
     const wage = minWageAt(wageTable, startYear); // 시작연도 시급 = 1시간 노동
     const currentWage = minWageAt(wageTable, maxYear);
+    const empty = [] as { key: string; label: string; value: number | null }[];
     if (wage == null || currentWage == null) {
-      return { wage, currentWage, entries: [] as ReturnType<typeof build> };
+      return { wage, currentWage, entries: empty };
     }
 
-    function build() {
-      const list: {
-        key: string;
-        label: string;
-        value: number | null;
-      }[] = [
-        {
-          key: "deposit",
-          label: "예금",
-          value: compoundDeposit(wage!, data.deposit?.history, startYear),
-        },
-        {
-          key: "stock",
-          label: stockLabel,
-          value: grow(
-            wage!,
-            valueAt(data.stock?.history, startYear),
-            latestValue(data.stock?.history),
-          ),
-        },
-        {
-          key: "house",
-          label: "주택",
-          value: grow(
-            wage!,
-            valueAt(data.house?.history, startYear),
-            latestValue(data.house?.history),
-          ),
-        },
-        {
-          key: "btc",
-          label: "비트코인",
-          value: grow(wage!, valueAt(btc, startYear), latestValue(btc)),
-        },
-      ];
-      return list;
-    }
+    const entries = [
+      {
+        key: "deposit",
+        label: "예금",
+        value: compoundDeposit(wage, data.deposit?.history, startYear),
+      },
+      {
+        key: "stock",
+        label: stockLabel,
+        value: grow(
+          wage,
+          valueAt(data.stock?.history, startYear),
+          latestValue(data.stock?.history),
+        ),
+      },
+      {
+        key: "house",
+        label: "주택",
+        value: grow(
+          wage,
+          valueAt(data.house?.history, startYear),
+          latestValue(data.house?.history),
+        ),
+      },
+      {
+        key: "btc",
+        label: "비트코인",
+        value: grow(wage, valueAt(btc, startYear), latestValue(btc)),
+      },
+    ];
 
-    return { wage, currentWage, entries: build() };
+    return { wage, currentWage, entries };
   }, [data, btc, startYear, maxYear, wageTable, stockLabel]);
-
-  const hi = (text: string, tone: "strong" | "bad" | "good") => (
-    <span
-      className={cn(
-        "font-semibold",
-        tone === "strong" && "text-foreground",
-        tone === "bad" && "text-rose-600 dark:text-rose-400",
-        tone === "good" && "text-emerald-600 dark:text-emerald-400",
-      )}
-    >
-      {text}
-    </span>
-  );
 
   const deposit = r.entries.find((e) => e.key === "deposit");
   const best = r.entries
@@ -128,14 +107,16 @@ export function LaborHours({
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
-        <SliderRow
+        <ControlSlider
           label="시작 연도"
-          valueLabel={`${startYear}년 · 시급 ${r.wage != null ? money(r.wage) : "—"}`}
           min={minYear}
           max={maxYear}
           step={1}
           value={startYear}
           onChange={setStartYear}
+          format={(v) =>
+            `${v}년 · 시급 ${r.wage != null ? money(r.wage) : "—"}`
+          }
         />
 
         <p className="bg-muted/40 rounded-lg border p-4 text-sm leading-relaxed">
@@ -180,11 +161,12 @@ export function LaborHours({
                 label={e.label}
                 value={e.value / r.currentWage}
                 format={fmtHours}
-                accent={e.key !== "deposit"}
                 tone={
-                  e.key === "deposit" && e.value / r.currentWage < 1
-                    ? "bad"
-                    : undefined
+                  e.key !== "deposit"
+                    ? "accent"
+                    : e.value / r.currentWage < 1
+                      ? "bad"
+                      : undefined
                 }
                 sub={money(e.value)}
               />

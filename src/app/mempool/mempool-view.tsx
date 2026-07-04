@@ -3,7 +3,7 @@
 import { AppHeader } from "@/components/app-header";
 import { HashrateChart } from "@/components/hashrate-chart";
 import { PageMain } from "@/components/page-main";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   useHashrateHistory,
@@ -13,8 +13,11 @@ import {
   useMiningStats,
   useRecentBlocks,
 } from "@/hooks/use-mempool";
-import { useRelativeTime } from "@/hooks/use-relative-time";
+import { formatRelativeTime, useMinuteTick } from "@/hooks/use-relative-time";
+import { BLOCKS_PER_HALVING, RETARGET_INTERVAL } from "@/lib/bitcoin-models";
+import { BTC_COLOR } from "@/lib/utils";
 import {
+  CardHeading,
   DonutRing,
   MempoolBlocksViz,
   PoolShareChart,
@@ -30,18 +33,24 @@ export function MempoolView() {
   const { data: hashrate } = useHashrateHistory();
   const { data: pools } = useMiningPools();
 
-  const mempoolRelTime = useRelativeTime(mempool?.fetchedAt);
-  const miningRelTime = useRelativeTime(mining?.fetchedAt);
-  const mempoolBlocksRelTime = useRelativeTime(mempoolBlocks?.fetchedAt);
-  const recentBlocksRelTime = useRelativeTime(recentBlocks?.fetchedAt);
-  const hashrateRelTime = useRelativeTime(hashrate?.fetchedAt);
-  const poolsRelTime = useRelativeTime(pools?.fetchedAt);
+  // 상대시간 라벨 6개를 타이머 하나로 갱신
+  useMinuteTick();
+  const rel = (iso?: string) =>
+    iso ? formatRelativeTime(new Date(iso).getTime()) : undefined;
+  const mempoolRelTime = rel(mempool?.fetchedAt);
+  const miningRelTime = rel(mining?.fetchedAt);
+  const mempoolBlocksRelTime = rel(mempoolBlocks?.fetchedAt);
+  const recentBlocksRelTime = rel(recentBlocks?.fetchedAt);
+  const hashrateRelTime = rel(hashrate?.fetchedAt);
+  const poolsRelTime = rel(pools?.fetchedAt);
 
   const halvingProgress = mining
-    ? ((210_000 - mining.remainingHalvingBlocks) / 210_000) * 100
+    ? ((BLOCKS_PER_HALVING - mining.remainingHalvingBlocks) /
+        BLOCKS_PER_HALVING) *
+      100
     : 0;
   const difficultyProgress = mining
-    ? ((2016 - mining.remainingBlocks) / 2016) * 100
+    ? ((RETARGET_INTERVAL - mining.remainingBlocks) / RETARGET_INTERVAL) * 100
     : 0;
 
   return (
@@ -52,18 +61,10 @@ export function MempoolView() {
           {/* 멤풀 */}
 
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-muted-foreground text-sm font-medium">
-                  멤풀
-                </CardTitle>
-                {mempoolRelTime && (
-                  <span className="text-muted-foreground text-xs">
-                    {mempoolRelTime}
-                  </span>
-                )}
-              </div>
-            </CardHeader>
+            <CardHeading
+              title="멤풀"
+              relativeTime={mempoolRelTime || undefined}
+            />
             <CardContent>
               {!mempool ? (
                 <Skeleton className="h-9 w-full" />
@@ -89,18 +90,10 @@ export function MempoolView() {
           {/* 수수료 */}
 
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-muted-foreground text-sm font-medium">
-                  수수료
-                </CardTitle>
-                {mempoolRelTime && (
-                  <span className="text-muted-foreground text-xs">
-                    {mempoolRelTime}
-                  </span>
-                )}
-              </div>
-            </CardHeader>
+            <CardHeading
+              title="수수료"
+              relativeTime={mempoolRelTime || undefined}
+            />
             <CardContent>
               {!mempool ? (
                 <Skeleton className="h-9 w-full" />
@@ -149,18 +142,10 @@ export function MempoolView() {
           {/* 채굴 */}
 
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-muted-foreground text-sm font-medium">
-                  채굴
-                </CardTitle>
-                {miningRelTime && (
-                  <span className="text-muted-foreground text-xs">
-                    {miningRelTime}
-                  </span>
-                )}
-              </div>
-            </CardHeader>
+            <CardHeading
+              title="채굴"
+              relativeTime={miningRelTime || undefined}
+            />
             <CardContent>
               {!mining ? (
                 <Skeleton className="h-[148px] w-full" />
@@ -230,18 +215,10 @@ export function MempoolView() {
           {/* 해시레이트 추이 */}
 
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-muted-foreground text-sm font-medium">
-                  해시레이트 추이 (1년)
-                </CardTitle>
-                {hashrateRelTime && (
-                  <span className="text-muted-foreground text-xs">
-                    {hashrateRelTime}
-                  </span>
-                )}
-              </div>
-            </CardHeader>
+            <CardHeading
+              title="해시레이트 추이 (1년)"
+              relativeTime={hashrateRelTime || undefined}
+            />
             <CardContent className="p-0">
               {!hashrate ? (
                 <Skeleton className="h-[288px] w-full rounded-none" />
@@ -272,18 +249,10 @@ export function MempoolView() {
           {/* 반감기 */}
 
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-muted-foreground text-sm font-medium">
-                  반감기
-                </CardTitle>
-                {miningRelTime && (
-                  <span className="text-muted-foreground text-xs">
-                    {miningRelTime}
-                  </span>
-                )}
-              </div>
-            </CardHeader>
+            <CardHeading
+              title="반감기"
+              relativeTime={miningRelTime || undefined}
+            />
             <CardContent>
               {!mining ? (
                 <Skeleton className="h-[140px] w-full" />
@@ -291,7 +260,7 @@ export function MempoolView() {
                 <div className="flex flex-col items-center gap-6 sm:flex-row">
                   <DonutRing
                     progress={halvingProgress}
-                    color="#f7931a"
+                    color={BTC_COLOR}
                     center={`${halvingProgress.toFixed(1)}%`}
                     centerSub="경과"
                   />

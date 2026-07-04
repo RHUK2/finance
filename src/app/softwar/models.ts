@@ -44,7 +44,11 @@ export type OrganismType = "평화주의자" | "약한 방어" | "강한 투사�
 export type Organism = { power: number; type: OrganismType };
 
 function typeForPower(power: number): OrganismType {
-  return power < 0.33 ? "평화주의자" : power < 0.66 ? "약한 방어" : "강한 투사자";
+  return power < 0.33
+    ? "평화주의자"
+    : power < 0.66
+      ? "약한 방어"
+      : "강한 투사자";
 }
 
 // meanPower(0~1): 개체군 평균 투사력. power를 [0, 2·mean]에 고르게 퍼뜨린다.
@@ -120,6 +124,5 @@ export function deterrence({
     bcra,
     deterred: projectedPower >= adversaryBenefit,
     hardCasualties: Math.round(projectedPower * CASUALTY_K),
-    softCasualties: 0,
   };
 }

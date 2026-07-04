@@ -6,9 +6,14 @@ import { Battery, Bitcoin, Wind, Zap } from "lucide-react";
 
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
+import {
+  ControlSlider,
+  ExplainCard,
+  Legend,
+  Metric,
+} from "@/components/simulation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 
 const fmt = (n: number) => `${Math.round(n)} GW`;
@@ -35,7 +40,15 @@ export function GridBatteryView() {
     const used = demandMet + absorbed;
     const efficiency = generation > 0 ? (used / generation) * 100 : 100;
     const minerUtil = minerCapacity > 0 ? (absorbed / minerCapacity) * 100 : 0;
-    return { demandMet, shortage, surplus, absorbed, curtailed, efficiency, minerUtil };
+    return {
+      demandMet,
+      shortage,
+      surplus,
+      absorbed,
+      curtailed,
+      efficiency,
+      minerUtil,
+    };
   }, [generation, demand, minerCapacity, minersOn]);
 
   // 막대는 총 발전량(generation)을 100%로 보고 세 세그먼트로 나눈다.
@@ -51,10 +64,11 @@ export function GridBatteryView() {
               비트코인은 전력망의 배터리다
             </h1>
             <p className="text-muted-foreground mt-1 text-sm">
-              전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야 한다. 비트코인
-              채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는 &lsquo;유연
-              부하&rsquo;로, 버려질 에너지를 수익으로 바꿔 전력망 효율을 높인다.
-              아래 슬라이더로 직접 확인해 보자. (단위는 개념용 예시)
+              전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야 한다.
+              비트코인 채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는
+              &lsquo;유연 부하&rsquo;로, 버려질 에너지를 수익으로 바꿔 전력망
+              효율을 높인다. 아래 슬라이더로 직접 확인해 보자. (단위는 개념용
+              예시)
             </p>
           </div>
 
@@ -65,12 +79,14 @@ export function GridBatteryView() {
               label="재생에너지 발전량"
               value={generation}
               onChange={setGeneration}
+              format={fmt}
             />
             <ControlSlider
               icon={<Zap className="size-4 text-emerald-500" />}
               label="전력 수요"
               value={demand}
               onChange={setDemand}
+              format={fmt}
             />
             <ControlSlider
               icon={<Bitcoin className="size-4 text-amber-500" />}
@@ -78,6 +94,7 @@ export function GridBatteryView() {
               value={minerCapacity}
               onChange={setMinerCapacity}
               max={60}
+              format={fmt}
             />
             <div className="flex items-center justify-between border-t pt-3">
               <span className="flex items-center gap-1.5 text-sm font-medium">
@@ -131,14 +148,25 @@ export function GridBatteryView() {
 
           {/* 지표 카드 */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Metric label="버려지는 전력" value={fmt(sim.curtailed)} tone="bad" />
-            <Metric label="채굴 흡수량" value={fmt(sim.absorbed)} tone="accent" />
+            <Metric
+              label="버려지는 전력"
+              value={fmt(sim.curtailed)}
+              tone="bad"
+            />
+            <Metric
+              label="채굴 흡수량"
+              value={fmt(sim.absorbed)}
+              tone="accent"
+            />
             <Metric
               label="전력망 효율"
               value={`${Math.round(sim.efficiency)}%`}
               tone="good"
             />
-            <Metric label="채굴 가동률" value={`${Math.round(sim.minerUtil)}%`} />
+            <Metric
+              label="채굴 가동률"
+              value={`${Math.round(sim.minerUtil)}%`}
+            />
           </div>
 
           {/* 설명 프로즈 */}
@@ -163,39 +191,6 @@ export function GridBatteryView() {
   );
 }
 
-function ControlSlider({
-  icon,
-  label,
-  value,
-  onChange,
-  max = 100,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  max?: number;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between text-sm">
-        <span className="flex items-center gap-1.5 font-medium">
-          {icon}
-          {label}
-        </span>
-        <span className="font-mono tabular-nums">{fmt(value)}</span>
-      </div>
-      <Slider
-        min={0}
-        max={max}
-        step={1}
-        value={[value]}
-        onValueChange={([v]) => onChange(v)}
-      />
-    </div>
-  );
-}
-
 function Segment({
   pct,
   className,
@@ -212,60 +207,5 @@ function Segment({
       style={{ width: `${pct}%` }}
       title={title}
     />
-  );
-}
-
-function Legend({ className, label }: { className: string; label: string }) {
-  return (
-    <span className="flex items-center gap-1.5">
-      <span className={cn("size-3 rounded-sm", className)} />
-      {label}
-    </span>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone?: "good" | "bad" | "accent";
-}) {
-  return (
-    <Card className="gap-1 p-4">
-      <span className="text-muted-foreground text-xs">{label}</span>
-      <span
-        className={cn(
-          "font-mono text-2xl font-semibold tabular-nums",
-          tone === "good" && "text-emerald-600 dark:text-emerald-400",
-          tone === "bad" && "text-rose-600 dark:text-rose-400",
-          tone === "accent" && "text-amber-600 dark:text-amber-400",
-        )}
-      >
-        {value}
-      </span>
-    </Card>
-  );
-}
-
-function ExplainCard({
-  icon,
-  title,
-  body,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-}) {
-  return (
-    <Card className="gap-2 p-4">
-      <span className="flex items-center gap-1.5 font-semibold">
-        {icon}
-        {title}
-      </span>
-      <p className="text-muted-foreground text-sm leading-relaxed">{body}</p>
-    </Card>
   );
 }

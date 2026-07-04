@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-import YahooFinance from "yahoo-finance2";
 
 import { cached } from "@/lib/cache";
+import { yf } from "@/lib/yahoo";
 
 export const dynamic = "force-dynamic";
-
-const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
 const GF = "https://www.google.com/finance/quote";
 

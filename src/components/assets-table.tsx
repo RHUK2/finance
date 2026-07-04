@@ -278,17 +278,21 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     </div>
   );
 
+  const searchInput = (
+    <>
+      <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
+      <Input
+        placeholder="자산 검색..."
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className="pl-8"
+      />
+    </>
+  );
+
   const controls = isMobile ? (
     <div className="flex flex-col gap-3">
-      <div className="relative w-full">
-        <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
-        <Input
-          placeholder="자산 검색..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="pl-8"
-        />
-      </div>
+      <div className="relative w-full">{searchInput}</div>
       <Select value={mobileSortKey} onValueChange={setMobileSortKey}>
         <SelectTrigger className="w-full">
           <SelectValue />
@@ -305,15 +309,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     </div>
   ) : (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="relative w-full sm:max-w-xs">
-        <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
-        <Input
-          placeholder="자산 검색..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="pl-8"
-        />
-      </div>
+      <div className="relative w-full sm:max-w-xs">{searchInput}</div>
       {filterTabs}
     </div>
   );

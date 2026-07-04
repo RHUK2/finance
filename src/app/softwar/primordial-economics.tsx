@@ -11,9 +11,11 @@ import {
   AgentGrid,
   ControlSlider,
   ExplainCard,
+  Legend,
   Metric,
   RoundControls,
   SectionIntro,
+  Sparkline,
 } from "@/components/simulation";
 import { useRoundEngine } from "@/hooks/use-round-engine";
 import {
@@ -40,10 +42,10 @@ export function PrimordialEconomics() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="자연의 파워 프로젝션 — 평화주의는 비싸다">
-        자연에서 자원과 생존을 지키는 방법은 물리력을 투사하는 것이다(원시 경제학).
-        뿔을 부딪히고 영역을 과시하며 &lsquo;공격하면 손해&rsquo;라는 신호를
-        보낸다. 포식 압력이 차오를 때, 충분한 물리력을 투사하지 못하는 개체부터
-        도태된다. 평화주의(미투사)는 진화적으로 살아남기 어렵다.
+        자연에서 자원과 생존을 지키는 방법은 물리력을 투사하는 것이다(원시
+        경제학). 뿔을 부딪히고 영역을 과시하며 &lsquo;공격하면 손해&rsquo;라는
+        신호를 보낸다. 포식 압력이 차오를 때, 충분한 물리력을 투사하지 못하는
+        개체부터 도태된다. 평화주의(미투사)는 진화적으로 살아남기 어렵다.
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -105,7 +107,10 @@ function PredationSim({
   speedMs: number;
   onSpeed: (ms: number) => void;
 }) {
-  const init = useCallback(() => initialPredationState(organisms.length), [organisms]);
+  const init = useCallback(
+    () => initialPredationState(organisms.length),
+    [organisms],
+  );
   const [sim, setSim] = useState<PredationState>(init);
 
   const step = useCallback(() => {
@@ -146,7 +151,13 @@ function PredationSim({
           done={done}
         />
         <AgentGrid states={states} />
-        <SurvivalCurve history={sim.history} />
+        <Sparkline
+          values={sim.history}
+          label="생존 곡선"
+          className="text-emerald-500"
+          min={0}
+          max={1}
+        />
         <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
           <Legend className="bg-emerald-500" label="강한 투사자" />
           <Legend className="bg-amber-500" label="약한 방어" />
@@ -156,9 +167,17 @@ function PredationSim({
       </Card>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Metric label="생존 개체" value={`${aliveCount} / ${organisms.length}`} tone="good" />
+        <Metric
+          label="생존 개체"
+          value={`${aliveCount} / ${organisms.length}`}
+          tone="good"
+        />
         <Metric label="도태 개체" value={`${dead}`} tone="bad" />
-        <Metric label="생존자 평균 투사력" value={`${Math.round(survivorAvg * 100)}%`} tone="accent" />
+        <Metric
+          label="생존자 평균 투사력"
+          value={`${Math.round(survivorAvg * 100)}%`}
+          tone="accent"
+        />
       </div>
 
       {done && (
@@ -176,40 +195,5 @@ function PredationSim({
         </p>
       )}
     </>
-  );
-}
-
-function Legend({ className, label }: { className: string; label: string }) {
-  return (
-    <span className="flex items-center gap-1.5">
-      <span className={cn("size-3 rounded-[3px]", className)} />
-      {label}
-    </span>
-  );
-}
-
-// 라운드별 생존율 추이를 작은 SVG 라인으로 표시.
-function SurvivalCurve({ history }: { history: number[] }) {
-  const W = 100;
-  const H = 32;
-  const pts = history.map((p, i) => {
-    const x = history.length <= 1 ? 0 : (i / (history.length - 1)) * W;
-    const y = H - p * H;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-muted-foreground w-16 shrink-0 text-xs">생존 곡선</span>
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="h-8 w-full">
-        <polyline
-          points={pts.join(" ")}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          className="text-emerald-500"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-    </div>
   );
 }

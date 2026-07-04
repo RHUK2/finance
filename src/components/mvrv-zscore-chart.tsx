@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
-import { LineSeries, LineStyle } from "lightweight-charts";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartContainer } from "@/components/chart-container";
-import { useChart } from "@/hooks/use-chart";
+import { LineSeries, addZoneLines, useChart } from "@/hooks/use-chart";
 import type { MvrvData } from "@/hooks/use-crypto";
 
 const ZONE_LINES = [
@@ -38,23 +36,11 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
         priceLineVisible: false,
       });
       lineSeries.setData(data.zScore);
-      ZONE_LINES.forEach((zone) => {
-        lineSeries.createPriceLine({
-          price: zone.price,
-          color: zone.color,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: zone.label,
-        });
-      });
+      addZoneLines(lineSeries, ZONE_LINES);
     },
     [data],
+    { resetRef },
   );
-
-  useEffect(() => {
-    if (resetRef) resetRef.current = resetView;
-  }, [resetRef, resetView]);
 
   const current = data?.zScore[data.zScore.length - 1]?.value;
   const status = current != null ? getZScoreStatus(current) : null;

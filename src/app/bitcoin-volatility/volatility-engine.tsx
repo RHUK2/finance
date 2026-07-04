@@ -11,11 +11,11 @@ import {
   Metric,
   RoundControls,
   SectionIntro,
+  Sparkline,
 } from "@/components/simulation";
 import { useRoundEngine } from "@/hooks/use-round-engine";
 import { formatUsd, mulberry32 } from "@/lib/utils";
 
-import { Sparkline } from "./components";
 import { GOLD_CAP, SUPPLY, realizedVol, stepP } from "./models";
 
 const SEED = 12345;
@@ -38,10 +38,11 @@ export function VolatilityEngine() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="변동성의 정체 — 확률을 실시간으로 매기는 시장">
-        시장은 매일 뉴스에 따라 성공 확률을 조금씩 고쳐 쓴다. 그런데 성공 확률이 낮을
-        때는 똑같은 크기의 뉴스라도 가격이 몇 배씩 출렁이고, 확률이 높아질수록 같은
-        뉴스에도 덜 흔들린다. 재생을 눌러 보자. 뉴스의 크기(σ)는 그대로 둬도, 성공
-        확률이 올라갈수록 변동성이 저절로 줄어드는 걸 볼 수 있다.
+        시장은 매일 뉴스에 따라 성공 확률을 조금씩 고쳐 쓴다. 그런데 성공 확률이
+        낮을 때는 똑같은 크기의 뉴스라도 가격이 몇 배씩 출렁이고, 확률이
+        높아질수록 같은 뉴스에도 덜 흔들린다. 재생을 눌러 보자. 뉴스의 크기(σ)는
+        그대로 둬도, 성공 확률이 올라갈수록 변동성이 저절로 줄어드는 걸 볼 수
+        있다.
       </SectionIntro>
 
       <Card className="gap-4 p-4">

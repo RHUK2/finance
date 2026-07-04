@@ -1,9 +1,9 @@
 "use client";
 
-import { LineSeries } from "lightweight-charts";
 import { ChartContainer } from "@/components/chart-container";
-import { useChart } from "@/hooks/use-chart";
+import { LineSeries, useChart } from "@/hooks/use-chart";
 import type { HashrateHistoryData } from "@/hooks/use-mempool";
+import { BTC_COLOR } from "@/lib/utils";
 
 type Props = {
   data: HashrateHistoryData;
@@ -13,7 +13,7 @@ export function HashrateChart({ data }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const series = chart.addSeries(LineSeries, {
-        color: "#f7931a",
+        color: BTC_COLOR,
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: true,

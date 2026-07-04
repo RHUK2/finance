@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { AreaSeries, LineSeries } from "lightweight-charts";
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartContainer } from "@/components/chart-container";
-import { useChart } from "@/hooks/use-chart";
+import { AreaSeries, LineSeries, useChart } from "@/hooks/use-chart";
 import {
   RAINBOW_BANDS,
   daysSinceGenesis,
@@ -57,12 +56,8 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
       priceSeries.setData(data.history);
     },
     [data],
-    { height: 320, logScale: true },
+    { height: 320, logScale: true, resetRef },
   );
-
-  useEffect(() => {
-    if (resetRef) resetRef.current = resetView;
-  }, [resetRef, resetView]);
 
   const currentBand = useMemo(() => {
     if (!data?.history.length) return null;
@@ -107,10 +102,10 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          Power Law 회귀 기반의 9단계 밸류에이션 밴드. 가격 자체가 아니라 &lsquo;지금
-          어느 색 밴드에 있는지&rsquo;로 읽습니다 — 한색(파랑) 구간은 저평가 매집권,
-          난색(빨강) 구간은 고평가 과열권으로 장기 사이클 위치를 직관적으로
-          가늠합니다.
+          Power Law 회귀 기반의 9단계 밸류에이션 밴드. 가격 자체가 아니라
+          &lsquo;지금 어느 색 밴드에 있는지&rsquo;로 읽습니다 — 한색(파랑)
+          구간은 저평가 매집권, 난색(빨강) 구간은 고평가 과열권으로 장기 사이클
+          위치를 직관적으로 가늠합니다.
         </p>
       </CardContent>
     </Card>

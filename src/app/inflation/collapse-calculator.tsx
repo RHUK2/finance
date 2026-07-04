@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 
+import { ControlSlider, StatCard } from "@/components/simulation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { clamp } from "@/lib/utils";
 import type { InflationData } from "@/hooks/use-inflation";
 import {
   compoundDeposit,
@@ -16,15 +17,14 @@ import {
 
 import {
   EmptyCard,
-  SliderRow,
-  StatCard,
   fmtMultiple,
+  hi,
   makeMoneyFmt,
   type Currency,
+  type HiTone,
 } from "./components";
 
 type Basis = "M2" | "CPI";
-type Tone = "strong" | "bad" | "good" | "amber";
 
 const BASIS_LABELS: Record<Basis, { ref: string; hold: string }> = {
   M2: { ref: "통화량(M2)", hold: "통화량 가치 유지선" },
@@ -50,9 +50,7 @@ export function CollapseCalculator({
   amount,
   stockLabel,
 }: Props) {
-  const [startYear, setStartYear] = useState(
-    Math.max(minYear, Math.min(maxYear, 2000)),
-  );
+  const [startYear, setStartYear] = useState(clamp(2000, minYear, maxYear));
   const [basis, setBasis] = useState<Basis>("M2");
   const money = makeMoneyFmt(currency);
 
@@ -102,20 +100,7 @@ export function CollapseCalculator({
 
   const { ref: refName, hold: holdLabel } = BASIS_LABELS[basis];
 
-  const realTone: Tone = r.lossPct != null && r.lossPct < 0 ? "bad" : "good";
-  const hi = (text: string, tone: Tone) => (
-    <span
-      className={cn(
-        "font-semibold",
-        tone === "strong" && "text-foreground",
-        tone === "bad" && "text-rose-600 dark:text-rose-400",
-        tone === "good" && "text-emerald-600 dark:text-emerald-400",
-        tone === "amber" && "text-amber-600 dark:text-amber-400",
-      )}
-    >
-      {text}
-    </span>
-  );
+  const realTone: HiTone = r.lossPct != null && r.lossPct < 0 ? "bad" : "good";
 
   const ready =
     r.depositNominal != null &&
@@ -130,8 +115,8 @@ export function CollapseCalculator({
         <CardTitle className="text-base">구매력 붕괴 계산기</CardTitle>
         <p className="text-muted-foreground text-sm">
           과거에 {money(amount)}을 예금에 두었다면 오늘 그 가치가 어떻게
-          변했을까요? 기준을 통화량(M2)·물가(CPI)로 바꿔, 같은 돈을 자산에 넣었을
-          경우와 비교합니다.
+          변했을까요? 기준을 통화량(M2)·물가(CPI)로 바꿔, 같은 돈을 자산에
+          넣었을 경우와 비교합니다.
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -149,14 +134,14 @@ export function CollapseCalculator({
           ))}
         </div>
 
-        <SliderRow
+        <ControlSlider
           label="시작 연도"
-          valueLabel={`${startYear}년`}
           min={minYear}
           max={maxYear}
           step={1}
           value={startYear}
           onChange={setStartYear}
+          format={(v) => `${v}년`}
         />
 
         <p className="bg-muted/40 rounded-lg border p-4 text-sm leading-relaxed">
@@ -166,8 +151,8 @@ export function CollapseCalculator({
               오늘 통장엔 {hi(money(r.depositNominal!), "strong")}(명목)입니다.
               하지만 같은 기간 {refName}이{" "}
               {hi(`${r.ratio!.toFixed(1)}배`, "amber")} 늘어, 같은 값어치를
-              유지하려면 오늘 {hi(money(r.holdLine!), "strong")}이 있어야 합니다 —
-              통장은 유지선 대비{" "}
+              유지하려면 오늘 {hi(money(r.holdLine!), "strong")}이 있어야 합니다
+              — 통장은 유지선 대비{" "}
               {hi(`${Math.abs(r.lossPct!).toFixed(0)}%`, realTone)}{" "}
               {r.lossPct! < 0 ? "부족합니다" : "초과합니다"}.
               {head && head.value != null ? (
@@ -230,7 +215,7 @@ export function CollapseCalculator({
                   label={a.label}
                   value={a.value}
                   format={money}
-                  accent
+                  tone="accent"
                   sub={fmtMultiple(a.value / amount)}
                 />
               ),

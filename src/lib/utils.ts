@@ -10,10 +10,19 @@ export function pctChange(cur: number, prev: number): number {
   return Number((((cur - prev) / prev) * 100).toFixed(2));
 }
 
+// 비트코인 브랜드 오렌지 — 차트·도넛·풀 색상에 공통 사용.
+export const BTC_COLOR = "#f7931a";
+
 export const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));
 
 export const clamp01 = (n: number) => clamp(n, 0, 1);
+
+// 부호 있는 정수 포맷 — 음수는 하이픈 대신 마이너스 부호 "−"(U+2212)를 쓴다.
+// money-creation·inflation 페이지가 공유하는 통화 표기 컨벤션.
+export function formatSigned(n: number, locale = "ko-KR"): string {
+  return `${n < 0 ? "−" : ""}${Math.round(Math.abs(n)).toLocaleString(locale)}`;
+}
 
 // 컴팩트 USD 포맷 ($1.2T / $3.4B / $5.6M / $7.8K / $90).
 export function formatUsd(n: number): string {

@@ -7,6 +7,7 @@ import { Crown, ShieldCheck, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   ControlSlider,
+  CostBar,
   ExplainCard,
   Metric,
   SectionIntro,
@@ -34,9 +35,10 @@ export function AbstractVsPhysical() {
       <SectionIntro title="추상 권력 vs 물리 권력 — 약탈자는 어디를 노리는가">
         권력에는 두 종류가 있다. <b>추상 권력</b>은 위계·신뢰·직위처럼 믿음 위에
         세워져 휘두르긴 싸지만, 약탈자(belligerent actor)가 적은 비용으로 탈취할
-        수 있다. <b>물리 권력</b>은 실제 와트를 소비해 부과하는 비용이라 비싸지만,
-        자산 가치보다 더 많은 에너지를 쏟아야만 뺏을 수 있게 만든다. 합리적
-        약탈자는 탈취 이득이 비용보다 클 때만 공격한다. (수치는 개념용 예시)
+        수 있다. <b>물리 권력</b>은 실제 와트를 소비해 부과하는 비용이라
+        비싸지만, 자산 가치보다 더 많은 에너지를 쏟아야만 뺏을 수 있게 만든다.
+        합리적 약탈자는 탈취 이득이 비용보다 클 때만 공격한다. (수치는 개념용
+        예시)
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -113,13 +115,14 @@ export function AbstractVsPhysical() {
           물리 권력은 와트를 부과해 탈취 비용을 자산 가치 위로 끌어올릴 수 있다.{" "}
           {r.physical.captured ? (
             <>
-              지금은 물리 권력 벽이 자원 가치보다 낮아 여전히 탈취된다. 벽을 가치
-              위로 올려 보면 BCRA가 1 미만으로 떨어진다.
+              지금은 물리 권력 벽이 자원 가치보다 낮아 여전히 탈취된다. 벽을
+              가치 위로 올려 보면 BCRA가 1 미만으로 떨어진다.
             </>
           ) : (
             <>
               지금은 물리 권력 벽이 자원 가치를 넘어 BCRA가 1 미만 — 합리적
-              약탈자라면 공격을 포기한다. 이것이 소프트워가 말하는 탈취 불가능성이다.
+              약탈자라면 공격을 포기한다. 이것이 소프트워가 말하는 탈취
+              불가능성이다.
             </>
           )}
         </p>
@@ -155,10 +158,24 @@ function RegimeCard({
         {icon}
         {title}
       </span>
-      <Bar label="탈취 이득 (자원 가치)" value={value} max={max} className="bg-amber-500" />
-      <Bar label="탈취 비용" value={cost} max={max} className="bg-sky-500" />
+      <CostBar
+        label="탈취 이득 (자원 가치)"
+        value={value}
+        max={max}
+        className="bg-amber-500"
+      />
+      <CostBar
+        label="탈취 비용"
+        value={cost}
+        max={max}
+        className="bg-sky-500"
+      />
       <div className="grid grid-cols-2 gap-3">
-        <Metric label="BCRA (이득÷비용)" value={bcraLabel(bcra)} tone={captured ? "bad" : "good"} />
+        <Metric
+          label="BCRA (이득÷비용)"
+          value={bcraLabel(bcra)}
+          tone={captured ? "bad" : "good"}
+        />
         <Metric
           label="판정"
           value={captured ? "탈취됨" : "방어됨"}
@@ -166,33 +183,5 @@ function RegimeCard({
         />
       </div>
     </Card>
-  );
-}
-
-function Bar({
-  label,
-  value,
-  max,
-  className,
-}: {
-  label: string;
-  value: number;
-  max: number;
-  className: string;
-}) {
-  const pct = max > 0 ? (value / max) * 100 : 0;
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono tabular-nums">{formatUsd(value)}</span>
-      </div>
-      <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
-        <div
-          className={cn("h-full rounded-md transition-all", className)}
-          style={{ width: `${Math.max(1, pct)}%` }}
-        />
-      </div>
-    </div>
   );
 }

@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { LineSeries, createSeriesMarkers, type Time } from "lightweight-charts";
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartContainer } from "@/components/chart-container";
-import { useChart } from "@/hooks/use-chart";
+import {
+  LineSeries,
+  createSeriesMarkers,
+  useChart,
+  type Time,
+} from "@/hooks/use-chart";
 import { movingAverage } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
@@ -82,12 +86,8 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
       }
     },
     [data, sma111, sma350x2, crossovers],
-    { height: 320, logScale: true },
+    { height: 320, logScale: true, resetRef },
   );
-
-  useEffect(() => {
-    if (resetRef) resetRef.current = resetView;
-  }, [resetRef, resetView]);
 
   const shortNow = sma111[sma111.length - 1]?.value;
   const longNow = sma350x2[sma350x2.length - 1]?.value;
@@ -137,9 +137,9 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          111일 이동평균과 350일 이동평균×2의 교차로 읽습니다 — 111일선이 350일선×2를
-          위로 돌파하는 순간이 사이클 천장 신호로, 과거 고점과 며칠 안쪽으로
-          맞아떨어져 단기 고점 경계 신호로 활용됩니다.
+          111일 이동평균과 350일 이동평균×2의 교차로 읽습니다 — 111일선이
+          350일선×2를 위로 돌파하는 순간이 사이클 천장 신호로, 과거 고점과 며칠
+          안쪽으로 맞아떨어져 단기 고점 경계 신호로 활용됩니다.
         </p>
       </CardContent>
     </Card>

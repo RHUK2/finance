@@ -2,12 +2,10 @@
 
 import { useMemo } from "react";
 
-import { LineSeries } from "lightweight-charts";
-
 import { ChartContainer } from "@/components/chart-container";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useChart } from "@/hooks/use-chart";
+import { LineSeries, useChart } from "@/hooks/use-chart";
 import { useBitcoinHistorical } from "@/hooks/use-crypto";
 import { rollingVolatility } from "@/lib/bitcoin-models";
 import { ExplainCard, SectionIntro } from "@/components/simulation";
@@ -40,17 +38,19 @@ export function MaturationCurve() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="성숙 곡선 — 실제 변동성은 추세적으로 하락한다">
-        지금까지의 이야기가 맞다면, 비트코인이 자산으로 자리를 잡아갈수록 변동성은 점점
-        줄어야 한다. 실제로 2015년부터 비트코인의 변동성(90일 기준, 연 단위로 환산)을
-        그려 보면, 초기에 100%를 훌쩍 넘던 변동성이 사이클을 거듭할수록 한 단계씩
-        낮아진다.
+        지금까지의 이야기가 맞다면, 비트코인이 자산으로 자리를 잡아갈수록
+        변동성은 점점 줄어야 한다. 실제로 2015년부터 비트코인의 변동성(90일
+        기준, 연 단위로 환산)을 그려 보면, 초기에 100%를 훌쩍 넘던 변동성이
+        사이클을 거듭할수록 한 단계씩 낮아진다.
       </SectionIntro>
 
       <Card className="gap-3 p-4">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-medium">변동성 (90일 기준, 연 환산)</span>
+          <span className="text-sm font-medium">
+            변동성 (90일 기준, 연 환산)
+          </span>
           {current != null && (
-            <span className="font-mono text-lg font-semibold tabular-nums text-amber-600 dark:text-amber-400">
+            <span className="font-mono text-lg font-semibold text-amber-600 tabular-nums dark:text-amber-400">
               {current.toFixed(0)}%
             </span>
           )}

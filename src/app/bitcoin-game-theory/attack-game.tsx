@@ -7,6 +7,7 @@ import { Bitcoin, Cpu, ShieldCheck, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   ControlSlider,
+  CostBar,
   ExplainCard,
   Metric,
   SectionIntro,
@@ -39,10 +40,10 @@ export function AttackGame() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="51% 공격 — 합리적이라면 정직하게 채굴한다">
-        네트워크 과반 해시파워를 확보하면 이론상 이중지불 공격이 가능하다. 하지만
-        그 해시파워를 갖추는 비용과, 같은 장비로 정직하게 채굴해 버는 수익, 그리고
-        공격이 성공했을 때 벌어질 일을 함께 따져 보자. 슬라이더로 조건을 바꿔도
-        결론은 좀처럼 바뀌지 않는다. (수치는 개념용 예시)
+        네트워크 과반 해시파워를 확보하면 이론상 이중지불 공격이 가능하다.
+        하지만 그 해시파워를 갖추는 비용과, 같은 장비로 정직하게 채굴해 버는
+        수익, 그리고 공격이 성공했을 때 벌어질 일을 함께 따져 보자. 슬라이더로
+        조건을 바꿔도 결론은 좀처럼 바뀌지 않는다. (수치는 개념용 예시)
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -119,7 +120,11 @@ export function AttackGame() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Metric label="공격 비용" value={formatUsd(r.attackCost)} tone="bad" />
-        <Metric label="이중지불 이득" value={formatUsd(r.doubleSpendGain)} tone="accent" />
+        <Metric
+          label="이중지불 이득"
+          value={formatUsd(r.doubleSpendGain)}
+          tone="accent"
+        />
         <Metric
           label="비용 ÷ 이득"
           value={`${r.costToGain >= 10 ? Math.round(r.costToGain) : r.costToGain.toFixed(1)}배`}
@@ -151,16 +156,18 @@ export function AttackGame() {
                   : r.costToGain.toFixed(1)}
                 배
               </b>
-              다. 게다가 공격이 성공하면 신뢰가 무너져 BTC 가격이 폭락하고, 비트코인
-              채굴에만 쓰이는 수십억 달러어치 장비와 보유 코인이 함께 휴지가 된다.{" "}
-              <b>합리적 행위자라면 공격 대신 정직하게 채굴해 보상을 받는다.</b> 이것이
-              작업증명이 경제적 유인으로 네트워크를 지키는 방식이다.
+              다. 게다가 공격이 성공하면 신뢰가 무너져 BTC 가격이 폭락하고,
+              비트코인 채굴에만 쓰이는 수십억 달러어치 장비와 보유 코인이 함께
+              휴지가 된다.{" "}
+              <b>합리적 행위자라면 공격 대신 정직하게 채굴해 보상을 받는다.</b>{" "}
+              이것이 작업증명이 경제적 유인으로 네트워크를 지키는 방식이다.
             </>
           ) : (
             <>
-              이 극단적 설정에선 이득이 비용을 넘어선다. 하지만 공격이 성공하는 순간
-              BTC 신뢰가 붕괴해 가격이 폭락하므로, 노린 이득 자체가 증발하고 보유
-              자산·장비도 함께 파괴된다. 자기 파괴적 공격은 여전히 비합리적이다.
+              이 극단적 설정에선 이득이 비용을 넘어선다. 하지만 공격이 성공하는
+              순간 BTC 신뢰가 붕괴해 가격이 폭락하므로, 노린 이득 자체가
+              증발하고 보유 자산·장비도 함께 파괴된다. 자기 파괴적 공격은 여전히
+              비합리적이다.
             </>
           )}
         </p>
@@ -170,37 +177,6 @@ export function AttackGame() {
         title="공격자도 시스템의 인질이다"
         body="51% 공격의 진짜 방어선은 암호가 아니라 경제적 유인이다. 과반 해시파워를 갖출 정도의 투자자는 이미 네트워크의 최대 이해관계자다. 그가 네트워크를 공격해 신뢰를 깨면 자기 장비와 코인의 가치를 스스로 파괴하게 된다. 정직하게 채굴할 때 가장 큰 보상을 받도록 설계돼 있어, 공격은 늘 손해 보는 선택이 된다."
       />
-    </div>
-  );
-}
-
-function CostBar({
-  label,
-  value,
-  max,
-  className,
-  sub,
-}: {
-  label: string;
-  value: number;
-  max: number;
-  className: string;
-  sub?: string;
-}) {
-  const pct = max > 0 ? (value / max) * 100 : 0;
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono tabular-nums">{formatUsd(value)}</span>
-      </div>
-      <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
-        <div
-          className={cn("h-full rounded-md transition-all", className)}
-          style={{ width: `${Math.max(1, pct)}%` }}
-        />
-      </div>
-      {sub && <span className="text-muted-foreground text-xs">{sub}</span>}
     </div>
   );
 }

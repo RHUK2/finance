@@ -1,8 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-
-import { cacheMs } from "@/lib/cache-config";
+import { useEndpoint } from "@/hooks/use-endpoint";
 
 export type MarketItem = {
   symbol: string;
@@ -22,15 +20,4 @@ export type MarketData = {
   items: MarketItem[];
 };
 
-export function useMarket() {
-  return useQuery<MarketData>({
-    queryKey: ["market"],
-    queryFn: async () => {
-      const res = await fetch("/api/market");
-      if (!res.ok) throw new Error("Failed to fetch market data");
-      return res.json();
-    },
-    staleTime: cacheMs("market"),
-    refetchInterval: cacheMs("market"),
-  });
-}
+export const useMarket = () => useEndpoint<MarketData>("market");

@@ -11,12 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCountUp } from "@/hooks/use-count-up";
-import { cn } from "@/lib/utils";
+import { cn, formatSigned } from "@/lib/utils";
 
 import type { Line, Sheet } from "./steps";
 
-const fmt = (n: number) =>
-  `${n < 0 ? "−" : ""}${Math.abs(Math.round(n)).toLocaleString("ko-KR")}`;
+const fmt = formatSigned;
 
 function AmountRow({
   line,
@@ -155,36 +154,6 @@ export function BalanceSheet({
   );
 }
 
-export function MoneyCounter({
-  label,
-  value,
-  suffix = "",
-  accent = false,
-}: {
-  label: string;
-  value: number;
-  suffix?: string;
-  accent?: boolean;
-}) {
-  const animated = useCountUp(value);
-  return (
-    <Card className="gap-1 p-4">
-      <span className="text-muted-foreground text-xs">{label}</span>
-      <span
-        className={cn(
-          "font-mono text-2xl font-semibold tabular-nums",
-          accent && "text-amber-600 dark:text-amber-400",
-        )}
-      >
-        {suffix === "배" ? animated.toFixed(1) : fmt(animated)}
-        {suffix && (
-          <span className="ml-0.5 text-base font-normal">{suffix}</span>
-        )}
-      </span>
-    </Card>
-  );
-}
-
 export function StepControls({
   step,
   total,
@@ -316,9 +285,9 @@ export function TrustSection() {
       <span className="font-semibold">자산의 가치는 결국 “상호합의”다</span>
       <div className="text-muted-foreground space-y-2 text-sm leading-relaxed">
         <p>
-          지금까지 본 것처럼 돈은 무에서 만들어진다. 그렇다면 그 돈은 왜
-          가치를 가질까? 종이 화폐 자체에는 내재가치가 없다. 가치는 “모두가
-          이것을 가치 있게 받아들인다”는 인간들의 상호합의에서 나온다.
+          지금까지 본 것처럼 돈은 무에서 만들어진다. 그렇다면 그 돈은 왜 가치를
+          가질까? 종이 화폐 자체에는 내재가치가 없다. 가치는 “모두가 이것을 가치
+          있게 받아들인다”는 인간들의 상호합의에서 나온다.
         </p>
         <p>
           오늘날 달러를 뒷받침하는 것은 금이 아니라 <strong>신뢰</strong>다 —
@@ -329,8 +298,8 @@ export function TrustSection() {
         <p>
           금 이전에도 합의의 대상은 계속 바뀌어 왔다. 조개껍데기·소금·곡물·돌
           화폐(라이 스톤)처럼, 그 사회가 “이건 희소하고 위조하기 어려우며 모두가
-          받아준다”고 합의한 것이 그때그때 돈의 역할을 했다. 무엇이 돈이 되느냐는
-          물질이 아니라 합의가 결정한다.
+          받아준다”고 합의한 것이 그때그때 돈의 역할을 했다. 무엇이 돈이
+          되느냐는 물질이 아니라 합의가 결정한다.
         </p>
       </div>
     </Card>

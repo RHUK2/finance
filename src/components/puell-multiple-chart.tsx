@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { LineSeries, LineStyle } from "lightweight-charts";
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartContainer } from "@/components/chart-container";
-import { useChart } from "@/hooks/use-chart";
+import { LineSeries, addZoneLines, useChart } from "@/hooks/use-chart";
 import { dailyIssuanceBtc, movingAverage } from "@/lib/bitcoin-models";
 import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
 
@@ -52,23 +51,11 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
         priceLineVisible: false,
       });
       lineSeries.setData(puell);
-      ZONE_LINES.forEach((zone) => {
-        lineSeries.createPriceLine({
-          price: zone.price,
-          color: zone.color,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: zone.label,
-        });
-      });
+      addZoneLines(lineSeries, ZONE_LINES);
     },
     [puell],
+    { resetRef },
   );
-
-  useEffect(() => {
-    if (resetRef) resetRef.current = resetView;
-  }, [resetRef, resetView]);
 
   const current = puell[puell.length - 1]?.value;
   const status = current != null ? getPuellStatus(current) : null;
@@ -107,9 +94,9 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          채굴자 일일 수익 ÷ 1년 평균 수익. 채굴자 행동으로 읽습니다 — 4 이상이면
-          채굴자 수익이 과도해 매도 압력이 큰 과열, 0.5 미만이면 채굴자가 항복하는
-          수준이라 역사적 바닥 신호로 해석합니다.
+          채굴자 일일 수익 ÷ 1년 평균 수익. 채굴자 행동으로 읽습니다 — 4
+          이상이면 채굴자 수익이 과도해 매도 압력이 큰 과열, 0.5 미만이면
+          채굴자가 항복하는 수준이라 역사적 바닥 신호로 해석합니다.
         </p>
       </CardContent>
     </Card>

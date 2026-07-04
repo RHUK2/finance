@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { ChartContainer } from "@/components/chart-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useChart } from "@/hooks/use-chart";
+import { LineSeries, addZoneLines, useChart } from "@/hooks/use-chart";
 import type { FearGreedData } from "@/hooks/use-crypto";
 import { cn } from "@/lib/utils";
-import { LineSeries, LineStyle } from "lightweight-charts";
 
 const ZONE_LINES = [
   { price: 25, label: "극도의 공포", color: "#ef4444" },
@@ -40,24 +38,11 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
         priceLineVisible: false,
       });
       lineSeries.setData(data.history);
-      ZONE_LINES.forEach((zone) => {
-        lineSeries.createPriceLine({
-          price: zone.price,
-          color: zone.color,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: zone.label,
-        });
-      });
+      addZoneLines(lineSeries, ZONE_LINES);
     },
     [data],
-    { timeVisible: true },
+    { timeVisible: true, resetRef },
   );
-
-  useEffect(() => {
-    if (resetRef) resetRef.current = resetView;
-  }, [resetRef, resetView]);
 
   const info = data
     ? (CLASSIFICATIONS[data.classification] ?? {

@@ -3,21 +3,57 @@
 import { useCallback, useEffect, useRef } from "react";
 import {
   ColorType,
+  LineStyle,
   PriceScaleMode,
   createChart,
   type IChartApi,
+  type ISeriesApi,
+  type SeriesType,
 } from "lightweight-charts";
+
+// 차트 컴포넌트가 lightweight-charts를 직접 import하지 않도록 여기서 재수출한다 (단일 관문).
+export {
+  AreaSeries,
+  LineSeries,
+  LineStyle,
+  createSeriesMarkers,
+  type Time,
+} from "lightweight-charts";
+
+// 지표 차트 공용 — 기준선(존 경계)을 점선 price line으로 추가.
+export function addZoneLines(
+  series: ISeriesApi<SeriesType>,
+  zones: readonly { price: number; label: string; color: string }[],
+) {
+  zones.forEach((zone) => {
+    series.createPriceLine({
+      price: zone.price,
+      color: zone.color,
+      lineWidth: 1,
+      lineStyle: LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: zone.label,
+    });
+  });
+}
 
 type ChartOverrides = {
   height?: number;
   logScale?: boolean;
   timeVisible?: boolean;
+  /** "전체 스케일 초기화" 버튼 연동용 — resetView를 밖에서 호출할 수 있게 담아준다. */
+  resetRef?: React.RefObject<(() => void) | null>;
 };
 
 export function useChart(
   setup: (chart: IChartApi) => void,
   deps: React.DependencyList,
-  { height = 280, logScale = false, timeVisible = false }: ChartOverrides = {},
+  {
+    height = 280,
+    logScale = false,
+    timeVisible = false,
+    resetRef,
+  }: ChartOverrides = {},
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -32,6 +68,10 @@ export function useChart(
     chartRef.current?.priceScale("right").applyOptions({ autoScale: true });
     chartRef.current?.timeScale().fitContent();
   }, []);
+
+  useEffect(() => {
+    if (resetRef) resetRef.current = resetView;
+  }, [resetRef, resetView]);
 
   useEffect(() => {
     const container = containerRef.current;

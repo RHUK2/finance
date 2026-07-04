@@ -4,12 +4,13 @@ import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
+import { StatCard } from "@/components/simulation";
 import { Slider } from "@/components/ui/slider";
+import { formatSigned } from "@/lib/utils";
 
 import {
   AssetEquationCard,
   BalanceSheet,
-  MoneyCounter,
   NarrationCard,
   StepControls,
   TrustSection,
@@ -44,12 +45,22 @@ export function MoneyCreationView() {
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <MoneyCounter label="본원통화 (M0)" value={metrics.m0} accent />
-            <MoneyCounter label="광의통화 (M2)" value={metrics.m2} accent />
-            <MoneyCounter
+            <StatCard
+              label="본원통화 (M0)"
+              value={metrics.m0}
+              format={formatSigned}
+              tone="accent"
+            />
+            <StatCard
+              label="광의통화 (M2)"
+              value={metrics.m2}
+              format={formatSigned}
+              tone="accent"
+            />
+            <StatCard
               label="통화승수"
               value={metrics.multiplier}
-              suffix="배"
+              format={(n) => `${n.toFixed(1)}배`}
             />
           </div>
 

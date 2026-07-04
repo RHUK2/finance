@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { useCountUp } from "@/hooks/use-count-up";
+import { clamp, cn, formatUsd } from "@/lib/utils";
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
 
@@ -179,6 +180,42 @@ export function Metric({
   );
 }
 
+// 숫자 값이 useCountUp으로 애니메이션되는 Metric.
+export function StatCard({
+  label,
+  value,
+  format,
+  tone,
+  sub,
+}: {
+  label: string;
+  value: number;
+  format: (n: number) => string;
+  tone?: "good" | "bad" | "accent";
+  sub?: string;
+}) {
+  const animated = useCountUp(value);
+  return (
+    <Metric label={label} value={format(animated)} tone={tone} sub={sub} />
+  );
+}
+
+// 색 견본 + 라벨 범례 항목.
+export function Legend({
+  className,
+  label,
+}: {
+  className: string;
+  label: string;
+}) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className={cn("size-3 rounded-[3px]", className)} />
+      {label}
+    </span>
+  );
+}
+
 // 설명 카드 (프로즈).
 export function ExplainCard({
   icon,
@@ -266,6 +303,88 @@ export function Field({
     <div className="flex flex-col gap-1.5">
       <span className="text-sm font-medium">{label}</span>
       {children}
+    </div>
+  );
+}
+
+// 값 배열을 폴리라인으로 그리는 작은 SVG 스파크라인.
+// min/max를 주면 고정 스케일(범위 밖은 잘라냄), 없으면 데이터 범위에 맞춰 자동 스케일.
+export function Sparkline({
+  values,
+  label,
+  className,
+  min,
+  max,
+  heightClass = "h-8",
+}: {
+  values: number[];
+  label: string;
+  className: string;
+  min?: number;
+  max?: number;
+  heightClass?: string;
+}) {
+  const W = 100;
+  const H = 32;
+  const lo = min ?? Math.min(...values);
+  const hi = max ?? Math.max(...values);
+  const span = hi - lo || 1;
+  const pts = values.map((v, i) => {
+    const x = values.length <= 1 ? 0 : (i / (values.length - 1)) * W;
+    const y = H - ((clamp(v, lo, hi) - lo) / span) * H;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-muted-foreground w-16 shrink-0 text-xs">
+        {label}
+      </span>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        className={cn("w-full", heightClass)}
+      >
+        <polyline
+          points={pts.join(" ")}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          className={className}
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+    </div>
+  );
+}
+
+// 라벨 + USD 금액 + 수평 비교 막대 (max 대비 비율로 폭 결정).
+export function CostBar({
+  label,
+  value,
+  max,
+  className,
+  sub,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  className: string;
+  sub?: string;
+}) {
+  const pct = max > 0 ? (value / max) * 100 : 0;
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-baseline justify-between text-xs">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="font-mono tabular-nums">{formatUsd(value)}</span>
+      </div>
+      <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
+        <div
+          className={cn("h-full rounded-md transition-all", className)}
+          style={{ width: `${Math.max(1, pct)}%` }}
+        />
+      </div>
+      {sub && <span className="text-muted-foreground text-xs">{sub}</span>}
     </div>
   );
 }

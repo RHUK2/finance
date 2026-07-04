@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { cached } from "@/lib/cache";
+import { mvrvZScore } from "@/lib/bitcoin-models";
 
 export const dynamic = "force-dynamic";
 
@@ -53,25 +54,7 @@ export async function GET() {
         value: row.mvrv,
       }));
 
-      // MVRV Z-Score = (시총 − 실현시총) / 시총의 표준편차 (실현시총 = 시총 / MVRV)
-      // 표준편차는 확장 윈도우(시작~당일)로 계산해 미래 데이터 참조를 배제.
-      // 최소 1년(365일) 표본이 쌓이기 전 불안정한 초기 구간은 제외.
-      const caps = merged.filter(
-        (r) => isFinite(r.marketCap) && r.marketCap > 0 && r.mvrv > 0,
-      );
-      const zScore: { time: string; value: number }[] = [];
-      let sum = 0;
-      let sumSq = 0;
-      for (let i = 0; i < caps.length; i++) {
-        const { marketCap, mvrv, time } = caps[i];
-        sum += marketCap;
-        sumSq += marketCap ** 2;
-        const n = i + 1;
-        const std = Math.sqrt(Math.max(sumSq / n - (sum / n) ** 2, 0));
-        if (n >= 365 && std > 0) {
-          zScore.push({ time, value: (marketCap - marketCap / mvrv) / std });
-        }
-      }
+      const zScore = mvrvZScore(merged);
 
       const latest = history[history.length - 1];
 

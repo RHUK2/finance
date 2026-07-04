@@ -14,6 +14,7 @@ import {
   Metric,
   RoundControls,
   SectionIntro,
+  Sparkline,
 } from "@/components/simulation";
 import { type CascadeAgent, buildCascadeAgents, cascadeStep } from "./models";
 import { useRoundEngine } from "@/hooks/use-round-engine";
@@ -44,9 +45,9 @@ export function AdoptionCascade() {
     <div className="flex flex-col gap-4">
       <SectionIntro title="채택 캐스케이드 — 도미노처럼 번지는 채택">
         각 행위자는 저마다 &lsquo;임계값&rsquo;을 갖는다. 주변 채택률이 그 선을
-        넘으면 채택에 동참한다(Granovetter 임계값 모델). 개인이 먼저 움직이고, 채택률이
-        오르면 기업이, 마지막엔 보수적인 국가까지 합류한다. 한 번 임계점을 넘으면
-        멈추기 어려운 연쇄가 시작된다.
+        넘으면 채택에 동참한다(Granovetter 임계값 모델). 개인이 먼저 움직이고,
+        채택률이 오르면 기업이, 마지막엔 보수적인 국가까지 합류한다. 한 번
+        임계점을 넘으면 멈추기 어려운 연쇄가 시작된다.
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -146,11 +147,21 @@ function CascadeSim({
           done={done}
         />
         <AgentGrid states={states} />
-        <AdoptionCurve history={sim.history} />
+        <Sparkline
+          values={sim.history}
+          label="채택 곡선"
+          className="text-amber-500"
+          min={0}
+          max={1}
+        />
       </Card>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Metric label="채택률" value={`${Math.round(p * 100)}%`} tone="accent" />
+        <Metric
+          label="채택률"
+          value={`${Math.round(p * 100)}%`}
+          tone="accent"
+        />
         <Metric label="채택자" value={`${adoptedCount} / ${N}`} />
         <Metric label="남은 관망자" value={`${N - adoptedCount}`} />
       </div>
@@ -170,37 +181,5 @@ function CascadeSim({
         </p>
       )}
     </>
-  );
-}
-
-// 라운드별 채택률 추이를 작은 SVG 라인으로 표시.
-function AdoptionCurve({ history }: { history: number[] }) {
-  const W = 100;
-  const H = 32;
-  const pts = history.map((p, i) => {
-    const x = history.length <= 1 ? 0 : (i / (history.length - 1)) * W;
-    const y = H - p * H;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-muted-foreground w-16 shrink-0 text-xs">
-        채택 곡선
-      </span>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
-        className="h-8 w-full"
-      >
-        <polyline
-          points={pts.join(" ")}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          className="text-amber-500"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-    </div>
   );
 }

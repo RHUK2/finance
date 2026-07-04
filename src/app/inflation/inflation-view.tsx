@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
@@ -73,10 +73,14 @@ export function InflationView() {
   const cfg = CONFIG[country];
   const data = country === "US" ? us.data : kr.data;
   // BTC 가격은 USD 기준. 미국은 그대로, 한국은 월별 환율로 원화 환산해 KRW 자산과 단위를 맞춘다.
-  const btc =
-    country === "US"
-      ? btcQuery.data?.history
-      : toKrw(btcQuery.data?.history, data?.fx?.history);
+  // useMemo로 참조를 고정해 하위 컴포넌트들의 useMemo·차트가 리렌더마다 무효화되지 않게 한다.
+  const btc = useMemo(
+    () =>
+      country === "US"
+        ? btcQuery.data?.history
+        : toKrw(btcQuery.data?.history, data?.fx?.history),
+    [country, btcQuery.data, data],
+  );
 
   return (
     <>

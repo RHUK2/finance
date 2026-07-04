@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { cached } from "@/lib/cache";
+import { toMacroSeries, type MacroSeries } from "@/lib/series";
 
 export const dynamic = "force-dynamic";
 
@@ -14,14 +15,7 @@ const STAT = {
   stock: { stat: "901Y014", item: "1070000" }, // KOSPI 종가(월), 배당 제외
   house: { stat: "901Y062", item: "P63A" }, // KB 주택매매가격지수(총지수)
   fx: { stat: "731Y004", item: "0000001/0000100" }, // 원/미국달러 환율(매매기준율, 월평균자료) — USD 자산의 원화 환산용. item2=0000100(평균자료)
-
 } as const;
-
-type Series = {
-  history: { time: string; value: number }[];
-  current: number | null;
-  changePercent: number | null;
-};
 
 function endMonth(): string {
   const now = new Date();
@@ -32,7 +26,7 @@ async function fetchSeries(
   key: string,
   stat: string,
   item: string,
-): Promise<Series> {
+): Promise<MacroSeries> {
   const url = `https://ecos.bok.or.kr/api/StatisticSearch/${key}/json/kr/1/100000/${stat}/M/${START}/${endMonth()}/${item}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`ECOS ${stat} error: ${res.status}`);
@@ -49,14 +43,7 @@ async function fetchSeries(
       value: Number(r.DATA_VALUE),
     }));
 
-  const last = history[history.length - 1];
-  const prev = history[history.length - 2];
-  const changePercent =
-    last && prev && prev.value !== 0
-      ? Number((((last.value - prev.value) / prev.value) * 100).toFixed(2))
-      : null;
-
-  return { history, current: last?.value ?? null, changePercent };
+  return toMacroSeries(history);
 }
 
 export async function GET() {

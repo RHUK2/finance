@@ -14,6 +14,7 @@ import {
   Metric,
   RoundControls,
   SectionIntro,
+  Sparkline,
 } from "@/components/simulation";
 import {
   type Holder,
@@ -114,8 +115,7 @@ function HodlSim({
     <>
       <Card className="gap-3 p-4">
         <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-          <Zap className="size-3.5 text-rose-500" />
-          첫 박자에 외생 공포 충격{" "}
+          <Zap className="size-3.5 text-rose-500" />첫 박자에 외생 공포 충격{" "}
           <span className="font-mono font-medium text-rose-600 dark:text-rose-400">
             −{Math.round(SHOCK * 100)}%
           </span>{" "}
@@ -167,33 +167,17 @@ function HodlSim({
   );
 }
 
-// 가격 추이 (0~100) SVG 라인.
+// 가격 추이 (0~100) — 마지막 가격에 따라 선 색이 바뀐다.
 function PriceLine({ history }: { history: number[] }) {
-  const W = 100;
-  const H = 40;
-  const pts = history.map((price, i) => {
-    const x = history.length <= 1 ? 0 : (i / (history.length - 1)) * W;
-    const y = H - (Math.max(0, Math.min(100, price)) / 100) * H;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
   const last = history[history.length - 1];
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-muted-foreground w-16 shrink-0 text-xs">가격</span>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
-        className="h-10 w-full"
-      >
-        <polyline
-          points={pts.join(" ")}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          className={cn(last < 60 ? "text-rose-500" : "text-emerald-500")}
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-    </div>
+    <Sparkline
+      values={history}
+      label="가격"
+      className={last < 60 ? "text-rose-500" : "text-emerald-500"}
+      min={0}
+      max={100}
+      heightClass="h-10"
+    />
   );
 }

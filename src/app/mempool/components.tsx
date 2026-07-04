@@ -1,14 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatRelativeTime } from "@/hooks/use-relative-time";
+import { formatRelativeTime, useMinuteTick } from "@/hooks/use-relative-time";
 import { useScrollDrag } from "@/hooks/use-scroll-drag";
-import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { BTC_COLOR, cn } from "@/lib/utils";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 const MAX_BLOCK_MB = 1.0;
 
-function CardHeading({
+export function CardHeading({
   title,
   relativeTime,
 }: {
@@ -31,7 +30,7 @@ function CardHeading({
 }
 
 const POOL_COLORS = [
-  "#f7931a",
+  BTC_COLOR,
   "#3b82f6",
   "#22c55e",
   "#a78bfa",
@@ -141,11 +140,8 @@ export function RecentBlocksList({
   relativeTime?: string;
   description?: string;
 }) {
-  const [, tick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => tick((n) => n + 1), 60_000);
-    return () => clearInterval(id);
-  }, []);
+  // 블록의 "N분 전" 라벨을 최신으로 유지
+  useMinuteTick();
 
   return (
     <Card>
