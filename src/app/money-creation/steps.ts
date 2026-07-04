@@ -58,7 +58,7 @@ export function buildSteps(r: number): Step[] {
       id: "issue",
       title: "정부, 국채 발행 → 은행 매입",
       narration:
-        "정부가 적자지출 재원을 마련하려 국채를 발행하고 은행이 이를 매입한다. 은행은 정부 계좌에 예금을 적어주고 국채를 받는다. 정부예금(TGA)은 통화량에 포함되지 않으므로 아직 새 돈은 없다 — 정부가 빚을 졌을 뿐이다.",
+        "정부가 적자지출 재원을 마련하려 국채를 발행하고 은행이 이를 매입한다. 은행은 정부 계좌에 예금을 적어주고 국채를 받는다. 정부예금(TGA)은 통화량에 포함되지 않으므로 아직 새 돈은 없다. 정부가 빚을 졌을 뿐이다.",
       ops: [
         { entity: "gov", side: "asset", item: "정부예금", delta: B },
         { entity: "gov", side: "liability", item: "국채", delta: B },
@@ -70,7 +70,7 @@ export function buildSteps(r: number): Step[] {
       id: "qe",
       title: "연준, 국채 매입 (공개시장조작·QE)",
       narration:
-        "연준이 은행에서 국채를 사들인다. 그 대금으로 연준은 지급준비금을 키보드로 적어넣어 무에서 창조한다 — 자산(국채)과 부채(지준)가 동시에 생겨난다. 이것이 본원통화(M0)의 탄생이다.",
+        "연준이 은행에서 국채를 사들인다. 그 대금으로 연준은 지급준비금을 키보드로 적어넣어 무에서 창조한다. 자산(국채)과 부채(지준)가 동시에 생겨난다. 이것이 본원통화(M0)의 탄생이다.",
       ops: [
         { entity: "fed", side: "asset", item: "국채", delta: B, created: true },
         {
@@ -101,7 +101,7 @@ export function buildSteps(r: number): Step[] {
     {
       id: "loan",
       title: "은행, 대출 실행 (신용창조)",
-      narration: `은행이 국민에게 ${L1}을 대출한다. 이때 은행은 보유한 돈을 빌려주는 게 아니라 예금을 새로 창조한다 — 대출(자산)과 예금(부채)이 동시에 생긴다. 지급준비금은 사후에 조달할 뿐이다. (지급준비율 ${pct}% 가정)`,
+      narration: `은행이 국민에게 ${L1}을 대출한다. 이때 은행은 보유한 돈을 빌려주는 게 아니라 예금을 새로 창조한다. 대출(자산)과 예금(부채)이 동시에 생긴다. 지급준비금은 사후에 조달할 뿐이다. (지급준비율 ${pct}% 가정)`,
       ops: [
         {
           entity: "bank",
@@ -174,6 +174,14 @@ export function sheetsAt(
       amounts.set(key, (amounts.get(key) ?? 0) + op.delta);
     }
   }
+  // 시나리오 전체에서 등장하는 항목의 합집합 — 모든 단계에서 행 구성을 동일하게
+  // 유지해(0에서 시작해 증감만) 카드 높이가 단계마다 흔들리지 않게 한다.
+  const allKeys = new Set<string>();
+  for (const s of steps) {
+    for (const op of s.ops) {
+      allKeys.add(`${op.entity}|${op.side}|${op.item}`);
+    }
+  }
   // 현재 단계에서 새로 생성된 항목(amber 강조)과
   // 이미 있던 돈이 이동·변환된 항목(sky 강조)을 구분해 표시한다.
   // 흐름 변경은 자동 감지: 이번 단계에 유출(delta<0)이 있으면,
@@ -197,8 +205,8 @@ export function sheetsAt(
       const lines: Line[] = [];
       for (const item of ITEM_ORDER) {
         const key = `${id}|${side}|${item}`;
+        if (!allKeys.has(key)) continue;
         const amount = amounts.get(key) ?? 0;
-        if (amount === 0) continue;
         lines.push({
           item,
           amount,

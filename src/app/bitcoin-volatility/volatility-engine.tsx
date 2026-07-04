@@ -37,7 +37,7 @@ export function VolatilityEngine() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="변동성의 정체 — 확률을 실시간으로 매기는 시장">
+      <SectionIntro title="변동성의 정체: 확률을 실시간으로 매기는 시장">
         시장은 매일 뉴스에 따라 성공 확률을 조금씩 고쳐 쓴다. 그런데 성공 확률이
         낮을 때는 똑같은 크기의 뉴스라도 가격이 몇 배씩 출렁이고, 확률이
         높아질수록 같은 뉴스에도 덜 흔들린다. 재생을 눌러 보자. 뉴스의 크기(σ)는

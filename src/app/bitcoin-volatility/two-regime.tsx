@@ -25,7 +25,7 @@ export function TwoRegime() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="두 갈래 운명 — 가격은 곧 확률이다">
+      <SectionIntro title="두 갈래 운명: 가격은 곧 확률이다">
         비트코인의 미래 가치에는 어중간한 중간이 없다. 진짜 화폐로 자리 잡아 거대한
         시장을 차지하거나(성공), 그러지 못해 0에 가까워지거나(실패) 둘 중 하나다. 그래서
         오늘의 가격은 사실상 <b>성공 확률 × 성공했을 때의 가격</b>이다. 아래 슬라이더로

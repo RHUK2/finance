@@ -151,8 +151,8 @@ export function CollapseCalculator({
               오늘 통장엔 {hi(money(r.depositNominal!), "strong")}(명목)입니다.
               하지만 같은 기간 {refName}이{" "}
               {hi(`${r.ratio!.toFixed(1)}배`, "amber")} 늘어, 같은 값어치를
-              유지하려면 오늘 {hi(money(r.holdLine!), "strong")}이 있어야 합니다
-              — 통장은 유지선 대비{" "}
+              유지하려면 오늘 {hi(money(r.holdLine!), "strong")}이 있어야 합니다.
+              통장은 유지선 대비{" "}
               {hi(`${Math.abs(r.lossPct!).toFixed(0)}%`, realTone)}{" "}
               {r.lossPct! < 0 ? "부족합니다" : "초과합니다"}.
               {head && head.value != null ? (

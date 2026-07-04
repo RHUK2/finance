@@ -64,13 +64,11 @@ export function MoneyCreationView() {
             />
           </div>
 
-          <div className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-12 z-20 -mx-1 px-1 py-1 backdrop-blur-sm">
-            <NarrationCard
-              index={step}
-              title={current.title}
-              narration={current.narration}
-            />
-          </div>
+          <NarrationCard
+            index={step}
+            title={current.title}
+            narration={current.narration}
+          />
 
           {isMultiplierStep && (
             <div className="flex flex-col gap-1.5 rounded-lg border p-4">

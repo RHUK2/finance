@@ -37,7 +37,7 @@ export function MaturationCurve() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="성숙 곡선 — 실제 변동성은 추세적으로 하락한다">
+      <SectionIntro title="성숙 곡선: 실제 변동성은 추세적으로 하락한다">
         지금까지의 이야기가 맞다면, 비트코인이 자산으로 자리를 잡아갈수록
         변동성은 점점 줄어야 한다. 실제로 2015년부터 비트코인의 변동성(90일
         기준, 연 단위로 환산)을 그려 보면, 초기에 100%를 훌쩍 넘던 변동성이

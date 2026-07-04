@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEconomy, useFred } from "@/hooks/use-economy";
 import { useRelativeTime } from "@/hooks/use-relative-time";
-import { pctChange } from "@/lib/utils";
+import { toMacroSeries } from "@/lib/series";
 import { RotateCcw } from "lucide-react";
 import { useMemo, useRef, type ReactNode } from "react";
 
@@ -71,11 +71,7 @@ export function EconomyView() {
         time: p.time,
         value: Number((p.value - us2yMap.get(p.time)!).toFixed(2)),
       }));
-    const last = history[history.length - 1];
-    const prev = history[history.length - 2];
-    const changePercent =
-      last && prev ? pctChange(last.value, prev.value) : null;
-    return { history, current: last?.value ?? null, changePercent };
+    return toMacroSeries(history);
   }, [eco, fred]);
 
   // lines 배열의 참조를 고정해 useChart가 리렌더마다 차트를 재생성하지 않게 한다
@@ -88,16 +84,13 @@ export function EconomyView() {
       kospi: [{ data: eco.kospi.history, color: "#a78bfa" }],
       nasdaq: [{ data: eco.nasdaq.history, color: "#38bdf8" }],
       vix: [{ data: eco.vix.history, color: "#ef4444" }],
-      treasury: fred?.us2y
-        ? [
-            { label: "2Y", data: fred.us2y.history, color: "#22c55e" },
-            { label: "10Y", data: eco.us10y.history, color: "#3b82f6" },
-            { label: "30Y", data: eco.us30y.history, color: "#a78bfa" },
-          ]
-        : [
-            { label: "10Y", data: eco.us10y.history, color: "#3b82f6" },
-            { label: "30Y", data: eco.us30y.history, color: "#a78bfa" },
-          ],
+      treasury: [
+        ...(fred?.us2y
+          ? [{ label: "2Y", data: fred.us2y.history, color: "#22c55e" }]
+          : []),
+        { label: "10Y", data: eco.us10y.history, color: "#3b82f6" },
+        { label: "30Y", data: eco.us30y.history, color: "#a78bfa" },
+      ],
     };
   }, [eco, fred]);
 

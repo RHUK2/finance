@@ -106,7 +106,7 @@ export function GridBatteryView() {
                 size="sm"
                 onClick={() => setMinersOn((v) => !v)}
               >
-                {minersOn ? "ON — 잉여 흡수 중" : "OFF — 잉여 방치"}
+                {minersOn ? "ON · 잉여 흡수 중" : "OFF · 잉여 방치"}
               </Button>
             </div>
           </Card>
@@ -140,7 +140,7 @@ export function GridBatteryView() {
             </div>
             {sim.shortage > 0 && (
               <p className="rounded-md bg-rose-500/10 px-3 py-2 text-xs text-rose-600 dark:text-rose-400">
-                ⚠ 공급 부족 {fmt(sim.shortage)} — 발전량이 수요에 못 미친다.
+                ⚠ 공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다.
                 이때 채굴 부하는 즉시 차단되어 전력을 가정·산업에 양보한다.
               </p>
             )}

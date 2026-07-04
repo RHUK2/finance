@@ -4,6 +4,7 @@ import {
   ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
+  Minus,
   RotateCcw,
   Sparkles,
 } from "lucide-react";
@@ -26,14 +27,16 @@ function AmountRow({
 }) {
   const value = useCountUp(line.amount);
   const isCapital = line.item === "자본";
+  const isIdle = line.amount === 0 && !line.created && !line.flowChanged;
   return (
     <div
       className={cn(
-        "animate-in fade-in slide-in-from-bottom-1 flex items-center justify-between gap-2 rounded-md border px-2.5 py-1.5 text-sm duration-300",
+        "flex items-center justify-between gap-2 rounded-md border px-2.5 py-1.5 text-sm",
         side === "asset"
           ? "border-emerald-500/30 bg-emerald-500/5"
           : "border-rose-500/30 bg-rose-500/5",
         isCapital && "border-border bg-muted/40 text-muted-foreground",
+        isIdle && "opacity-45",
         line.flowChanged &&
           "border-sky-500/70 bg-sky-500/15 ring-1 ring-sky-500/60",
         line.created &&
@@ -69,7 +72,6 @@ export function BalanceSheet({
   const hasFlow = [...sheet.asset, ...sheet.liability].some(
     (l) => l.flowChanged,
   );
-  const isEmpty = sheet.asset.length === 0 && sheet.liability.length === 0;
 
   return (
     <Card
@@ -85,16 +87,19 @@ export function BalanceSheet({
       </div>
 
       <CardContent className="p-3">
-        {hasCreated && (
+        {hasCreated ? (
           <div className="mb-2 flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400">
             <Sparkles className="size-3.5" />
             無에서 자산·부채가 동시에 생성됨
           </div>
-        )}
-        {!hasCreated && hasFlow && (
+        ) : hasFlow ? (
           <div className="mb-2 flex items-center gap-1 text-xs font-medium text-sky-600 dark:text-sky-400">
             <ArrowLeftRight className="size-3.5" />
             기존의 돈이 이동·변환됨
+          </div>
+        ) : (
+          <div className="text-muted-foreground/70 mb-2 flex items-center gap-1 text-xs font-medium">
+            <Minus className="size-3.5" />이 단계에서 변동 없음
           </div>
         )}
         <div className="grid grid-cols-2 gap-2">
@@ -130,25 +135,23 @@ export function BalanceSheet({
           </div>
         </div>
 
-        {!isEmpty && (
-          <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2 text-xs">
-            <span className="font-mono tabular-nums">
-              자산 {fmt(assetTotal)}
-            </span>
-            <span
-              className={cn(
-                assetTotal === liabTotal
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-rose-600",
-              )}
-            >
-              {assetTotal === liabTotal ? "균형 ✓" : "불균형"}
-            </span>
-            <span className="font-mono tabular-nums">
-              부채·자본 {fmt(liabTotal)}
-            </span>
-          </div>
-        )}
+        <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2 text-xs">
+          <span className="font-mono tabular-nums">
+            자산 {fmt(assetTotal)}
+          </span>
+          <span
+            className={cn(
+              assetTotal === liabTotal
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-rose-600",
+            )}
+          >
+            {assetTotal === liabTotal ? "균형 ✓" : "불균형"}
+          </span>
+          <span className="font-mono tabular-nums">
+            부채·자본 {fmt(liabTotal)}
+          </span>
+        </div>
       </CardContent>
     </Card>
   );
@@ -255,7 +258,7 @@ export function AssetEquationCard() {
       <div className="flex flex-wrap items-baseline gap-2">
         <span className="font-semibold">자산 = 부채 + 자본</span>
         <span className="text-muted-foreground text-xs">
-          모든 대차대조표가 항상 “균형 ✓”인 이유 — 자산은 누군가의 빚(부채)이나
+          모든 대차대조표가 항상 “균형 ✓”인 이유다. 자산은 누군가의 빚(부채)이나
           내 몫(자본)으로 정확히 채워진다.
         </span>
       </div>
@@ -290,7 +293,7 @@ export function TrustSection() {
           있게 받아들인다”는 인간들의 상호합의에서 나온다.
         </p>
         <p>
-          오늘날 달러를 뒷받침하는 것은 금이 아니라 <strong>신뢰</strong>다 —
+          오늘날 달러를 뒷받침하는 것은 금이 아니라 <strong>신뢰</strong>다.
           세계 최강의 군사력, 원유를 달러로 결제하는 페트로달러 체제, 미국채에
           대한 전 세계의 수요가 그 신뢰를 떠받친다. 1971년 금태환이 중단된 뒤
           달러는 “금으로 바꿔준다”는 약속이 아니라 이 신뢰망 위에 서 있다.

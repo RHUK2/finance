@@ -32,7 +32,7 @@ export function AbstractVsPhysical() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="추상 권력 vs 물리 권력 — 약탈자는 어디를 노리는가">
+      <SectionIntro title="추상 권력 vs 물리 권력: 약탈자는 어디를 노리는가">
         권력에는 두 종류가 있다. <b>추상 권력</b>은 위계·신뢰·직위처럼 믿음 위에
         세워져 휘두르긴 싸지만, 약탈자(belligerent actor)가 적은 비용으로 탈취할
         수 있다. <b>물리 권력</b>은 실제 와트를 소비해 부과하는 비용이라
@@ -120,7 +120,7 @@ export function AbstractVsPhysical() {
             </>
           ) : (
             <>
-              지금은 물리 권력 벽이 자원 가치를 넘어 BCRA가 1 미만 — 합리적
+              지금은 물리 권력 벽이 자원 가치를 넘어 BCRA가 1 미만이다. 합리적
               약탈자라면 공격을 포기한다. 이것이 소프트워가 말하는 탈취
               불가능성이다.
             </>

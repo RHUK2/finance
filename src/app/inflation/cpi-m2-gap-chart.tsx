@@ -32,7 +32,7 @@ export function CpiM2GapChart({ data, baseYear, updatedLabel }: Props) {
 
   return (
     <MacroChart
-      title="CPI vs M2 — 통화팽창과 물가의 괴리"
+      title="CPI vs M2: 통화팽창과 물가의 괴리"
       currentLabel={gapLabel}
       lines={lines}
       updatedLabel={updatedLabel}

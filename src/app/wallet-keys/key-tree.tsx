@@ -61,6 +61,22 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         이어지는지 따라가 보자.
       </SectionIntro>
 
+      <ExplainCard
+        title="쉽게 말하면: 폴더 경로처럼 키를 찾아간다"
+        body={
+          <>
+            시드가 하드디스크 하나라면, 파생 경로는{" "}
+            <span className="font-mono">
+              비트코인 &gt; 0번 계정 &gt; 수신용 &gt; 0번 주소
+            </span>{" "}
+            같은 폴더 경로다. 같은 시드에서 같은 경로를 따라가면 언제 어디서든
+            똑같은 키가 나온다. 그래서 단어 12개만 있으면 지갑이 만들었던 수천
+            개 주소를 전부 되찾을 수 있고, 새 주소가 필요하면 마지막
+            번호(index)만 1씩 올리면 된다.
+          </>
+        }
+      />
+
       <Card className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3">
         <Field label="purpose (주소 타입)">
           <Select value={purpose} onValueChange={setPurpose}>
@@ -196,7 +212,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         title="CKD 한 단계는 실제로 무슨 계산일까? (∥ 는 이어붙이기)"
         body={
           <>
-            트리의 매 가지는 같은 한 줄을 반복한다 —{" "}
+            트리의 매 가지는 같은 한 줄을 반복한다:{" "}
             <span className="font-mono">HMAC-SHA512(키 = 부모 체인코드, data)</span> →
             결과 64바이트의 왼쪽 32B는 자식 키, 오른쪽 32B는 자식 체인코드. 여기서 data는
             바이트를 <b>이어붙인</b> 값인데,{" "}
@@ -213,12 +229,12 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
       />
 
       <ExplainCard
-        title="체인코드는 왜 필요할까? — 확장키(xprv/xpub)"
+        title="체인코드는 왜 필요할까? (확장키 xprv/xpub)"
         body={
           <>
             개인키 하나만으로는 자식 키를 만들 수 없다. BIP-32는 HMAC-SHA512로 64바이트를
             쪼개 개인키 옆에 같은 길이의 <b>체인코드</b>를 둔다. 이 둘을 합친 게
-            확장키다 — <span className="font-mono">개인키 + 체인코드 = xprv</span>,{" "}
+            확장키다: <span className="font-mono">개인키 + 체인코드 = xprv</span>,{" "}
             <span className="font-mono">공개키 + 체인코드 = xpub</span>. 체인코드가 있어야
             매번 다른 자식 키가 결정적으로 파생되고, xpub만 넘기면 개인키 없이도 수신
             주소를 끝없이 만들 수 있어 워치온리(watch-only) 지갑이 가능해진다.
@@ -227,7 +243,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
       />
 
       <ExplainCard
-        title="작은따옴표(')는 무슨 뜻일까? — 하드닝"
+        title="작은따옴표(')는 무슨 뜻일까? (하드닝)"
         body={
           <>
             <span className="font-mono">44&apos;</span>처럼 붙은 따옴표는{" "}

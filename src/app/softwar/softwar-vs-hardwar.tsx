@@ -26,7 +26,7 @@ export function SoftwarVsHardwar() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="소프트워 vs 하드워 — 같은 억지, 다른 대가">
+      <SectionIntro title="소프트워 vs 하드워: 같은 억지, 다른 대가">
         적을 억지하려면 적의 BCRA(공격 이득 ÷ 내가 투사한 권력)를 1 미만으로
         낮춰야 한다. 권력 투사의 매개체는 역사적으로 군대(영토) → 핵무기(MAD) →
         비트코인(전기)으로 바뀌어 왔다. 같은 억지 효과라도 <b>하드워</b>는 유혈과
@@ -76,7 +76,7 @@ export function SoftwarVsHardwar() {
           <b className={r.deterred ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
             {r.bcra.toFixed(2)}
           </b>{" "}
-          —{" "}
+          →{" "}
           {r.deterred
             ? "1 미만이라 공격이 손해. 억지에 성공했다. 이 결과는 하드워든 소프트워든 동일하다."
             : "1 이상이라 공격이 이득. 억지에 실패했다. 투사 권력을 더 올려야 한다."}
@@ -114,7 +114,7 @@ export function SoftwarVsHardwar() {
 
       <ExplainCard
         title="비트코인은 부드러운 전쟁이다"
-        body="핵 억지(MAD)가 '먼저 쏘면 같이 죽는다'는 BCRA로 70여 년의 평화를 지탱했듯, 비트코인은 '디지털 자산을 뺏으려면 전 세계 채굴 전력을 능가하는 에너지를 쏟아야 한다'는 BCRA로 자산을 지킨다. 차이는 매개체다 — 핵은 도시를, 작업증명은 전기만 태운다. 로워리는 이를 유혈 없는 권력 투사, 곧 소프트워라 불렀다."
+        body="핵 억지(MAD)가 '먼저 쏘면 같이 죽는다'는 BCRA로 70여 년의 평화를 지탱했듯, 비트코인은 '디지털 자산을 뺏으려면 전 세계 채굴 전력을 능가하는 에너지를 쏟아야 한다'는 BCRA로 자산을 지킨다. 차이는 매개체다. 핵은 도시를, 작업증명은 전기만 태운다. 로워리는 이를 유혈 없는 권력 투사, 곧 소프트워라 불렀다."
       />
     </div>
   );

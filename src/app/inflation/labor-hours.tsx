@@ -124,7 +124,7 @@ export function LaborHours({
             <>
               {startYear}년 최저임금 {hi("1시간", "strong")}어치(시급{" "}
               {money(r.wage!)})를 예금에 넣었다면 오늘{" "}
-              {hi(money(deposit!.value!), "strong")} — 오늘 최저임금(
+              {hi(money(deposit!.value!), "strong")}이 됩니다. 오늘 최저임금(
               {money(r.currentWage!)}) 기준{" "}
               {hi(fmtHours(depositHours!), depositTone)}어치입니다. 같은 1시간
               노동의 구매력이{" "}

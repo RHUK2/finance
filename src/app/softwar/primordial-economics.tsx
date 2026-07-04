@@ -41,7 +41,7 @@ export function PrimordialEconomics() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="자연의 파워 프로젝션 — 평화주의는 비싸다">
+      <SectionIntro title="자연의 파워 프로젝션: 평화주의는 비싸다">
         자연에서 자원과 생존을 지키는 방법은 물리력을 투사하는 것이다(원시
         경제학). 뿔을 부딪히고 영역을 과시하며 &lsquo;공격하면 손해&rsquo;라는
         신호를 보낸다. 포식 압력이 차오를 때, 충분한 물리력을 투사하지 못하는

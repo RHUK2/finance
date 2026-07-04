@@ -6,7 +6,7 @@ import { TriangleAlert } from "lucide-react";
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
 import { Card } from "@/components/ui/card";
-import { SimTabs } from "@/components/simulation";
+import { ExplainCard, SimTabs } from "@/components/simulation";
 import {
   entropyToMnemonic,
   illustrativeHex,
@@ -109,17 +109,17 @@ export function WalletKeysView() {
             <span className="font-semibold">한 줄 정리</span>
             <ul className="text-muted-foreground list-disc space-y-1 pl-4">
               <li>
-                <b>엔트로피 → 단어 (BIP-39)</b> — 무작위 비트를 11비트씩 잘라
+                <b>엔트로피 → 단어 (BIP-39)</b>: 무작위 비트를 11비트씩 잘라
                 2048개 단어장에서 단어를 고른다. 그래서 단어 수가
                 12·15·18·21·24개로 정해진다.
               </li>
               <li>
-                <b>단어 → 시드 (BIP-39)</b> — 단어들을 (선택적 passphrase와
+                <b>단어 → 시드 (BIP-39)</b>: 단어들을 (선택적 passphrase와
                 함께) 한 덩어리 512비트 시드로 변환한다. 글자 하나만 달라도
                 시드는 완전히 바뀐다.
               </li>
               <li>
-                <b>시드 → 키 트리 (BIP-32/44)</b> — 하나의 시드에서{" "}
+                <b>시드 → 키 트리 (BIP-32/44)</b>: 하나의 시드에서{" "}
                 <code className="font-mono">
                   m/44&apos;/0&apos;/0&apos;/0/0
                 </code>{" "}
@@ -129,6 +129,22 @@ export function WalletKeysView() {
           </Card>
 
           <SimTabs tabs={TABS} defaultValue="mnemonic" />
+
+          <ExplainCard
+            title="공통 배경지식: SHA-256·HMAC·PBKDF2, 이름이 비슷한 세 함수"
+            body={
+              <>
+                세 단계에 걸쳐 해시 계열 함수가 셋 등장하는데 목적이 서로
+                다르다. <b>SHA-256</b>은 입력을 고정 256비트로 줄이는 순수
+                해시다. 빠르고 단방향이라 체크섬·채굴·주소 생성에 쓴다(①
+                단계). <b>HMAC</b>은 해시에 키를 끼워 넣어, 키를 아는 사람이
+                만들었음을 증명하거나(인증) 두 입력을 잘 섞는 믹서로 쓴다.{" "}
+                <b>PBKDF2</b>는 그 HMAC을 수천 번 반복해 <b>일부러 느리게</b>{" "}
+                만든 키 유도 함수다. 그래서 ②에서 PBKDF2(시드), ③에서
+                HMAC-SHA512(키 트리)가 차례로 나온다.
+              </>
+            }
+          />
         </div>
       </PageMain>
     </>

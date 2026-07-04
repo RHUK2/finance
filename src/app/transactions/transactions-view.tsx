@@ -23,7 +23,7 @@ export function TransactionsView() {
         <div className="mx-auto flex max-w-5xl flex-col gap-4">
           <div>
             <h1 className="text-xl font-semibold">
-              비트코인은 어떻게 돈을 보낼까 — UTXO와 수수료
+              비트코인은 어떻게 돈을 보낼까? UTXO와 수수료
             </h1>
             <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
               지갑에서 만든 주소로 코인이 들어오면, 그 코인은 &lsquo;잔액&rsquo;이 아니라
@@ -38,16 +38,16 @@ export function TransactionsView() {
             <span className="font-semibold">한 줄 정리</span>
             <ul className="text-muted-foreground list-disc space-y-1 pl-4">
               <li>
-                <b>UTXO 모델</b> — 계좌 잔액이 없다. 동전을 통째로 써야 해서 거의 항상
+                <b>UTXO 모델</b>: 계좌 잔액이 없다. 동전을 통째로 써야 해서 거의 항상
                 <b> 잔돈(change)</b>이 되돌아온다. <code className="font-mono">수수료 = 입력
                 합계 − 송금액 − 잔돈</code>.
               </li>
               <li>
-                <b>수수료 = 크기 × 수수료율</b> — <code className="font-mono">vByte × sat/vB</code>.
+                <b>수수료 = 크기 × 수수료율</b>: <code className="font-mono">vByte × sat/vB</code>.
                 금액과 무관하다. 블록 공간을 두고 벌이는 경매라서 혼잡하면 비싸진다.
               </li>
               <li>
-                <b>주소 타입</b> — SegWit·Taproot는 같은 송금도 크기가 작아 수수료가 싸다.
+                <b>주소 타입</b>: SegWit·Taproot는 같은 송금도 크기가 작아 수수료가 싸다.
                 지갑 키 생성에서 고른 purpose(44&apos;/49&apos;/84&apos;/86&apos;)가 결국 이
                 차이로 이어진다.
               </li>

@@ -119,14 +119,14 @@ export function AddressCompare() {
       </Card>
 
       <ExplainCard
-        title="왜 Taproot·SegWit이 더 쌀까 — weight units와 witness 할인"
+        title="왜 Taproot·SegWit이 더 쌀까? weight units와 witness 할인"
         body={
           <>
             블록 크기는 바이트가 아니라 <b>weight unit</b>으로 잰다. 일반 데이터는 4 wu,
             서명(witness) 데이터는 1 wu. vByte = weight ÷ 4이므로, 서명을 witness 영역으로
             옮긴 SegWit·Taproot 입력은 같은 서명이라도 vByte가 줄어든다. Taproot은 서명을
             한 개(Schnorr)로 합쳐 더 작다. 입력이 많아질수록(동전을 여러 개 쓸수록)
-            이 절감 폭이 더 커진다 — 입력 개수를 늘려 확인해 보자.
+            이 절감 폭이 더 커진다. 입력 개수를 늘려 확인해 보자.
           </>
         }
       />

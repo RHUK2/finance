@@ -43,29 +43,6 @@ export const FEE_PRESETS = [
 
 export type Utxo = { id: number; sats: number };
 
-// 큰 동전부터 그리디로 고른다. 입력을 추가할 때마다 수수료(고른 입력 수 + 출력 2개:
-// 받는 사람·잔돈)를 다시 계산해, 송금액 + 수수료를 덮을 때까지 쌓는다.
-export function selectCoins(
-  utxos: Utxo[],
-  targetSats: number,
-  feeRate: number,
-  type: AddrType,
-): { selected: Utxo[]; fee: number; change: number; enough: boolean } {
-  const sorted = [...utxos].sort((a, b) => b.sats - a.sats);
-  const selected: Utxo[] = [];
-  let sum = 0;
-  for (const u of sorted) {
-    selected.push(u);
-    sum += u.sats;
-    const fee = feeSats(txVBytes(type, selected.length, 2), feeRate);
-    if (sum >= targetSats + fee) {
-      return { selected, fee, change: sum - targetSats - fee, enough: true };
-    }
-  }
-  const fee = feeSats(txVBytes(type, selected.length, 2), feeRate);
-  return { selected, fee, change: 0, enough: false };
-}
-
 export function formatSats(sats: number): string {
   return `${sats.toLocaleString("en-US")} sat`;
 }

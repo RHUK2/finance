@@ -123,7 +123,7 @@ export function FeeCalc() {
       </div>
 
       <ExplainCard
-        title="수수료는 금액이 아니라 크기에 붙는다 — 블록 공간 경매"
+        title="수수료는 금액이 아니라 크기에 붙는다 (블록 공간 경매)"
         body={
           <>
             한 블록(약 10분에 하나)에 들어갈 공간은 약 4백만 weight(≈ 1MvB)로 한정된다.
@@ -135,7 +135,7 @@ export function FeeCalc() {
       />
 
       <ExplainCard
-        title="SegWit 할인 — witness는 1/4만 센다"
+        title="SegWit 할인: witness는 1/4만 센다"
         body={
           <>
             서명(witness) 데이터는 블록 weight를 계산할 때 1/4 가중치만 받는다. vByte =

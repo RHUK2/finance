@@ -108,15 +108,15 @@ export function mnemonicToSeed(mnemonic: string, passphrase: string): string {
 
 // BIP-44 purpose → 주소 타입 메타.
 export const PURPOSES = [
-  { value: "44", label: "44' — Legacy", addr: "P2PKH", prefix: "1", charset: "base58" },
-  { value: "49", label: "49' — P2SH-SegWit", addr: "P2SH-P2WPKH", prefix: "3", charset: "base58" },
-  { value: "84", label: "84' — Native SegWit", addr: "P2WPKH", prefix: "bc1q", charset: "bech32" },
-  { value: "86", label: "86' — Taproot", addr: "P2TR", prefix: "bc1p", charset: "bech32" },
+  { value: "44", label: "44' · Legacy", addr: "P2PKH", prefix: "1", charset: "base58" },
+  { value: "49", label: "49' · P2SH-SegWit", addr: "P2SH-P2WPKH", prefix: "3", charset: "base58" },
+  { value: "84", label: "84' · Native SegWit", addr: "P2WPKH", prefix: "bc1q", charset: "bech32" },
+  { value: "86", label: "86' · Taproot", addr: "P2TR", prefix: "bc1p", charset: "bech32" },
 ] as const;
 
 export const COINS = [
-  { value: "0", label: "0' — Bitcoin" },
-  { value: "1", label: "1' — Testnet" },
+  { value: "0", label: "0' · Bitcoin" },
+  { value: "1", label: "1' · Testnet" },
 ] as const;
 
 export type PathParts = {

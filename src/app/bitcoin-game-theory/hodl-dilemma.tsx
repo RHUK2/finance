@@ -40,7 +40,7 @@ export function HodlDilemma() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="홀더의 딜레마 — 던질까, 버틸까">
+      <SectionIntro title="홀더의 딜레마: 던질까, 버틸까">
         모두가 버티면(HODL) 가격은 지켜지지만, 누군가 던지기 시작하면 하락이 또
         다른 매도를 부른다. 확신이 약한 손은 작은 하락에도 패닉 매도하고, 그
         매도가 가격을 더 끌어내려 연쇄 청산을 일으킨다. 재생을 누르면 첫 박자에{" "}
@@ -72,7 +72,7 @@ export function HodlDilemma() {
 
       <ExplainCard
         title="버티기는 조정 게임이다"
-        body="비트코인 보유자 전체로 보면 '모두 버티기'가 모두에게 최선의 균형이다. 하지만 각자는 '남들이 던지기 전에 내가 먼저 던질까'라는 유혹에 노출돼 있다 — 뱅크런과 같은 구조다. 공급량이 고정돼 새로 찍어낼 수 없고, 장기 보유자(다이아몬드손) 비중이 커질수록 유통 물량이 줄어 같은 충격에도 가격이 덜 흔들린다. 확신의 분포가 곧 네트워크의 회복탄력성이다."
+        body="비트코인 보유자 전체로 보면 '모두 버티기'가 모두에게 최선의 균형이다. 하지만 각자는 '남들이 던지기 전에 내가 먼저 던질까'라는 유혹에 노출돼 있다. 뱅크런과 같은 구조다. 공급량이 고정돼 새로 찍어낼 수 없고, 장기 보유자(다이아몬드손) 비중이 커질수록 유통 물량이 줄어 같은 충격에도 가격이 덜 흔들린다. 확신의 분포가 곧 네트워크의 회복탄력성이다."
       />
     </div>
   );
@@ -134,7 +134,18 @@ function HodlSim({
           onSpeed={onSpeed}
         />
         <AgentGrid states={states} />
-        <PriceLine history={history} />
+        <Sparkline
+          values={history}
+          label="가격"
+          className={
+            history[history.length - 1] < 60
+              ? "text-rose-500"
+              : "text-emerald-500"
+          }
+          min={0}
+          max={100}
+          heightClass="h-10"
+        />
       </Card>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -159,25 +170,10 @@ function HodlSim({
           )}
         >
           {collapsed
-            ? "💥 데스 스파이럴 — 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다."
+            ? "💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다."
             : "💎 다이아몬드손이 충격을 흡수했다. 확신이 강한 보유자가 던지지 않으니 매도가 더 번지지 않고 첫 충격 선에서 멈췄다."}
         </p>
       )}
     </>
-  );
-}
-
-// 가격 추이 (0~100) — 마지막 가격에 따라 선 색이 바뀐다.
-function PriceLine({ history }: { history: number[] }) {
-  const last = history[history.length - 1];
-  return (
-    <Sparkline
-      values={history}
-      label="가격"
-      className={last < 60 ? "text-rose-500" : "text-emerald-500"}
-      min={0}
-      max={100}
-      heightClass="h-10"
-    />
   );
 }

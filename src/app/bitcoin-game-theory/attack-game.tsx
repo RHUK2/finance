@@ -39,7 +39,7 @@ export function AttackGame() {
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionIntro title="51% 공격 — 합리적이라면 정직하게 채굴한다">
+      <SectionIntro title="51% 공격: 합리적이라면 정직하게 채굴한다">
         네트워크 과반 해시파워를 확보하면 이론상 이중지불 공격이 가능하다.
         하지만 그 해시파워를 갖추는 비용과, 같은 장비로 정직하게 채굴해 버는
         수익, 그리고 공격이 성공했을 때 벌어질 일을 함께 따져 보자. 슬라이더로

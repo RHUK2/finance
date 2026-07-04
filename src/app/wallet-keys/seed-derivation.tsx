@@ -30,6 +30,19 @@ export function SeedDerivation({
         확인해 보자.
       </SectionIntro>
 
+      <ExplainCard
+        title="쉽게 말하면: 믹서기에 2048번 갈기"
+        body={
+          <>
+            12개 단어를 재료로 믹서기(PBKDF2)에 넣고 2048번 돌린다고 생각하면
+            된다. passphrase는 나만 아는 비밀 재료 하나를 몰래 추가하는 것이다.
+            재료가 한 글자라도 다르면 완전히 다른 주스가 나오고, 완성된
+            주스에서 원래 재료를 되돌릴 수도 없다. 이렇게 나온 주스 한 잔이
+            512비트 시드이고, 지갑의 모든 키는 이 원액에서 만들어진다.
+          </>
+        }
+      />
+
       <Card className="flex flex-col gap-1.5 p-4">
         <span className="flex items-center gap-1.5 text-sm font-medium">
           <Lock className="size-4" />
@@ -38,7 +51,7 @@ export function SeedDerivation({
         <Input
           value={passphrase}
           onChange={(e) => onPassphrase(e.target.value)}
-          placeholder="비워 두어도 됨 — 한 글자 바꿔 보세요"
+          placeholder="비워 두어도 됨 · 한 글자 바꿔 보세요"
         />
         <p className="text-muted-foreground text-xs">
           passphrase는 단어를 적어둔 종이를 누가 훔쳐도 자금을 지키는 추가 비밀이다.
@@ -80,7 +93,7 @@ export function SeedDerivation({
           <>
             좋은 해시 함수는 입력이 1비트만 달라져도 출력이 절반쯤 무작위로 뒤집힌다.
             그래서 passphrase에 점(.) 하나만 더해도 완전히 다른 지갑이 된다. 같은 단어
-            목록 + 다른 passphrase = 서로 무관한 지갑들 — 이를 이용해 &lsquo;위장
+            목록 + 다른 passphrase = 서로 무관한 지갑들. 이를 이용해 &lsquo;위장
             지갑&rsquo;을 만들 수도 있다. (이 데모의 시드는 시연용 값이다.)
           </>
         }
@@ -90,7 +103,7 @@ export function SeedDerivation({
         title="여기서 HMAC은 '인증'이 아니라 '믹서'다"
         body={
           <>
-            HMAC 하면 보통 &lsquo;비밀 키로 메시지를 인증한다&rsquo;를 떠올린다 — 그땐 키가
+            HMAC 하면 보통 &lsquo;비밀 키로 메시지를 인증한다&rsquo;를 떠올린다. 그땐 키가
             새면 위조되니 비밀성이 생명이다. 하지만 PBKDF2가 HMAC을 부르는 이유는 인증이
             아니라, 두 입력을 예측 불가능하게 잘 섞어 주는 <b>결정적 믹서(PRF)</b>가
             필요해서다. 니모닉은 HMAC의 &lsquo;키&rsquo; 자리에 들어가지만 그 비밀성 성질을

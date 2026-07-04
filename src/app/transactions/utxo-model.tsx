@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Coins, Send } from "lucide-react";
+import { CircleCheck, CircleX, Coins, Send } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Pipeline } from "@/components/pipeline";
@@ -9,8 +9,9 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro } from "@/components/s
 import { cn } from "@/lib/utils";
 import {
   FEE_PRESETS,
+  feeSats,
   formatSats,
-  selectCoins,
+  txVBytes,
   type Utxo,
 } from "@/lib/tx-concept";
 
@@ -27,15 +28,21 @@ const WALLET_TOTAL = WALLET.reduce((s, u) => s + u.sats, 0);
 export function UtxoModel() {
   const [amount, setAmount] = useState(80000);
   const [feeRate, setFeeRate] = useState<number>(15);
+  const [selectedIds, setSelectedIds] = useState<number[]>([1]);
 
-  const { selected, fee, change, enough } = selectCoins(
-    WALLET,
-    amount,
-    feeRate,
-    "native",
-  );
-  const selectedIds = new Set(selected.map((u) => u.id));
+  const selected = WALLET.filter((u) => selectedIds.includes(u.id));
   const inputSum = selected.reduce((s, u) => s + u.sats, 0);
+  // 출력 2개(받는 사람 + 잔돈) 가정. 입력 수에 따라 수수료가 달라진다.
+  const fee = feeSats(txVBytes("native", selected.length, 2), feeRate);
+  const valid = selected.length > 0 && inputSum >= amount + fee;
+  const change = valid ? inputSum - amount - fee : 0;
+  const shortfall = amount + fee - inputSum;
+
+  function toggleCoin(id: number) {
+    setSelectedIds((ids) =>
+      ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id],
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -43,7 +50,8 @@ export function UtxoModel() {
         비트코인 지갑에는 &lsquo;잔액&rsquo; 숫자 하나가 있는 게 아니라, 받을 때마다
         생긴 <b>동전(UTXO)</b>들이 들어 있다. 송금하려면 동전을 골라 통째로 부숴야 해서,
         보낼 금액보다 큰 동전을 쓰면 나머지가 <b>잔돈</b>으로 내 지갑에 되돌아온다.
-        보낼 금액을 바꿔 어떤 동전이 선택되는지 따라가 보자.
+        아래에서 <b>동전을 직접 클릭해</b> 골라 보자. 고른 동전의 합이 송금액 + 수수료를
+        덮으면 유효한 트랜잭션이 된다.
       </SectionIntro>
 
       <Card className="flex flex-col gap-4 p-4">
@@ -62,32 +70,70 @@ export function UtxoModel() {
 
       <Card className="flex flex-col gap-3 p-4">
         <span className="flex items-center gap-1.5 text-sm font-semibold">
-          <Coins className="size-4" />내 지갑의 동전들 (선택된 것만 사용)
+          <Coins className="size-4" />내 지갑의 동전들 (클릭해서 고르기)
         </span>
         <div className="flex flex-col gap-1.5">
           {WALLET.map((u) => {
-            const on = selectedIds.has(u.id);
+            const on = selectedIds.includes(u.id);
             return (
-              <div
+              <button
                 key={u.id}
+                onClick={() => toggleCoin(u.id)}
+                aria-pressed={on}
                 className={cn(
-                  "flex items-center justify-between rounded-md border px-3 py-2 transition-colors",
+                  "flex items-center justify-between rounded-md border px-3 py-2 text-left transition-colors",
                   on
                     ? "border-amber-500/50 bg-amber-500/10"
-                    : "border-transparent bg-muted",
+                    : "border-transparent bg-muted hover:border-border",
                 )}
               >
-                <span className="text-muted-foreground text-xs">
-                  동전 #{u.id}
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className={cn(
+                      "size-3.5 rounded-full border-2",
+                      on
+                        ? "border-amber-500 bg-amber-500"
+                        : "border-muted-foreground/40",
+                    )}
+                  />
+                  <span className="text-muted-foreground text-xs">
+                    동전 #{u.id}
+                  </span>
                 </span>
                 <span className="font-mono text-sm tabular-nums">
                   {formatSats(u.sats)}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>
       </Card>
+
+      {valid ? (
+        <Card className="gap-1 border-emerald-500/40 bg-emerald-500/5 p-4 text-sm">
+          <span className="flex items-center gap-1.5 font-semibold text-emerald-600 dark:text-emerald-400">
+            <CircleCheck className="size-4" />
+            유효한 트랜잭션
+          </span>
+          <p className="text-muted-foreground">
+            입력 합계 {formatSats(inputSum)}가 송금액 + 수수료(
+            {formatSats(amount + fee)})를 덮는다. 남는{" "}
+            {formatSats(change)}은 잔돈으로 되돌아온다.
+          </p>
+        </Card>
+      ) : (
+        <Card className="gap-1 border-rose-500/40 bg-rose-500/5 p-4 text-sm">
+          <span className="flex items-center gap-1.5 font-semibold text-rose-600 dark:text-rose-400">
+            <CircleX className="size-4" />
+            유효하지 않은 트랜잭션
+          </span>
+          <p className="text-muted-foreground">
+            {selected.length === 0
+              ? "동전을 하나도 고르지 않았다. 위에서 동전을 클릭해 보자."
+              : `입력 합계가 송금액 + 수수료보다 ${formatSats(shortfall)} 부족하다. 동전을 더 고르거나 금액을 줄여 보자.`}
+          </p>
+        </Card>
+      )}
 
       <Card className="flex flex-col gap-3 p-4">
         <span className="text-sm font-semibold">고른 동전이 새 동전으로</span>
@@ -96,7 +142,10 @@ export function UtxoModel() {
             {
               kind: "box",
               label: `입력: 선택된 동전 ${selected.length}개`,
-              value: `${selected.map((u) => formatSats(u.sats)).join(" + ")} = ${formatSats(inputSum)}`,
+              value:
+                selected.length > 0
+                  ? `${selected.map((u) => formatSats(u.sats)).join(" + ")} = ${formatSats(inputSum)}`
+                  : "없음",
             },
             { kind: "op", label: "트랜잭션 (입력을 부수고 출력을 새로 찍음)" },
             {
@@ -118,17 +167,6 @@ export function UtxoModel() {
         <Metric label="잔돈" value={formatSats(change)} tone="accent" />
         <Metric label="수수료" value={formatSats(fee)} />
       </div>
-
-      {!enough && (
-        <Card className="border-rose-500/40 bg-rose-500/5 p-4 text-sm">
-          <span className="font-semibold text-rose-600 dark:text-rose-400">
-            잔액 부족
-          </span>
-          <p className="text-muted-foreground mt-1">
-            지갑의 모든 동전을 합쳐도 송금액 + 수수료에 못 미친다. 금액을 줄여 보자.
-          </p>
-        </Card>
-      )}
 
       <Card className="bg-muted/50 p-4 text-sm">
         <span className="font-mono">수수료 = 입력 합계 − 송금액 − 잔돈</span>
@@ -155,7 +193,7 @@ export function UtxoModel() {
         body={
           <>
             은행·이더리움은 <b>계좌 잔액</b>을 더하고 빼는 방식이다. 비트코인은 현금
-            지갑처럼 <b>동전(UTXO) 묶음</b>이다 — 지갑 잔액은 그 동전들의 합을 화면에서
+            지갑처럼 <b>동전(UTXO) 묶음</b>이다. 지갑 잔액은 그 동전들의 합을 화면에서
             계산해 보여줄 뿐이다. 덕분에 어떤 동전이 어디서 왔는지 추적이 쉽고, 여러
             입력을 병렬로 검증할 수 있다.
           </>
