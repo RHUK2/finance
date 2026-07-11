@@ -80,7 +80,7 @@ export function WalletKeysView() {
         <div className="mx-auto flex max-w-5xl flex-col gap-4">
           <div>
             <h1 className="text-xl font-semibold">
-              지갑은 어떻게 &lsquo;단어&rsquo;에서 만들어질까
+              지갑은 어떻게 &#39;단어&#39;에서 만들어질까
             </h1>
             <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
               비트코인 지갑은 12~24개의 영어 단어 하나로 모든 주소와 키를
@@ -100,35 +100,9 @@ export function WalletKeysView() {
               여기서 만들어지는 단어·시드·주소는 흐름을 보여주기 위한{" "}
               <b>그럴듯한 가짜 값</b>이다. 체크섬·시드·주소는 실제 암호
               연산(SHA-256, PBKDF2, secp256k1)을 단순화했다.{" "}
-              <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 진짜 지갑은
-              오프라인에서 검증된 소프트웨어로만 생성해야 한다.
+              <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b>
             </p>
           </Card>
-
-          <Card className="gap-1.5 p-4 text-sm leading-relaxed">
-            <span className="font-semibold">한 줄 정리</span>
-            <ul className="text-muted-foreground list-disc space-y-1 pl-4">
-              <li>
-                <b>엔트로피 → 단어 (BIP-39)</b>: 무작위 비트를 11비트씩 잘라
-                2048개 단어장에서 단어를 고른다. 그래서 단어 수가
-                12·15·18·21·24개로 정해진다.
-              </li>
-              <li>
-                <b>단어 → 시드 (BIP-39)</b>: 단어들을 (선택적 passphrase와
-                함께) 한 덩어리 512비트 시드로 변환한다. 글자 하나만 달라도
-                시드는 완전히 바뀐다.
-              </li>
-              <li>
-                <b>시드 → 키 트리 (BIP-32/44)</b>: 하나의 시드에서{" "}
-                <code className="font-mono">
-                  m/44&apos;/0&apos;/0&apos;/0/0
-                </code>{" "}
-                같은 경로를 따라 무한히 많은 주소를 가지치기한다.
-              </li>
-            </ul>
-          </Card>
-
-          <SimTabs tabs={TABS} defaultValue="mnemonic" />
 
           <ExplainCard
             title="공통 배경지식: SHA-256·HMAC·PBKDF2, 이름이 비슷한 세 함수"
@@ -145,6 +119,8 @@ export function WalletKeysView() {
               </>
             }
           />
+
+          <SimTabs tabs={TABS} defaultValue="mnemonic" />
         </div>
       </PageMain>
     </>

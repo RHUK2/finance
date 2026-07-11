@@ -216,7 +216,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             <span className="font-mono">HMAC-SHA512(키 = 부모 체인코드, data)</span> →
             결과 64바이트의 왼쪽 32B는 자식 키, 오른쪽 32B는 자식 체인코드. 여기서 data는
             바이트를 <b>이어붙인</b> 값인데,{" "}
-            <span className="font-mono">∥</span>는 &lsquo;또는&rsquo;이나 비트 연산이 아니라
+            <span className="font-mono">∥</span>는 &#39;또는&#39;이나 비트 연산이 아니라
             연결(붙이기) 기호다. 하드닝(<span className="font-mono">84&apos;</span>)이면{" "}
             <span className="font-mono">0x00 ∥ 부모개인키 ∥ index</span>, 일반(
             <span className="font-mono">0</span>)이면{" "}

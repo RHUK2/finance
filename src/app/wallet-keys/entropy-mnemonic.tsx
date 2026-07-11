@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/select";
 import { ExplainCard, Metric, SectionIntro } from "@/components/simulation";
 import {
-  checksumBits,
   ENTROPY_OPTIONS,
   entropyBreakdown,
   hexToBits,
@@ -24,6 +23,40 @@ import {
 } from "@/lib/bip-concept";
 
 import { Pipeline } from "@/components/pipeline";
+import { cn } from "@/lib/utils";
+
+// 4비트 니블(2진수)과 그에 대응하는 hex 한 자리를 세로로 정렬해 "같은 값"임을 보여주는 그리드.
+// 4비트가 안 되는 마지막 그룹(체크섬 5·6·7비트)은 hex 없이 비트만 표시한다.
+function NibbleHexGrid({
+  bits,
+  className,
+}: {
+  bits: string;
+  className?: string;
+}) {
+  const groups = bits.match(/.{1,4}/g) ?? [];
+  return (
+    <span
+      className={cn(
+        "flex flex-wrap gap-x-2 gap-y-2.5 font-mono text-xs",
+        className,
+      )}
+    >
+      {groups.map((g, i) => (
+        <span key={i} className="flex flex-col items-center gap-1">
+          <span className="text-muted-foreground tracking-widest">{g}</span>
+          {g.length === 4 ? (
+            <span className="w-full rounded-sm bg-amber-500/15 text-center font-semibold text-amber-600 dark:text-amber-400">
+              {parseInt(g, 2).toString(16)}
+            </span>
+          ) : (
+            <span className="text-muted-foreground/50 text-center">·</span>
+          )}
+        </span>
+      ))}
+    </span>
+  );
+}
 
 export function EntropyMnemonic({
   bits,
@@ -39,7 +72,7 @@ export function EntropyMnemonic({
   onRegen: () => void;
 }) {
   const bd = entropyBreakdown(bits);
-  const binaryGroups = hexToBits(entropyHex).match(/.{1,8}/g) ?? [];
+  const hash = illustrativeSha256(entropyHex);
 
   return (
     <div className="flex flex-col gap-4">
@@ -76,18 +109,21 @@ export function EntropyMnemonic({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-muted-foreground text-xs">엔트로피 (hex)</span>
-          <code className="bg-muted text-foreground rounded-md p-3 font-mono text-xs break-all">
-            {entropyHex}
-          </code>
+          <span className="text-muted-foreground text-xs">
+            엔트로피 · 2진수 {bd.entropy}비트(동전 {bd.entropy}번) 와 hex{" "}
+            {entropyHex.length}자리는 <b>같은 값</b>이다 — 4비트가 hex 한 자리에
+            대응한다
+          </span>
+          <NibbleHexGrid
+            bits={hexToBits(entropyHex)}
+            className="bg-muted rounded-md p-3"
+          />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-muted-foreground text-xs">
-            엔트로피 (2진수 · {bd.entropy}비트 = 동전 {bd.entropy}번 던지기)
-          </span>
-          <code className="bg-muted text-foreground rounded-md p-3 font-mono text-xs leading-relaxed break-words">
-            {binaryGroups.join(" ")}
+          <span className="text-muted-foreground text-xs">엔트로피 (hex)</span>
+          <code className="bg-muted text-foreground rounded-md p-3 font-mono text-xs break-all">
+            {entropyHex}
           </code>
         </div>
       </Card>
@@ -116,6 +152,51 @@ export function EntropyMnemonic({
         <Metric label="총 비트" value={`${bd.total} bit`} sub="ENT + CS" />
         <Metric label="단어 수" value={`${bd.words}개`} sub="총 ÷ 11" tone="good" />
       </div>
+
+      <Card className="flex flex-col gap-3 p-4">
+        <span className="flex items-center gap-1.5 text-sm font-semibold">
+          <ShieldCheck className="size-4" />
+          체크섬은 이렇게 만들어진다 (SHA-256)
+        </span>
+        <Pipeline
+          items={[
+            { kind: "box", label: "엔트로피 (입력)", value: entropyHex },
+            { kind: "op", label: "SHA-256 해시" },
+            {
+              kind: "box",
+              label: "해시 결과 (256비트)",
+              value: hash,
+            },
+            { kind: "op", label: `앞 ${bd.checksum}비트만 잘라냄 (ENT ÷ 32)` },
+            {
+              kind: "box",
+              label: `체크섬 (${bd.checksum}비트) → 마지막 단어 뒤에 붙음`,
+              value: <NibbleHexGrid bits={hexToBits(hash).slice(0, bd.checksum)} />,
+              tone: "accent",
+            },
+          ]}
+        />
+        <p className="text-muted-foreground text-xs">
+          이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.
+        </p>
+      </Card>
+
+      <ExplainCard
+        title="왜 하필 ENT ÷ 32일까?"
+        body={
+          <>
+            니모닉은 전체 비트를 <b>11비트씩</b> 잘라 단어로 만든다. 그러려면{" "}
+            <code className="font-mono">엔트로피 + 체크섬</code>이 11로 정확히
+            나눠떨어져야 한다. 엔트로피는 항상 32의 배수(128·160·192·224·256)로
+            정하는데, 체크섬을 <code className="font-mono">ENT ÷ 32</code>로 잡으면
+            총비트가 <code className="font-mono">ENT × 33/32</code>가 되어 언제나
+            11의 배수가 된다(예: 128 → 132 = 11×12단어, 256 → 264 = 11×24단어).
+            즉 ÷32는 <b>남는 비트 없이 단어가 딱 떨어지게</b> 만드는 유일한
+            선택이고, 덤으로 엔트로피가 길수록 체크섬도 비례해 길어져 오타 검출력이
+            좋아진다.
+          </>
+        }
+      />
 
       <Card className="flex flex-col gap-3 p-4">
         <span className="flex items-center gap-1.5 text-sm font-semibold">
@@ -150,41 +231,13 @@ export function EntropyMnemonic({
         </div>
       </Card>
 
-      <Card className="flex flex-col gap-3 p-4">
-        <span className="flex items-center gap-1.5 text-sm font-semibold">
-          <ShieldCheck className="size-4" />
-          체크섬은 이렇게 만들어진다 (SHA-256)
-        </span>
-        <Pipeline
-          items={[
-            { kind: "box", label: "엔트로피 (입력)", value: entropyHex },
-            { kind: "op", label: "SHA-256 해시" },
-            {
-              kind: "box",
-              label: "해시 결과 (256비트)",
-              value: illustrativeSha256(entropyHex),
-            },
-            { kind: "op", label: `앞 ${bd.checksum}비트만 잘라냄 (ENT ÷ 32)` },
-            {
-              kind: "box",
-              label: "체크섬 → 마지막 단어 뒤에 붙음",
-              value: checksumBits(entropyHex),
-              tone: "accent",
-            },
-          ]}
-        />
-        <p className="text-muted-foreground text-xs">
-          이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.
-        </p>
-      </Card>
-
       <ExplainCard
         title="체크섬은 왜 필요할까?"
         body={
           <>
             복구할 때 지갑은 입력한 단어들에서 엔트로피를 거꾸로 뽑아 <b>SHA-256을 다시
             계산</b>하고, 끝에 붙은 체크섬과 맞는지 검사한다. 단어를 하나라도 잘못 적으면
-            해시가 어긋나 즉시 &lsquo;잘못된 니모닉&rsquo; 오류가 뜬다. 그래서 아무 단어
+            해시가 어긋나 즉시 &#39;잘못된 니모닉&#39; 오류가 뜬다. 그래서 아무 단어
             12개나 적는다고 유효한 니모닉이 되지 않는다.
           </>
         }

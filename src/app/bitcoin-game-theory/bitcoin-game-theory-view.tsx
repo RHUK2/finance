@@ -2,7 +2,6 @@
 
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
-import { Card } from "@/components/ui/card";
 import { SimTabs } from "@/components/simulation";
 
 import { AdoptionCascade } from "./adoption-cascade";
@@ -33,21 +32,6 @@ export function BitcoinGameTheoryView() {
               어떤 균형으로 수렴하는지를, 네 가지 게임으로 직접 돌려 보자.
             </p>
           </div>
-
-          <Card className="gap-1.5 p-4 text-sm leading-relaxed">
-            <span className="font-semibold">게임이론 한 줄 정리</span>
-            <ul className="text-muted-foreground list-disc space-y-1 pl-4">
-              <li>
-                <b>행위자·전략·보수</b>: 누가, 어떤 선택을, 어떤 대가를 두고 하는가.
-              </li>
-              <li>
-                <b>우월전략</b>: 상대가 무엇을 하든 나에게 더 유리한 전략.
-              </li>
-              <li>
-                <b>내쉬 균형</b>: 아무도 혼자 전략을 바꿀 이유가 없는 안정 상태.
-              </li>
-            </ul>
-          </Card>
 
           <SimTabs tabs={TABS} defaultValue="payoff" />
         </div>

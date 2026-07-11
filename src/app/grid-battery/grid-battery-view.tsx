@@ -66,7 +66,7 @@ export function GridBatteryView() {
             <p className="text-muted-foreground mt-1 text-sm">
               전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야 한다.
               비트코인 채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는
-              &lsquo;유연 부하&rsquo;로, 버려질 에너지를 수익으로 바꿔 전력망
+              &#39;유연 부하&#39;로, 버려질 에너지를 수익으로 바꿔 전력망
               효율을 높인다. 아래 슬라이더로 직접 확인해 보자. (단위는 개념용
               예시)
             </p>
@@ -178,7 +178,7 @@ export function GridBatteryView() {
           <ExplainCard
             icon={<Bitcoin className="size-4 text-amber-500" />}
             title="비트코인 채굴 = 유연 부하"
-            body="채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 &lsquo;수요 반응(demand response)&rsquo; 자원인 셈이다."
+            body="채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 '수요 반응(demand response)' 자원인 셈이다."
           />
           <ExplainCard
             icon={<Battery className="size-4 text-emerald-500" />}

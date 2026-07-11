@@ -47,7 +47,7 @@ export function UtxoModel() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="동전을 고른다 (UTXO 모델)">
-        비트코인 지갑에는 &lsquo;잔액&rsquo; 숫자 하나가 있는 게 아니라, 받을 때마다
+        비트코인 지갑에는 &#39;잔액&#39; 숫자 하나가 있는 게 아니라, 받을 때마다
         생긴 <b>동전(UTXO)</b>들이 들어 있다. 송금하려면 동전을 골라 통째로 부숴야 해서,
         보낼 금액보다 큰 동전을 쓰면 나머지가 <b>잔돈</b>으로 내 지갑에 되돌아온다.
         아래에서 <b>동전을 직접 클릭해</b> 골라 보자. 고른 동전의 합이 송금액 + 수수료를

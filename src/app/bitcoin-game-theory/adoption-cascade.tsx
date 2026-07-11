@@ -44,7 +44,7 @@ export function AdoptionCascade() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="채택 캐스케이드: 도미노처럼 번지는 채택">
-        각 행위자는 저마다 &lsquo;임계값&rsquo;을 갖는다. 주변 채택률이 그 선을
+        각 행위자는 저마다 &#39;임계값&#39;을 갖는다. 주변 채택률이 그 선을
         넘으면 채택에 동참한다(Granovetter 임계값 모델). 개인이 먼저 움직이고,
         채택률이 오르면 기업이, 마지막엔 보수적인 국가까지 합류한다. 한 번
         임계점을 넘으면 멈추기 어려운 연쇄가 시작된다.
