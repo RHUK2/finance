@@ -19,34 +19,39 @@ function scrollToTop(duration = 300) {
 
 type Props = {
   children: React.ReactNode;
+  /** 하단 상시 패널 등과 겹칠 때 스크롤-투-톱 버튼을 숨긴다 */
+  hideScrollTop?: boolean;
 };
 
-export function PageMain({ children }: Props) {
+export function PageMain({ children, hideScrollTop }: Props) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (hideScrollTop) return;
     function onScroll() {
       setVisible(window.scrollY > 300);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [hideScrollTop]);
 
   return (
     <main className="min-h-[calc(100dvh-3rem)] p-4 sm:p-6 md:p-8 lg:p-10">
       {children}
-      <div className="fixed right-4 bottom-4 z-50 flex flex-col gap-2">
-        {visible && (
-          <Button
-            size="icon"
-            variant="outline"
-            className="h-12 w-12 rounded-full shadow-md"
-            onClick={() => scrollToTop()}
-          >
-            <ChevronUp className="size-6" />
-          </Button>
-        )}
-      </div>
+      {!hideScrollTop && (
+        <div className="fixed right-4 bottom-4 z-50 flex flex-col gap-2">
+          {visible && (
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-12 w-12 rounded-full shadow-md"
+              onClick={() => scrollToTop()}
+            >
+              <ChevronUp className="size-6" />
+            </Button>
+          )}
+        </div>
+      )}
     </main>
   );
 }

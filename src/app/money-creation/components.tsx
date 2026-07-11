@@ -2,12 +2,14 @@
 
 import {
   ArrowLeftRight,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Minus,
   RotateCcw,
   Sparkles,
 } from "lucide-react";
+import { type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -86,7 +88,7 @@ export function BalanceSheet({
         <span className="text-muted-foreground text-xs">{sub}</span>
       </div>
 
-      <CardContent className="p-3">
+      <CardContent className="flex flex-1 flex-col p-3">
         {hasCreated ? (
           <div className="mb-2 flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400">
             <Sparkles className="size-3.5" />
@@ -102,7 +104,7 @@ export function BalanceSheet({
             <Minus className="size-3.5" />이 단계에서 변동 없음
           </div>
         )}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="mb-3 grid grid-cols-2 gap-2">
           <div className="space-y-1.5">
             <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
               자산
@@ -135,7 +137,7 @@ export function BalanceSheet({
           </div>
         </div>
 
-        <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2 text-xs">
+        <div className="text-muted-foreground mt-auto flex items-center justify-between border-t pt-2 text-xs">
           <span className="font-mono tabular-nums">
             자산 {fmt(assetTotal)}
           </span>
@@ -157,7 +159,7 @@ export function BalanceSheet({
   );
 }
 
-export function StepControls({
+function StepControls({
   step,
   total,
   onPrev,
@@ -207,27 +209,66 @@ export function StepControls({
   );
 }
 
-export function NarrationCard({
-  index,
+export function StepPanel({
+  step,
+  total,
   title,
   narration,
+  onPrev,
+  onNext,
+  onReset,
+  onJump,
+  slider,
 }: {
-  index: number;
+  step: number;
+  total: number;
   title: string;
   narration: string;
+  onPrev: () => void;
+  onNext: () => void;
+  onReset: () => void;
+  onJump: (i: number) => void;
+  slider?: ReactNode;
 }) {
+  const [open, setOpen] = useState(true);
   return (
-    <Card className="gap-2 p-4">
-      <div className="flex items-center gap-2">
-        <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold">
-          <span className="translate-y-[1px]">{index}</span>
-        </span>
-        <span className="font-semibold">{title}</span>
-      </div>
-      <p className="text-muted-foreground text-sm leading-relaxed">
-        {narration}
-      </p>
-    </Card>
+    <div className="sticky bottom-4 z-40">
+      <Card className="bg-card gap-0 overflow-hidden p-0 shadow-xl">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="hover:bg-muted/40 flex w-full items-center gap-2 px-3 py-2 text-left transition-colors"
+        >
+          <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold">
+            <span className="translate-y-[1px]">{step}</span>
+          </span>
+          <span className="flex-1 truncate font-semibold">{title}</span>
+          <ChevronDown
+            className={cn(
+              "size-4 shrink-0 transition-transform",
+              open && "rotate-180",
+            )}
+          />
+        </button>
+        {open && (
+          <div className="flex flex-col gap-3 border-t px-3 pt-3 pb-3">
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {narration}
+            </p>
+            {slider}
+            <StepControls
+              step={step}
+              total={total}
+              onPrev={onPrev}
+              onNext={onNext}
+              onReset={onReset}
+              onJump={onJump}
+            />
+          </div>
+        )}
+      </Card>
+    </div>
   );
 }
 

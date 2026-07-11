@@ -4,15 +4,13 @@ import { useMemo, useState } from "react";
 
 import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
-import { StatCard } from "@/components/simulation";
-import { Slider } from "@/components/ui/slider";
+import { ControlSlider, StatCard } from "@/components/simulation";
 import { formatSigned } from "@/lib/utils";
 
 import {
   AssetEquationCard,
   BalanceSheet,
-  NarrationCard,
-  StepControls,
+  StepPanel,
   TrustSection,
 } from "./components";
 import { ENTITIES, buildSteps, metricsAt, sheetsAt } from "./steps";
@@ -28,10 +26,25 @@ export function MoneyCreationView() {
   const current = steps[step];
   const isMultiplierStep = current.id === "multiplier";
 
+  const sliderNode = isMultiplierStep ? (
+    <div className="rounded-lg border p-3">
+      <ControlSlider
+        label="지급준비율"
+        value={Math.round(reserveRatio * 100)}
+        min={1}
+        max={50}
+        step={1}
+        onChange={(v) => setReserveRatio(v / 100)}
+        format={(v) => `${v}%`}
+        hint="지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량 = 본원통화 ÷ 지급준비율)."
+      />
+    </div>
+  ) : null;
+
   return (
     <>
       <AppHeader breadcrumbs={[{ label: "신용창조" }]} />
-      <PageMain>
+      <PageMain hideScrollTop>
         <div className="mx-auto flex max-w-5xl flex-col gap-4">
           <div>
             <h1 className="text-xl font-semibold">
@@ -64,35 +77,6 @@ export function MoneyCreationView() {
             />
           </div>
 
-          <NarrationCard
-            index={step}
-            title={current.title}
-            narration={current.narration}
-          />
-
-          {isMultiplierStep && (
-            <div className="flex flex-col gap-1.5 rounded-lg border p-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">지급준비율</span>
-                <span className="font-mono tabular-nums">
-                  {Math.round(reserveRatio * 100)}%
-                </span>
-              </div>
-              <Slider
-                min={1}
-                max={50}
-                step={1}
-                value={[Math.round(reserveRatio * 100)]}
-                onValueChange={([v]) => setReserveRatio(v / 100)}
-                className="w-full"
-              />
-              <p className="text-muted-foreground text-xs">
-                지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량 = 본원통화
-                ÷ 지급준비율).
-              </p>
-            </div>
-          )}
-
           <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
             <span className="flex items-center gap-1.5">
               <span className="size-3 rounded-sm border border-amber-500/70 bg-amber-500/15 ring-1 ring-amber-500/60" />
@@ -115,18 +99,21 @@ export function MoneyCreationView() {
             ))}
           </div>
 
-          <StepControls
+          <AssetEquationCard />
+
+          <TrustSection />
+
+          <StepPanel
             step={step}
             total={steps.length}
+            title={current.title}
+            narration={current.narration}
             onPrev={() => setStep((s) => Math.max(0, s - 1))}
             onNext={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
             onReset={() => setStep(0)}
             onJump={setStep}
+            slider={sliderNode}
           />
-
-          <AssetEquationCard />
-
-          <TrustSection />
         </div>
       </PageMain>
     </>
