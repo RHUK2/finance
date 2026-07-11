@@ -19,14 +19,14 @@ export const NAV_GROUPS = [
     label: "마켓",
     items: [
       { label: "자산 현황", href: "/", icon: BarChart3 },
-      { label: "경제", href: "/economy", icon: LineChart },
-      { label: "원자재", href: "/commodities", icon: Wheat },
+      { label: "경제 차트", href: "/economy", icon: LineChart },
+      { label: "원자재 차트", href: "/commodities", icon: Wheat },
     ],
   },
   {
     label: "비트코인",
     items: [
-      { label: "비트코인", href: "/bitcoin", icon: Bitcoin },
+      { label: "비트코인 차트", href: "/bitcoin", icon: Bitcoin },
       { label: "비트코인 네트워크", href: "/mempool", icon: Network },
       { label: "비트코인 게임이론", href: "/bitcoin-game-theory", icon: Swords },
       { label: "비트코인 소프트워", href: "/softwar", icon: Radar },
