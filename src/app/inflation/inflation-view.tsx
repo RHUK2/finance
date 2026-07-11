@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/app-header";
 import { PageMain } from "@/components/page-main";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { SimTabs } from "@/components/simulation";
 import { useBitcoinHistorical } from "@/hooks/use-crypto";
 import { useRelativeTime } from "@/hooks/use-relative-time";
 import {
@@ -155,42 +156,54 @@ function Devices({
   btc?: { time: string; value: number }[];
 }) {
   const updatedLabel = useRelativeTime(data.fetchedAt);
-  return (
-    <div className="flex flex-col gap-4">
-      <CollapseCalculator
-        key={`calc-${country}`}
-        data={data}
-        btc={btc}
-        currency={cfg.currency}
-        minYear={cfg.minYear}
-        maxYear={cfg.maxYear}
-        amount={cfg.principal}
-        stockLabel={cfg.stockLabel}
-      />
-      <CpiM2GapChart
-        key={`gap-${country}`}
-        data={data}
-        baseYear={cfg.gapBaseYear}
-        updatedLabel={updatedLabel}
-      />
-      <LaborHours
-        key={`labor-${country}`}
-        data={data}
-        btc={btc}
-        currency={cfg.currency}
-        minYear={cfg.minYear}
-        maxYear={cfg.maxYear}
-        wageTable={cfg.wageTable}
-        stockLabel={cfg.stockLabel}
-      />
-      <AssetRaceChart
-        key={`race-${country}`}
-        data={data}
-        btc={btc}
-        baseYear={cfg.raceBaseYear}
-        stockLabel={cfg.stockLabel}
-        updatedLabel={updatedLabel}
-      />
-    </div>
-  );
+  const tabs = [
+    {
+      value: "collapse",
+      label: "구매력 붕괴 계산기",
+      node: (
+        <div className="flex flex-col gap-4">
+          <CollapseCalculator
+            data={data}
+            btc={btc}
+            currency={cfg.currency}
+            minYear={cfg.minYear}
+            maxYear={cfg.maxYear}
+            amount={cfg.principal}
+            stockLabel={cfg.stockLabel}
+          />
+          <CpiM2GapChart
+            data={data}
+            baseYear={cfg.gapBaseYear}
+            updatedLabel={updatedLabel}
+          />
+        </div>
+      ),
+    },
+    {
+      value: "labor",
+      label: "노동시간 환산",
+      node: (
+        <div className="flex flex-col gap-4">
+          <LaborHours
+            data={data}
+            btc={btc}
+            currency={cfg.currency}
+            minYear={cfg.minYear}
+            maxYear={cfg.maxYear}
+            wageTable={cfg.wageTable}
+            stockLabel={cfg.stockLabel}
+          />
+          <AssetRaceChart
+            data={data}
+            btc={btc}
+            baseYear={cfg.raceBaseYear}
+            stockLabel={cfg.stockLabel}
+            updatedLabel={updatedLabel}
+          />
+        </div>
+      ),
+    },
+  ];
+
+  return <SimTabs key={country} tabs={tabs} defaultValue="collapse" />;
 }
