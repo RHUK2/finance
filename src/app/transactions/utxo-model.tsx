@@ -178,6 +178,7 @@ export function UtxoModel() {
 
       <ExplainCard
         title="왜 항상 잔돈이 생길까?"
+        preview="동전은 쪼갤 수 없고 통째로만 쓴다. 12만으로 8만을 보내면 잔돈이 돌아온다."
         body={
           <>
             동전은 쪼개 쓸 수 없고 통째로만 쓸 수 있다. 12만 사토시 동전으로 8만을
@@ -190,6 +191,7 @@ export function UtxoModel() {
 
       <ExplainCard
         title="계좌 모델 vs UTXO 모델"
+        preview="은행·이더리움은 잔액을 더하고 빼지만, 비트코인은 현금 동전을 주고받는다."
         body={
           <>
             은행·이더리움은 <b>계좌 잔액</b>을 더하고 빼는 방식이다. 비트코인은 현금

@@ -131,6 +131,7 @@ export function EntropyMnemonic({
       <ExplainCard
         icon={<Dices className="size-4" />}
         title="가장 안전한 엔트로피는 오프라인에서 나온다 (동전·주사위)"
+        preview="동전·주사위로 직접 만든 무작위성이 어떤 소프트웨어보다 믿을 만하다."
         body={
           <>
             컴퓨터의 난수 생성기는 블랙박스다. 악성코드나 백도어가 예측 가능한
@@ -183,6 +184,7 @@ export function EntropyMnemonic({
 
       <ExplainCard
         title="왜 하필 ENT ÷ 32일까?"
+        preview="11비트씩 잘라 단어로 만들려면 체크섬 비트 수가 딱 맞아떨어져야 한다."
         body={
           <>
             니모닉은 전체 비트를 <b>11비트씩</b> 잘라 단어로 만든다. 그러려면{" "}
@@ -233,6 +235,7 @@ export function EntropyMnemonic({
 
       <ExplainCard
         title="체크섬은 왜 필요할까?"
+        preview="단어 하나를 잘못 적었을 때 복구 단계에서 바로 걸러내기 위한 장치다."
         body={
           <>
             복구할 때 지갑은 입력한 단어들에서 엔트로피를 거꾸로 뽑아 <b>SHA-256을 다시

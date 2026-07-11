@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
+import { ExplainCard } from "@/components/simulation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCountUp } from "@/hooks/use-count-up";
@@ -325,27 +326,30 @@ export function AssetEquationCard() {
 
 export function TrustSection() {
   return (
-    <Card className="mt-2 gap-2 p-4">
-      <span className="font-semibold">자산의 가치는 결국 &#39;상호합의&#39;다</span>
-      <div className="text-muted-foreground space-y-2 text-sm leading-relaxed">
-        <p>
-          지금까지 본 것처럼 돈은 무에서 만들어진다. 그렇다면 그 돈은 왜 가치를
-          가질까? 종이 화폐 자체에는 내재가치가 없다. 가치는 &#39;모두가 이것을 가치
-          있게 받아들인다&#39;는 인간들의 상호합의에서 나온다.
-        </p>
-        <p>
-          오늘날 달러를 뒷받침하는 것은 금이 아니라 <b>신뢰</b>다.
-          세계 최강의 군사력, 원유를 달러로 결제하는 페트로달러 체제, 미국채에
-          대한 전 세계의 수요가 그 신뢰를 떠받친다. 1971년 금태환이 중단된 뒤
-          달러는 &#39;금으로 바꿔준다&#39;는 약속이 아니라 이 신뢰망 위에 서 있다.
-        </p>
-        <p>
-          금 이전에도 합의의 대상은 계속 바뀌어 왔다. 조개껍데기·소금·곡물·돌
-          화폐(라이 스톤)처럼, 그 사회가 &#39;이건 희소하고 위조하기 어려우며 모두가
-          받아준다&#39;고 합의한 것이 그때그때 돈의 역할을 했다. 무엇이 돈이
-          되느냐는 물질이 아니라 합의가 결정한다.
-        </p>
-      </div>
-    </Card>
+    <ExplainCard
+      title="자산의 가치는 결국 '상호합의'다"
+      preview="종이 자체엔 내재가치가 없다. 달러도 금이 아니라 신뢰가 떠받친다."
+      body={
+        <div className="space-y-2">
+          <p>
+            지금까지 본 것처럼 돈은 무에서 만들어진다. 그렇다면 그 돈은 왜 가치를
+            가질까? 종이 화폐 자체에는 내재가치가 없다. 가치는 &#39;모두가 이것을 가치
+            있게 받아들인다&#39;는 인간들의 상호합의에서 나온다.
+          </p>
+          <p>
+            오늘날 달러를 뒷받침하는 것은 금이 아니라 <b>신뢰</b>다.
+            세계 최강의 군사력, 원유를 달러로 결제하는 페트로달러 체제, 미국채에
+            대한 전 세계의 수요가 그 신뢰를 떠받친다. 1971년 금태환이 중단된 뒤
+            달러는 &#39;금으로 바꿔준다&#39;는 약속이 아니라 이 신뢰망 위에 서 있다.
+          </p>
+          <p>
+            금 이전에도 합의의 대상은 계속 바뀌어 왔다. 조개껍데기·소금·곡물·돌
+            화폐(라이 스톤)처럼, 그 사회가 &#39;이건 희소하고 위조하기 어려우며 모두가
+            받아준다&#39;고 합의한 것이 그때그때 돈의 역할을 했다. 무엇이 돈이
+            되느냐는 물질이 아니라 합의가 결정한다.
+          </p>
+        </div>
+      }
+    />
   );
 }

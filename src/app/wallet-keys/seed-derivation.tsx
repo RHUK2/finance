@@ -32,6 +32,7 @@ export function SeedDerivation({
 
       <ExplainCard
         title="쉽게 말하면: 믹서기에 2048번 갈기"
+        preview="12개 단어를 PBKDF2 믹서기에 넣고 2048번 돌려 시드를 뽑는다."
         body={
           <>
             12개 단어를 재료로 믹서기(PBKDF2)에 넣고 2048번 돌린다고 생각하면
@@ -89,6 +90,7 @@ export function SeedDerivation({
 
       <ExplainCard
         title="왜 글자 하나에 시드가 통째로 바뀔까? (눈사태 효과)"
+        preview="좋은 해시는 입력 1비트만 달라져도 출력 절반이 무작위로 뒤집힌다."
         body={
           <>
             좋은 해시 함수는 입력이 1비트만 달라져도 출력이 절반쯤 무작위로 뒤집힌다.
@@ -101,6 +103,7 @@ export function SeedDerivation({
 
       <ExplainCard
         title="여기서 HMAC은 '인증'이 아니라 '믹서'다"
+        preview="익숙한 '키로 메시지 인증'이 아니라, 두 입력을 섞는 도구로 쓰인다."
         body={
           <>
             HMAC 하면 보통 &#39;비밀 키로 메시지를 인증한다&#39;를 떠올린다. 그땐 키가

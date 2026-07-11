@@ -120,6 +120,7 @@ export function AddressCompare() {
 
       <ExplainCard
         title="왜 Taproot·SegWit이 더 쌀까? weight units와 witness 할인"
+        preview="블록 크기는 바이트가 아니라 weight unit으로 재고, 서명은 할인받는다."
         body={
           <>
             블록 크기는 바이트가 아니라 <b>weight unit</b>으로 잰다. 일반 데이터는 4 wu,

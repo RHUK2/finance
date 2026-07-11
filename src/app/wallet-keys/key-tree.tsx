@@ -63,6 +63,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
       <ExplainCard
         title="쉽게 말하면: 폴더 경로처럼 키를 찾아간다"
+        preview="시드가 하드디스크라면, 파생 경로는 키를 찾아가는 폴더 경로다."
         body={
           <>
             시드가 하드디스크 하나라면, 파생 경로는{" "}
@@ -210,6 +211,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
       <ExplainCard
         title="CKD 한 단계는 실제로 무슨 계산일까? (∥ 는 이어붙이기)"
+        preview="트리의 매 가지는 HMAC-SHA512 한 줄을 반복할 뿐이다."
         body={
           <>
             트리의 매 가지는 같은 한 줄을 반복한다:{" "}
@@ -230,6 +232,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
       <ExplainCard
         title="체인코드는 왜 필요할까? (확장키 xprv/xpub)"
+        preview="개인키만으로는 자식 키를 못 만든다. 짝이 되는 32바이트가 더 필요하다."
         body={
           <>
             개인키 하나만으로는 자식 키를 만들 수 없다. BIP-32는 HMAC-SHA512로 64바이트를
@@ -244,6 +247,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
       <ExplainCard
         title="작은따옴표(')는 무슨 뜻일까? (하드닝)"
+        preview="44' 처럼 붙는 따옴표는 부모 공개키로 역추적을 막는 하드닝 표시다."
         body={
           <>
             <span className="font-mono">44&apos;</span>처럼 붙은 따옴표는{" "}

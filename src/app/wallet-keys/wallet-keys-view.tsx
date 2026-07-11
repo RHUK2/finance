@@ -105,7 +105,8 @@ export function WalletKeysView() {
           </Card>
 
           <ExplainCard
-            title="공통 배경지식: SHA-256·HMAC·PBKDF2, 이름이 비슷한 세 함수"
+            title="SHA-256·HMAC·PBKDF2, 이름은 비슷한데 뭐가 다를까?"
+            preview="세 단계에 걸쳐 등장하는 해시 계열 함수 셋, 목적이 서로 다르다."
             body={
               <>
                 세 단계에 걸쳐 해시 계열 함수가 셋 등장하는데 목적이 서로
