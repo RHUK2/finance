@@ -1,9 +1,14 @@
 "use client";
 
-import { Pause, Play, RotateCcw, StepForward } from "lucide-react";
+import { ChevronDown, Pause, Play, RotateCcw, StepForward } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCountUp } from "@/hooks/use-count-up";
@@ -216,24 +221,42 @@ export function Legend({
   );
 }
 
-// 설명 카드 (프로즈).
+// 설명 카드 (프로즈) — 접이식. preview는 접힌 상태에서 보이는 맛보기 한 줄.
 export function ExplainCard({
   icon,
   title,
   body,
+  preview,
 }: {
   icon?: React.ReactNode;
   title: string;
   body: React.ReactNode;
+  preview?: string;
 }) {
   return (
-    <Card className="gap-2 p-4">
-      <span className="flex items-center gap-1.5 font-semibold">
-        {icon}
-        {title}
-      </span>
-      <p className="text-muted-foreground text-sm leading-relaxed">{body}</p>
-    </Card>
+    <Collapsible asChild>
+      <Card className="group/explain gap-0 p-0">
+        <CollapsibleTrigger className="hover:bg-muted/50 flex w-full items-start gap-2 p-4 text-left transition-colors">
+          <div className="flex-1">
+            <span className="flex items-center gap-1.5 font-semibold">
+              {icon}
+              {title}
+            </span>
+            {preview && (
+              <span className="text-muted-foreground mt-1 line-clamp-1 block text-sm group-data-[state=open]/explain:hidden">
+                {preview}
+              </span>
+            )}
+          </div>
+          <ChevronDown className="text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]/explain:rotate-180" />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="text-muted-foreground px-4 pb-4 text-sm leading-relaxed">
+            {body}
+          </div>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 }
 
