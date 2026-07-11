@@ -52,7 +52,6 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   JPY: "¥",
   EUR: "€",
   GBP: "£",
-  BTC: "₿",
 };
 
 function currencySymbol(currency: string) {
@@ -72,7 +71,7 @@ const FMT_USD = new Intl.NumberFormat("en-US", {
 function formatPrice(price: number, currency: string) {
   if ((currency === "KRW" && price >= 100) || price > 100000)
     return FMT_KRW.format(price);
-  if (currency === "BTC" || price < 0.01) return FMT_BTC.format(price);
+  if (price < 0.01) return FMT_BTC.format(price);
   return FMT_USD.format(price);
 }
 

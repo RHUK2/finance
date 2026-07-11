@@ -16,13 +16,6 @@ const SYMBOLS = [
     gfUrl: `${GF}/USD-KRW`,
   },
   {
-    symbol: "USDT-KRW",
-    ticker: "USDT/KRW",
-    label: "테더 환율",
-    type: "macro",
-    gfUrl: `${GF}/USDT-KRW`,
-  },
-  {
     symbol: "^KS11",
     ticker: "KOSPI",
     label: "코스피",
@@ -58,27 +51,6 @@ const SYMBOLS = [
     label: "BTC",
     type: "crypto",
     gfUrl: `${GF}/BTC-USD`,
-  },
-  {
-    symbol: "ETH-USD",
-    ticker: "ETH",
-    label: "ETH",
-    type: "crypto",
-    gfUrl: `${GF}/ETH-USD`,
-  },
-  {
-    symbol: "BAT-USD",
-    ticker: "BAT",
-    label: "BAT",
-    type: "crypto",
-    gfUrl: `${GF}/BAT-USD`,
-  },
-  {
-    symbol: "BAT-BTC",
-    ticker: "BAT/BTC",
-    label: "BAT/BTC",
-    type: "crypto",
-    gfUrl: `${GF}/BAT-BTC`,
   },
   {
     symbol: "MSTR",
