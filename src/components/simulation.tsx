@@ -141,7 +141,7 @@ export function ControlSlider({
           {icon}
           {label}
         </span>
-        <span className="font-mono tabular-nums">{format(value)}</span>
+        <span className="tabular-nums">{format(value)}</span>
       </div>
       <Slider
         min={min}
@@ -172,7 +172,7 @@ export function Metric({
       <span className="text-muted-foreground text-xs">{label}</span>
       <span
         className={cn(
-          "font-mono text-xl font-semibold tabular-nums sm:text-2xl",
+          "text-xl font-semibold tabular-nums sm:text-2xl",
           tone === "good" && "text-emerald-600 dark:text-emerald-400",
           tone === "bad" && "text-rose-600 dark:text-rose-400",
           tone === "accent" && "text-amber-600 dark:text-amber-400",
@@ -399,7 +399,7 @@ export function CostBar({
     <div className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono tabular-nums">{formatUsd(value)}</span>
+        <span className="tabular-nums">{formatUsd(value)}</span>
       </div>
       <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
         <div

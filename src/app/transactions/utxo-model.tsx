@@ -100,7 +100,7 @@ export function UtxoModel() {
                     동전 #{u.id}
                   </span>
                 </span>
-                <span className="font-mono text-sm tabular-nums">
+                <span className="text-sm tabular-nums">
                   {formatSats(u.sats)}
                 </span>
               </button>
@@ -170,7 +170,7 @@ export function UtxoModel() {
 
       <Card className="bg-muted/50 p-4 text-sm">
         <span className="font-mono">수수료 = 입력 합계 − 송금액 − 잔돈</span>
-        <p className="text-muted-foreground mt-1 font-mono text-xs tabular-nums">
+        <p className="text-muted-foreground mt-1 text-xs tabular-nums">
           {formatSats(fee)} = {formatSats(inputSum)} − {formatSats(amount)} −{" "}
           {formatSats(change)}
         </p>

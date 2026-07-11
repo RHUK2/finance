@@ -91,7 +91,7 @@ export function AddressCompare() {
                   </span>
                   {r.label}
                 </span>
-                <span className="text-muted-foreground font-mono text-xs tabular-nums">
+                <span className="text-muted-foreground text-xs tabular-nums">
                   {r.vb} vB
                 </span>
               </div>
@@ -103,7 +103,7 @@ export function AddressCompare() {
                   )}
                   style={{ width: `${r.width}%` }}
                 >
-                  <span className="font-mono text-xs tabular-nums text-primary-foreground">
+                  <span className="text-xs tabular-nums text-primary-foreground">
                     {formatSats(r.fee)}
                   </span>
                 </div>

@@ -320,7 +320,7 @@ function PayoffCell({
           : "bg-background",
       )}
     >
-      <span className="font-mono text-base font-semibold tabular-nums">
+      <span className="text-base font-semibold tabular-nums">
         <span
           className={cn(me < 0 && "text-rose-500", meBest && mark)}
         >

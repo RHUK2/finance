@@ -47,7 +47,7 @@ function AmountRow({
       )}
     >
       <span className="truncate">{line.item}</span>
-      <span className="font-mono tabular-nums">{fmt(value)}</span>
+      <span className="tabular-nums">{fmt(value)}</span>
     </div>
   );
 }
@@ -139,7 +139,7 @@ export function BalanceSheet({
         </div>
 
         <div className="text-muted-foreground mt-auto flex items-center justify-between border-t pt-2 text-xs">
-          <span className="font-mono tabular-nums">
+          <span className="tabular-nums">
             자산 {fmt(assetTotal)}
           </span>
           <span
@@ -151,7 +151,7 @@ export function BalanceSheet({
           >
             {assetTotal === liabTotal ? "균형 ✓" : "불균형"}
           </span>
-          <span className="font-mono tabular-nums">
+          <span className="tabular-nums">
             부채·자본 {fmt(liabTotal)}
           </span>
         </div>

@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { ControlSlider, StatCard } from "@/components/simulation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { clamp } from "@/lib/utils";
 import type { InflationData } from "@/hooks/use-inflation";
 import {
   compoundDeposit,
@@ -50,9 +49,9 @@ export function CollapseCalculator({
   amount,
   stockLabel,
 }: Props) {
-  const [startYear, setStartYear] = useState(clamp(2000, minYear, maxYear));
+  const [startYear, setStartYear] = useState(minYear);
   const [basis, setBasis] = useState<Basis>("M2");
-  const money = makeMoneyFmt(currency);
+  const money = makeMoneyFmt(currency, true);
 
   const r = useMemo(() => {
     const refHist = basis === "M2" ? data.m2?.history : data.cpi?.history;

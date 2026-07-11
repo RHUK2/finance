@@ -50,7 +50,7 @@ export function MaturationCurve() {
             변동성 (90일 기준, 연 환산)
           </span>
           {current != null && (
-            <span className="font-mono text-lg font-semibold text-amber-600 tabular-nums dark:text-amber-400">
+            <span className="text-lg font-semibold text-amber-600 tabular-nums dark:text-amber-400">
               {current.toFixed(0)}%
             </span>
           )}

@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 
 import { ControlSlider, StatCard } from "@/components/simulation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { clamp } from "@/lib/utils";
 import type { InflationData } from "@/hooks/use-inflation";
 import {
   compoundDeposit,
@@ -42,7 +41,7 @@ export function LaborHours({
   wageTable,
   stockLabel,
 }: Props) {
-  const [startYear, setStartYear] = useState(clamp(2000, minYear, maxYear));
+  const [startYear, setStartYear] = useState(minYear);
   const money = makeMoneyFmt(currency);
 
   const r = useMemo(() => {
