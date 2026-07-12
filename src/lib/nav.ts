@@ -3,6 +3,7 @@ import {
   BarChart3,
   Bitcoin,
   Coins,
+  History,
   KeyRound,
   Landmark,
   LineChart,
@@ -27,6 +28,7 @@ export const NAV_GROUPS = [
     label: "비트코인",
     items: [
       { label: "비트코인 차트", href: "/bitcoin", icon: Bitcoin },
+      { label: "비트코인 역사", href: "/bitcoin-history", icon: History },
       { label: "비트코인 네트워크", href: "/mempool", icon: Network },
       { label: "비트코인 게임이론", href: "/bitcoin-game-theory", icon: Swords },
       { label: "비트코인 소프트워", href: "/softwar", icon: Radar },
