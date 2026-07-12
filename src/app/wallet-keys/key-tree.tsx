@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Wallet } from "lucide-react";
+import { ArrowDown, RotateCcw, StepForward } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,7 +23,7 @@ import {
   PURPOSES,
 } from "@/lib/bip-concept";
 
-import { Pipeline } from "@/components/pipeline";
+import { Pipeline, type PipeItem } from "@/components/pipeline";
 
 export function KeyTree({ seedHex }: { seedHex: string }) {
   const [purpose, setPurpose] = useState("84");
@@ -30,27 +31,99 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
   const [account, setAccount] = useState(0);
   const [change, setChange] = useState<0 | 1>(0);
   const [index, setIndex] = useState(0);
+  const [step, setStep] = useState(0); // 스텝다운: 지금까지 파생한 노드 인덱스
 
   const meta = PURPOSES.find((p) => p.value === purpose) ?? PURPOSES[0];
   const path = buildPath({ purpose, coin, account, change, index });
   const address = illustrativeAddress(seedHex, path, purpose);
 
-  // 개념 시연용 키 자료(모두 결정적 가짜 값). HMAC-SHA512는 64바이트를 둘로 쪼갠다:
-  // 왼쪽 32B = 키, 오른쪽 32B = 체인코드. 공개키는 02 + 32B (압축 33바이트) 모양.
-  const masterKey = illustrativeHex("master:" + seedHex, 64);
-  const masterChainCode = illustrativeHex("chaincode:" + seedHex, 64);
-  const childKey = illustrativeHex("childpriv:" + seedHex + path, 64);
-  const childChainCode = illustrativeHex("childcc:" + seedHex + path, 64);
-  const pubkey = "02" + illustrativeHex("pub:" + seedHex + path, 64);
-
-  const segments = [
-    { val: "m", name: "마스터", hint: "시드에서 나온 뿌리 키" },
-    { val: `${purpose}'`, name: "purpose", hint: meta.addr },
-    { val: `${coin}'`, name: "coin", hint: coin === "0" ? "Bitcoin" : "Testnet" },
-    { val: `${account}'`, name: "account", hint: `${account}번 계정` },
-    { val: `${change}`, name: "change", hint: change === 0 ? "수신용" : "잔돈용" },
-    { val: `${index}`, name: "index", hint: `${index}번 주소` },
+  const nodes = [
+    { val: "m", name: "마스터", hint: "시드에서 나온 뿌리 키", hardened: false },
+    { val: `${purpose}'`, name: "purpose", hint: meta.addr, hardened: true },
+    { val: `${coin}'`, name: "coin", hint: coin === "0" ? "Bitcoin" : "Testnet", hardened: true },
+    { val: `${account}'`, name: "account", hint: `${account}번 계정`, hardened: true },
+    { val: `${change}`, name: "change", hint: change === 0 ? "수신용" : "잔돈용", hardened: false },
+    { val: `${index}`, name: "index", hint: `${index}번 주소`, hardened: false },
   ];
+  const lastStep = nodes.length - 1;
+  const node = nodes[step];
+
+  // 각 노드의 확장키 자료(개인키·체인코드·공개키). 모두 결정적 시연용 가짜 값.
+  // HMAC-SHA512가 64바이트를 둘로 쪼갠다: 오른쪽 32B = 체인코드.
+  // 왼쪽 32B는 마스터에선 개인키 그 자체, 자식 단계에선 부모 개인키에 더할 값(IL)이다.
+  // 공개키는 02 + 32B (압축 33바이트) 모양.
+  const keysAt = (i: number) => {
+    const p = nodes.slice(0, i + 1).map((n) => n.val).join("/");
+    return {
+      priv: illustrativeHex("priv:" + seedHex + p, 64),
+      cc: illustrativeHex("cc:" + seedHex + p, 64),
+      pub: "02" + illustrativeHex("pub:" + seedHex + p, 64),
+      il: illustrativeHex("il:" + seedHex + p, 64),
+    };
+  };
+  const cur = keysAt(step);
+  const parent = keysAt(Math.max(0, step - 1)); // step 0에선 미사용
+  const short = (h: string) => h.slice(0, 12) + "…";
+
+  // 현재 단계의 상세 파이프라인: 마스터=시드→HMAC, 그 외=부모키→CKD, 마지막=→주소.
+  const detailItems: PipeItem[] =
+    step === 0
+      ? [
+          { kind: "box", label: "시드 (512비트)", value: seedHex },
+          {
+            kind: "op",
+            label: 'HMAC-SHA512 (key = "Bitcoin seed") → 64바이트를 둘로 분할',
+          },
+          {
+            kind: "split",
+            boxes: [
+              { label: "마스터 개인키 (왼쪽 32B)", value: cur.priv },
+              { label: "마스터 체인코드 (오른쪽 32B)", value: cur.cc, tone: "accent" },
+            ],
+          },
+        ]
+      : [
+          {
+            kind: "box",
+            label: node.hardened
+              ? "CKD 입력 (0x00 + 부모 개인키 + index)"
+              : "CKD 입력 (부모 공개키 + index)",
+            value: node.hardened
+              ? `0x00 ∥ ${short(parent.priv)} ∥ ${node.val}`
+              : `${short(parent.pub)} ∥ ${node.val}`,
+          },
+          {
+            kind: "op",
+            label: "HMAC-SHA512 (key = 부모 체인코드) → 64바이트를 둘로 분할",
+          },
+          {
+            kind: "split",
+            boxes: [
+              { label: "IL · 더할 값 (왼쪽 32B)", value: cur.il },
+              { label: "자식 체인코드 (오른쪽 32B)", value: cur.cc, tone: "accent" },
+            ],
+          },
+          {
+            kind: "op",
+            label: "자식 개인키 = (IL + 부모 개인키) mod n",
+          },
+          {
+            kind: "box",
+            label: "자식 개인키",
+            value: cur.priv,
+          },
+        ];
+  if (step === lastStep) {
+    detailItems.push(
+      { kind: "op", label: "secp256k1 (개인키 → 공개키, 단방향)" },
+      { kind: "box", label: "공개키 (압축 33바이트)", value: cur.pub },
+      {
+        kind: "op",
+        label: `HASH160 → ${meta.charset === "bech32" ? "Bech32" : "Base58Check"} 인코딩`,
+      },
+      { kind: "box", label: `주소 (${meta.addr})`, value: address, tone: "good" },
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -60,23 +133,6 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         change / index</span> 경로로 지정한다. 아래 값을 바꿔 경로가 어떤 주소로
         이어지는지 따라가 보자.
       </SectionIntro>
-
-      <ExplainCard
-        title="쉽게 말하면: 폴더 경로처럼 키를 찾아간다"
-        preview="시드가 하드디스크라면, 파생 경로는 키를 찾아가는 폴더 경로다."
-        body={
-          <>
-            시드가 하드디스크 하나라면, 파생 경로는{" "}
-            <span className="font-mono">
-              비트코인 &gt; 0번 계정 &gt; 수신용 &gt; 0번 주소
-            </span>{" "}
-            같은 폴더 경로다. 같은 시드에서 같은 경로를 따라가면 언제 어디서든
-            똑같은 키가 나온다. 그래서 단어 12개만 있으면 지갑이 만들었던 수천
-            개 주소를 전부 되찾을 수 있고, 새 주소가 필요하면 마지막
-            번호(index)만 1씩 올리면 된다.
-          </>
-        }
-      />
 
       <Card className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3">
         <Field label="purpose (주소 타입)">
@@ -147,103 +203,172 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         </Field>
       </Card>
 
-      <Card className="flex flex-col gap-3 p-4">
-        <span className="text-muted-foreground text-xs">파생 경로</span>
-        <div className="flex flex-wrap items-stretch gap-1.5">
-          {segments.map((s, i) => (
-            <div key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-muted-foreground font-mono">/</span>}
-              <div className="bg-muted flex min-w-14 flex-col items-center rounded-md px-2 py-1.5">
-                <span className="font-mono text-sm font-semibold">{s.val}</span>
-                <span className="text-muted-foreground text-[10px]">{s.name}</span>
-                <span className="text-muted-foreground text-[10px]">{s.hint}</span>
-              </div>
+      <Card className="flex flex-col gap-4 p-4">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm font-semibold">
+            시드에서 주소까지, 한 단계씩 파생하기
+          </span>
+          <span className="text-muted-foreground text-xs tabular-nums">
+            {step + 1} / {nodes.length} 단계
+          </span>
+        </div>
+        <p className="text-muted-foreground text-xs leading-relaxed">
+          경로는 한 번에 나오지 않는다. 부모 키에서 가지 하나를 파생하면 나온 자식
+          키가 다시 다음 가지의 부모가 된다. 각 노드는 확장 개인키(xprv)와 확장
+          공개키(xpub)를 갖는데, 하드닝(&apos;)된 가지는 부모 개인키가 있어야만
+          파생된다. 노드를 눌러 단계를 오갈 수 있다.
+        </p>
+
+        {/* 트리 지도 */}
+        <ol className="flex flex-col">
+          {nodes.map((n, i) => {
+            const revealed = i <= step;
+            const current = i === step;
+            return (
+              <li key={i} className="flex flex-col">
+                {i > 0 && (
+                  <div
+                    className={cn(
+                      "flex items-center gap-1.5 py-1 pl-[13px] text-xs",
+                      revealed
+                        ? "text-muted-foreground"
+                        : "text-muted-foreground/40",
+                    )}
+                  >
+                    <ArrowDown className="size-3.5 shrink-0" />
+                    {n.hardened
+                      ? `🔒 CKD ${n.val} · 하드닝 (부모 개인키 필요)`
+                      : `👁 CKD ${n.val} · 일반 (부모 공개키로 충분)`}
+                  </div>
+                )}
+                <button
+                  onClick={() => setStep(i)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-md border px-3 py-2 text-left transition-colors",
+                    current
+                      ? "border-primary bg-primary/5"
+                      : "hover:bg-muted/50 border-transparent",
+                    !revealed && "opacity-40",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "size-3 shrink-0 rounded-full",
+                      current
+                        ? "bg-primary"
+                        : revealed
+                          ? "bg-muted-foreground"
+                          : "border-muted-foreground/40 border",
+                    )}
+                  />
+                  <span className="w-14 font-mono text-sm font-semibold">
+                    {n.val}
+                  </span>
+                  <span className="text-muted-foreground w-16 text-xs">
+                    {n.name}
+                  </span>
+                  <span className="text-muted-foreground text-xs">{n.hint}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+
+        {/* 현재 단계 상세 */}
+        <div className="bg-muted/30 flex flex-col gap-3 rounded-lg border p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-sm font-semibold">{node.val}</span>
+            <span className="text-muted-foreground text-xs">
+              {node.name} · {node.hint}
+            </span>
+            {step > 0 && (
+              <span
+                className={cn(
+                  "ml-auto flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium",
+                  node.hardened
+                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                )}
+              >
+                {node.hardened
+                  ? "🔒 하드닝 · 부모 개인키 필요"
+                  : "👁 일반 · 부모 공개키로 충분"}
+              </span>
+            )}
+          </div>
+
+          <Pipeline items={detailItems} />
+
+          <div className="flex flex-col gap-1.5">
+            <div className="bg-muted flex flex-col gap-0.5 rounded-md p-2.5">
+              <span className="text-xs font-semibold">🔒 확장 개인키 (xprv)</span>
+              <code className="font-mono text-[11px] break-all">
+                {short(cur.priv)} ∥ {short(cur.cc)}
+              </code>
+              <span className="text-muted-foreground text-[10px]">
+                개인키 + 체인코드 · 비밀
+              </span>
             </div>
-          ))}
+            <div className="text-muted-foreground flex items-center gap-1.5 pl-[13px] text-[10px]">
+              <ArrowDown className="size-3.5 shrink-0" />
+              개인키에만 secp256k1 적용 → 공개키, 체인코드는 그대로 복사
+            </div>
+            <div className="bg-muted flex flex-col gap-0.5 rounded-md p-2.5">
+              <span className="text-xs font-semibold">👁 확장 공개키 (xpub)</span>
+              <code className="font-mono text-[11px] break-all">
+                {short(cur.pub)} ∥ {short(cur.cc)}
+              </code>
+              <span className="text-muted-foreground text-[10px]">
+                공개키 + 체인코드 · 공유 가능
+              </span>
+            </div>
+          </div>
+
+          <p className="text-muted-foreground text-xs leading-relaxed">
+            {step === 0
+              ? "시드에서 나온 뿌리 키. 여기서부터 모든 노드가 개인키+체인코드(xprv)와 공개키+체인코드(xpub) 짝을 갖는다."
+              : node.hardened
+                ? "입력에 부모 개인키가 들어가므로, xpub(공개키)만 가진 사람은 이 가지를 파생할 수 없다. 그래서 purpose·coin·account 같은 상위 단계를 하드닝해 형제·부모 키를 지킨다."
+                : "입력에 부모 공개키만 쓰이므로, xpub만으로도 자식 공개키와 주소를 끝없이 만들 수 있다. 그래서 change·index는 하드닝하지 않아 watch-only 지갑이 주소를 뽑을 수 있다."}
+          </p>
+        </div>
+
+        {/* 컨트롤 */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setStep(0)}
+            disabled={step === 0}
+            className="gap-1.5"
+          >
+            <RotateCcw className="size-4" />
+            처음부터
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setStep((s) => Math.max(0, s - 1))}
+            disabled={step === 0}
+          >
+            이전
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => setStep((s) => Math.min(lastStep, s + 1))}
+            disabled={step === lastStep}
+            className="gap-1.5"
+          >
+            <StepForward className="size-4" />
+            다음 단계
+          </Button>
+          <span className="text-muted-foreground ml-auto text-xs">
+            {step === lastStep
+              ? "주소까지 완성"
+              : "부모 키에서 다음 가지를 파생한다"}
+          </span>
         </div>
       </Card>
-
-      <Card className="flex flex-col gap-3 p-4">
-        <span className="flex items-center gap-1.5 text-sm font-semibold">
-          <Wallet className="size-4" />
-          시드에서 주소까지 ({meta.addr})
-        </span>
-        <Pipeline
-          items={[
-            { kind: "box", label: "시드 (512비트)", value: seedHex },
-            { kind: "op", label: "HMAC-SHA512 (key = \"Bitcoin seed\") → 64바이트를 둘로 분할" },
-            {
-              kind: "split",
-              boxes: [
-                { label: "마스터 개인키 (왼쪽 32B)", value: masterKey },
-                {
-                  label: "마스터 체인코드 (오른쪽 32B)",
-                  value: masterChainCode,
-                  tone: "accent",
-                },
-              ],
-            },
-            {
-              kind: "op",
-              label: `경로 ${path} 한 단계씩 반복 (CKD: 부모키 + 체인코드 + index → HMAC-SHA512)`,
-            },
-            {
-              kind: "split",
-              boxes: [
-                { label: "자식 개인키", value: childKey },
-                { label: "자식 체인코드", value: childChainCode, tone: "accent" },
-              ],
-            },
-            { kind: "op", label: "secp256k1 (개인키 → 공개키, 단방향)" },
-            { kind: "box", label: "자식 공개키 (압축 33바이트)", value: pubkey },
-            {
-              kind: "op",
-              label: `HASH160 → ${meta.charset === "bech32" ? "Bech32" : "Base58Check"} 인코딩`,
-            },
-            { kind: "box", label: `주소 (${meta.addr})`, value: address, tone: "good" },
-          ]}
-        />
-        <p className="text-muted-foreground text-xs">
-          이 데모의 중간 키·체인코드·주소는 가짜 값이지만, 단계 자체는 실제 BIP-32 흐름과
-          같다.
-        </p>
-      </Card>
-
-      <ExplainCard
-        title="CKD 한 단계는 실제로 무슨 계산일까? (∥ 는 이어붙이기)"
-        preview="트리의 매 가지는 HMAC-SHA512 한 줄을 반복할 뿐이다."
-        body={
-          <>
-            트리의 매 가지는 같은 한 줄을 반복한다:{" "}
-            <span className="font-mono">HMAC-SHA512(키 = 부모 체인코드, data)</span> →
-            결과 64바이트의 왼쪽 32B는 자식 키, 오른쪽 32B는 자식 체인코드. 여기서 data는
-            바이트를 <b>이어붙인</b> 값인데,{" "}
-            <span className="font-mono">∥</span>는 &#39;또는&#39;이나 비트 연산이 아니라
-            연결(붙이기) 기호다. 하드닝(<span className="font-mono">84&apos;</span>)이면{" "}
-            <span className="font-mono">0x00 ∥ 부모개인키 ∥ index</span>, 일반(
-            <span className="font-mono">0</span>)이면{" "}
-            <span className="font-mono">부모공개키(33B) ∥ index</span>를 이어붙인다. 맨 앞{" "}
-            <span className="font-mono">0x00</span>은 개인키(32B)와 공개키(33B)의 길이를
-            33B로 맞추는 패딩이다. 부모 체인코드가 HMAC 키 자리에 들어가므로, 개인키만
-            알아선 형제·부모 키를 만들 수 없다.
-          </>
-        }
-      />
-
-      <ExplainCard
-        title="체인코드는 왜 필요할까? (확장키 xprv/xpub)"
-        preview="개인키만으로는 자식 키를 못 만든다. 짝이 되는 32바이트가 더 필요하다."
-        body={
-          <>
-            개인키 하나만으로는 자식 키를 만들 수 없다. BIP-32는 HMAC-SHA512로 64바이트를
-            쪼개 개인키 옆에 같은 길이의 <b>체인코드</b>를 둔다. 이 둘을 합친 게
-            확장키다: <span className="font-mono">개인키 + 체인코드 = xprv</span>,{" "}
-            <span className="font-mono">공개키 + 체인코드 = xpub</span>. 체인코드가 있어야
-            매번 다른 자식 키가 결정적으로 파생되고, xpub만 넘기면 개인키 없이도 수신
-            주소를 끝없이 만들 수 있어 워치온리(watch-only) 지갑이 가능해진다.
-          </>
-        }
-      />
 
       <ExplainCard
         title="작은따옴표(')는 무슨 뜻일까? (하드닝)"
