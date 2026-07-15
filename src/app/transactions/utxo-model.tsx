@@ -35,6 +35,20 @@ export function UtxoModel() {
   const change = valid ? inputSum - amount - fee : 0;
   const shortfall = amount + fee - inputSum;
 
+  const status = valid
+    ? {
+        box: "border-emerald-500/40 bg-emerald-500/5",
+        text: "text-emerald-600 dark:text-emerald-400",
+        Icon: CircleCheck,
+        label: "유효한 트랜잭션",
+      }
+    : {
+        box: "border-rose-500/40 bg-rose-500/5",
+        text: "text-rose-600 dark:text-rose-400",
+        Icon: CircleX,
+        label: "유효하지 않은 트랜잭션",
+      };
+
   function toggleCoin(id: number) {
     setSelectedIds((ids) =>
       ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id],
@@ -110,25 +124,17 @@ export function UtxoModel() {
         <div
           className={cn(
             "flex flex-col gap-1 rounded-md border p-3 text-sm",
-            valid
-              ? "border-emerald-500/40 bg-emerald-500/5"
-              : "border-rose-500/40 bg-rose-500/5",
+            status.box,
           )}
         >
           <span
             className={cn(
               "flex items-center gap-1.5 font-semibold",
-              valid
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-rose-600 dark:text-rose-400",
+              status.text,
             )}
           >
-            {valid ? (
-              <CircleCheck className="size-4 shrink-0" />
-            ) : (
-              <CircleX className="size-4 shrink-0" />
-            )}
-            {valid ? "유효한 트랜잭션" : "유효하지 않은 트랜잭션"}
+            <status.Icon className="size-4 shrink-0" />
+            {status.label}
           </span>
           <p className="text-muted-foreground">
             {valid

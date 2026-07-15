@@ -79,8 +79,13 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
   const [step, setStep] = useState(0); // 스텝다운: 지금까지 파생한 노드 인덱스
 
   const meta = PURPOSES.find((p) => p.value === purpose) ?? PURPOSES[0];
-  const path = buildPath({ purpose, coin, account, change, index });
-  const address = illustrativeAddress(seedHex, path, purpose);
+  const addressAt = (i: number) =>
+    illustrativeAddress(
+      seedHex,
+      buildPath({ purpose, coin, account, change, index: i }),
+      purpose,
+    );
+  const address = addressAt(index);
 
   // idx = 경로에 적히는 번호. 실제 CKD에 들어가는 직렬화 index는 하드닝이면 2^31 + idx다.
   const nodes = [
@@ -96,14 +101,9 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
   // 마지막(index) 단계는 형제 노드를 함께 펼쳐 '가지가 갈라지는' 모습을 보여준다.
   // 같은 부모(change)에서 나온 형제들이 서로 다른 주소로 이어지는 게 요점.
-  const siblings = (index === 0 ? [0, 1, 2] : [index - 1, index, index + 1]).map((i) => ({
-    index: i,
-    address: illustrativeAddress(
-      seedHex,
-      buildPath({ purpose, coin, account, change, index: i }),
-      purpose,
-    ),
-  }));
+  const siblings = (index === 0 ? [0, 1, 2] : [index - 1, index, index + 1]).map(
+    (i) => ({ index: i, address: addressAt(i) }),
+  );
 
   // 각 노드의 확장키 자료(개인키·체인코드·공개키). 모두 결정적 시연용 가짜 값.
   // HMAC-SHA512가 64바이트를 둘로 쪼갠다: 오른쪽 32B = 체인코드.
@@ -123,8 +123,11 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
   const short = (h: string) => h.slice(0, 12) + "…";
 
   // 하드닝은 별도 플래그가 아니라 index 공간을 반으로 가르는 규칙. 2^31 이상이면 하드닝.
-  const serIndex = (node.hardened ? 0x80000000 + node.idx : node.idx) >>> 0;
-  const serIndexHex = "0x" + serIndex.toString(16).padStart(8, "0");
+  const serIndexHex =
+    "0x" +
+    (node.hardened ? 0x80000000 + node.idx : node.idx)
+      .toString(16)
+      .padStart(8, "0");
 
   // 현재 단계의 상세 파이프라인: 마스터=시드→HMAC, 그 외=부모키→CKD, 마지막=→주소.
   const detailItems: PipeItem[] =
@@ -311,10 +314,10 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               <li key={i} className="flex flex-col">
                 {i > 0 && (
                   // 트리의 세로 축은 노드 dot의 중심(x=19px: 버튼 border 1 + px-3 12 + dot 12/2).
-                  // 화살표(14px)는 중심이 19에 오도록 12px에서 시작한다.
+                  // 화살표(14px)는 중심이 19에 오도록 pl-3(12px)에서 시작한다.
                   <div
                     className={cn(
-                      "flex items-center gap-1.5 py-1 pl-[12px] text-xs",
+                      "flex items-center gap-1.5 py-1 pl-3 text-xs",
                       revealed
                         ? "text-muted-foreground"
                         : "text-muted-foreground/40",
@@ -404,8 +407,8 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
                 className={cn(
                   "ml-auto flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium",
                   node.hardened
-                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                    ? `bg-amber-500/10 ${LOCK_COLOR}`
+                    : `bg-emerald-500/10 ${OPEN_COLOR}`,
                 )}
               >
                 {node.hardened ? (
