@@ -34,6 +34,12 @@ export function TransactionsView() {
           </div>
 
           <SimTabs tabs={TABS} defaultValue="utxo" />
+
+          <p className="text-muted-foreground text-xs leading-relaxed">
+            입력/출력 vByte는 타입별 대표 근사값이다(서명 길이에 따라 ±1~2 vB
+            변동). 수수료 계산식 자체는 실제와 같다. ① 탭은 Native SegWit 주소를
+            가정한다.
+          </p>
         </div>
       </PageMain>
     </>
