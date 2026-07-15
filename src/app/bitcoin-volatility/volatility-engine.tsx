@@ -98,7 +98,7 @@ function VolSim({
   speedMs: number;
   onSpeed: (ms: number) => void;
 }) {
-  // 확률 경로(ps)가 유일한 상태 — 가격·수익률·스텝 수는 모두 여기서 파생된다.
+  // 확률 경로(ps)가 유일한 상태. 가격·수익률·스텝 수는 모두 여기서 파생된다.
   const [ps, setPs] = useState<number[]>([START_P]);
   const rngRef = useRef(mulberry32(SEED));
 

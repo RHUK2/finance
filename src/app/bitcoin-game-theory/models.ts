@@ -27,7 +27,7 @@ export function payoffMatrix({ u, r, f }: PayoffInput) {
     WW: cell("W", "W"),
   };
 
-  // 채택 우월 판정 마진 — 상대 선택과 무관하게 채택이 유리하면 > 0.
+  // 채택 우월 판정 마진. 상대 선택과 무관하게 채택이 유리하면 > 0.
   const margin = u - r + f;
   const nash: keyof typeof cells = margin > 0 ? "AA" : "WW";
   const dominantStrategy: Choice | null =
@@ -64,7 +64,7 @@ export function bestResponses(cells: PayoffCells): BestResponses {
 }
 
 // 정석 죄수의 딜레마. 행/열 첫째 = 협력(A 자리), 둘째 = 배신(W 자리).
-// 우월전략은 '배신'이라 내쉬 균형은 WW(1,1) — 협력 AA(3,3)보다 모두에게 나쁜
+// 우월전략은 '배신'이라 내쉬 균형은 WW(1,1)이고, 협력 AA(3,3)보다 모두에게 나쁜
 // 파레토 열등 결과로 수렴한다. 채택 게임과의 대비용.
 export function prisonersDilemma(): { cells: PayoffCells; nash: CellKey } {
   return {
@@ -84,7 +84,7 @@ export function prisonersDilemma(): { cells: PayoffCells; nash: CellKey } {
 export type AgentType = "개인" | "기업" | "국가";
 export type CascadeAgent = { type: AgentType; threshold: number };
 
-// 임계값으로 유형을 분류 — 낮은 임계값(먼저 채택)은 개인, 높은 쪽은 국가.
+// 임계값으로 유형을 분류. 낮은 임계값(먼저 채택)은 개인, 높은 쪽은 국가.
 function typeForThreshold(threshold: number): AgentType {
   return threshold < 0.25 ? "개인" : threshold < 0.5 ? "기업" : "국가";
 }

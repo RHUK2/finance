@@ -20,7 +20,7 @@ export {
   type Time,
 } from "lightweight-charts";
 
-// 지표 차트 공용 — 기준선(존 경계)을 점선 price line으로 추가.
+// 지표 차트 공용. 기준선(존 경계)을 점선 price line으로 추가.
 export function addZoneLines(
   series: ISeriesApi<SeriesType>,
   zones: readonly { price: number; label: string; color: string }[],
@@ -41,7 +41,7 @@ type ChartOverrides = {
   height?: number;
   logScale?: boolean;
   timeVisible?: boolean;
-  /** "전체 스케일 초기화" 버튼 연동용 — resetView를 밖에서 호출할 수 있게 담아준다. */
+  /** "전체 스케일 초기화" 버튼 연동용. resetView를 밖에서 호출할 수 있게 담아준다. */
   resetRef?: React.RefObject<(() => void) | null>;
 };
 

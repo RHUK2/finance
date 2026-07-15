@@ -13,7 +13,7 @@ export type EventTag =
   | "제도";
 
 export type TimelineEvent = {
-  year: string; // 범위 허용 ("2015–17")
+  year: string; // 범위 허용 ("2015~17")
   title: string;
   summary: string; // 접힌 상태 미리보기 한 줄
   body: string; // 펼친 상세
@@ -47,7 +47,7 @@ export const GOVERNANCE_EVENTS: TimelineEvent[] = [
     body: "사람들은 이미 비트코인 블록체인을 '메시지·자산 증명을 새기는 장부'로 쓰고 싶어 했고, 그 방법으로 가짜 수신 주소에 데이터를 욱여넣어 소비 불가능한 출력(UTXO)을 영구히 남기고 있었다. 개발진은 차라리 명시적으로 소각되는 OP_RETURN 출력을 열어 주는 게 UTXO 세트 오염을 줄인다고 봤다. Bitcoin Core 0.9(2014)는 OP_RETURN을 표준화하되 데이터 상한을 애초 제안된 80바이트에서 40바이트로 낮춰 내놨다. '체인은 화폐 원장인가, 범용 데이터 저장소인가'라는 질문이 이때 공식적으로 시작됐고, 이후 11년간 형태만 바꿔 반복된다.",
   },
   {
-    year: "2015–17",
+    year: "2015~17",
     title: "블록사이즈 워",
     tag: "논쟁",
     summary:
@@ -76,7 +76,7 @@ export const GOVERNANCE_EVENTS: TimelineEvent[] = [
     tag: "업그레이드",
     summary:
       "블록사이즈 워의 상처를 딛고, 드물게 매끄러운 합의로 활성화된 소프트포크.",
-    body: "Taproot(BIP340–342)는 슈노어 서명과 MAST를 도입해 프라이버시와 스마트 컨트랙트 유연성, 다중서명 효율을 개선했다. 논쟁적 파라미터가 없고 뚜렷한 반대 진영도 없었던 덕에, 'Speedy Trial'이라는 짧고 기한이 정해진 채굴자 신호 방식으로 큰 갈등 없이 활성화됐다. 블록사이즈 워 이후 비트코인이 '조용히, 광범위한 합의가 있을 때만' 바뀐다는 규범을 실제로 보여 준 사례다.",
+    body: "Taproot(BIP340~342)는 슈노어 서명과 MAST를 도입해 프라이버시와 스마트 컨트랙트 유연성, 다중서명 효율을 개선했다. 논쟁적 파라미터가 없고 뚜렷한 반대 진영도 없었던 덕에, 'Speedy Trial'이라는 짧고 기한이 정해진 채굴자 신호 방식으로 큰 갈등 없이 활성화됐다. 블록사이즈 워 이후 비트코인이 '조용히, 광범위한 합의가 있을 때만' 바뀐다는 규범을 실제로 보여 준 사례다.",
   },
   {
     year: "2023",
@@ -87,7 +87,7 @@ export const GOVERNANCE_EVENTS: TimelineEvent[] = [
     body: "2023년 초 Ordinals는 각 사토시에 일련번호를 매기고, Taproot가 확장한 witness 데이터 공간에 이미지·텍스트 같은 데이터를 통째로 새기는(inscription) 방법을 열었다. NFT류 자산과 BRC-20 토큰이 쏟아지며 블록이 가득 차고 수수료가 치솟았다. 일부는 이를 '스팸'이자 화폐 원장의 오염으로 봤고, 다른 이들은 수수료 시장을 키우는 정당한 유료 사용이라 봤다. 2014년 OP_RETURN 논쟁이 훨씬 큰 규모로 되살아난 것이다.",
   },
   {
-    year: "2024–25",
+    year: "2024~25",
     title: "OP_RETURN 상한 제거 논쟁",
     tag: "논쟁",
     ongoing: true,

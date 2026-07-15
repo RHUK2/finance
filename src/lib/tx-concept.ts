@@ -1,6 +1,6 @@
 // 비트코인 트랜잭션 크기·수수료 개념 계산.
 // ⚠️ wallet-keys와 달리 여기 값은 실제 산술이다(가짜 값 아님).
-// 입력/출력 vByte는 타입별 표준 대표값(근사) — 서명 길이에 따라 ±1~2 vB 변동하지만
+// 입력/출력 vByte는 타입별 표준 대표값(근사)이다. 서명 길이에 따라 ±1~2 vB 변동하지만
 // 수수료 = vByte × sat/vB 계산식 자체는 실제와 같다.
 
 export type AddrType = "legacy" | "nested" | "native" | "taproot";

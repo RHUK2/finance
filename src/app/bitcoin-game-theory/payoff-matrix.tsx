@@ -23,7 +23,7 @@ const PD_BEST = bestResponses(PD.cells);
 
 const sign = (n: number) => (n > 0 ? `+${n.toFixed(1)}` : n.toFixed(1));
 
-// 슬라이더별 색 스킴 — 산식·판정식·범례에서 동일하게 재사용한다.
+// 슬라이더별 색 스킴. 산식·판정식·범례에서 동일하게 재사용한다.
 const C = {
   u: "text-emerald-600 dark:text-emerald-400",
   r: "text-rose-600 dark:text-rose-400",

@@ -102,7 +102,7 @@ export function LaborHours({
         <p className="text-muted-foreground text-sm">
           {startYear}년 최저임금 <b>1시간</b>어치를 저축했다면, 오늘 그 돈으로
           몇 시간어치를 살 수 있을까요? (오늘 최저임금{" "}
-          {r.currentWage != null ? money(r.currentWage) : "—"} 기준)
+          {r.currentWage != null ? money(r.currentWage) : "-"} 기준)
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -114,7 +114,7 @@ export function LaborHours({
           value={startYear}
           onChange={setStartYear}
           format={(v) =>
-            `${v}년 · 시급 ${r.wage != null ? money(r.wage) : "—"}`
+            `${v}년 · 시급 ${r.wage != null ? money(r.wage) : "-"}`
           }
         />
 

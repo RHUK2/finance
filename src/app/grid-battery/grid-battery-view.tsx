@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 const fmt = (n: number) => `${Math.round(n)} GW`;
 
-// 막대 세그먼트와 범례를 한 곳에서 정의 — 색·라벨이 항상 동기화된다.
+// 막대 세그먼트와 범례를 한 곳에서 정의. 색·라벨이 항상 동기화된다.
 const SEGMENTS = [
   { key: "demandMet", className: "bg-emerald-500", label: "수요 충당" },
   { key: "absorbed", className: "bg-amber-500", label: "채굴 흡수" },

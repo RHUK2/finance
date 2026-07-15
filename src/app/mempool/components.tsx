@@ -262,7 +262,7 @@ export function MempoolBlocksViz({
                         </span>
                       </div>
                       <div className="text-center text-[10px] text-purple-200/90 tabular-nums">
-                        {b.feeMin}–{b.feeMax} sat/vB
+                        {b.feeMin}~{b.feeMax} sat/vB
                       </div>
                       {/* 블록 충전율 */}
                       <div className="h-1 w-full overflow-hidden rounded-full bg-purple-950/60">

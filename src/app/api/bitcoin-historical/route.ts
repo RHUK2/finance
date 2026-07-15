@@ -33,7 +33,7 @@ export async function GET() {
             const res = await fetch(url, { cache: "no-store" });
             if (!res.ok) throw new Error(`Coinbase error: ${res.status}`);
 
-            // [timestamp_sec, low, high, open, close, volume] — 내림차순 반환
+            // [timestamp_sec, low, high, open, close, volume], 내림차순 반환
             const candles: [number, number, number, number, number, number][] =
               await res.json();
 

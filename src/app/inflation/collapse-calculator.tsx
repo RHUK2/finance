@@ -181,7 +181,7 @@ export function CollapseCalculator({
             label={holdLabel}
             value={r.holdLine ?? amount}
             format={money}
-            sub={r.ratio != null ? `${refName} ×${r.ratio.toFixed(1)}` : "—"}
+            sub={r.ratio != null ? `${refName} ×${r.ratio.toFixed(1)}` : "-"}
           />
           <StatCard
             label="유지선 대비"

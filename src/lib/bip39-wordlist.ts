@@ -1,5 +1,5 @@
 // BIP-39 영어 니모닉 단어 2048개 (표준 목록, sha256 2f5eed…dbda).
-// 출처: bitcoin/bips bip-0039/english.txt — 의존성 없는 정적 데이터.
+// 출처: bitcoin/bips bip-0039/english.txt. 의존성 없는 정적 데이터.
 export const BIP39_WORDLIST = [
   "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
   "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",

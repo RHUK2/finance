@@ -3,7 +3,7 @@
 
 import { clamp } from "@/lib/utils";
 
-// 최대 발행량(2,100만 개) — 성공 시(터미널) 가격 환산 분모.
+// 최대 발행량(2,100만 개). 성공 시(터미널) 가격 환산 분모.
 export const SUPPLY = 21_000_000;
 // 참조: 금 시가총액 ≈ $18조.
 export const GOLD_CAP = 18e12;

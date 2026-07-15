@@ -15,7 +15,7 @@ import {
   type Utxo,
 } from "@/lib/tx-concept";
 
-// 프리셋 지갑 — 액면가가 제각각인 동전(UTXO)들. 합계 415,000 sat.
+// 프리셋 지갑. 액면가가 제각각인 동전(UTXO)들. 합계 415,000 sat.
 const WALLET: Utxo[] = [
   { id: 1, sats: 200000 },
   { id: 2, sats: 120000 },

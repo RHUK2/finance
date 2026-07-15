@@ -127,7 +127,7 @@ export function EconomyView() {
             currentLabel={
               eco?.usdkrw.current != null
                 ? `₩${eco.usdkrw.current.toLocaleString("ko-KR", { maximumFractionDigits: 0 })}`
-                : "–"
+                : "-"
             }
             changePercent={eco?.usdkrw.changePercent ?? null}
             lines={chartLines?.usdkrw}
@@ -138,7 +138,7 @@ export function EconomyView() {
 
           <MacroChart
             title="달러인덱스"
-            currentLabel={eco?.dxy.current?.toFixed(2) ?? "–"}
+            currentLabel={eco?.dxy.current?.toFixed(2) ?? "-"}
             changePercent={eco?.dxy.changePercent ?? null}
             lines={chartLines?.dxy}
             updatedLabel={ecoRelTime ?? undefined}
@@ -153,7 +153,7 @@ export function EconomyView() {
                 ? eco.kospi.current.toLocaleString("ko-KR", {
                     maximumFractionDigits: 2,
                   })
-                : "–"
+                : "-"
             }
             changePercent={eco?.kospi.changePercent ?? null}
             lines={chartLines?.kospi}
@@ -169,7 +169,7 @@ export function EconomyView() {
                 ? eco.nasdaq.current.toLocaleString("en-US", {
                     maximumFractionDigits: 2,
                   })
-                : "–"
+                : "-"
             }
             changePercent={eco?.nasdaq.changePercent ?? null}
             lines={chartLines?.nasdaq}
@@ -180,7 +180,7 @@ export function EconomyView() {
 
           <MacroChart
             title="VIX 변동성지수"
-            currentLabel={eco?.vix.current?.toFixed(2) ?? "–"}
+            currentLabel={eco?.vix.current?.toFixed(2) ?? "-"}
             changePercent={eco?.vix.changePercent ?? null}
             lines={chartLines?.vix}
             updatedLabel={ecoRelTime ?? undefined}
@@ -194,7 +194,7 @@ export function EconomyView() {
               currentLabel={
                 fred?.fedFunds?.current != null
                   ? `${fred.fedFunds.current.toFixed(2)}%`
-                  : "–"
+                  : "-"
               }
               changePercent={fred?.fedFunds?.changePercent ?? null}
               lines={fedFundsLines}
@@ -209,7 +209,7 @@ export function EconomyView() {
             currentLabel={
               eco?.us10y.current != null
                 ? `${eco.us10y.current.toFixed(2)}%`
-                : "–"
+                : "-"
             }
             changePercent={eco?.us10y.changePercent ?? null}
             lines={chartLines?.treasury}
@@ -220,14 +220,14 @@ export function EconomyView() {
 
           <FredGate
             available={fredAvailable}
-            title="수익률 곡선 스프레드 (10Y–2Y)"
+            title="수익률 곡선 스프레드 (10Y−2Y)"
           >
             <MacroChart
-              title="수익률 곡선 스프레드 (10Y–2Y)"
+              title="수익률 곡선 스프레드 (10Y−2Y)"
               currentLabel={
                 yieldSpread?.current != null
                   ? `${yieldSpread.current.toFixed(2)}%p`
-                  : "–"
+                  : "-"
               }
               changePercent={yieldSpread?.changePercent ?? null}
               lines={yieldSpreadLines}

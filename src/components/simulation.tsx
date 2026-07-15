@@ -16,7 +16,7 @@ import { clamp, cn, formatUsd } from "@/lib/utils";
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
 
-// 에이전트 격자 — 상태별 배경색 className 배열을 받아 사각형으로 렌더링.
+// 에이전트 격자. 상태별 배경색 className 배열을 받아 사각형으로 렌더링.
 // 라운드마다 색이 바뀌며 transition-colors로 부드럽게 전환된다.
 export function AgentGrid({ states }: { states: string[] }) {
   return (
@@ -43,7 +43,7 @@ const DEFAULT_SPEEDS = [
   { label: "2×", ms: 280 },
 ];
 
-// 재생 컨트롤 — 재생/일시정지 · 한 스텝 · 리셋 · 속도.
+// 재생 컨트롤: 재생/일시정지 · 한 스텝 · 리셋 · 속도.
 // unit으로 진행 단위 명칭("라운드"·"스텝"), speeds로 속도 프리셋을 바꿀 수 있다.
 export function RoundControls({
   playing,
@@ -112,7 +112,7 @@ export function RoundControls({
   );
 }
 
-// 슬라이더 컨트롤 한 줄 — 라벨 + 포맷된 값 + 슬라이더.
+// 슬라이더 컨트롤 한 줄: 라벨 + 포맷된 값 + 슬라이더.
 export function ControlSlider({
   icon,
   label,
@@ -221,7 +221,7 @@ export function Legend({
   );
 }
 
-// 설명 카드 (프로즈) — 접이식. preview는 접힌 상태에서 보이는 맛보기 한 줄.
+// 설명 카드 (프로즈). 접이식. preview는 접힌 상태에서 보이는 맛보기 한 줄.
 export function ExplainCard({
   icon,
   title,
@@ -260,7 +260,7 @@ export function ExplainCard({
   );
 }
 
-// 시뮬레이션 페이지 공용 탭 — 반응형: 모바일 2열(라벨 줄바꿈), 데스크탑 탭 수만큼 한 줄.
+// 시뮬레이션 페이지 공용 탭. 반응형: 모바일 2열(라벨 줄바꿈), 데스크탑 탭 수만큼 한 줄.
 // 탭 수가 홀수면 마지막 탭이 모바일에서 한 줄을 꽉 채운다.
 const MD_GRID_COLS: Record<number, string> = {
   2: "md:grid-cols-2",

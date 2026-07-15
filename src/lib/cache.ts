@@ -19,7 +19,7 @@ import { cacheSeconds, type EndpointKey } from "./cache-config";
 
 let client: Redis | null = null;
 function redis(): Redis {
-  // 모듈 import가 아닌 첫 호출 시 초기화 — 빌드/정적분석 단계의 env 부재 throw 방지.
+  // 모듈 import가 아닌 첫 호출 시 초기화. 빌드/정적분석 단계의 env 부재 throw 방지.
   if (!client) client = Redis.fromEnv();
   return client;
 }

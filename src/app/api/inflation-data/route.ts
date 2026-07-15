@@ -19,7 +19,7 @@ export async function GET() {
       const [cpi, m2, deposit, stock, house] = await Promise.all([
         fetchFredSeries("CPIAUCSL", key, OBSERVATION_START), // 소비자물가지수
         fetchFredSeries("M2SL", key, OBSERVATION_START), // 광의통화 (2021년 정의 변경)
-        fetchFredSeries("TB3MS", key, OBSERVATION_START), // 3개월 국채금리 — 단기 예금금리 근사
+        fetchFredSeries("TB3MS", key, OBSERVATION_START), // 3개월 국채금리(단기 예금금리 근사)
         fetchFredSeries("NASDAQCOM", key, OBSERVATION_START), // NASDAQ 종합지수 (배당 제외, 1971~)
         fetchFredSeries("CSUSHPISA", key, OBSERVATION_START), // Case-Shiller 전미주택가격지수 (1987~)
       ]);

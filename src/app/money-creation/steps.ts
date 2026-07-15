@@ -174,7 +174,7 @@ export function sheetsAt(
       amounts.set(key, (amounts.get(key) ?? 0) + op.delta);
     }
   }
-  // 시나리오 전체에서 등장하는 항목의 합집합 — 모든 단계에서 행 구성을 동일하게
+  // 시나리오 전체에서 등장하는 항목의 합집합. 모든 단계에서 행 구성을 동일하게
   // 유지해(0에서 시작해 증감만) 카드 높이가 단계마다 흔들리지 않게 한다.
   const allKeys = new Set<string>();
   for (const s of steps) {

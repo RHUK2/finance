@@ -14,7 +14,7 @@ export function formatRelativeTime(timestampMs: number): string {
   return rtf.format(-Math.floor(diffHour / 24), "day");
 }
 
-/** 1분마다 리렌더를 일으키는 틱 — 상대시간 라벨을 갱신할 때 사용. */
+/** 1분마다 리렌더를 일으키는 틱. 상대시간 라벨을 갱신할 때 사용. */
 export function useMinuteTick(enabled = true) {
   const [, rerender] = useReducer((c: number) => c + 1, 0);
 
