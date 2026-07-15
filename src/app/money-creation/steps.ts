@@ -211,7 +211,8 @@ export function sheetsAt(
           item,
           amount,
           created: createdNow.has(key),
-          flowChanged: hasOutflow && touchedNow.has(key) && !createdNow.has(key),
+          flowChanged:
+            hasOutflow && touchedNow.has(key) && !createdNow.has(key),
         });
       }
       result[id][side] = lines;

@@ -57,9 +57,7 @@ export function AppHeader({ breadcrumbs }: Props) {
                       <DropdownMenuContent align="start" className="min-w-44">
                         {NAV_GROUPS.map((group) => ({
                           label: group.label,
-                          items: group.items.filter(
-                            (n) => n.href !== pathname,
-                          ),
+                          items: group.items.filter((n) => n.href !== pathname),
                         }))
                           .filter((group) => group.items.length > 0)
                           .map((group, gi) => (
@@ -68,15 +66,17 @@ export function AppHeader({ breadcrumbs }: Props) {
                               <DropdownMenuLabel className="text-muted-foreground text-xs">
                                 {group.label}
                               </DropdownMenuLabel>
-                              {group.items.map(({ label, href, icon: Icon }) => (
-                                <DropdownMenuItem
-                                  key={href}
-                                  onClick={() => router.push(href)}
-                                >
-                                  <Icon className="h-4 w-4" />
-                                  {label}
-                                </DropdownMenuItem>
-                              ))}
+                              {group.items.map(
+                                ({ label, href, icon: Icon }) => (
+                                  <DropdownMenuItem
+                                    key={href}
+                                    onClick={() => router.push(href)}
+                                  >
+                                    <Icon className="h-4 w-4" />
+                                    {label}
+                                  </DropdownMenuItem>
+                                ),
+                              )}
                             </span>
                           ))}
                       </DropdownMenuContent>

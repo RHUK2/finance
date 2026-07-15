@@ -73,10 +73,10 @@ const TABS = [
     node: (
       <div className="flex flex-col gap-4">
         <SectionIntro title="프로토콜은 어떻게 (안) 바뀌는가">
-          비트코인의 진짜 전장은 &#39;누가, 어떻게 프로토콜을 바꿀 수 있는가&#39;다.
-          사토시가 넣은 1MB 한도부터 지금 진행 중인 OP_RETURN 상한 논쟁까지, 데이터
-          한 줄을 두고 커뮤니티가 쪼개지고 합의가 코드가 아니라 사람 위에 있음을
-          확인해 온 사건들.
+          비트코인의 진짜 전장은 &#39;누가, 어떻게 프로토콜을 바꿀 수
+          있는가&#39;다. 사토시가 넣은 1MB 한도부터 지금 진행 중인 OP_RETURN
+          상한 논쟁까지, 데이터 한 줄을 두고 커뮤니티가 쪼개지고 합의가 코드가
+          아니라 사람 위에 있음을 확인해 온 사건들.
         </SectionIntro>
         <Timeline events={GOVERNANCE_EVENTS} />
       </div>
@@ -111,7 +111,8 @@ export function BitcoinHistoryView() {
             <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
               같은 역사를 두 렌즈로 본다. 하나는 프로토콜이 어떻게 (안) 바뀌어
               왔는가라는 거버넌스의 전장, 다른 하나는 세상이 비트코인을 어떻게
-              받아들였는가라는 시장·채택의 서사. 각 항목을 눌러 자세히 볼 수 있다.
+              받아들였는가라는 시장·채택의 서사. 각 항목을 눌러 자세히 볼 수
+              있다.
             </p>
           </div>
 

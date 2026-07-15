@@ -26,10 +26,11 @@ export function TwoRegime() {
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="두 갈래 운명: 가격은 곧 확률이다">
-        비트코인의 미래 가치에는 어중간한 중간이 없다. 진짜 화폐로 자리 잡아 거대한
-        시장을 차지하거나(성공), 그러지 못해 0에 가까워지거나(실패) 둘 중 하나다. 그래서
-        오늘의 가격은 사실상 <b>성공 확률 × 성공했을 때의 가격</b>이다. 아래 슬라이더로
-        성공 확률을 직접 움직여 보자.
+        비트코인의 미래 가치에는 어중간한 중간이 없다. 진짜 화폐로 자리 잡아
+        거대한 시장을 차지하거나(성공), 그러지 못해 0에 가까워지거나(실패) 둘 중
+        하나다. 그래서 오늘의 가격은 사실상{" "}
+        <b>성공 확률 × 성공했을 때의 가격</b>이다. 아래 슬라이더로 성공 확률을
+        직접 움직여 보자.
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -62,7 +63,12 @@ export function TwoRegime() {
           tone="good"
           sub={`${formatUsd(winCap)} ÷ 2,100만 개`}
         />
-        <Metric label="실패 시 가격" value="$0" tone="bad" sub="성공하지 못하면" />
+        <Metric
+          label="실패 시 가격"
+          value="$0"
+          tone="bad"
+          sub="성공하지 못하면"
+        />
         <Metric
           label="현재 함의 가격"
           value={formatUsd(implied)}
@@ -123,7 +129,7 @@ function RegimeLine({ p }: { p: number }) {
           />
         </svg>
         <div
-          className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background bg-amber-500"
+          className="border-background absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 bg-amber-500"
           style={{ left: `${p * 100}%`, top: `${(1 - p) * 100}%` }}
         />
       </div>

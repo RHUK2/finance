@@ -155,9 +155,7 @@ export function RecentBlocksList({
               <li key={b.height} className="px-4 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-bold">
-                      #{b.height.toLocaleString()}
-                    </p>
+                    <p className="font-bold">#{b.height.toLocaleString()}</p>
                     <p className="text-muted-foreground mt-0.5 truncate text-xs">
                       {b.poolName} · {blockTimeAgo(b.timestamp)}
                     </p>

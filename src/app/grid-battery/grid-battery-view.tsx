@@ -66,9 +66,8 @@ export function GridBatteryView() {
             <p className="text-muted-foreground mt-1 text-sm">
               전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야 한다.
               비트코인 채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는
-              &#39;유연 부하&#39;로, 버려질 에너지를 수익으로 바꿔 전력망
-              효율을 높인다. 아래 슬라이더로 직접 확인해 보자. (단위는 개념용
-              예시)
+              &#39;유연 부하&#39;로, 버려질 에너지를 수익으로 바꿔 전력망 효율을
+              높인다. 아래 슬라이더로 직접 확인해 보자. (단위는 개념용 예시)
             </p>
           </div>
 
@@ -140,8 +139,8 @@ export function GridBatteryView() {
             </div>
             {sim.shortage > 0 && (
               <p className="rounded-md bg-rose-500/10 px-3 py-2 text-xs text-rose-600 dark:text-rose-400">
-                ⚠ 공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다.
-                이때 채굴 부하는 즉시 차단되어 전력을 가정·산업에 양보한다.
+                ⚠ 공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다. 이때
+                채굴 부하는 즉시 차단되어 전력을 가정·산업에 양보한다.
               </p>
             )}
           </Card>

@@ -27,10 +27,15 @@ function strToSeed(s: string): number {
 }
 
 // 입력 문자열 + 문자셋으로부터 결정적 문자열 생성 (개념 시연용, 실제 해시 아님).
-function illustrativeChars(input: string, charset: string, len: number): string {
+function illustrativeChars(
+  input: string,
+  charset: string,
+  len: number,
+): string {
   const rng = mulberry32(strToSeed(input));
   let out = "";
-  for (let i = 0; i < len; i++) out += charset[Math.floor(rng() * charset.length)];
+  for (let i = 0; i < len; i++)
+    out += charset[Math.floor(rng() * charset.length)];
   return out;
 }
 
@@ -43,7 +48,8 @@ export function illustrativeHex(input: string, chars: number): string {
 export function randomEntropyHex(bits: number): string {
   const chars = bits / 4;
   let out = "";
-  for (let i = 0; i < chars; i++) out += Math.floor(Math.random() * 16).toString(16);
+  for (let i = 0; i < chars; i++)
+    out += Math.floor(Math.random() * 16).toString(16);
   return out;
 }
 
@@ -108,10 +114,34 @@ export function mnemonicToSeed(mnemonic: string, passphrase: string): string {
 
 // BIP-44 purpose → 주소 타입 메타.
 export const PURPOSES = [
-  { value: "44", label: "44' · Legacy", addr: "P2PKH", prefix: "1", charset: "base58" },
-  { value: "49", label: "49' · P2SH-SegWit", addr: "P2SH-P2WPKH", prefix: "3", charset: "base58" },
-  { value: "84", label: "84' · Native SegWit", addr: "P2WPKH", prefix: "bc1q", charset: "bech32" },
-  { value: "86", label: "86' · Taproot", addr: "P2TR", prefix: "bc1p", charset: "bech32" },
+  {
+    value: "44",
+    label: "44' · Legacy",
+    addr: "P2PKH",
+    prefix: "1",
+    charset: "base58",
+  },
+  {
+    value: "49",
+    label: "49' · P2SH-SegWit",
+    addr: "P2SH-P2WPKH",
+    prefix: "3",
+    charset: "base58",
+  },
+  {
+    value: "84",
+    label: "84' · Native SegWit",
+    addr: "P2WPKH",
+    prefix: "bc1q",
+    charset: "bech32",
+  },
+  {
+    value: "86",
+    label: "86' · Taproot",
+    addr: "P2TR",
+    prefix: "bc1p",
+    charset: "bech32",
+  },
 ] as const;
 
 export const COINS = [
@@ -135,7 +165,11 @@ const BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const BECH32 = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
 // 시드 + 경로 → 주소 모양 문자열 (개념 시연용).
-export function illustrativeAddress(seedHex: string, path: string, purposeValue: string): string {
+export function illustrativeAddress(
+  seedHex: string,
+  path: string,
+  purposeValue: string,
+): string {
   const meta = PURPOSES.find((p) => p.value === purposeValue) ?? PURPOSES[0];
   const isBech32 = meta.charset === "bech32";
   const charset = isBech32 ? BECH32 : BASE58;

@@ -5,7 +5,11 @@ import { CircleCheck, CircleX, Coins, Send } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Pipeline } from "@/components/pipeline";
-import { ControlSlider, ExplainCard, SectionIntro } from "@/components/simulation";
+import {
+  ControlSlider,
+  ExplainCard,
+  SectionIntro,
+} from "@/components/simulation";
 import { cn } from "@/lib/utils";
 import { feeSats, formatSats, txVBytes, type Utxo } from "@/lib/tx-concept";
 
@@ -205,7 +209,6 @@ export function UtxoModel() {
           </>
         }
       />
-
     </div>
   );
 }

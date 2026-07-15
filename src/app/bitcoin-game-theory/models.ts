@@ -146,11 +146,21 @@ export function buildHolders(
 }
 
 export function initialHodlState(n: number): HodlState {
-  return { price: 100, sold: Array(n).fill(false), lastDropPct: 0, newSellers: 0, round: 0 };
+  return {
+    price: 100,
+    sold: Array(n).fill(false),
+    lastDropPct: 0,
+    newSellers: 0,
+    round: 0,
+  };
 }
 
 // 한 라운드 진행. shock: 외생 하락 비율(0~1), 없으면 0.
-export function hodlStep(state: HodlState, holders: Holder[], shock = 0): HodlState {
+export function hodlStep(
+  state: HodlState,
+  holders: Holder[],
+  shock = 0,
+): HodlState {
   const n = holders.length;
   // 직전 하락 + 이번 충격이 패닉 임계를 넘는 보유자가 매도
   const trigger = state.lastDropPct + shock;
@@ -170,7 +180,13 @@ export function hodlStep(state: HodlState, holders: Holder[], shock = 0): HodlSt
   // 새 매도가 끊기면 lastDropPct=0이 되어 연쇄가 멈춘다.
   const nextPrice = drop > 0 ? state.price * (1 - drop) : state.price;
 
-  return { price: nextPrice, sold, lastDropPct: drop, newSellers, round: state.round + 1 };
+  return {
+    price: nextPrice,
+    sold,
+    lastDropPct: drop,
+    newSellers,
+    round: state.round + 1,
+  };
 }
 
 // ── 4. 51% 공격 보안 게임 ────────────────────────────────────────────────
@@ -208,5 +224,12 @@ export function attack51({
 
   const costToGain = attackCost / doubleSpendGain;
 
-  return { hardwareCost, energyCost, attackCost, doubleSpendGain, honestRevenue, costToGain };
+  return {
+    hardwareCost,
+    energyCost,
+    attackCost,
+    doubleSpendGain,
+    honestRevenue,
+    costToGain,
+  };
 }

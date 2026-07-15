@@ -12,10 +12,34 @@ export const ADDR_TYPES: {
   inputVb: number;
   outputVb: number;
 }[] = [
-  { value: "legacy", label: "Legacy (P2PKH)", purpose: "44'", inputVb: 148, outputVb: 34 },
-  { value: "nested", label: "Nested SegWit (P2SH)", purpose: "49'", inputVb: 91, outputVb: 32 },
-  { value: "native", label: "Native SegWit (P2WPKH)", purpose: "84'", inputVb: 68, outputVb: 31 },
-  { value: "taproot", label: "Taproot (P2TR)", purpose: "86'", inputVb: 57.5, outputVb: 43 },
+  {
+    value: "legacy",
+    label: "Legacy (P2PKH)",
+    purpose: "44'",
+    inputVb: 148,
+    outputVb: 34,
+  },
+  {
+    value: "nested",
+    label: "Nested SegWit (P2SH)",
+    purpose: "49'",
+    inputVb: 91,
+    outputVb: 32,
+  },
+  {
+    value: "native",
+    label: "Native SegWit (P2WPKH)",
+    purpose: "84'",
+    inputVb: 68,
+    outputVb: 31,
+  },
+  {
+    value: "taproot",
+    label: "Taproot (P2TR)",
+    purpose: "86'",
+    inputVb: 57.5,
+    outputVb: 43,
+  },
 ];
 
 // version(4) + locktime(4) + 입력/출력 개수 varint + SegWit marker/flag 근사.
@@ -25,7 +49,11 @@ export function addrMeta(type: AddrType) {
   return ADDR_TYPES.find((t) => t.value === type) ?? ADDR_TYPES[0];
 }
 
-export function txVBytes(type: AddrType, numIn: number, numOut: number): number {
+export function txVBytes(
+  type: AddrType,
+  numIn: number,
+  numOut: number,
+): number {
   const m = addrMeta(type);
   return TX_OVERHEAD_VB + numIn * m.inputVb + numOut * m.outputVb;
 }

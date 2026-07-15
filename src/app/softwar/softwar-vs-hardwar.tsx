@@ -29,9 +29,9 @@ export function SoftwarVsHardwar() {
       <SectionIntro title="소프트워 vs 하드워: 같은 억지, 다른 대가">
         적을 억지하려면 적의 BCRA(공격 이득 ÷ 내가 투사한 권력)를 1 미만으로
         낮춰야 한다. 권력 투사의 매개체는 역사적으로 군대(영토) → 핵무기(MAD) →
-        비트코인(전기)으로 바뀌어 왔다. 같은 억지 효과라도 <b>하드워</b>는 유혈과
-        파괴를 동반하지만, <b>소프트워</b>는 인명 피해 없이 전기만 소비한다. (수치는
-        개념용 예시)
+        비트코인(전기)으로 바뀌어 왔다. 같은 억지 효과라도 <b>하드워</b>는
+        유혈과 파괴를 동반하지만, <b>소프트워</b>는 인명 피해 없이 전기만
+        소비한다. (수치는 개념용 예시)
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -73,7 +73,13 @@ export function SoftwarVsHardwar() {
         />
         <p className="text-sm leading-relaxed">
           적의 BCRA ={" "}
-          <b className={r.deterred ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
+          <b
+            className={
+              r.deterred
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-rose-600 dark:text-rose-400"
+            }
+          >
             {r.bcra.toFixed(2)}
           </b>{" "}
           →{" "}

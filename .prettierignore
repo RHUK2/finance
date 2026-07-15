@@ -1,0 +1,4 @@
+# bitcoin/bips english.txt를 그대로 옮긴 정적 데이터.
+# 한 줄에 10단어씩 묶어 둔 형태를 유지한다. prettier가 풀면 209줄이 2052줄이 되고
+# 원본과 대조하기도 나빠진다.
+src/lib/bip39-wordlist.ts

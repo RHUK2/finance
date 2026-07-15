@@ -133,11 +133,11 @@ export function FeeCalc() {
         preview="블록은 바이트가 아니라 weight로 재고, 서명은 1/4 가중치만 차지해서 더 싸다."
         body={
           <>
-            블록 크기는 바이트가 아니라 <b>weight unit</b>으로 잰다. 일반 데이터는
-            4 wu, 서명(witness) 데이터는 1 wu다. vByte = weight ÷ 4이므로, 서명이
-            witness로 빠진 SegWit·Taproot 입력은 같은 일을 하면서도 vByte가
-            작아진다(예: Legacy 입력 148 vB → Native SegWit 68 vB). 다음 탭에서
-            타입별 차이를 직접 비교해 보자.
+            블록 크기는 바이트가 아니라 <b>weight unit</b>으로 잰다. 일반
+            데이터는 4 wu, 서명(witness) 데이터는 1 wu다. vByte = weight ÷
+            4이므로, 서명이 witness로 빠진 SegWit·Taproot 입력은 같은 일을
+            하면서도 vByte가 작아진다(예: Legacy 입력 148 vB → Native SegWit 68
+            vB). 다음 탭에서 타입별 차이를 직접 비교해 보자.
           </>
         }
       />
@@ -147,8 +147,8 @@ export function FeeCalc() {
         preview="실제 바이트를 센 값이다. 오버헤드의 0.5는 witness 할인이 만든 소수점이다."
         body={
           <>
-            위 파이프라인의 세 숫자는 어림잡은 게 아니라 실제 바이트를 센 값이다.
-            weight로 재서 4로 나누기 때문에 소수점이 생긴다.
+            위 파이프라인의 세 숫자는 어림잡은 게 아니라 실제 바이트를 센
+            값이다. weight로 재서 4로 나누기 때문에 소수점이 생긴다.
             <div className="bg-muted/50 my-3 overflow-x-auto rounded-md p-3">
               <pre className="font-mono text-[11px] leading-relaxed">{`오버헤드 10.5 vB  (트랜잭션마다 한 번)
   비witness  version 4 + 입력수 1 + 출력수 1 + locktime 4 = 10 B → 40 wu
@@ -164,24 +164,23 @@ export function FeeCalc() {
   비witness  value 8 + script 길이 1 + OP_0·push20·해시 20 = 31 B → 124 wu
   합계       124 wu ÷ 4 = 31 vB`}</pre>
             </div>
-            오버헤드에 <b>0.5</b>가 붙는 건 SegWit 표시용 marker·flag 2바이트가 witness라
-            1/4로 계산되기 때문이다(2 ÷ 4 = 0.5).
+            오버헤드에 <b>0.5</b>가 붙는 건 SegWit 표시용 marker·flag 2바이트가
+            witness라 1/4로 계산되기 때문이다(2 ÷ 4 = 0.5).
             <br />
             <br />
-            입력을 보면 할인이 어디서 오는지 드러난다. 서명 72바이트와 공개키 33바이트가
-            witness에 있어 1 wu로 세어진다. Legacy 입력이 <b>148 vB</b>인 건 구성 요소가
-            거의 같은데 이 서명 뭉치가 scriptSig에 들어가 할인 없이 4 wu로 세어지기
-            때문이다.
+            입력을 보면 할인이 어디서 오는지 드러난다. 서명 72바이트와 공개키
+            33바이트가 witness에 있어 1 wu로 세어진다. Legacy 입력이{" "}
+            <b>148 vB</b>인 건 구성 요소가 거의 같은데 이 서명 뭉치가
+            scriptSig에 들어가 할인 없이 4 wu로 세어지기 때문이다.
             <br />
             <br />
-            출력에는 서명이 없어 할인받을 게 없다. 그래서 바이트 수가 그대로 vByte가
-            된다. 다음 탭에서 Taproot 출력이 43 vB로 가장 큰 것도 여기에 이유가 있다.
-            20바이트 해시 대신 32바이트 공개키가 들어가는데, 할인이 없으니 늘어난 12
-            바이트가 고스란히 12 vB로 붙는다.
+            출력에는 서명이 없어 할인받을 게 없다. 그래서 바이트 수가 그대로
+            vByte가 된다. 다음 탭에서 Taproot 출력이 43 vB로 가장 큰 것도 여기에
+            이유가 있다. 20바이트 해시 대신 32바이트 공개키가 들어가는데, 할인이
+            없으니 늘어난 12 바이트가 고스란히 12 vB로 붙는다.
           </>
         }
       />
-
     </div>
   );
 }

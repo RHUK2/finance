@@ -2,12 +2,22 @@
 
 import { useMemo, useState } from "react";
 
-import { AlertTriangle, Crown, Flag, TrendingUp, UserMinus } from "lucide-react";
+import {
+  AlertTriangle,
+  Crown,
+  Flag,
+  TrendingUp,
+  UserMinus,
+} from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-import { ControlSlider, ExplainCard, SectionIntro } from "@/components/simulation";
+import {
+  ControlSlider,
+  ExplainCard,
+  SectionIntro,
+} from "@/components/simulation";
 import {
   type BestResponses,
   type CellKey,
@@ -30,7 +40,13 @@ const C = {
   f: "text-amber-600 dark:text-amber-400",
 };
 
-function Num({ color, children }: { color: string; children: React.ReactNode }) {
+function Num({
+  color,
+  children,
+}: {
+  color: string;
+  children: React.ReactNode;
+}) {
   return <span className={cn("font-semibold", color)}>{children}</span>;
 }
 
@@ -68,15 +84,14 @@ export function PayoffMatrix() {
     WW: <>0</>,
   };
 
-
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="보수 행렬: 사면 이득, 안 사면 낙오">
-        두 행위자(우리나라 vs 경쟁국)가 비트코인을 <b>채택</b>할지 <b>관망</b>할지
-        고른다. 슬라이더로 보수를 조정해 보자. 상승 기대와 낙오 페널티가 조기채택
-        비용을 넘어서면 <b>채택이 우월전략</b>이 되어, 상대가 무엇을 하든 채택이
-        유리해진다. 결국 내쉬 균형은 모두가 채택하는 칸으로 수렴한다. (수치는 개념용
-        예시)
+        두 행위자(우리나라 vs 경쟁국)가 비트코인을 <b>채택</b>할지 <b>관망</b>
+        할지 고른다. 슬라이더로 보수를 조정해 보자. 상승 기대와 낙오 페널티가
+        조기채택 비용을 넘어서면 <b>채택이 우월전략</b>이 되어, 상대가 무엇을
+        하든 채택이 유리해진다. 결국 내쉬 균형은 모두가 채택하는 칸으로
+        수렴한다. (수치는 개념용 예시)
       </SectionIntro>
 
       <Card className="gap-4 p-4">
@@ -143,22 +158,27 @@ export function PayoffMatrix() {
                 <b className="text-amber-600 dark:text-amber-400">
                   채택이 우월전략
                 </b>{" "}
-                상태다. 경쟁국이 채택하든 관망하든 우리는 채택하는 편이 항상 낫다. 양쪽 다
-                같은 결론에 이르러 <b>모두 채택</b>이 유일한 균형이 된다.
+                상태다. 경쟁국이 채택하든 관망하든 우리는 채택하는 편이 항상
+                낫다. 양쪽 다 같은 결론에 이르러 <b>모두 채택</b>이 유일한
+                균형이 된다.
               </>
             ) : dominantStrategy === "W" ? (
               <>
-                지금은 <b>관망이 우월전략</b>인 상태다. 조기채택 비용(r)이 상승 기대와 낙오
-                페널티를 압도한다. u를 키우거나 r을 낮춰 보자.
+                지금은 <b>관망이 우월전략</b>인 상태다. 조기채택 비용(r)이 상승
+                기대와 낙오 페널티를 압도한다. u를 키우거나 r을 낮춰 보자.
               </>
             ) : (
-              <>두 전략의 보수가 같은 경계 상태다. 슬라이더를 조금 움직여 보자.</>
+              <>
+                두 전략의 보수가 같은 경계 상태다. 슬라이더를 조금 움직여 보자.
+              </>
             )}
           </p>
           <p className="text-muted-foreground mt-1.5 font-mono text-xs">
             상승기대 − 비용 + 낙오페널티 = <Num color={C.u}>{u}</Num>−
             <Num color={C.r}>{r}</Num>+<Num color={C.f}>{f}</Num> ={" "}
-            <span className="font-semibold text-foreground">{sign(margin)}</span>{" "}
+            <span className="text-foreground font-semibold">
+              {sign(margin)}
+            </span>{" "}
             {margin > 0
               ? "> 0 → 채택 우월"
               : margin < 0
@@ -172,8 +192,8 @@ export function PayoffMatrix() {
         <div>
           <h3 className="font-semibold">비교: 죄수의 딜레마</h3>
           <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-            같은 &#39;우월전략&#39; 구조라도 보상이 다르면 결과가 정반대가
-            된다. 죄수의 딜레마에선 배신이 우월전략이라 둘 다 배신(1/1)으로
+            같은 &#39;우월전략&#39; 구조라도 보상이 다르면 결과가 정반대가 된다.
+            죄수의 딜레마에선 배신이 우월전략이라 둘 다 배신(1/1)으로
             수렴하지만, 이는 둘 다 협력(3/3)보다 <b>모두에게 더 나쁜</b> 결과다.
           </p>
         </div>
@@ -205,8 +225,8 @@ function Legend() {
         = 각자의 최적대응
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="size-3 rounded-sm ring-2 ring-amber-500/70" />
-        둘 다 밑줄인 칸 = 내쉬 균형
+        <span className="size-3 rounded-sm ring-2 ring-amber-500/70" />둘 다
+        밑줄인 칸 = 내쉬 균형
       </span>
       <span>칸 안의 값 = (우리 보수 / 상대 보수)</span>
     </div>
@@ -321,15 +341,11 @@ function PayoffCell({
       )}
     >
       <span className="text-base font-semibold tabular-nums">
-        <span
-          className={cn(me < 0 && "text-rose-500", meBest && mark)}
-        >
+        <span className={cn(me < 0 && "text-rose-500", meBest && mark)}>
           {sign(me)}
         </span>
         <span className="text-muted-foreground"> / </span>
-        <span
-          className={cn(them < 0 && "text-rose-500", themBest && mark)}
-        >
+        <span className={cn(them < 0 && "text-rose-500", themBest && mark)}>
           {sign(them)}
         </span>
       </span>
