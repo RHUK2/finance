@@ -26,7 +26,7 @@ function strToSeed(s: string): number {
   return h >>> 0;
 }
 
-// 입력 문자열 + 문자셋으로부터 결정적 문자열 생성 (개념 시연용 — 실제 해시 아님).
+// 입력 문자열 + 문자셋으로부터 결정적 문자열 생성 (개념 시연용, 실제 해시 아님).
 function illustrativeChars(input: string, charset: string, len: number): string {
   const rng = mulberry32(strToSeed(input));
   let out = "";
@@ -62,7 +62,7 @@ export type MnemonicWord = {
   isChecksum: boolean; // 체크섬 비트를 포함하는 단어인지
 };
 
-// 개념 시연용 "SHA-256" — 실제 해시가 아니라 입력에서 결정적으로 만든 가짜 256비트 값.
+// 개념 시연용 "SHA-256". 실제 해시가 아니라 입력에서 결정적으로 만든 가짜 256비트 값.
 // (실제로는 crypto.subtle.digest("SHA-256", entropy)를 쓴다.)
 export function illustrativeSha256(entropyHex: string): string {
   return illustrativeHex("checksum:" + entropyHex, 64);

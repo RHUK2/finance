@@ -77,9 +77,10 @@ export function EntropyMnemonic({
   return (
     <div className="flex flex-col gap-4">
       <SectionIntro title="엔트로피를 단어로 (BIP-39)">
-        지갑의 출발점은 순수한 무작위 비트, 즉 엔트로피다. 이 비트열을 11비트씩 잘라
-        각 조각(0~2047)을 2048개 단어장의 단어로 바꾼다. 강도를 바꿔 단어 수가 어떻게
-        달라지는지, 🎲로 새 엔트로피를 뽑아 단어가 어떻게 바뀌는지 확인해 보자.
+        지갑의 출발점은 순수한 무작위 비트, 즉 엔트로피다. 이 비트열 뒤에 체크섬을
+        붙인 다음 11비트씩 잘라, 각 조각(0~2047)을 2048개 단어장의 단어로 바꾼다.
+        강도를 바꿔 단어 수가 어떻게 달라지는지, 새 엔트로피를 뽑아 단어가 어떻게
+        바뀌는지 확인해 보자.
       </SectionIntro>
 
       <Card className="flex flex-col gap-4 p-4">
@@ -103,15 +104,15 @@ export function EntropyMnemonic({
             </Select>
           </div>
           <Button variant="outline" onClick={onRegen} className="gap-1.5">
-            <Dices className="size-4" />
+            <Dices className="size-4 text-sky-600 dark:text-sky-400" />
             새로 뽑기
           </Button>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <span className="text-muted-foreground text-xs">
-            엔트로피 · 2진수 {bd.entropy}비트(동전 {bd.entropy}번) 와 hex{" "}
-            {entropyHex.length}자리는 <b>같은 값</b>이다 — 4비트가 hex 한 자리에
+            엔트로피 · 2진수 {bd.entropy}비트(동전 {bd.entropy}번)와 hex{" "}
+            {entropyHex.length}자리는 <b>같은 값</b>이다. 4비트가 hex 한 자리에
             대응한다
           </span>
           <NibbleHexGrid
@@ -129,7 +130,7 @@ export function EntropyMnemonic({
       </Card>
 
       <ExplainCard
-        icon={<Dices className="size-4" />}
+        icon={<Dices className="size-4 text-sky-600 dark:text-sky-400" />}
         title="가장 안전한 엔트로피는 오프라인에서 나온다 (동전·주사위)"
         preview="동전·주사위로 직접 만든 무작위성이 어떤 소프트웨어보다 믿을 만하다."
         body={
@@ -156,7 +157,7 @@ export function EntropyMnemonic({
 
       <Card className="flex flex-col gap-3 p-4">
         <span className="flex items-center gap-1.5 text-sm font-semibold">
-          <ShieldCheck className="size-4" />
+          <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400" />
           체크섬은 이렇게 만들어진다 (SHA-256)
         </span>
         <Pipeline
@@ -202,7 +203,7 @@ export function EntropyMnemonic({
 
       <Card className="flex flex-col gap-3 p-4">
         <span className="flex items-center gap-1.5 text-sm font-semibold">
-          <KeyRound className="size-4" />
+          <KeyRound className="size-4 text-amber-600 dark:text-amber-400" />
           니모닉 단어
         </span>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
@@ -235,13 +236,21 @@ export function EntropyMnemonic({
 
       <ExplainCard
         title="체크섬은 왜 필요할까?"
-        preview="단어 하나를 잘못 적었을 때 복구 단계에서 바로 걸러내기 위한 장치다."
+        preview="단어를 잘못 적었을 때 복구 단계에서 걸러내기 위한 장치다. 다만 완벽한 그물은 아니다."
         body={
           <>
             복구할 때 지갑은 입력한 단어들에서 엔트로피를 거꾸로 뽑아 <b>SHA-256을 다시
-            계산</b>하고, 끝에 붙은 체크섬과 맞는지 검사한다. 단어를 하나라도 잘못 적으면
-            해시가 어긋나 즉시 &#39;잘못된 니모닉&#39; 오류가 뜬다. 그래서 아무 단어
-            12개나 적는다고 유효한 니모닉이 되지 않는다.
+            계산</b>하고, 끝에 붙은 체크섬과 맞는지 검사한다. 단어를 잘못 적으면 해시가
+            어긋나 &#39;잘못된 니모닉&#39; 오류가 뜬다. 그래서 아무 단어 12개나 적는다고
+            유효한 니모닉이 되지 않는다.
+            <br />
+            <br />
+            다만 완벽한 그물은 아니다. 12단어의 체크섬은 <b>4비트뿐</b>이라, 잘못 적은
+            니모닉이 우연히 검사를 통과할 확률이 16분의 1쯤 된다. 같은 이야기를 뒤집으면
+            아무 단어 12개나 적었을 때 유효한 니모닉이 될 확률도 딱 그만큼이다. 단어 수가
+            늘면 체크섬도 함께 길어져 그물이 촘촘해진다(24단어는 8비트라 256분의 1).
+            체크섬은 오타를 <b>대개</b> 잡아 주는 장치지, 반드시 잡아 준다고 믿을 물건은
+            아니다.
           </>
         }
       />

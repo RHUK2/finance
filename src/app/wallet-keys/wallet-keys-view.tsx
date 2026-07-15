@@ -26,7 +26,7 @@ export function WalletKeysView() {
     illustrativeHex("genesis", 32),
   );
   const [passphrase, setPassphrase] = useState("");
-  // 비트 수는 엔트로피 길이에서 파생 (hex 1글자 = 4비트) — 별도 state로 두면 어긋날 수 있다.
+  // 비트 수는 엔트로피 길이에서 파생 (hex 1글자 = 4비트). 별도 state로 두면 어긋날 수 있다.
   const bits = (entropyHex.length * 4) as EntropyBits;
 
   const words = useMemo(() => entropyToMnemonic(entropyHex), [entropyHex]);
@@ -104,6 +104,8 @@ export function WalletKeysView() {
             </p>
           </Card>
 
+          <SimTabs tabs={TABS} defaultValue="mnemonic" />
+
           <ExplainCard
             title="SHA-256·SHA-512·HMAC·PBKDF2, 이름은 비슷한데 뭐가 다를까?"
             preview="세 단계에 걸쳐 등장하는 해시 계열 함수 넷, 목적이 서로 다르다."
@@ -111,11 +113,13 @@ export function WalletKeysView() {
               <>
                 세 단계에 걸쳐 해시 계열 함수가 넷 등장하는데 목적이 서로
                 다르다. <b>SHA-256</b>은 입력을 고정 256비트로 줄이는 순수
-                해시다. 빠르고 단방향이라 체크섬·채굴·주소 생성에 쓴다(①
-                단계). <b>SHA-512</b>는 같은 SHA-2 계열이지만 출력이 512비트로
+                해시다. 빠르고 단방향이라 ①의 체크섬을 비롯해 채굴·주소 생성에
+                두루 쓴다. <b>SHA-512</b>는 같은 SHA-2 계열이지만 출력이 512비트로
                 두 배다. ②의 시드 파생과 ③의 키 트리에 모두 쓰이는데, 특히
-                ③에서는 그 512비트를 정확히 반으로 갈라 앞 256비트는 자식 키,
-                뒤 256비트는 체인 코드로 쓴다.{" "}
+                ③에서는 그 512비트를 정확히 반으로 갈라 앞 256비트는 키 재료,
+                뒤 256비트는 체인코드로 쓴다. 앞 절반이 곧바로 키가 되는 건
+                마스터 단계뿐이고, 자식 단계에서는 그 값(IL)을 부모 개인키에
+                더해야 자식 키가 된다.{" "}
                 <b>HMAC</b>은 해시에 키를 끼워 넣어, 키를 아는 사람이
                 만들었음을 증명하거나(인증) 두 입력을 잘 섞는 믹서로 쓴다.{" "}
                 <b>PBKDF2</b>는 그 HMAC을 수천 번 반복해 <b>일부러 느리게</b>{" "}
@@ -124,8 +128,6 @@ export function WalletKeysView() {
               </>
             }
           />
-
-          <SimTabs tabs={TABS} defaultValue="mnemonic" />
         </div>
       </PageMain>
     </>
