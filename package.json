@@ -15,7 +15,8 @@
     "audit": "pnpm audit --audit-level=high",
     "deps:check": "pnpm -r outdated",
     "deps:update": "pnpm -r update && pnpm build",
-    "deps:update:major": "pnpm -r up -iL"
+    "deps:update:major": "pnpm -r up -iL",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
@@ -44,10 +45,16 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
     "prettier": "^3.8.4",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "shadcn": "^4.11.0",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "prettier --write",
+    "*.{md,json}": "prettier --write"
   }
 }
