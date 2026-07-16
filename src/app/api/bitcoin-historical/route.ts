@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
+import { cached } from '@/lib/cache';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 // Coinbase BTC-USD 상장일: 2015-07-20
 const COINBASE_START_MS = 1437436800000;
@@ -11,7 +11,7 @@ const DAY_MS = 86_400_000;
 
 export async function GET() {
   try {
-    const data = await cached("bitcoin-historical", async () => {
+    const data = await cached('bitcoin-historical', async () => {
       // 청크 범위는 미리 다 알 수 있으므로 병렬로 요청 (Coinbase 공개 rate limit을 고려해 배치 단위)
       const ranges: { startMs: number; endMs: number }[] = [];
       const nowMs = Date.now();
@@ -30,12 +30,11 @@ export async function GET() {
             const end = new Date(endMs).toISOString();
             const url = `https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=${start}&end=${end}`;
 
-            const res = await fetch(url, { cache: "no-store" });
+            const res = await fetch(url, { cache: 'no-store' });
             if (!res.ok) throw new Error(`Coinbase error: ${res.status}`);
 
             // [timestamp_sec, low, high, open, close, volume], 내림차순 반환
-            const candles: [number, number, number, number, number, number][] =
-              await res.json();
+            const candles: [number, number, number, number, number, number][] = await res.json();
 
             return candles.map(([tSec, , , , close]) => ({
               time: new Date(tSec * 1000).toISOString().slice(0, 10),
@@ -54,10 +53,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("bitcoin historical fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch data" },
-      { status: 500 },
-    );
+    console.error('bitcoin historical fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
 }

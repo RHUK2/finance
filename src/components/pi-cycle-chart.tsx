@@ -1,18 +1,13 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChartContainer } from "@/components/chart-container";
-import {
-  LineSeries,
-  createSeriesMarkers,
-  useChart,
-  type Time,
-} from "@/hooks/use-chart";
-import { movingAverage } from "@/lib/bitcoin-models";
-import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
+import { useMemo } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChartContainer } from '@/components/chart-container';
+import { LineSeries, createSeriesMarkers, useChart, type Time } from '@/hooks/use-chart';
+import { movingAverage } from '@/lib/bitcoin-models';
+import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
 
 type Props = {
   data?: BitcoinHistoricalData;
@@ -46,29 +41,29 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
     (chart) => {
       if (!data) return;
       const priceSeries = chart.addSeries(LineSeries, {
-        color: "#6b7280",
+        color: '#6b7280',
         lineWidth: 1,
         priceLineVisible: false,
         lastValueVisible: false,
-        title: "BTC",
+        title: 'BTC',
       });
       priceSeries.setData(data.history);
 
       const longSeries = chart.addSeries(LineSeries, {
-        color: "#ef4444",
+        color: '#ef4444',
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: false,
-        title: "350일 MA×2",
+        title: '350일 MA×2',
       });
       longSeries.setData(sma350x2);
 
       const shortSeries = chart.addSeries(LineSeries, {
-        color: "#22c55e",
+        color: '#22c55e',
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: false,
-        title: "111일 MA",
+        title: '111일 MA',
       });
       shortSeries.setData(sma111);
 
@@ -77,10 +72,10 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
           priceSeries,
           crossovers.map((c) => ({
             time: c.time as Time,
-            position: "aboveBar" as const,
-            color: "#ef4444",
-            shape: "arrowDown" as const,
-            text: "천장",
+            position: 'aboveBar' as const,
+            color: '#ef4444',
+            shape: 'arrowDown' as const,
+            text: '천장',
           })),
         );
       }
@@ -96,50 +91,41 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
     ratio == null
       ? null
       : ratio >= 1
-        ? { label: "천장 신호", variant: "destructive" as const }
+        ? { label: '천장 신호', variant: 'destructive' as const }
         : ratio >= 0.9
-          ? { label: "근접", variant: "secondary" as const }
-          : { label: "정상", variant: "outline" as const };
+          ? { label: '근접', variant: 'secondary' as const }
+          : { label: '정상', variant: 'outline' as const };
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            Pi Cycle Top
-          </CardTitle>
-          {updatedLabel && (
-            <span className="text-muted-foreground text-xs">
-              {updatedLabel}
-            </span>
-          )}
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-muted-foreground text-sm font-medium'>Pi Cycle Top</CardTitle>
+          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
         </div>
         {!data ? (
-          <Skeleton className="h-5 w-24" />
+          <Skeleton className='h-5 w-24' />
         ) : (
           ratio != null &&
           status && (
-            <div className="flex items-end gap-2">
-              <span className="text-sm font-semibold">
-                천장선 도달 {(ratio * 100).toFixed(0)}%
-              </span>
-              <Badge variant={status.variant} className="mb-0.5">
+            <div className='flex items-end gap-2'>
+              <span className='text-sm font-semibold'>천장선 도달 {(ratio * 100).toFixed(0)}%</span>
+              <Badge variant={status.variant} className='mb-0.5'>
                 {status.label}
               </Badge>
             </div>
           )
         )}
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className='p-0'>
         {!data ? (
-          <Skeleton className="h-[320px] w-full rounded-none" />
+          <Skeleton className='h-[320px] w-full rounded-none' />
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-        <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          111일 이동평균과 350일 이동평균×2의 교차로 읽습니다. 111일선이
-          350일선×2를 위로 돌파하는 순간이 사이클 천장 신호로, 과거 고점과 며칠
-          안쪽으로 맞아떨어져 단기 고점 경계 신호로 활용됩니다.
+        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+          111일 이동평균과 350일 이동평균×2의 교차로 읽습니다. 111일선이 350일선×2를 위로 돌파하는 순간이 사이클 천장
+          신호로, 과거 고점과 며칠 안쪽으로 맞아떨어져 단기 고점 경계 신호로 활용됩니다.
         </p>
       </CardContent>
     </Card>

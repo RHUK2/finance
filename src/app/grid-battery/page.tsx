@@ -1,4 +1,4 @@
-import { GridBatteryView } from "./grid-battery-view";
+import { GridBatteryView } from './grid-battery-view';
 
 export default function GridBatteryPage() {
   return <GridBatteryView />;

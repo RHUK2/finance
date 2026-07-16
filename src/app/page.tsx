@@ -1,11 +1,11 @@
-import { HydrationBoundary } from "@tanstack/react-query";
+import { HydrationBoundary } from '@tanstack/react-query';
 
-import { prefetchEndpoints } from "@/lib/prefetch";
+import { prefetchEndpoints } from '@/lib/prefetch';
 
-import { AssetsView } from "./assets-view";
+import { AssetsView } from './assets-view';
 
 export default async function AssetsPage() {
-  const state = await prefetchEndpoints(["market"]);
+  const state = await prefetchEndpoints(['market']);
 
   return (
     <HydrationBoundary state={state}>

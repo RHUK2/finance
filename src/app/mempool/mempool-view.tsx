@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { AppHeader } from "@/components/app-header";
-import { HashrateChart } from "@/components/hashrate-chart";
-import { PageMain } from "@/components/page-main";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AppHeader } from '@/components/app-header';
+import { HashrateChart } from '@/components/hashrate-chart';
+import { PageMain } from '@/components/page-main';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   useHashrateHistory,
   useMempoolBlocks,
@@ -12,18 +12,11 @@ import {
   useMiningPools,
   useMiningStats,
   useRecentBlocks,
-} from "@/hooks/use-mempool";
-import { formatRelativeTime, useMinuteTick } from "@/hooks/use-relative-time";
-import { BLOCKS_PER_HALVING, RETARGET_INTERVAL } from "@/lib/bitcoin-models";
-import { BTC_COLOR } from "@/lib/utils";
-import {
-  CardHeading,
-  DonutRing,
-  MempoolBlocksViz,
-  PoolShareChart,
-  RecentBlocksList,
-  Stat,
-} from "./components";
+} from '@/hooks/use-mempool';
+import { formatRelativeTime, useMinuteTick } from '@/hooks/use-relative-time';
+import { BLOCKS_PER_HALVING, RETARGET_INTERVAL } from '@/lib/bitcoin-models';
+import { BTC_COLOR } from '@/lib/utils';
+import { CardHeading, DonutRing, MempoolBlocksViz, PoolShareChart, RecentBlocksList, Stat } from './components';
 
 export function MempoolView() {
   const { data: mempool } = useMempoolStats();
@@ -35,8 +28,7 @@ export function MempoolView() {
 
   // 상대시간 라벨 6개를 타이머 하나로 갱신
   useMinuteTick();
-  const rel = (iso?: string) =>
-    iso ? formatRelativeTime(new Date(iso).getTime()) : undefined;
+  const rel = (iso?: string) => (iso ? formatRelativeTime(new Date(iso).getTime()) : undefined);
   const mempoolRelTime = rel(mempool?.fetchedAt);
   const miningRelTime = rel(mining?.fetchedAt);
   const mempoolBlocksRelTime = rel(mempoolBlocks?.fetchedAt);
@@ -45,81 +37,51 @@ export function MempoolView() {
   const poolsRelTime = rel(pools?.fetchedAt);
 
   const halvingProgress = mining
-    ? ((BLOCKS_PER_HALVING - mining.remainingHalvingBlocks) /
-        BLOCKS_PER_HALVING) *
-      100
+    ? ((BLOCKS_PER_HALVING - mining.remainingHalvingBlocks) / BLOCKS_PER_HALVING) * 100
     : 0;
-  const difficultyProgress = mining
-    ? ((RETARGET_INTERVAL - mining.remainingBlocks) / RETARGET_INTERVAL) * 100
-    : 0;
+  const difficultyProgress = mining ? ((RETARGET_INTERVAL - mining.remainingBlocks) / RETARGET_INTERVAL) * 100 : 0;
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: "비트코인 네트워크" }]} />
+      <AppHeader breadcrumbs={[{ label: '비트코인 네트워크' }]} />
       <PageMain>
-        <div className="flex flex-col gap-6">
+        <div className='flex flex-col gap-6'>
           {/* 멤풀 */}
 
           <Card>
-            <CardHeading
-              title="멤풀"
-              relativeTime={mempoolRelTime || undefined}
-            />
+            <CardHeading title='멤풀' relativeTime={mempoolRelTime || undefined} />
             <CardContent>
               {!mempool ? (
-                <Skeleton className="h-9 w-full" />
+                <Skeleton className='h-9 w-full' />
               ) : (
-                <div className="grid grid-cols-2 gap-x-6">
-                  <Stat
-                    label="미확인 트랜잭션"
-                    value={mempool.pendingTxCount.toLocaleString()}
-                  />
-                  <Stat
-                    label="멤풀 크기"
-                    value={`${mempool.mempoolSizeMB} MB`}
-                  />
+                <div className='grid grid-cols-2 gap-x-6'>
+                  <Stat label='미확인 트랜잭션' value={mempool.pendingTxCount.toLocaleString()} />
+                  <Stat label='멤풀 크기' value={`${mempool.mempoolSizeMB} MB`} />
                 </div>
               )}
-              <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                대기 중인 미확인 트랜잭션 현황은 네트워크 혼잡도 지표로
-                활용됩니다. 미확인 거래·멤풀 크기가 클수록 처리 대기가 길고
-                수수료가 오릅니다.
+              <p className='bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs'>
+                대기 중인 미확인 트랜잭션 현황은 네트워크 혼잡도 지표로 활용됩니다. 미확인 거래·멤풀 크기가 클수록 처리
+                대기가 길고 수수료가 오릅니다.
               </p>
             </CardContent>
           </Card>
           {/* 수수료 */}
 
           <Card>
-            <CardHeading
-              title="수수료"
-              relativeTime={mempoolRelTime || undefined}
-            />
+            <CardHeading title='수수료' relativeTime={mempoolRelTime || undefined} />
             <CardContent>
               {!mempool ? (
-                <Skeleton className="h-9 w-full" />
+                <Skeleton className='h-9 w-full' />
               ) : (
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
-                  <Stat
-                    label="느림 (~1시간)"
-                    value={`${mempool.hourFee} sat/vB`}
-                    valueClassName="text-green-400"
-                  />
-                  <Stat
-                    label="보통 (~30분)"
-                    value={`${mempool.halfHourFee} sat/vB`}
-                    valueClassName="text-yellow-400"
-                  />
-                  <Stat
-                    label="빠름 (~10분)"
-                    value={`${mempool.fastFee} sat/vB`}
-                    valueClassName="text-orange-400"
-                  />
+                <div className='grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3'>
+                  <Stat label='느림 (~1시간)' value={`${mempool.hourFee} sat/vB`} valueClassName='text-green-400' />
+                  <Stat label='보통 (~30분)' value={`${mempool.halfHourFee} sat/vB`} valueClassName='text-yellow-400' />
+                  <Stat label='빠름 (~10분)' value={`${mempool.fastFee} sat/vB`} valueClassName='text-orange-400' />
                 </div>
               )}
-              <p className="bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs">
-                구간별 권장 수수료는 네트워크 혼잡도·처리 우선순위 지표로
-                활용됩니다. 혼잡할수록 같은 시간 내 처리에 필요한 sat/vB가
-                올라갑니다.
+              <p className='bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs'>
+                구간별 권장 수수료는 네트워크 혼잡도·처리 우선순위 지표로 활용됩니다. 혼잡할수록 같은 시간 내 처리에
+                필요한 sat/vB가 올라갑니다.
               </p>
             </CardContent>
           </Card>
@@ -127,114 +89,82 @@ export function MempoolView() {
 
           <MempoolBlocksViz
             blocks={mempoolBlocks?.blocks}
-            title="멤풀 블록 (예상)"
+            title='멤풀 블록 (예상)'
             relativeTime={mempoolBlocksRelTime ?? undefined}
-            description="대기 트랜잭션이 향후 몇 개 블록으로 처리될지 예측한 시각화로, 단기 처리 적체·수수료 압력 지표로 활용됩니다. 왼쪽 블록일수록 먼저 채굴됩니다."
+            description='대기 트랜잭션이 향후 몇 개 블록으로 처리될지 예측한 시각화로, 단기 처리 적체·수수료 압력 지표로 활용됩니다. 왼쪽 블록일수록 먼저 채굴됩니다.'
           />
           {/* 최근 블록 */}
 
           <RecentBlocksList
             blocks={recentBlocks?.blocks}
-            title="최근 블록"
+            title='최근 블록'
             relativeTime={recentBlocksRelTime ?? undefined}
-            description="최근 채굴된 블록 목록은 블록 생성 간격·수수료 추이·채굴풀 분포를 보는 네트워크 처리 흐름 지표로 활용됩니다."
+            description='최근 채굴된 블록 목록은 블록 생성 간격·수수료 추이·채굴풀 분포를 보는 네트워크 처리 흐름 지표로 활용됩니다.'
           />
           {/* 채굴 */}
 
           <Card>
-            <CardHeading
-              title="채굴"
-              relativeTime={miningRelTime || undefined}
-            />
+            <CardHeading title='채굴' relativeTime={miningRelTime || undefined} />
             <CardContent>
               {!mining ? (
-                <Skeleton className="h-[148px] w-full" />
+                <Skeleton className='h-[148px] w-full' />
               ) : (
-                <div className="flex flex-col gap-6">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
+                <div className='flex flex-col gap-6'>
+                  <div className='grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5'>
+                    <Stat label='해시레이트' value={`${mining.hashrateEHs} EH/s`} change={mining.hashrateChangePct} />
+                    <Stat label='블록 보상' value={`${mining.blockRewardBTC} BTC`} />
+                    <Stat label='남은 블록' value={mining.remainingBlocks.toLocaleString()} />
                     <Stat
-                      label="해시레이트"
-                      value={`${mining.hashrateEHs} EH/s`}
-                      change={mining.hashrateChangePct}
+                      label='예상 변화율'
+                      value={`${mining.difficultyChangePct > 0 ? '+' : ''}${mining.difficultyChangePct}%`}
+                      valueClassName={mining.difficultyChangePct >= 0 ? 'text-green-500' : 'text-red-500'}
                     />
                     <Stat
-                      label="블록 보상"
-                      value={`${mining.blockRewardBTC} BTC`}
-                    />
-                    <Stat
-                      label="남은 블록"
-                      value={mining.remainingBlocks.toLocaleString()}
-                    />
-                    <Stat
-                      label="예상 변화율"
-                      value={`${mining.difficultyChangePct > 0 ? "+" : ""}${mining.difficultyChangePct}%`}
-                      valueClassName={
-                        mining.difficultyChangePct >= 0
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }
-                    />
-                    <Stat
-                      label="이전 변화율"
-                      value={`${mining.previousDifficultyChangePct > 0 ? "+" : ""}${mining.previousDifficultyChangePct}%`}
-                      valueClassName={
-                        mining.previousDifficultyChangePct >= 0
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }
+                      label='이전 변화율'
+                      value={`${mining.previousDifficultyChangePct > 0 ? '+' : ''}${mining.previousDifficultyChangePct}%`}
+                      valueClassName={mining.previousDifficultyChangePct >= 0 ? 'text-green-500' : 'text-red-500'}
                     />
                   </div>
                   <div>
-                    <div className="mb-1.5 flex justify-between text-xs">
-                      <span className="text-muted-foreground">
-                        난이도 조정 진행
-                      </span>
-                      <span className="font-medium">
-                        {difficultyProgress.toFixed(1)}%
-                      </span>
+                    <div className='mb-1.5 flex justify-between text-xs'>
+                      <span className='text-muted-foreground'>난이도 조정 진행</span>
+                      <span className='font-medium'>{difficultyProgress.toFixed(1)}%</span>
                     </div>
-                    <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
+                    <div className='bg-muted h-2 w-full overflow-hidden rounded-full'>
                       <div
-                        className="h-full rounded-full bg-blue-500 transition-all"
+                        className='h-full rounded-full bg-blue-500 transition-all'
                         style={{ width: `${difficultyProgress}%` }}
                       />
                     </div>
-                    <p className="text-muted-foreground mt-1.5 text-xs">
-                      예상 조정일: {mining.estimatedRetargetDate}
-                    </p>
+                    <p className='text-muted-foreground mt-1.5 text-xs'>예상 조정일: {mining.estimatedRetargetDate}</p>
                   </div>
                 </div>
               )}
-              <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
-                해시레이트와 2016블록마다 조정되는 난이도는 네트워크 보안 강도와
-                채굴 경쟁 강도 지표로 활용됩니다. 해시레이트가 높을수록 공격
-                비용이 커져 보안이 강합니다.
+              <p className='bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs'>
+                해시레이트와 2016블록마다 조정되는 난이도는 네트워크 보안 강도와 채굴 경쟁 강도 지표로 활용됩니다.
+                해시레이트가 높을수록 공격 비용이 커져 보안이 강합니다.
               </p>
             </CardContent>
           </Card>
           {/* 해시레이트 추이 */}
 
           <Card>
-            <CardHeading
-              title="해시레이트 추이 (1년)"
-              relativeTime={hashrateRelTime || undefined}
-            />
-            <CardContent className="p-0">
+            <CardHeading title='해시레이트 추이 (1년)' relativeTime={hashrateRelTime || undefined} />
+            <CardContent className='p-0'>
               {!hashrate ? (
-                <Skeleton className="h-[288px] w-full rounded-none" />
+                <Skeleton className='h-[288px] w-full rounded-none' />
               ) : (
                 <>
-                  <div className="text-muted-foreground flex justify-end gap-4 px-4 py-3 text-xs">
+                  <div className='text-muted-foreground flex justify-end gap-4 px-4 py-3 text-xs'>
                     <span>현재 {hashrate.currentHashrateEHs} EH/s</span>
                     <span>난이도 {hashrate.currentDifficultyT}T</span>
                   </div>
                   <HashrateChart data={hashrate} />
                 </>
               )}
-              <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-                해시레이트 1년 추이는 채굴자 신뢰와 네트워크 보안 추세 지표로
-                활용됩니다. 꾸준한 상승은 보안 강화를, 급격한 하락은 대규모
-                채굴자 이탈 신호로 읽힙니다.
+              <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+                해시레이트 1년 추이는 채굴자 신뢰와 네트워크 보안 추세 지표로 활용됩니다. 꾸준한 상승은 보안 강화를,
+                급격한 하락은 대규모 채굴자 이탈 신호로 읽힙니다.
               </p>
             </CardContent>
           </Card>
@@ -242,60 +172,38 @@ export function MempoolView() {
 
           <PoolShareChart
             pools={pools?.pools}
-            title="채굴풀 점유율 (1주)"
+            title='채굴풀 점유율 (1주)'
             relativeTime={poolsRelTime ?? undefined}
-            description="채굴풀별 블록 점유율은 네트워크 탈중앙화(분산화) 지표로 활용됩니다. 특정 풀이 50%를 초과하면 51% 공격 위험이 커집니다."
+            description='채굴풀별 블록 점유율은 네트워크 탈중앙화(분산화) 지표로 활용됩니다. 특정 풀이 50%를 초과하면 51% 공격 위험이 커집니다.'
           />
           {/* 반감기 */}
 
           <Card>
-            <CardHeading
-              title="반감기"
-              relativeTime={miningRelTime || undefined}
-            />
+            <CardHeading title='반감기' relativeTime={miningRelTime || undefined} />
             <CardContent>
               {!mining ? (
-                <Skeleton className="h-[140px] w-full" />
+                <Skeleton className='h-[140px] w-full' />
               ) : (
-                <div className="flex flex-col items-center gap-6 sm:flex-row">
+                <div className='flex flex-col items-center gap-6 sm:flex-row'>
                   <DonutRing
                     progress={halvingProgress}
                     color={BTC_COLOR}
                     center={`${halvingProgress.toFixed(1)}%`}
-                    centerSub="경과"
+                    centerSub='경과'
                   />
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:flex-1">
-                    <Stat
-                      label="현재 블록"
-                      value={mining.blockHeight.toLocaleString()}
-                    />
-                    <Stat
-                      label="다음 반감기 블록"
-                      value={mining.nextHalvingBlock.toLocaleString()}
-                    />
-                    <Stat
-                      label="남은 블록"
-                      value={mining.remainingHalvingBlocks.toLocaleString()}
-                    />
-                    <Stat
-                      label="예상 날짜"
-                      value={mining.estimatedHalvingDate}
-                    />
-                    <Stat
-                      label="현재 보상"
-                      value={`${mining.blockRewardBTC} BTC`}
-                    />
-                    <Stat
-                      label="반감기 후 보상"
-                      value={`${mining.nextRewardBTC} BTC`}
-                    />
+                  <div className='grid grid-cols-2 gap-x-6 gap-y-4 sm:flex-1'>
+                    <Stat label='현재 블록' value={mining.blockHeight.toLocaleString()} />
+                    <Stat label='다음 반감기 블록' value={mining.nextHalvingBlock.toLocaleString()} />
+                    <Stat label='남은 블록' value={mining.remainingHalvingBlocks.toLocaleString()} />
+                    <Stat label='예상 날짜' value={mining.estimatedHalvingDate} />
+                    <Stat label='현재 보상' value={`${mining.blockRewardBTC} BTC`} />
+                    <Stat label='반감기 후 보상' value={`${mining.nextRewardBTC} BTC`} />
                   </div>
                 </div>
               )}
-              <p className="bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs">
-                반감기까지의 진행도는 신규 공급 감소 속도와 희소성 지표로
-                활용됩니다. 약 4년마다 보상이 절반으로 줄어 발행량이 감소하고,
-                역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
+              <p className='bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs'>
+                반감기까지의 진행도는 신규 공급 감소 속도와 희소성 지표로 활용됩니다. 약 4년마다 보상이 절반으로 줄어
+                발행량이 감소하고, 역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
               </p>
             </CardContent>
           </Card>

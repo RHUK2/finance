@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { MacroChart, type MacroLine } from "@/components/macro-chart";
-import type { InflationData } from "@/hooks/use-inflation";
-import { latestValue, normalizeToBase } from "@/lib/inflation-models";
+import { MacroChart, type MacroLine } from '@/components/macro-chart';
+import type { InflationData } from '@/hooks/use-inflation';
+import { latestValue, normalizeToBase } from '@/lib/inflation-models';
 
 type Props = {
   data: InflationData;
@@ -17,22 +17,20 @@ export function CpiM2GapChart({ data, baseYear, updatedLabel }: Props) {
     const cpi = normalizeToBase(data.cpi?.history, baseYear);
     const m2 = normalizeToBase(data.m2?.history, baseYear);
     const lines: MacroLine[] = [];
-    if (cpi.length) lines.push({ label: "CPI", data: cpi, color: "#22c55e" });
-    if (m2.length) lines.push({ label: "M2", data: m2, color: "#ef4444" });
+    if (cpi.length) lines.push({ label: 'CPI', data: cpi, color: '#22c55e' });
+    if (m2.length) lines.push({ label: 'M2', data: m2, color: '#ef4444' });
 
     const cpiNow = latestValue(cpi);
     const m2Now = latestValue(m2);
     const gapLabel =
-      cpiNow && m2Now
-        ? `${baseYear}년=100 기준, CPI ${cpiNow.toFixed(0)} · M2 ${m2Now.toFixed(0)}`
-        : undefined;
+      cpiNow && m2Now ? `${baseYear}년=100 기준, CPI ${cpiNow.toFixed(0)} · M2 ${m2Now.toFixed(0)}` : undefined;
 
     return { lines: lines.length ? lines : undefined, gapLabel };
   }, [data, baseYear]);
 
   return (
     <MacroChart
-      title="CPI vs M2: 통화팽창과 물가의 괴리"
+      title='CPI vs M2: 통화팽창과 물가의 괴리'
       currentLabel={gapLabel}
       lines={lines}
       updatedLabel={updatedLabel}

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Sidebar,
   SidebarContent,
@@ -13,8 +13,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { NAV_GROUPS } from "@/lib/nav";
+} from '@/components/ui/sidebar';
+import { NAV_GROUPS } from '@/lib/nav';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -22,8 +22,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="px-4 py-4">
-        <span className="text-base font-bold tracking-tight">Finance</span>
+      <SidebarHeader className='px-4 py-4'>
+        <span className='text-base font-bold tracking-tight'>Finance</span>
       </SidebarHeader>
       <SidebarContent>
         {NAV_GROUPS.map((group) => (
@@ -33,11 +33,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 {group.items.map(({ label, href, icon: Icon }) => (
                   <SidebarMenuItem key={href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === href}
-                      onClick={() => setOpenMobile(false)}
-                    >
+                    <SidebarMenuButton asChild isActive={pathname === href} onClick={() => setOpenMobile(false)}>
                       <Link href={href}>
                         <Icon />
                         <span>{label}</span>

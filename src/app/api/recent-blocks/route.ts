@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
+import { cached } from '@/lib/cache';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 type Block = {
   height: number;
@@ -18,9 +18,9 @@ type Block = {
 
 export async function GET() {
   try {
-    const data = await cached("recent-blocks", async () => {
-      const res = await fetch("https://mempool.space/api/v1/blocks", {
-        cache: "no-store",
+    const data = await cached('recent-blocks', async () => {
+      const res = await fetch('https://mempool.space/api/v1/blocks', {
+        cache: 'no-store',
       });
       if (!res.ok) throw new Error(`recent blocks error: ${res.status}`);
 
@@ -40,10 +40,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("recent-blocks fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch recent blocks" },
-      { status: 500 },
-    );
+    console.error('recent-blocks fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch recent blocks' }, { status: 500 });
   }
 }

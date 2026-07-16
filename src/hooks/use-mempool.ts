@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEndpoint } from "@/hooks/use-endpoint";
+import { useEndpoint } from '@/hooks/use-endpoint';
 
 export type MempoolStatsData = {
   fetchedAt: string;
@@ -65,15 +65,9 @@ export type MempoolBlocksData = {
   }[];
 };
 
-export const useMempoolStats = () =>
-  useEndpoint<MempoolStatsData>("mempool-stats");
-export const useMiningStats = () =>
-  useEndpoint<MiningStatsData>("mining-stats");
-export const useMiningPools = () =>
-  useEndpoint<MiningPoolsData>("mining-pools");
-export const useRecentBlocks = () =>
-  useEndpoint<RecentBlocksData>("recent-blocks");
-export const useHashrateHistory = () =>
-  useEndpoint<HashrateHistoryData>("hashrate-history");
-export const useMempoolBlocks = () =>
-  useEndpoint<MempoolBlocksData>("mempool-blocks");
+export const useMempoolStats = () => useEndpoint<MempoolStatsData>('mempool-stats');
+export const useMiningStats = () => useEndpoint<MiningStatsData>('mining-stats');
+export const useMiningPools = () => useEndpoint<MiningPoolsData>('mining-pools');
+export const useRecentBlocks = () => useEndpoint<RecentBlocksData>('recent-blocks');
+export const useHashrateHistory = () => useEndpoint<HashrateHistoryData>('hashrate-history');
+export const useMempoolBlocks = () => useEndpoint<MempoolBlocksData>('mempool-blocks');

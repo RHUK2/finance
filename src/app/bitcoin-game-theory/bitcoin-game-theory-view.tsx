@@ -1,40 +1,36 @@
-"use client";
+'use client';
 
-import { AppHeader } from "@/components/app-header";
-import { PageMain } from "@/components/page-main";
-import { SimTabs } from "@/components/simulation";
+import { AppHeader } from '@/components/app-header';
+import { PageMain } from '@/components/page-main';
+import { SimTabs } from '@/components/simulation';
 
-import { AdoptionCascade } from "./adoption-cascade";
-import { AttackGame } from "./attack-game";
-import { HodlDilemma } from "./hodl-dilemma";
-import { PayoffMatrix } from "./payoff-matrix";
+import { AdoptionCascade } from './adoption-cascade';
+import { AttackGame } from './attack-game';
+import { HodlDilemma } from './hodl-dilemma';
+import { PayoffMatrix } from './payoff-matrix';
 
 const TABS = [
-  { value: "payoff", label: "보수 행렬", node: <PayoffMatrix /> },
-  { value: "cascade", label: "채택 캐스케이드", node: <AdoptionCascade /> },
-  { value: "hodl", label: "홀더 딜레마", node: <HodlDilemma /> },
-  { value: "attack", label: "51% 공격", node: <AttackGame /> },
+  { value: 'payoff', label: '보수 행렬', node: <PayoffMatrix /> },
+  { value: 'cascade', label: '채택 캐스케이드', node: <AdoptionCascade /> },
+  { value: 'hodl', label: '홀더 딜레마', node: <HodlDilemma /> },
+  { value: 'attack', label: '51% 공격', node: <AttackGame /> },
 ];
 
 export function BitcoinGameTheoryView() {
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: "비트코인 게임이론" }]} />
+      <AppHeader breadcrumbs={[{ label: '비트코인 게임이론' }]} />
       <PageMain>
-        <div className="mx-auto flex max-w-5xl flex-col gap-4">
+        <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
-            <h1 className="text-xl font-semibold">
-              비트코인을 움직이는 게임이론
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-              비트코인의 가격과 보안은 수많은 행위자(개인·기업·국가·채굴자)가
-              서로의 선택을 의식하며 내리는 결정의 결과다. 각자가 합리적으로
-              행동할 때 어떤 균형으로 수렴하는지를, 네 가지 게임으로 직접 돌려
-              보자.
+            <h1 className='text-xl font-semibold'>비트코인을 움직이는 게임이론</h1>
+            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+              비트코인의 가격과 보안은 수많은 행위자(개인·기업·국가·채굴자)가 서로의 선택을 의식하며 내리는 결정의
+              결과다. 각자가 합리적으로 행동할 때 어떤 균형으로 수렴하는지를, 네 가지 게임으로 직접 돌려 보자.
             </p>
           </div>
 
-          <SimTabs tabs={TABS} defaultValue="payoff" />
+          <SimTabs tabs={TABS} defaultValue='payoff' />
         </div>
       </PageMain>
     </>

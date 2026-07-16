@@ -1,25 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Pickaxe, Target } from "lucide-react";
+import { useState } from 'react';
+import { Pickaxe, Target } from 'lucide-react';
 
-import { Card } from "@/components/ui/card";
-import {
-  ControlSlider,
-  ExplainCard,
-  Metric,
-  RoundControls,
-  SectionIntro,
-} from "@/components/simulation";
-import { useRoundEngine } from "@/hooks/use-round-engine";
-import { cn, shortHex } from "@/lib/utils";
-import {
-  blockHeaderPrefix,
-  expectedTries,
-  hashWithNonce,
-  meetsTarget,
-  SAMPLE_HEADER,
-} from "@/lib/block-concept";
+import { Card } from '@/components/ui/card';
+import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro } from '@/components/simulation';
+import { useRoundEngine } from '@/hooks/use-round-engine';
+import { cn, shortHex } from '@/lib/utils';
+import { blockHeaderPrefix, expectedTries, hashWithNonce, meetsTarget, SAMPLE_HEADER } from '@/lib/block-concept';
 
 // SAMPLE_HEADER는 상수라 접두어도 한 번만 계산해 두면 된다. 채굴 루프는 여기에
 // nonce만 이어붙이므로 매 시도마다 헤더 객체를 새로 만들 필요가 없다.
@@ -38,21 +26,18 @@ export function MiningSim() {
   const [difficulty, setDifficulty] = useState(3);
 
   return (
-    <div className="flex flex-col gap-4">
-      <SectionIntro title="채굴: 목표 이하의 해시가 나올 때까지 복권 긁기">
-        채굴자가 하는 일은 사실 단순하다. nonce를 바꿔가며 헤더를 해시하고,
-        결과가 정해진 <b>목표값보다 작은지(=앞자리에 0이 충분히 많은지)</b>{" "}
-        확인하는 것뿐이다. 정답을 미리 알 방법은 없으니 그냥 계속 찍어보는
-        수밖에 없다. 난이도를 정하고 재생을 눌러 직접 &#39;채굴&#39;해 보자.
+    <div className='flex flex-col gap-4'>
+      <SectionIntro title='채굴: 목표 이하의 해시가 나올 때까지 복권 긁기'>
+        채굴자가 하는 일은 사실 단순하다. nonce를 바꿔가며 헤더를 해시하고, 결과가 정해진{' '}
+        <b>목표값보다 작은지(=앞자리에 0이 충분히 많은지)</b> 확인하는 것뿐이다. 정답을 미리 알 방법은 없으니 그냥 계속
+        찍어보는 수밖에 없다. 난이도를 정하고 재생을 눌러 직접 &#39;채굴&#39;해 보자.
       </SectionIntro>
 
-      <Card className="gap-4 p-4">
+      <Card className='gap-4 p-4'>
         <ControlSlider
-          icon={
-            <Target className="size-4 text-amber-600 dark:text-amber-400" />
-          }
-          label="목표 난이도 (해시 앞자리 0 개수)"
-          hint={`평균 ${expectedTries(difficulty).toLocaleString("ko-KR")}번 시도해야 한 번 나오는 목표. 목표 패턴: ${"0".repeat(difficulty)}…`}
+          icon={<Target className='size-4 text-amber-600 dark:text-amber-400' />}
+          label='목표 난이도 (해시 앞자리 0 개수)'
+          hint={`평균 ${expectedTries(difficulty).toLocaleString('ko-KR')}번 시도해야 한 번 나오는 목표. 목표 패턴: ${'0'.repeat(difficulty)}…`}
           value={difficulty}
           onChange={setDifficulty}
           min={1}
@@ -65,18 +50,15 @@ export function MiningSim() {
       <MiningEngine key={difficulty} difficulty={difficulty} />
 
       <ExplainCard
-        title="채굴이 전력을 그렇게 많이 먹는 이유"
-        preview="사람이 손으로 계산하면 이 목표를 맞추는 데 수백 년이 걸린다. ASIC은 초당 수백조 번을 찍는다."
+        title='채굴이 전력을 그렇게 많이 먹는 이유'
+        preview='사람이 손으로 계산하면 이 목표를 맞추는 데 수백 년이 걸린다. ASIC은 초당 수백조 번을 찍는다.'
         body={
           <>
-            사람이 계산기로 손수 해시를 두드린다면 초당 {HUMAN_RATE}회가 한계라,
-            난이도 5자리(평균 {expectedTries(5).toLocaleString("ko-KR")}번)를
-            맞추는 데 수백 년이 걸린다. 실제 ASIC 채굴기 한 대는 초당 약{" "}
-            {ASIC_RATE.toLocaleString("ko-KR")}번을 찍고, 전 세계 채굴기를
-            합치면 그보다 몇만 배 더 많은 시도를 10분마다 쏟아붓는다. 정답에
-            &#39;가까워지는&#39; 과정이 없으니(눈사태 효과), 유일한 전략은 더
-            많은 해시를 더 빨리 찍는 것뿐이고, 그게 채굴이 곧 전력 소비 경쟁이
-            되는 이유다.
+            사람이 계산기로 손수 해시를 두드린다면 초당 {HUMAN_RATE}회가 한계라, 난이도 5자리(평균{' '}
+            {expectedTries(5).toLocaleString('ko-KR')}번)를 맞추는 데 수백 년이 걸린다. 실제 ASIC 채굴기 한 대는 초당 약{' '}
+            {ASIC_RATE.toLocaleString('ko-KR')}번을 찍고, 전 세계 채굴기를 합치면 그보다 몇만 배 더 많은 시도를 10분마다
+            쏟아붓는다. 정답에 &#39;가까워지는&#39; 과정이 없으니(눈사태 효과), 유일한 전략은 더 많은 해시를 더 빨리
+            찍는 것뿐이고, 그게 채굴이 곧 전력 소비 경쟁이 되는 이유다.
           </>
         }
       />
@@ -118,7 +100,7 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
   const engine = useRoundEngine(step, speedMs);
 
   return (
-    <Card className="flex flex-col gap-3 p-4">
+    <Card className='flex flex-col gap-3 p-4'>
       <RoundControls
         playing={engine.playing}
         onToggle={engine.toggle}
@@ -134,50 +116,28 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
         speedMs={speedMs}
         onSpeed={setSpeedMs}
         done={found}
-        unit="회 시도"
+        unit='회 시도'
       />
 
       <div
         className={cn(
-          "flex flex-col gap-1 rounded-md border p-3",
-          found
-            ? "border-emerald-500/40 bg-emerald-500/5"
-            : "bg-muted border-transparent",
+          'flex flex-col gap-1 rounded-md border p-3',
+          found ? 'border-emerald-500/40 bg-emerald-500/5' : 'bg-muted border-transparent',
         )}
       >
-        <span className="flex items-center gap-1.5 text-sm font-medium">
+        <span className='flex items-center gap-1.5 text-sm font-medium'>
           <Pickaxe
-            className={cn(
-              "size-4",
-              found
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-muted-foreground",
-            )}
+            className={cn('size-4', found ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground')}
           />
-          {found
-            ? `nonce ${nonce}에서 목표를 찾았다!`
-            : `nonce ${nonce} 시도 중…`}
+          {found ? `nonce ${nonce}에서 목표를 찾았다!` : `nonce ${nonce} 시도 중…`}
         </span>
-        <code className="font-mono text-xs break-all">
-          {shortHex(hash, 24)}
-        </code>
+        <code className='font-mono text-xs break-all'>{shortHex(hash, 24)}</code>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Metric
-          label="시도 횟수"
-          value={attempts.toLocaleString("ko-KR")}
-          tone="accent"
-        />
-        <Metric
-          label="평균 예상 시도"
-          value={expectedTries(difficulty).toLocaleString("ko-KR")}
-        />
-        <Metric
-          label="상태"
-          value={found ? "성공" : "탐색 중"}
-          tone={found ? "good" : undefined}
-        />
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+        <Metric label='시도 횟수' value={attempts.toLocaleString('ko-KR')} tone='accent' />
+        <Metric label='평균 예상 시도' value={expectedTries(difficulty).toLocaleString('ko-KR')} />
+        <Metric label='상태' value={found ? '성공' : '탐색 중'} tone={found ? 'good' : undefined} />
       </div>
     </Card>
   );

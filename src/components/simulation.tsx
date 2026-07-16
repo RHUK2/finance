@@ -1,25 +1,14 @@
-"use client";
+'use client';
 
-import {
-  ChevronDown,
-  Pause,
-  Play,
-  RotateCcw,
-  StepForward,
-  TriangleAlert,
-} from "lucide-react";
+import { ChevronDown, Pause, Play, RotateCcw, StepForward, TriangleAlert } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Slider } from "@/components/ui/slider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCountUp } from "@/hooks/use-count-up";
-import { clamp, cn, formatUsd } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Slider } from '@/components/ui/slider';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useCountUp } from '@/hooks/use-count-up';
+import { clamp, cn, formatUsd } from '@/lib/utils';
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
 
@@ -27,27 +16,18 @@ import { clamp, cn, formatUsd } from "@/lib/utils";
 // 라운드마다 색이 바뀌며 transition-colors로 부드럽게 전환된다.
 export function AgentGrid({ states }: { states: string[] }) {
   return (
-    <div
-      className="grid gap-1"
-      style={{ gridTemplateColumns: "repeat(auto-fill, minmax(13px, 1fr))" }}
-    >
+    <div className='grid gap-1' style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(13px, 1fr))' }}>
       {states.map((c, i) => (
-        <div
-          key={i}
-          className={cn(
-            "aspect-square rounded-[3px] transition-colors duration-300",
-            c,
-          )}
-        />
+        <div key={i} className={cn('aspect-square rounded-[3px] transition-colors duration-300', c)} />
       ))}
     </div>
   );
 }
 
 const DEFAULT_SPEEDS = [
-  { label: "0.5×", ms: 1100 },
-  { label: "1×", ms: 600 },
-  { label: "2×", ms: 280 },
+  { label: '0.5×', ms: 1100 },
+  { label: '1×', ms: 600 },
+  { label: '2×', ms: 280 },
 ];
 
 // 재생 컨트롤: 재생/일시정지 · 한 스텝 · 리셋 · 속도.
@@ -61,7 +41,7 @@ export function RoundControls({
   speedMs,
   onSpeed,
   done,
-  unit = "라운드",
+  unit = '라운드',
   speeds = DEFAULT_SPEEDS,
 }: {
   playing: boolean;
@@ -76,38 +56,30 @@ export function RoundControls({
   speeds?: { label: string; ms: number }[];
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button size="sm" onClick={onToggle} disabled={done} className="gap-1.5">
-        {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
-        {playing ? "일시정지" : done ? "완료" : "재생"}
+    <div className='flex flex-wrap items-center gap-2'>
+      <Button size='sm' onClick={onToggle} disabled={done} className='gap-1.5'>
+        {playing ? <Pause className='size-4' /> : <Play className='size-4' />}
+        {playing ? '일시정지' : done ? '완료' : '재생'}
       </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={onStep}
-        disabled={playing || done}
-        className="gap-1.5"
-      >
-        <StepForward className="size-4" />한 {unit}
+      <Button size='sm' variant='outline' onClick={onStep} disabled={playing || done} className='gap-1.5'>
+        <StepForward className='size-4' />한 {unit}
       </Button>
-      <Button size="sm" variant="outline" onClick={onReset} className="gap-1.5">
-        <RotateCcw className="size-4" />
+      <Button size='sm' variant='outline' onClick={onReset} className='gap-1.5'>
+        <RotateCcw className='size-4' />
         리셋
       </Button>
-      <div className="ml-auto flex items-center gap-2">
-        <span className="text-muted-foreground text-sm tabular-nums">
+      <div className='ml-auto flex items-center gap-2'>
+        <span className='text-muted-foreground text-sm tabular-nums'>
           {unit} {round}
         </span>
-        <div className="flex overflow-hidden rounded-md border">
+        <div className='flex overflow-hidden rounded-md border'>
           {speeds.map((s) => (
             <button
               key={s.ms}
               onClick={() => onSpeed(s.ms)}
               className={cn(
-                "px-2 py-1 text-xs tabular-nums transition-colors",
-                speedMs === s.ms
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-muted",
+                'px-2 py-1 text-xs tabular-nums transition-colors',
+                speedMs === s.ms ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
               )}
             >
               {s.label}
@@ -142,22 +114,16 @@ export function ControlSlider({
   format: (v: number) => string;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between text-sm">
-        <span className="flex items-center gap-1.5 font-medium">
+    <div className='flex flex-col gap-1.5'>
+      <div className='flex items-center justify-between text-sm'>
+        <span className='flex items-center gap-1.5 font-medium'>
           {icon}
           {label}
         </span>
-        <span className="tabular-nums">{format(value)}</span>
+        <span className='tabular-nums'>{format(value)}</span>
       </div>
-      <Slider
-        min={min}
-        max={max}
-        step={step}
-        value={[value]}
-        onValueChange={([v]) => onChange(v)}
-      />
-      {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+      <Slider min={min} max={max} step={step} value={[value]} onValueChange={([v]) => onChange(v)} />
+      {hint && <p className='text-muted-foreground text-xs'>{hint}</p>}
     </div>
   );
 }
@@ -171,23 +137,23 @@ export function Metric({
 }: {
   label: string;
   value: string;
-  tone?: "good" | "bad" | "accent";
+  tone?: 'good' | 'bad' | 'accent';
   sub?: string;
 }) {
   return (
-    <Card className="gap-1 p-4">
-      <span className="text-muted-foreground text-xs">{label}</span>
+    <Card className='gap-1 p-4'>
+      <span className='text-muted-foreground text-xs'>{label}</span>
       <span
         className={cn(
-          "text-xl font-semibold tabular-nums sm:text-2xl",
-          tone === "good" && "text-emerald-600 dark:text-emerald-400",
-          tone === "bad" && "text-rose-600 dark:text-rose-400",
-          tone === "accent" && "text-amber-600 dark:text-amber-400",
+          'text-xl font-semibold tabular-nums sm:text-2xl',
+          tone === 'good' && 'text-emerald-600 dark:text-emerald-400',
+          tone === 'bad' && 'text-rose-600 dark:text-rose-400',
+          tone === 'accent' && 'text-amber-600 dark:text-amber-400',
         )}
       >
         {value}
       </span>
-      {sub && <span className="text-muted-foreground text-xs">{sub}</span>}
+      {sub && <span className='text-muted-foreground text-xs'>{sub}</span>}
     </Card>
   );
 }
@@ -203,26 +169,18 @@ export function StatCard({
   label: string;
   value: number;
   format: (n: number) => string;
-  tone?: "good" | "bad" | "accent";
+  tone?: 'good' | 'bad' | 'accent';
   sub?: string;
 }) {
   const animated = useCountUp(value);
-  return (
-    <Metric label={label} value={format(animated)} tone={tone} sub={sub} />
-  );
+  return <Metric label={label} value={format(animated)} tone={tone} sub={sub} />;
 }
 
 // 색 견본 + 라벨 범례 항목.
-export function Legend({
-  className,
-  label,
-}: {
-  className: string;
-  label: string;
-}) {
+export function Legend({ className, label }: { className: string; label: string }) {
   return (
-    <span className="flex items-center gap-1.5">
-      <span className={cn("size-3 rounded-[3px]", className)} />
+    <span className='flex items-center gap-1.5'>
+      <span className={cn('size-3 rounded-[3px]', className)} />
       {label}
     </span>
   );
@@ -242,25 +200,23 @@ export function ExplainCard({
 }) {
   return (
     <Collapsible asChild>
-      <Card className="group/explain gap-0 p-0">
-        <CollapsibleTrigger className="hover:bg-muted/50 flex w-full items-start gap-2 p-4 text-left transition-colors">
-          <div className="flex-1">
-            <span className="flex items-center gap-1.5 font-semibold">
+      <Card className='group/explain gap-0 p-0'>
+        <CollapsibleTrigger className='hover:bg-muted/50 flex w-full items-start gap-2 p-4 text-left transition-colors'>
+          <div className='flex-1'>
+            <span className='flex items-center gap-1.5 font-semibold'>
               {icon}
               {title}
             </span>
             {preview && (
-              <span className="text-muted-foreground mt-1 line-clamp-1 block text-sm group-data-[state=open]/explain:hidden">
+              <span className='text-muted-foreground mt-1 line-clamp-1 block text-sm group-data-[state=open]/explain:hidden'>
                 {preview}
               </span>
             )}
           </div>
-          <ChevronDown className="text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]/explain:rotate-180" />
+          <ChevronDown className='text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]/explain:rotate-180' />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="text-muted-foreground px-4 pb-4 text-sm leading-relaxed">
-            {body}
-          </div>
+          <div className='text-muted-foreground px-4 pb-4 text-sm leading-relaxed'>{body}</div>
         </CollapsibleContent>
       </Card>
     </Collapsible>
@@ -270,11 +226,11 @@ export function ExplainCard({
 // 시뮬레이션 페이지 공용 탭. 반응형: 모바일 2열(라벨 줄바꿈), 데스크탑 탭 수만큼 한 줄.
 // 탭 수가 홀수면 마지막 탭이 모바일에서 한 줄을 꽉 채운다.
 const MD_GRID_COLS: Record<number, string> = {
-  2: "md:grid-cols-2",
-  3: "md:grid-cols-3",
-  4: "md:grid-cols-4",
-  5: "md:grid-cols-5",
-  6: "md:grid-cols-6",
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-3',
+  4: 'md:grid-cols-4',
+  5: 'md:grid-cols-5',
+  6: 'md:grid-cols-6',
 };
 
 export type SimTab = {
@@ -283,20 +239,14 @@ export type SimTab = {
   node: React.ReactNode;
 };
 
-export function SimTabs({
-  tabs,
-  defaultValue,
-}: {
-  tabs: SimTab[];
-  defaultValue: string;
-}) {
+export function SimTabs({ tabs, defaultValue }: { tabs: SimTab[]; defaultValue: string }) {
   const isOdd = tabs.length % 2 === 1;
   return (
-    <Tabs defaultValue={defaultValue} className="gap-4">
+    <Tabs defaultValue={defaultValue} className='gap-4'>
       <TabsList
         className={cn(
-          "grid w-full grid-cols-2 group-data-horizontal/tabs:h-auto",
-          MD_GRID_COLS[tabs.length] ?? "md:grid-cols-4",
+          'grid w-full grid-cols-2 group-data-horizontal/tabs:h-auto',
+          MD_GRID_COLS[tabs.length] ?? 'md:grid-cols-4',
         )}
       >
         {tabs.map((t, i) => (
@@ -304,8 +254,8 @@ export function SimTabs({
             key={t.value}
             value={t.value}
             className={cn(
-              "min-h-9 py-1.5 text-center leading-tight whitespace-normal",
-              isOdd && i === tabs.length - 1 && "col-span-2 md:col-span-1",
+              'min-h-9 py-1.5 text-center leading-tight whitespace-normal',
+              isOdd && i === tabs.length - 1 && 'col-span-2 md:col-span-1',
             )}
           >
             {t.label}
@@ -322,16 +272,10 @@ export function SimTabs({
 }
 
 // 라벨 + 입력 컨트롤(Select·Input 등)을 세로로 묶는 폼 필드.
-export function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium">{label}</span>
+    <div className='flex flex-col gap-1.5'>
+      <span className='text-sm font-medium'>{label}</span>
       {children}
     </div>
   );
@@ -348,16 +292,14 @@ export function SegmentedControl<T extends string | boolean>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex overflow-hidden rounded-md border">
+    <div className='flex overflow-hidden rounded-md border'>
       {options.map((o) => (
         <button
           key={String(o.value)}
           onClick={() => onChange(o.value)}
           className={cn(
-            "flex-1 px-2 py-1.5 text-sm transition-colors",
-            value === o.value
-              ? "bg-primary text-primary-foreground"
-              : "hover:bg-muted",
+            'flex-1 px-2 py-1.5 text-sm transition-colors',
+            value === o.value ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
           )}
         >
           {o.label}
@@ -368,18 +310,14 @@ export function SegmentedControl<T extends string | boolean>({
 }
 
 // "교육용 개념 시연" 경고 카드. 개념 시연 페이지들이 공통으로 쓰는 틀.
-export function IllustrativeDisclaimer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function IllustrativeDisclaimer({ children }: { children: React.ReactNode }) {
   return (
-    <Card className="gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm leading-relaxed">
-      <span className="flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400">
-        <TriangleAlert className="size-4" />
+    <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm leading-relaxed'>
+      <span className='flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400'>
+        <TriangleAlert className='size-4' />
         교육용 개념 시연
       </span>
-      <p className="text-muted-foreground">{children}</p>
+      <p className='text-muted-foreground'>{children}</p>
     </Card>
   );
 }
@@ -392,7 +330,7 @@ export function Sparkline({
   className,
   min,
   max,
-  heightClass = "h-8",
+  heightClass = 'h-8',
 }: {
   values: number[];
   label: string;
@@ -412,22 +350,16 @@ export function Sparkline({
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-muted-foreground w-16 shrink-0 text-xs">
-        {label}
-      </span>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
-        className={cn("w-full", heightClass)}
-      >
+    <div className='flex items-center gap-2'>
+      <span className='text-muted-foreground w-16 shrink-0 text-xs'>{label}</span>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio='none' className={cn('w-full', heightClass)}>
         <polyline
-          points={pts.join(" ")}
-          fill="none"
-          stroke="currentColor"
+          points={pts.join(' ')}
+          fill='none'
+          stroke='currentColor'
           strokeWidth={1.5}
           className={className}
-          vectorEffect="non-scaling-stroke"
+          vectorEffect='non-scaling-stroke'
         />
       </svg>
     </div>
@@ -452,36 +384,25 @@ export function CostBar({
 }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="tabular-nums">{format(value)}</span>
+    <div className='flex flex-col gap-1'>
+      <div className='flex items-baseline justify-between text-xs'>
+        <span className='text-muted-foreground'>{label}</span>
+        <span className='tabular-nums'>{format(value)}</span>
       </div>
-      <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
-        <div
-          className={cn("h-full rounded-md transition-all", className)}
-          style={{ width: `${Math.max(1, pct)}%` }}
-        />
+      <div className='bg-muted h-5 w-full overflow-hidden rounded-md'>
+        <div className={cn('h-full rounded-md transition-all', className)} style={{ width: `${Math.max(1, pct)}%` }} />
       </div>
-      {sub && <span className="text-muted-foreground text-xs">{sub}</span>}
+      {sub && <span className='text-muted-foreground text-xs'>{sub}</span>}
     </div>
   );
 }
 
 // 탭 섹션 상단 제목 + 설명.
-export function SectionIntro({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+export function SectionIntro({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold">{title}</h2>
-      <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-        {children}
-      </p>
+      <h2 className='text-lg font-semibold'>{title}</h2>
+      <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>{children}</p>
     </div>
   );
 }

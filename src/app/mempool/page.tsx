@@ -1,17 +1,17 @@
-import { HydrationBoundary } from "@tanstack/react-query";
+import { HydrationBoundary } from '@tanstack/react-query';
 
-import { prefetchEndpoints } from "@/lib/prefetch";
+import { prefetchEndpoints } from '@/lib/prefetch';
 
-import { MempoolView } from "./mempool-view";
+import { MempoolView } from './mempool-view';
 
 export default async function MempoolPage() {
   const state = await prefetchEndpoints([
-    "mempool-stats",
-    "mining-stats",
-    "mempool-blocks",
-    "recent-blocks",
-    "hashrate-history",
-    "mining-pools",
+    'mempool-stats',
+    'mining-stats',
+    'mempool-blocks',
+    'recent-blocks',
+    'hashrate-history',
+    'mining-pools',
   ]);
 
   return (

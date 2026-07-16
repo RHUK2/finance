@@ -3,7 +3,7 @@
 // 입력/출력 vByte는 타입별 표준 대표값(근사)이다. 서명 길이에 따라 ±1~2 vB 변동하지만
 // 수수료 = vByte × sat/vB 계산식 자체는 실제와 같다.
 
-export type AddrType = "legacy" | "nested" | "native" | "taproot";
+export type AddrType = 'legacy' | 'nested' | 'native' | 'taproot';
 
 export const ADDR_TYPES: {
   value: AddrType;
@@ -13,29 +13,29 @@ export const ADDR_TYPES: {
   outputVb: number;
 }[] = [
   {
-    value: "legacy",
-    label: "Legacy (P2PKH)",
+    value: 'legacy',
+    label: 'Legacy (P2PKH)',
     purpose: "44'",
     inputVb: 148,
     outputVb: 34,
   },
   {
-    value: "nested",
-    label: "Nested SegWit (P2SH)",
+    value: 'nested',
+    label: 'Nested SegWit (P2SH)',
     purpose: "49'",
     inputVb: 91,
     outputVb: 32,
   },
   {
-    value: "native",
-    label: "Native SegWit (P2WPKH)",
+    value: 'native',
+    label: 'Native SegWit (P2WPKH)',
     purpose: "84'",
     inputVb: 68,
     outputVb: 31,
   },
   {
-    value: "taproot",
-    label: "Taproot (P2TR)",
+    value: 'taproot',
+    label: 'Taproot (P2TR)',
     purpose: "86'",
     inputVb: 57.5,
     outputVb: 43,
@@ -49,11 +49,7 @@ export function addrMeta(type: AddrType) {
   return ADDR_TYPES.find((t) => t.value === type) ?? ADDR_TYPES[0];
 }
 
-export function txVBytes(
-  type: AddrType,
-  numIn: number,
-  numOut: number,
-): number {
+export function txVBytes(type: AddrType, numIn: number, numOut: number): number {
   const m = addrMeta(type);
   return TX_OVERHEAD_VB + numIn * m.inputVb + numOut * m.outputVb;
 }
@@ -64,15 +60,15 @@ export function feeSats(vbytes: number, feeRate: number): number {
 
 // 멤풀 혼잡도 프리셋 (sat/vB).
 export const FEE_PRESETS = [
-  { label: "여유", rate: 2 },
-  { label: "보통", rate: 15 },
-  { label: "혼잡", rate: 60 },
+  { label: '여유', rate: 2 },
+  { label: '보통', rate: 15 },
+  { label: '혼잡', rate: 60 },
 ] as const;
 
 export type Utxo = { id: number; sats: number };
 
 export function formatSats(sats: number): string {
-  return `${sats.toLocaleString("en-US")} sat`;
+  return `${sats.toLocaleString('en-US')} sat`;
 }
 
 export function satsToBtc(sats: number): string {

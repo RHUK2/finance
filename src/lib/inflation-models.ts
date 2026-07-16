@@ -12,10 +12,7 @@ export type Point = { time: string; value: number };
  * 해당 연도 시점의 관측값. 시계열이 그 연도를 포함하지 않으면(데이터가 그 이후
  * 시작) null. 예: BTC를 2010년 시작연도로 조회하면 null(2015년부터 존재).
  */
-export function valueAt(
-  history: Point[] | undefined,
-  year: number,
-): number | null {
+export function valueAt(history: Point[] | undefined, year: number): number | null {
   if (!history || history.length === 0) return null;
   if (history[0].time > `${year}-12-31`) return null;
   const target = `${year}-01-01`;
@@ -31,11 +28,7 @@ export function latestValue(history: Point[] | undefined): number | null {
 }
 
 /** 비율 환산: principal × (now / start). 자산·CPI·M2 평가에 공통 사용. */
-export function grow(
-  principal: number,
-  start: number | null,
-  now: number | null,
-): number | null {
+export function grow(principal: number, start: number | null, now: number | null): number | null {
   if (start == null || now == null || start === 0) return null;
   return principal * (now / start);
 }
@@ -44,11 +37,7 @@ export function grow(
  * 예금 누적: 연 환산 금리(%) 월별 시계열을 월복리로 누적.
  * 시작연도가 금리 데이터 범위 밖이면 null.
  */
-export function compoundDeposit(
-  principal: number,
-  rateHistory: Point[] | undefined,
-  year: number,
-): number | null {
+export function compoundDeposit(principal: number, rateHistory: Point[] | undefined, year: number): number | null {
   if (!rateHistory || rateHistory.length === 0) return null;
   if (rateHistory[0].time > `${year}-12-31`) return null;
   const target = `${year}-01-01`;
@@ -65,10 +54,7 @@ export function compoundDeposit(
  * 환율이 아직 없는 최근 달은 직전 환율을 이어쓴다(carry-forward). 두 시계열 모두
  * 시간 오름차순이라고 가정하고 2-포인터로 O(n+m) 처리.
  */
-export function toKrw(
-  usd: Point[] | undefined,
-  fx: Point[] | undefined,
-): Point[] | undefined {
+export function toKrw(usd: Point[] | undefined, fx: Point[] | undefined): Point[] | undefined {
   if (!usd || !fx || fx.length === 0) return undefined;
   let i = 0;
   return usd.map((p) => {
@@ -79,11 +65,7 @@ export function toKrw(
 }
 
 /** 시작연도=base로 정규화한 곡선(격차 차트용). */
-export function normalizeToBase(
-  history: Point[] | undefined,
-  baseYear: number,
-  base = 100,
-): Point[] {
+export function normalizeToBase(history: Point[] | undefined, baseYear: number, base = 100): Point[] {
   const baseVal = valueAt(history, baseYear);
   if (!history || baseVal == null || baseVal === 0) return [];
   return history
@@ -92,11 +74,7 @@ export function normalizeToBase(
 }
 
 /** 예금 누적 지수 곡선(레이스 차트용). baseYear에서 base로 출발해 월복리. */
-export function depositIndex(
-  rateHistory: Point[] | undefined,
-  baseYear: number,
-  base = 100,
-): Point[] {
+export function depositIndex(rateHistory: Point[] | undefined, baseYear: number, base = 100): Point[] {
   if (!rateHistory || rateHistory.length === 0) return [];
   if (rateHistory[0].time > `${baseYear}-12-31`) return [];
   const target = `${baseYear}-01-01`;
@@ -111,10 +89,7 @@ export function depositIndex(
 }
 
 /** 최저임금 테이블에서 해당 연도(이하 최댓값) 시급을 반환. */
-export function minWageAt(
-  table: { year: number; wage: number }[],
-  year: number,
-): number | null {
+export function minWageAt(table: { year: number; wage: number }[], year: number): number | null {
   let found: number | null = null;
   for (const row of table) {
     if (row.year <= year) found = row.wage;

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 
-import { Diamond, Zap } from "lucide-react";
+import { Diamond, Zap } from 'lucide-react';
 
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 import {
   AgentGrid,
@@ -15,15 +15,9 @@ import {
   RoundControls,
   SectionIntro,
   Sparkline,
-} from "@/components/simulation";
-import {
-  type Holder,
-  type HodlState,
-  buildHolders,
-  hodlStep,
-  initialHodlState,
-} from "./models";
-import { useRoundEngine } from "@/hooks/use-round-engine";
+} from '@/components/simulation';
+import { type Holder, type HodlState, buildHolders, hodlStep, initialHodlState } from './models';
+import { useRoundEngine } from '@/hooks/use-round-engine';
 
 const N = 180;
 const SEED = 777;
@@ -33,26 +27,21 @@ export function HodlDilemma() {
   const [meanConviction, setMeanConviction] = useState(0.5);
   const [speedMs, setSpeedMs] = useState(600);
 
-  const holders = useMemo(
-    () => buildHolders(N, meanConviction, SEED),
-    [meanConviction],
-  );
+  const holders = useMemo(() => buildHolders(N, meanConviction, SEED), [meanConviction]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <SectionIntro title="홀더의 딜레마: 던질까, 버틸까">
-        모두가 버티면(HODL) 가격은 지켜지지만, 누군가 던지기 시작하면 하락이 또
-        다른 매도를 부른다. 확신이 약한 손은 작은 하락에도 패닉 매도하고, 그
-        매도가 가격을 더 끌어내려 연쇄 청산을 일으킨다. 재생을 누르면 첫 박자에{" "}
-        <b>−15% 공포 충격</b>이 가해진다. 평균 확신도에 따라 시장이 붕괴하는지,
-        흡수하는지 지켜보자.
+    <div className='flex flex-col gap-4'>
+      <SectionIntro title='홀더의 딜레마: 던질까, 버틸까'>
+        모두가 버티면(HODL) 가격은 지켜지지만, 누군가 던지기 시작하면 하락이 또 다른 매도를 부른다. 확신이 약한 손은
+        작은 하락에도 패닉 매도하고, 그 매도가 가격을 더 끌어내려 연쇄 청산을 일으킨다. 재생을 누르면 첫 박자에{' '}
+        <b>−15% 공포 충격</b>이 가해진다. 평균 확신도에 따라 시장이 붕괴하는지, 흡수하는지 지켜보자.
       </SectionIntro>
 
-      <Card className="gap-4 p-4">
+      <Card className='gap-4 p-4'>
         <ControlSlider
-          icon={<Diamond className="size-4 text-emerald-500" />}
-          label="얼마나 잘 버티나 (평균 확신도)"
-          hint="가격이 떨어져도 안 던지고 버티는 정도. 높일수록 다이아몬드손이 많아 작은 충격은 흡수하고, 낮추면 약한 손이 먼저 던져 연쇄 매도가 터진다."
+          icon={<Diamond className='size-4 text-emerald-500' />}
+          label='얼마나 잘 버티나 (평균 확신도)'
+          hint='가격이 떨어져도 안 던지고 버티는 정도. 높일수록 다이아몬드손이 많아 작은 충격은 흡수하고, 낮추면 약한 손이 먼저 던져 연쇄 매도가 터진다.'
           value={meanConviction}
           onChange={setMeanConviction}
           min={0.2}
@@ -63,16 +52,11 @@ export function HodlDilemma() {
       </Card>
 
       {/* key로 확신도 분포 변경 시 리마운트 → 초기화 */}
-      <HodlSim
-        key={meanConviction}
-        holders={holders}
-        speedMs={speedMs}
-        onSpeed={setSpeedMs}
-      />
+      <HodlSim key={meanConviction} holders={holders} speedMs={speedMs} onSpeed={setSpeedMs} />
 
       <ExplainCard
-        title="왜 버티기가 뱅크런과 같은 구조일까?"
-        preview="모두 버티면 최선이지만, 각자는 남보다 먼저 던지려는 유혹에 노출된다."
+        title='왜 버티기가 뱅크런과 같은 구조일까?'
+        preview='모두 버티면 최선이지만, 각자는 남보다 먼저 던지려는 유혹에 노출된다.'
         body="비트코인 보유자 전체로 보면 '모두 버티기'가 모두에게 최선의 균형이다. 하지만 각자는 '남들이 던지기 전에 내가 먼저 던질까'라는 유혹에 노출돼 있다. 뱅크런과 같은 구조다. 공급량이 고정돼 새로 찍어낼 수 없고, 장기 보유자(다이아몬드손) 비중이 커질수록 유통 물량이 줄어 같은 충격에도 가격이 덜 흔들린다. 확신의 분포가 곧 네트워크의 회복탄력성이다."
       />
     </div>
@@ -81,15 +65,7 @@ export function HodlDilemma() {
 
 type Sim = { state: HodlState; history: number[] };
 
-function HodlSim({
-  holders,
-  speedMs,
-  onSpeed,
-}: {
-  holders: Holder[];
-  speedMs: number;
-  onSpeed: (ms: number) => void;
-}) {
+function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: number; onSpeed: (ms: number) => void }) {
   const init = (): Sim => ({ state: initialHodlState(N), history: [100] });
   const [sim, setSim] = useState<Sim>(init);
 
@@ -107,20 +83,17 @@ function HodlSim({
   const { state, history } = sim;
   const soldCount = state.sold.filter(Boolean).length;
   const holding = N - soldCount;
-  const states = state.sold.map((s) => (s ? "bg-rose-500" : "bg-emerald-500"));
+  const states = state.sold.map((s) => (s ? 'bg-rose-500' : 'bg-emerald-500'));
 
   const collapsed = state.round > 0 && soldCount > N * 0.5;
   const survived = state.round > 0 && soldCount <= N * 0.1;
 
   return (
     <>
-      <Card className="gap-3 p-4">
-        <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-          <Zap className="size-3.5 text-rose-500" />첫 박자에 외생 공포 충격{" "}
-          <span className="font-medium text-rose-600 dark:text-rose-400">
-            −{Math.round(SHOCK * 100)}%
-          </span>{" "}
-          자동 적용
+      <Card className='gap-3 p-4'>
+        <div className='text-muted-foreground flex items-center gap-1.5 text-xs'>
+          <Zap className='size-3.5 text-rose-500' />첫 박자에 외생 공포 충격{' '}
+          <span className='font-medium text-rose-600 dark:text-rose-400'>−{Math.round(SHOCK * 100)}%</span> 자동 적용
         </div>
         <RoundControls
           playing={engine.playing}
@@ -137,42 +110,36 @@ function HodlSim({
         <AgentGrid states={states} />
         <Sparkline
           values={history}
-          label="가격"
-          className={
-            history[history.length - 1] < 60
-              ? "text-rose-500"
-              : "text-emerald-500"
-          }
+          label='가격'
+          className={history[history.length - 1] < 60 ? 'text-rose-500' : 'text-emerald-500'}
           min={0}
           max={100}
-          heightClass="h-10"
+          heightClass='h-10'
         />
       </Card>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
-          label="가격 (시작 100)"
+          label='가격 (시작 100)'
           value={state.price.toFixed(1)}
-          tone={
-            state.price < 60 ? "bad" : state.price >= 95 ? "good" : undefined
-          }
+          tone={state.price < 60 ? 'bad' : state.price >= 95 ? 'good' : undefined}
         />
-        <Metric label="매도자" value={`${soldCount}`} tone="bad" />
-        <Metric label="버티는 손" value={`${holding}`} tone="good" />
+        <Metric label='매도자' value={`${soldCount}`} tone='bad' />
+        <Metric label='버티는 손' value={`${holding}`} tone='good' />
       </div>
 
       {(collapsed || survived) && (
         <p
           className={cn(
-            "rounded-md px-3 py-2 text-xs",
+            'rounded-md px-3 py-2 text-xs',
             collapsed
-              ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+              ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+              : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
           )}
         >
           {collapsed
-            ? "💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다."
-            : "💎 다이아몬드손이 충격을 흡수했다. 확신이 강한 보유자가 던지지 않으니 매도가 더 번지지 않고 첫 충격 선에서 멈췄다."}
+            ? '💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다.'
+            : '💎 다이아몬드손이 충격을 흡수했다. 확신이 강한 보유자가 던지지 않으니 매도가 더 번지지 않고 첫 충격 선에서 멈췄다.'}
         </p>
       )}
     </>

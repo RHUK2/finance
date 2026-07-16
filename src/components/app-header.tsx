@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Breadcrumb,
@@ -7,7 +7,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,15 +15,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { NAV_GROUPS } from "@/lib/nav";
-import { ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { NAV_GROUPS } from '@/lib/nav';
+import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 type BreadcrumbEntry = { label: string; href?: string };
 
@@ -37,24 +37,24 @@ export function AppHeader({ breadcrumbs }: Props) {
   const router = useRouter();
 
   return (
-    <header className="bg-sidebar dark:bg-background sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b px-4">
-      <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" />
+    <header className='bg-sidebar dark:bg-background sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b px-4'>
+      <SidebarTrigger className='-ml-1' />
+      <Separator orientation='vertical' />
       <Breadcrumb>
         <BreadcrumbList>
           {breadcrumbs.map((item, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
-              <span key={item.label} className="flex items-center gap-1.5">
+              <span key={item.label} className='flex items-center gap-1.5'>
                 {i > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
                   {isLast && isMobile ? (
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="flex cursor-pointer items-center gap-1 font-medium outline-none">
+                      <DropdownMenuTrigger className='flex cursor-pointer items-center gap-1 font-medium outline-none'>
                         {item.label}
-                        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                        <ChevronDown className='h-3.5 w-3.5 opacity-60' />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="min-w-44">
+                      <DropdownMenuContent align='start' className='min-w-44'>
                         {NAV_GROUPS.map((group) => ({
                           label: group.label,
                           items: group.items.filter((n) => n.href !== pathname),
@@ -63,20 +63,15 @@ export function AppHeader({ breadcrumbs }: Props) {
                           .map((group, gi) => (
                             <span key={group.label}>
                               {gi > 0 && <DropdownMenuSeparator />}
-                              <DropdownMenuLabel className="text-muted-foreground text-xs">
+                              <DropdownMenuLabel className='text-muted-foreground text-xs'>
                                 {group.label}
                               </DropdownMenuLabel>
-                              {group.items.map(
-                                ({ label, href, icon: Icon }) => (
-                                  <DropdownMenuItem
-                                    key={href}
-                                    onClick={() => router.push(href)}
-                                  >
-                                    <Icon className="h-4 w-4" />
-                                    {label}
-                                  </DropdownMenuItem>
-                                ),
-                              )}
+                              {group.items.map(({ label, href, icon: Icon }) => (
+                                <DropdownMenuItem key={href} onClick={() => router.push(href)}>
+                                  <Icon className='h-4 w-4' />
+                                  {label}
+                                </DropdownMenuItem>
+                              ))}
                             </span>
                           ))}
                       </DropdownMenuContent>
@@ -85,7 +80,7 @@ export function AppHeader({ breadcrumbs }: Props) {
                     <BreadcrumbPage>{item.label}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={item.href ?? "/"}>{item.label}</Link>
+                      <Link href={item.href ?? '/'}>{item.label}</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
@@ -94,7 +89,7 @@ export function AppHeader({ breadcrumbs }: Props) {
           })}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="ml-auto">
+      <div className='ml-auto'>
         <ThemeToggle />
       </div>
     </header>

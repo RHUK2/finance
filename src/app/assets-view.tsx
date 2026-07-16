@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { AppHeader } from "@/components/app-header";
-import { AssetsTable } from "@/components/assets-table";
-import { PageMain } from "@/components/page-main";
-import { useRelativeTime } from "@/hooks/use-relative-time";
-import { useMarket } from "@/hooks/use-market";
+import { AppHeader } from '@/components/app-header';
+import { AssetsTable } from '@/components/assets-table';
+import { PageMain } from '@/components/page-main';
+import { useRelativeTime } from '@/hooks/use-relative-time';
+import { useMarket } from '@/hooks/use-market';
 
 export function AssetsView() {
   const { data: market, isLoading } = useMarket();
@@ -13,13 +13,9 @@ export function AssetsView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: "자산 현황" }]} />
+      <AppHeader breadcrumbs={[{ label: '자산 현황' }]} />
       <PageMain>
-        <AssetsTable
-          data={market?.items ?? []}
-          isLoading={isLoading}
-          updatedLabel={relativeTime}
-        />
+        <AssetsTable data={market?.items ?? []} isLoading={isLoading} updatedLabel={relativeTime} />
       </PageMain>
     </>
   );

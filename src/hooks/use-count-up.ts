@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 /** 목표값으로 RAF cubic-ease 카운트업하는 훅. (page-main.tsx의 RAF 이징과 동일 방식) */
 export function useCountUp(target: number, duration = 500) {

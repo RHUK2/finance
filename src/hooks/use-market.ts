@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEndpoint } from "@/hooks/use-endpoint";
+import { useEndpoint } from '@/hooks/use-endpoint';
 
 export type MarketItem = {
   symbol: string;
   ticker: string;
   label: string;
-  type: "stock" | "crypto" | "macro";
+  type: 'stock' | 'crypto' | 'macro';
   gfUrl?: string;
   hideCurrencySymbol?: boolean;
   price: number | null;
@@ -20,4 +20,4 @@ export type MarketData = {
   items: MarketItem[];
 };
 
-export const useMarket = () => useEndpoint<MarketData>("market");
+export const useMarket = () => useEndpoint<MarketData>('market');

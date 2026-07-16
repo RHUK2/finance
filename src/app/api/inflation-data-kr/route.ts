@@ -1,34 +1,30 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
-import { toMacroSeries, type MacroSeries } from "@/lib/series";
+import { cached } from '@/lib/cache';
+import { toMacroSeries, type MacroSeries } from '@/lib/series';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-const START = "199601"; // 예금금리 시계열 시작 시점에 맞춤
+const START = '199601'; // 예금금리 시계열 시작 시점에 맞춤
 const STAT = {
   // ⚠️ 통계표코드/항목코드는 ECOS "통계코드검색"으로 검증 후 확정할 것.
   //    한국은행이 표를 개편하면 코드가 바뀔 수 있다.
-  cpi: { stat: "901Y009", item: "0" }, // 소비자물가지수(총지수)
-  m2: { stat: "161Y006", item: "BBHA00" }, // M2(광의통화, 평잔·원계열) 신계열, 2003~
-  deposit: { stat: "722Y001", item: "0101000" }, // 한국은행 기준금리(단기 안전금리 근사, 미국 TB3MS에 대응)
-  stock: { stat: "901Y014", item: "1070000" }, // KOSPI 종가(월), 배당 제외
-  house: { stat: "901Y062", item: "P63A" }, // KB 주택매매가격지수(총지수)
-  fx: { stat: "731Y004", item: "0000001/0000100" }, // 원/미국달러 환율(매매기준율, 월평균자료). USD 자산의 원화 환산용. item2=0000100(평균자료)
+  cpi: { stat: '901Y009', item: '0' }, // 소비자물가지수(총지수)
+  m2: { stat: '161Y006', item: 'BBHA00' }, // M2(광의통화, 평잔·원계열) 신계열, 2003~
+  deposit: { stat: '722Y001', item: '0101000' }, // 한국은행 기준금리(단기 안전금리 근사, 미국 TB3MS에 대응)
+  stock: { stat: '901Y014', item: '1070000' }, // KOSPI 종가(월), 배당 제외
+  house: { stat: '901Y062', item: 'P63A' }, // KB 주택매매가격지수(총지수)
+  fx: { stat: '731Y004', item: '0000001/0000100' }, // 원/미국달러 환율(매매기준율, 월평균자료). USD 자산의 원화 환산용. item2=0000100(평균자료)
 } as const;
 
 function endMonth(): string {
   const now = new Date();
-  return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}`;
+  return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
-async function fetchSeries(
-  key: string,
-  stat: string,
-  item: string,
-): Promise<MacroSeries> {
+async function fetchSeries(key: string, stat: string, item: string): Promise<MacroSeries> {
   const url = `https://ecos.bok.or.kr/api/StatisticSearch/${key}/json/kr/1/100000/${stat}/M/${START}/${endMonth()}/${item}`;
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`ECOS ${stat} error: ${res.status}`);
 
   const data = await res.json();
@@ -37,7 +33,7 @@ async function fetchSeries(
     DATA_VALUE: string;
   }[];
   const history = rows
-    .filter((r) => r.DATA_VALUE != null && r.DATA_VALUE !== "")
+    .filter((r) => r.DATA_VALUE != null && r.DATA_VALUE !== '')
     .map((r) => ({
       time: `${r.TIME.slice(0, 4)}-${r.TIME.slice(4, 6)}-01`,
       value: Number(r.DATA_VALUE),
@@ -48,7 +44,7 @@ async function fetchSeries(
 
 export async function GET() {
   try {
-    const data = await cached("inflation-data-kr", async () => {
+    const data = await cached('inflation-data-kr', async () => {
       const key = process.env.ECOS_API_KEY;
       if (!key) {
         return { fetchedAt: new Date().toISOString(), available: false };
@@ -77,10 +73,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("inflation-data-kr fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch ECOS data" },
-      { status: 500 },
-    );
+    console.error('inflation-data-kr fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch ECOS data' }, { status: 500 });
   }
 }

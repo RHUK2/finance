@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useScrollDrag() {
   const elRef = useRef<HTMLDivElement | null>(null);
@@ -15,24 +15,24 @@ export function useScrollDrag() {
     scrollLeft: 0,
     moved: false,
   });
-  const [mask, setMask] = useState<"none" | "left" | "right" | "both">("none");
+  const [mask, setMask] = useState<'none' | 'left' | 'right' | 'both'>('none');
 
   useEffect(() => {
     if (!el) return;
     const updateMask = () => {
       const canLeft = el.scrollLeft > 0;
       const canRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
-      if (canLeft && canRight) setMask("both");
-      else if (canLeft) setMask("left");
-      else if (canRight) setMask("right");
-      else setMask("none");
+      if (canLeft && canRight) setMask('both');
+      else if (canLeft) setMask('left');
+      else if (canRight) setMask('right');
+      else setMask('none');
     };
     updateMask();
-    el.addEventListener("scroll", updateMask, { passive: true });
+    el.addEventListener('scroll', updateMask, { passive: true });
     const ro = new ResizeObserver(updateMask);
     ro.observe(el);
     return () => {
-      el.removeEventListener("scroll", updateMask);
+      el.removeEventListener('scroll', updateMask);
       ro.disconnect();
     };
   }, [el]);
@@ -73,12 +73,12 @@ export function useScrollDrag() {
 
   const maskStyle: React.CSSProperties = {
     maskImage:
-      mask === "both"
-        ? "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)"
-        : mask === "left"
-          ? "linear-gradient(to right, transparent 0%, black 5%)"
-          : mask === "right"
-            ? "linear-gradient(to right, black 95%, transparent 100%)"
+      mask === 'both'
+        ? 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)'
+        : mask === 'left'
+          ? 'linear-gradient(to right, transparent 0%, black 5%)'
+          : mask === 'right'
+            ? 'linear-gradient(to right, black 95%, transparent 100%)'
             : undefined,
   };
 

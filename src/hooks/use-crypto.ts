@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEndpoint } from "@/hooks/use-endpoint";
+import { useEndpoint } from '@/hooks/use-endpoint';
 
 export type FearGreedData = {
   fetchedAt: string;
@@ -23,7 +23,6 @@ export type BitcoinHistoricalData = {
   history: { time: string; value: number }[];
 };
 
-export const useFearGreed = () => useEndpoint<FearGreedData>("fear-greed");
-export const useMvrv = () => useEndpoint<MvrvData>("mvrv");
-export const useBitcoinHistorical = () =>
-  useEndpoint<BitcoinHistoricalData>("bitcoin-historical");
+export const useFearGreed = () => useEndpoint<FearGreedData>('fear-greed');
+export const useMvrv = () => useEndpoint<MvrvData>('mvrv');
+export const useBitcoinHistorical = () => useEndpoint<BitcoinHistoricalData>('bitcoin-historical');

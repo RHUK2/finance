@@ -1,6 +1,6 @@
-import { Redis } from "@upstash/redis";
+import { Redis } from '@upstash/redis';
 
-import { cacheSeconds, type EndpointKey } from "./cache-config";
+import { cacheSeconds, type EndpointKey } from './cache-config';
 
 /**
  * 분산 POP 간 데이터·갱신시각을 일치시키는 공유 read-through 캐시.
@@ -32,10 +32,7 @@ const WAIT_INTERVAL = 300; // 폴링 간격(ms).
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export async function cached<T>(
-  key: EndpointKey,
-  fetcher: () => Promise<T>,
-): Promise<T> {
+export async function cached<T>(key: EndpointKey, fetcher: () => Promise<T>): Promise<T> {
   const r = redis();
   const cacheKey = `cache:${key}`;
   const lockKey = `lock:${key}`;
@@ -45,7 +42,7 @@ export async function cached<T>(
   if (entry && Date.now() < entry.freshUntil) return entry.data;
 
   // 만료/미스 → 한 요청만 외부 API를 호출하도록 락 시도.
-  const locked = await r.set(lockKey, "1", { nx: true, ex: LOCK_TTL });
+  const locked = await r.set(lockKey, '1', { nx: true, ex: LOCK_TTL });
 
   if (locked) {
     try {

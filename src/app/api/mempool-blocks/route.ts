@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
+import { cached } from '@/lib/cache';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 type MempoolBlock = {
   blockVSize: number;
@@ -13,11 +13,8 @@ type MempoolBlock = {
 
 export async function GET() {
   try {
-    const data = await cached("mempool-blocks", async () => {
-      const res = await fetch(
-        "https://mempool.space/api/v1/fees/mempool-blocks",
-        { cache: "no-store" },
-      );
+    const data = await cached('mempool-blocks', async () => {
+      const res = await fetch('https://mempool.space/api/v1/fees/mempool-blocks', { cache: 'no-store' });
       if (!res.ok) throw new Error(`mempool blocks error: ${res.status}`);
 
       const blocks = ((await res.json()) as MempoolBlock[]).map((b) => ({
@@ -34,10 +31,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("mempool-blocks fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch mempool blocks" },
-      { status: 500 },
-    );
+    console.error('mempool-blocks fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch mempool blocks' }, { status: 500 });
   }
 }

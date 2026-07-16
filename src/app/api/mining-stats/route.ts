@@ -1,30 +1,27 @@
-import { cached } from "@/lib/cache";
-import { pctChange } from "@/lib/utils";
-import { NextResponse } from "next/server";
+import { cached } from '@/lib/cache';
+import { pctChange } from '@/lib/utils';
+import { NextResponse } from 'next/server';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const data = await cached("mining-stats", async () => {
+    const data = await cached('mining-stats', async () => {
       const [hashrateRes, difficultyRes, blockHeightRes] = await Promise.all([
-        fetch("https://mempool.space/api/v1/mining/hashrate/1w", {
-          cache: "no-store",
+        fetch('https://mempool.space/api/v1/mining/hashrate/1w', {
+          cache: 'no-store',
         }),
-        fetch("https://mempool.space/api/v1/difficulty-adjustment", {
-          cache: "no-store",
+        fetch('https://mempool.space/api/v1/difficulty-adjustment', {
+          cache: 'no-store',
         }),
-        fetch("https://mempool.space/api/blocks/tip/height", {
-          cache: "no-store",
+        fetch('https://mempool.space/api/blocks/tip/height', {
+          cache: 'no-store',
         }),
       ]);
 
-      if (!hashrateRes.ok)
-        throw new Error(`hashrate error: ${hashrateRes.status}`);
-      if (!difficultyRes.ok)
-        throw new Error(`difficulty error: ${difficultyRes.status}`);
-      if (!blockHeightRes.ok)
-        throw new Error(`block height error: ${blockHeightRes.status}`);
+      if (!hashrateRes.ok) throw new Error(`hashrate error: ${hashrateRes.status}`);
+      if (!difficultyRes.ok) throw new Error(`difficulty error: ${difficultyRes.status}`);
+      if (!blockHeightRes.ok) throw new Error(`block height error: ${blockHeightRes.status}`);
 
       const hashrateData = await hashrateRes.json();
       const difficulty = await difficultyRes.json();
@@ -42,17 +39,9 @@ export async function GET() {
       const remainingHalvingBlocks = nextHalvingBlock - blockHeight;
 
       const timeAvgMs = (difficulty.timeAvg as number) || 600_000;
-      const estimatedHalvingDate = new Date(
-        Date.now() + remainingHalvingBlocks * timeAvgMs,
-      )
-        .toISOString()
-        .slice(0, 10);
+      const estimatedHalvingDate = new Date(Date.now() + remainingHalvingBlocks * timeAvgMs).toISOString().slice(0, 10);
 
-      const estimatedRetargetDate = new Date(
-        difficulty.estimatedRetargetDate as number,
-      )
-        .toISOString()
-        .slice(0, 10);
+      const estimatedRetargetDate = new Date(difficulty.estimatedRetargetDate as number).toISOString().slice(0, 10);
 
       return {
         fetchedAt: new Date().toISOString(),
@@ -60,12 +49,8 @@ export async function GET() {
         hashrateChangePct,
         blockHeight,
         blockRewardBTC,
-        difficultyChangePct: Number(
-          (difficulty.difficultyChange as number).toFixed(2),
-        ),
-        previousDifficultyChangePct: Number(
-          (difficulty.previousRetarget as number).toFixed(2),
-        ),
+        difficultyChangePct: Number((difficulty.difficultyChange as number).toFixed(2)),
+        previousDifficultyChangePct: Number((difficulty.previousRetarget as number).toFixed(2)),
         remainingBlocks: difficulty.remainingBlocks as number,
         estimatedRetargetDate,
         nextHalvingBlock,
@@ -77,10 +62,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("mining-stats fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch mining stats" },
-      { status: 500 },
-    );
+    console.error('mining-stats fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch mining stats' }, { status: 500 });
   }
 }

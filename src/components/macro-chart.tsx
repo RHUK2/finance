@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChartContainer } from "@/components/chart-container";
-import { LineSeries, useChart } from "@/hooks/use-chart";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChartContainer } from '@/components/chart-container';
+import { LineSeries, useChart } from '@/hooks/use-chart';
 
 export type MacroLine = {
   label?: string;
@@ -21,15 +21,7 @@ type Props = {
   description?: string;
 };
 
-export function MacroChart({
-  title,
-  currentLabel,
-  changePercent,
-  lines,
-  updatedLabel,
-  resetRef,
-  description,
-}: Props) {
+export function MacroChart({ title, currentLabel, changePercent, lines, updatedLabel, resetRef, description }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       if (!lines) return;
@@ -51,43 +43,33 @@ export function MacroChart({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            {title}
-          </CardTitle>
-          {updatedLabel && (
-            <span className="text-muted-foreground text-xs">
-              {updatedLabel}
-            </span>
-          )}
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-muted-foreground text-sm font-medium'>{title}</CardTitle>
+          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
         </div>
         {!lines ? (
-          <Skeleton className="h-8 w-32" />
+          <Skeleton className='h-8 w-32' />
         ) : (
-          <div className="flex items-end gap-2">
-            <span className="text-2xl font-bold">{currentLabel}</span>
+          <div className='flex items-end gap-2'>
+            <span className='text-2xl font-bold'>{currentLabel}</span>
             {changePercent != null && (
-              <span
-                className={`mb-1 text-sm font-semibold ${changePercent >= 0 ? "text-green-400" : "text-red-400"}`}
-              >
-                {changePercent >= 0 ? "▲" : "▼"} {Math.abs(changePercent)}%
+              <span className={`mb-1 text-sm font-semibold ${changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {changePercent >= 0 ? '▲' : '▼'} {Math.abs(changePercent)}%
               </span>
             )}
           </div>
         )}
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className='p-0'>
         {!lines ? (
-          <Skeleton className="h-[240px] w-full rounded-none" />
+          <Skeleton className='h-[240px] w-full rounded-none' />
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
         {description ? (
-          <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-            {description}
-          </p>
+          <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>{description}</p>
         ) : (
-          <div className="h-4" />
+          <div className='h-4' />
         )}
       </CardContent>
     </Card>

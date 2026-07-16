@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from 'react';
 import {
   ColorType,
   LineStyle,
@@ -9,16 +9,10 @@ import {
   type IChartApi,
   type ISeriesApi,
   type SeriesType,
-} from "lightweight-charts";
+} from 'lightweight-charts';
 
 // 차트 컴포넌트가 lightweight-charts를 직접 import하지 않도록 여기서 재수출한다 (단일 관문).
-export {
-  AreaSeries,
-  LineSeries,
-  LineStyle,
-  createSeriesMarkers,
-  type Time,
-} from "lightweight-charts";
+export { AreaSeries, LineSeries, LineStyle, createSeriesMarkers, type Time } from 'lightweight-charts';
 
 // 지표 차트 공용. 기준선(존 경계)을 점선 price line으로 추가.
 export function addZoneLines(
@@ -48,12 +42,7 @@ type ChartOverrides = {
 export function useChart(
   setup: (chart: IChartApi) => void,
   deps: React.DependencyList,
-  {
-    height = 280,
-    logScale = false,
-    timeVisible = false,
-    resetRef,
-  }: ChartOverrides = {},
+  { height = 280, logScale = false, timeVisible = false, resetRef }: ChartOverrides = {},
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -65,7 +54,7 @@ export function useChart(
   const resetView = useCallback(() => {
     if (!dirtyRef.current) return;
     dirtyRef.current = false;
-    chartRef.current?.priceScale("right").applyOptions({ autoScale: true });
+    chartRef.current?.priceScale('right').applyOptions({ autoScale: true });
     chartRef.current?.timeScale().fitContent();
   }, []);
 
@@ -83,25 +72,25 @@ export function useChart(
       height,
       hoveredSeriesOnTop: false,
       layout: {
-        background: { type: ColorType.Solid, color: "transparent" },
-        textColor: "#9ca3af",
+        background: { type: ColorType.Solid, color: 'transparent' },
+        textColor: '#9ca3af',
       },
       grid: {
-        vertLines: { color: "#1f2937" },
-        horzLines: { color: "#1f2937" },
+        vertLines: { color: '#1f2937' },
+        horzLines: { color: '#1f2937' },
       },
       rightPriceScale: {
-        borderColor: "#374151",
+        borderColor: '#374151',
         ...(logScale && { mode: PriceScaleMode.Logarithmic }),
       },
       timeScale: {
-        borderColor: "#374151",
+        borderColor: '#374151',
         minBarSpacing: 0.1,
         ...(timeVisible && { timeVisible: true }),
       },
       crosshair: {
-        vertLine: { color: "#6b7280" },
-        horzLine: { color: "#6b7280" },
+        vertLine: { color: '#6b7280' },
+        horzLine: { color: '#6b7280' },
       },
     });
 
@@ -111,8 +100,8 @@ export function useChart(
     const markDirty = () => {
       dirtyRef.current = true;
     };
-    container.addEventListener("wheel", markDirty, { passive: true });
-    container.addEventListener("pointerdown", markDirty, { passive: true });
+    container.addEventListener('wheel', markDirty, { passive: true });
+    container.addEventListener('pointerdown', markDirty, { passive: true });
 
     let resizeObserver: ResizeObserver | null = null;
     const rafId = requestAnimationFrame(() => {
@@ -128,8 +117,8 @@ export function useChart(
     return () => {
       cancelAnimationFrame(rafId);
       resizeObserver?.disconnect();
-      container.removeEventListener("wheel", markDirty);
-      container.removeEventListener("pointerdown", markDirty);
+      container.removeEventListener('wheel', markDirty);
+      container.removeEventListener('pointerdown', markDirty);
       chart.remove();
       chartRef.current = null;
     };

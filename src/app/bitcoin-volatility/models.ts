@@ -1,7 +1,7 @@
 // 비트코인 변동성 = 체제 전환 확률 페이지의 순수 계산 모델.
 // 외부 API 없이 클라이언트에서 계산하며, 모든 수치는 개념 설명용 예시다.
 
-import { clamp } from "@/lib/utils";
+import { clamp } from '@/lib/utils';
 
 // 최대 발행량(2,100만 개). 성공 시(터미널) 가격 환산 분모.
 export const SUPPLY = 21_000_000;
@@ -26,12 +26,7 @@ function noise(rng: () => number) {
   return rng() + rng() - 1;
 }
 
-export function stepP(
-  p: number,
-  sigma: number,
-  drift: number,
-  rng: () => number,
-): number {
+export function stepP(p: number, sigma: number, drift: number, rng: () => number): number {
   return clamp(p + drift + sigma * noise(rng), 0.002, 1);
 }
 
@@ -40,7 +35,6 @@ export function realizedVol(returns: number[], window: number): number {
   const slice = returns.slice(-window);
   if (slice.length < 2) return 0;
   const mean = slice.reduce((a, b) => a + b, 0) / slice.length;
-  const variance =
-    slice.reduce((a, b) => a + (b - mean) ** 2, 0) / slice.length;
+  const variance = slice.reduce((a, b) => a + (b - mean) ** 2, 0) / slice.length;
   return Math.sqrt(variance);
 }

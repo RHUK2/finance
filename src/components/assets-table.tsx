@@ -1,19 +1,13 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { type MarketItem } from "@/hooks/use-market";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useScrollDrag } from "@/hooks/use-scroll-drag";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { type MarketItem } from '@/hooks/use-market';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useScrollDrag } from '@/hooks/use-scroll-drag';
+import { cn } from '@/lib/utils';
 import {
   createColumnHelper,
   flexRender,
@@ -22,99 +16,74 @@ import {
   getSortedRowModel,
   useReactTable,
   type SortingState,
-} from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  Search,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+} from '@tanstack/react-table';
+import { ArrowDown, ArrowUp, ArrowUpDown, Search, TrendingDown, TrendingUp } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 const TYPE_LABELS: Record<string, string> = {
-  all: "전체",
-  crypto: "가상화폐",
-  stock: "주식",
-  macro: "지표",
+  all: '전체',
+  crypto: '가상화폐',
+  stock: '주식',
+  macro: '지표',
 };
 
 const TYPE_DOT_COLORS: Record<string, string> = {
-  crypto: "bg-amber-500",
-  stock: "bg-blue-500",
-  macro: "bg-emerald-500",
+  crypto: 'bg-amber-500',
+  stock: 'bg-blue-500',
+  macro: 'bg-emerald-500',
 };
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
-  KRW: "₩",
-  USD: "$",
-  JPY: "¥",
-  EUR: "€",
-  GBP: "£",
+  KRW: '₩',
+  USD: '$',
+  JPY: '¥',
+  EUR: '€',
+  GBP: '£',
 };
 
 function currencySymbol(currency: string) {
   return CURRENCY_SYMBOLS[currency] ?? currency;
 }
 
-const FMT_KRW = new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 0 });
-const FMT_BTC = new Intl.NumberFormat("en-US", {
+const FMT_KRW = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 0 });
+const FMT_BTC = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 6,
   maximumFractionDigits: 8,
 });
-const FMT_USD = new Intl.NumberFormat("en-US", {
+const FMT_USD = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 
 function formatPrice(price: number, currency: string) {
-  if ((currency === "KRW" && price >= 100) || price > 100000)
-    return FMT_KRW.format(price);
+  if ((currency === 'KRW' && price >= 100) || price > 100000) return FMT_KRW.format(price);
   if (price < 0.01) return FMT_BTC.format(price);
   return FMT_USD.format(price);
 }
 
-function PriceDisplay({
-  item,
-  priceClassName,
-}: {
-  item: MarketItem;
-  priceClassName?: string;
-}) {
-  if (item.price === null)
-    return <span className="text-muted-foreground">-</span>;
+function PriceDisplay({ item, priceClassName }: { item: MarketItem; priceClassName?: string }) {
+  if (item.price === null) return <span className='text-muted-foreground'>-</span>;
   return (
-    <div className={cn("tabular-nums", priceClassName)}>
+    <div className={cn('tabular-nums', priceClassName)}>
       {!item.hideCurrencySymbol && currencySymbol(item.currency)}
       {formatPrice(item.price, item.currency)}
     </div>
   );
 }
 
-function PercentageChange({
-  value,
-  className,
-}: {
-  value: number | null;
-  className?: string;
-}) {
-  if (value === null) return <span className="text-muted-foreground">-</span>;
+function PercentageChange({ value, className }: { value: number | null; className?: string }) {
+  if (value === null) return <span className='text-muted-foreground'>-</span>;
   const isPositive = value >= 0;
   return (
     <div
       className={cn(
-        "flex items-center justify-end gap-1 tabular-nums",
-        isPositive ? "text-green-500" : "text-red-500",
+        'flex items-center justify-end gap-1 tabular-nums',
+        isPositive ? 'text-green-500' : 'text-red-500',
         className,
       )}
     >
-      {isPositive ? (
-        <TrendingUp className="h-3 w-3 shrink-0" />
-      ) : (
-        <TrendingDown className="h-3 w-3 shrink-0" />
-      )}
-      {isPositive ? "+" : ""}
+      {isPositive ? <TrendingUp className='h-3 w-3 shrink-0' /> : <TrendingDown className='h-3 w-3 shrink-0' />}
+      {isPositive ? '+' : ''}
       {value.toFixed(2)}%
     </div>
   );
@@ -128,100 +97,73 @@ type Props = {
   updatedLabel?: string;
 };
 
-const ASSET_TYPES = ["all", "macro", "crypto", "stock"];
+const ASSET_TYPES = ['all', 'macro', 'crypto', 'stock'];
 
 const MOBILE_SORT_OPTIONS = [
-  { value: "default", label: "기본" },
-  { value: "label-asc", label: "자산명 오름차순" },
-  { value: "price-desc", label: "가격 높은순" },
-  { value: "price-asc", label: "가격 낮은순" },
-  { value: "changePercent-desc", label: "증감 높은순" },
-  { value: "changePercent-asc", label: "증감 낮은순" },
+  { value: 'default', label: '기본' },
+  { value: 'label-asc', label: '자산명 오름차순' },
+  { value: 'price-desc', label: '가격 높은순' },
+  { value: 'price-asc', label: '가격 낮은순' },
+  { value: 'changePercent-desc', label: '증감 높은순' },
+  { value: 'changePercent-asc', label: '증감 낮은순' },
 ];
 
 export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   const isMobile = useIsMobile();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [mobileSortKey, setMobileSortKey] = useState("default");
-  const {
-    ref: filterRef,
-    handlers: filterHandlers,
-    maskStyle: filterMaskStyle,
-  } = useScrollDrag();
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [mobileSortKey, setMobileSortKey] = useState('default');
+  const { ref: filterRef, handlers: filterHandlers, maskStyle: filterMaskStyle } = useScrollDrag();
 
   const filtered = useMemo(
-    () =>
-      typeFilter === "all"
-        ? data
-        : data.filter((item) => item.type === typeFilter),
+    () => (typeFilter === 'all' ? data : data.filter((item) => item.type === typeFilter)),
     [data, typeFilter],
   );
 
   const mobileSorted = useMemo(() => {
     const q = globalFilter.trim().toLowerCase();
     const searched = q
-      ? filtered.filter(
-          (item) =>
-            item.label.toLowerCase().includes(q) ||
-            item.ticker.toLowerCase().includes(q),
-        )
+      ? filtered.filter((item) => item.label.toLowerCase().includes(q) || item.ticker.toLowerCase().includes(q))
       : filtered;
-    if (mobileSortKey === "default") return searched;
-    const [col, dir] = mobileSortKey.split("-") as [string, "asc" | "desc"];
+    if (mobileSortKey === 'default') return searched;
+    const [col, dir] = mobileSortKey.split('-') as [string, 'asc' | 'desc'];
     return searched.toSorted((a, b) => {
-      const av =
-        (a[col as keyof MarketItem] as number | string | null) ??
-        (dir === "asc" ? Infinity : -Infinity);
-      const bv =
-        (b[col as keyof MarketItem] as number | string | null) ??
-        (dir === "asc" ? Infinity : -Infinity);
-      if (typeof av === "string" && typeof bv === "string")
-        return dir === "asc"
-          ? av.localeCompare(bv, "ko")
-          : bv.localeCompare(av, "ko");
-      return dir === "asc"
-        ? (av as number) - (bv as number)
-        : (bv as number) - (av as number);
+      const av = (a[col as keyof MarketItem] as number | string | null) ?? (dir === 'asc' ? Infinity : -Infinity);
+      const bv = (b[col as keyof MarketItem] as number | string | null) ?? (dir === 'asc' ? Infinity : -Infinity);
+      if (typeof av === 'string' && typeof bv === 'string')
+        return dir === 'asc' ? av.localeCompare(bv, 'ko') : bv.localeCompare(av, 'ko');
+      return dir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
     });
   }, [filtered, globalFilter, mobileSortKey]);
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("label", {
-        header: "자산",
+      columnHelper.accessor('label', {
+        header: '자산',
         cell: (info) => {
           const type = info.row.original.type;
           return (
-            <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "h-2 w-2 shrink-0 rounded-full",
-                  TYPE_DOT_COLORS[type] ?? "bg-muted",
-                )}
-              />
+            <div className='flex items-center gap-2'>
+              <span className={cn('h-2 w-2 shrink-0 rounded-full', TYPE_DOT_COLORS[type] ?? 'bg-muted')} />
               <div>
-                <span className="font-medium">{info.getValue()}</span>
-                <span className="text-muted-foreground ml-2 text-xs">
-                  {info.row.original.ticker}
-                </span>
+                <span className='font-medium'>{info.getValue()}</span>
+                <span className='text-muted-foreground ml-2 text-xs'>{info.row.original.ticker}</span>
               </div>
             </div>
           );
         },
-        filterFn: "includesString",
+        filterFn: 'includesString',
       }),
-      columnHelper.accessor("price", {
-        header: "가격",
+      columnHelper.accessor('price', {
+        header: '가격',
         cell: (info) => <PriceDisplay item={info.row.original} />,
         sortingFn: (a, b) => (a.original.price ?? 0) - (b.original.price ?? 0),
       }),
-      columnHelper.accessor("changePercent", {
-        header: "증감",
+      columnHelper.accessor('changePercent', {
+        header: '증감',
         cell: (info) => <PercentageChange value={info.getValue()} />,
-        sortingFn: (a, b) =>
-          (a.original.changePercent ?? 0) - (b.original.changePercent ?? 0),
+        sortingFn: (a, b) => (a.original.changePercent ?? 0) - (b.original.changePercent ?? 0),
       }),
     ],
     [],
@@ -237,7 +179,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: "includesString",
+    globalFilterFn: 'includesString',
   });
 
   if (isMobile === undefined) {
@@ -247,18 +189,18 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   const filterTabs = (
     <div
       ref={filterRef}
-      className="cursor-grab [scrollbar-width:none] overflow-x-auto py-1 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+      className='cursor-grab [scrollbar-width:none] overflow-x-auto py-1 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden'
       style={filterMaskStyle}
       {...filterHandlers}
     >
-      <div className="flex w-max items-center gap-1.5 px-1">
+      <div className='flex w-max items-center gap-1.5 px-1'>
         {ASSET_TYPES.map((type) => (
           <Button
             key={type}
-            size="sm"
-            variant={typeFilter === type ? "default" : "outline"}
+            size='sm'
+            variant={typeFilter === type ? 'default' : 'outline'}
             onClick={() => setTypeFilter(type)}
-            className="rounded-full whitespace-nowrap"
+            className='rounded-full whitespace-nowrap'
           >
             {TYPE_LABELS[type]}
           </Button>
@@ -268,32 +210,32 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   );
 
   const updatedRow = (
-    <div className="flex justify-end">
+    <div className='flex justify-end'>
       {isLoading ? (
-        <Skeleton className="h-4 w-16" />
+        <Skeleton className='h-4 w-16' />
       ) : updatedLabel ? (
-        <p className="text-muted-foreground text-xs">{updatedLabel}</p>
+        <p className='text-muted-foreground text-xs'>{updatedLabel}</p>
       ) : null}
     </div>
   );
 
   const searchInput = (
     <>
-      <Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
+      <Search className='text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2' />
       <Input
-        placeholder="자산 검색..."
+        placeholder='자산 검색...'
         value={globalFilter}
         onChange={(e) => setGlobalFilter(e.target.value)}
-        className="pl-8"
+        className='pl-8'
       />
     </>
   );
 
   const controls = isMobile ? (
-    <div className="flex flex-col gap-3">
-      <div className="relative w-full">{searchInput}</div>
+    <div className='flex flex-col gap-3'>
+      <div className='relative w-full'>{searchInput}</div>
       <Select value={mobileSortKey} onValueChange={setMobileSortKey}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className='w-full'>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -307,66 +249,47 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
       {filterTabs}
     </div>
   ) : (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="relative w-full sm:max-w-xs">{searchInput}</div>
+    <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+      <div className='relative w-full sm:max-w-xs'>{searchInput}</div>
       {filterTabs}
     </div>
   );
 
   if (isMobile) {
     return (
-      <div className="space-y-4">
+      <div className='space-y-4'>
         {controls}
         {updatedRow}
-        <div className="space-y-2">
+        <div className='space-y-2'>
           {isLoading ? (
             Array.from({ length: 22 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm"
-              >
-                <Skeleton className="h-10 w-2/5" />
-                <Skeleton className="h-10 w-2/5" />
+              <div key={i} className='bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm'>
+                <Skeleton className='h-10 w-2/5' />
+                <Skeleton className='h-10 w-2/5' />
               </div>
             ))
           ) : mobileSorted.length === 0 ? (
-            <div className="text-muted-foreground py-10 text-center text-sm">
-              검색 결과가 없습니다.
-            </div>
+            <div className='text-muted-foreground py-10 text-center text-sm'>검색 결과가 없습니다.</div>
           ) : (
             mobileSorted.map((item) => (
               <div
                 key={item.symbol}
                 className={cn(
-                  "bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm",
-                  item.gfUrl &&
-                    "hover:bg-muted/30 cursor-pointer transition-colors",
+                  'bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm',
+                  item.gfUrl && 'hover:bg-muted/30 cursor-pointer transition-colors',
                 )}
-                onClick={() => item.gfUrl && window.open(item.gfUrl, "_blank")}
+                onClick={() => item.gfUrl && window.open(item.gfUrl, '_blank')}
               >
-                <div className="flex items-center gap-2.5">
-                  <span
-                    className={cn(
-                      "h-2 w-2 shrink-0 rounded-full",
-                      TYPE_DOT_COLORS[item.type] ?? "bg-muted",
-                    )}
-                  />
+                <div className='flex items-center gap-2.5'>
+                  <span className={cn('h-2 w-2 shrink-0 rounded-full', TYPE_DOT_COLORS[item.type] ?? 'bg-muted')} />
                   <div>
-                    <div className="font-medium">{item.label}</div>
-                    <div className="text-muted-foreground text-xs">
-                      {item.ticker}
-                    </div>
+                    <div className='font-medium'>{item.label}</div>
+                    <div className='text-muted-foreground text-xs'>{item.ticker}</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <PriceDisplay
-                    item={item}
-                    priceClassName="text-sm font-medium"
-                  />
-                  <PercentageChange
-                    value={item.changePercent}
-                    className="gap-0.5 text-sm"
-                  />
+                <div className='text-right'>
+                  <PriceDisplay item={item} priceClassName='text-sm font-medium' />
+                  <PercentageChange value={item.changePercent} className='gap-0.5 text-sm' />
                 </div>
               </div>
             ))
@@ -377,15 +300,15 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {controls}
       {updatedRow}
-      <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[400px] text-sm">
+      <div className='bg-card overflow-hidden rounded-xl border shadow-sm'>
+        <div className='overflow-x-auto'>
+          <table className='w-full min-w-[400px] text-sm'>
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="bg-muted/40 border-b">
+                <tr key={headerGroup.id} className='bg-muted/40 border-b'>
                   {headerGroup.headers.map((header) => {
                     const sorted = header.column.getIsSorted();
                     const canSort = header.column.getCanSort();
@@ -394,28 +317,19 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
                         className={cn(
-                          "text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right",
-                          canSort &&
-                            "hover:text-foreground cursor-pointer select-none",
+                          'text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right',
+                          canSort && 'hover:text-foreground cursor-pointer select-none',
                         )}
                       >
-                        <div
-                          className={cn(
-                            "flex items-center gap-1",
-                            header.index > 0 && "justify-end",
-                          )}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        <div className={cn('flex items-center gap-1', header.index > 0 && 'justify-end')}>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
                           {canSort &&
-                            (sorted === "asc" ? (
-                              <ArrowUp className="h-3 w-3" />
-                            ) : sorted === "desc" ? (
-                              <ArrowDown className="h-3 w-3" />
+                            (sorted === 'asc' ? (
+                              <ArrowUp className='h-3 w-3' />
+                            ) : sorted === 'desc' ? (
+                              <ArrowDown className='h-3 w-3' />
                             ) : (
-                              <ArrowUpDown className="h-3 w-3 opacity-40" />
+                              <ArrowUpDown className='h-3 w-3 opacity-40' />
                             ))}
                         </div>
                       </th>
@@ -424,21 +338,18 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y">
+            <tbody className='divide-y'>
               {isLoading ? (
                 Array.from({ length: 22 }).map((_, i) => (
                   <tr key={i}>
-                    <td colSpan={3} className="px-4 py-3">
-                      <Skeleton className="h-5 w-full" />
+                    <td colSpan={3} className='px-4 py-3'>
+                      <Skeleton className='h-5 w-full' />
                     </td>
                   </tr>
                 ))
               ) : table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={3}
-                    className="text-muted-foreground px-4 py-10 text-center"
-                  >
+                  <td colSpan={3} className='text-muted-foreground px-4 py-10 text-center'>
                     검색 결과가 없습니다.
                   </td>
                 </tr>
@@ -448,21 +359,12 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                   return (
                     <tr
                       key={row.id}
-                      className={cn(
-                        "hover:bg-muted/30 transition-colors",
-                        gfUrl && "cursor-pointer",
-                      )}
-                      onClick={() => gfUrl && window.open(gfUrl, "_blank")}
+                      className={cn('hover:bg-muted/30 transition-colors', gfUrl && 'cursor-pointer')}
+                      onClick={() => gfUrl && window.open(gfUrl, '_blank')}
                     >
                       {row.getVisibleCells().map((cell, i) => (
-                        <td
-                          key={cell.id}
-                          className={cn("px-4 py-3", i > 0 && "text-right")}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
+                        <td key={cell.id} className={cn('px-4 py-3', i > 0 && 'text-right')}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
                     </tr>

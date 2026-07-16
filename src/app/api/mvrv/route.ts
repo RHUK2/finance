@@ -1,31 +1,30 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
-import { mvrvZScore } from "@/lib/bitcoin-models";
+import { cached } from '@/lib/cache';
+import { mvrvZScore } from '@/lib/bitcoin-models';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const data = await cached("mvrv", async () => {
+    const data = await cached('mvrv', async () => {
       type Row = { time: string; CapMVRVCur: string; CapMrktCurUSD: string };
       const rows: Row[] = [];
       let nextPageToken: string | null = null;
 
       do {
         const params = new URLSearchParams({
-          assets: "btc",
-          metrics: "CapMVRVCur,CapMrktCurUSD",
-          frequency: "1d",
-          page_size: "2000",
-          start_time: "2015-01-01",
+          assets: 'btc',
+          metrics: 'CapMVRVCur,CapMrktCurUSD',
+          frequency: '1d',
+          page_size: '2000',
+          start_time: '2015-01-01',
         });
-        if (nextPageToken) params.set("next_page_token", nextPageToken);
+        if (nextPageToken) params.set('next_page_token', nextPageToken);
 
-        const res = await fetch(
-          `https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?${params}`,
-          { cache: "no-store" },
-        );
+        const res = await fetch(`https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?${params}`, {
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`CoinMetrics error: ${res.status}`);
 
         const json = await res.json();
@@ -33,7 +32,7 @@ export async function GET() {
         nextPageToken = (json.next_page_token as string) ?? null;
       } while (nextPageToken);
 
-      if (rows.length === 0) throw new Error("No MVRV data");
+      if (rows.length === 0) throw new Error('No MVRV data');
 
       const seen = new Set<string>();
       const merged = rows
@@ -69,10 +68,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("mvrv fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch MVRV data" },
-      { status: 500 },
-    );
+    console.error('mvrv fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch MVRV data' }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-import { BitcoinHistoryView } from "./bitcoin-history-view";
+import { BitcoinHistoryView } from './bitcoin-history-view';
 
 export default function BitcoinHistoryPage() {
   return <BitcoinHistoryView />;

@@ -1,15 +1,11 @@
-import { HydrationBoundary } from "@tanstack/react-query";
+import { HydrationBoundary } from '@tanstack/react-query';
 
-import { prefetchEndpoints } from "@/lib/prefetch";
+import { prefetchEndpoints } from '@/lib/prefetch';
 
-import { InflationView } from "./inflation-view";
+import { InflationView } from './inflation-view';
 
 export default async function InflationPage() {
-  const state = await prefetchEndpoints([
-    "inflation-data",
-    "inflation-data-kr",
-    "bitcoin-historical",
-  ]);
+  const state = await prefetchEndpoints(['inflation-data', 'inflation-data-kr', 'bitcoin-historical']);
 
   return (
     <HydrationBoundary state={state}>

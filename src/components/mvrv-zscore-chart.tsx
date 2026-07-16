@@ -1,23 +1,22 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChartContainer } from "@/components/chart-container";
-import { LineSeries, addZoneLines, useChart } from "@/hooks/use-chart";
-import type { MvrvData } from "@/hooks/use-crypto";
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChartContainer } from '@/components/chart-container';
+import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
+import type { MvrvData } from '@/hooks/use-crypto';
 
 const ZONE_LINES = [
-  { price: 7, label: "천장 위험", color: "#ef4444" },
-  { price: 0.1, label: "바닥 기회", color: "#22c55e" },
+  { price: 7, label: '천장 위험', color: '#ef4444' },
+  { price: 0.1, label: '바닥 기회', color: '#22c55e' },
 ];
 
 function getZScoreStatus(value: number) {
-  if (value >= 7)
-    return { label: "천장 위험", variant: "destructive" as const };
-  if (value >= 3) return { label: "고평가", variant: "secondary" as const };
-  if (value >= 0.1) return { label: "적정", variant: "outline" as const };
-  return { label: "바닥 기회", variant: "secondary" as const };
+  if (value >= 7) return { label: '천장 위험', variant: 'destructive' as const };
+  if (value >= 3) return { label: '고평가', variant: 'secondary' as const };
+  if (value >= 0.1) return { label: '적정', variant: 'outline' as const };
+  return { label: '바닥 기회', variant: 'secondary' as const };
 }
 
 type Props = {
@@ -31,7 +30,7 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
     (chart) => {
       if (!data) return;
       const lineSeries = chart.addSeries(LineSeries, {
-        color: "#3b82f6",
+        color: '#3b82f6',
         lineWidth: 2,
         priceLineVisible: false,
       });
@@ -48,41 +47,33 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            MVRV Z-Score
-          </CardTitle>
-          {updatedLabel && (
-            <span className="text-muted-foreground text-xs">
-              {updatedLabel}
-            </span>
-          )}
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-muted-foreground text-sm font-medium'>MVRV Z-Score</CardTitle>
+          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
         </div>
         {!data ? (
-          <Skeleton className="h-9 w-20" />
+          <Skeleton className='h-9 w-20' />
         ) : (
           current != null &&
           status && (
-            <div className="flex items-end gap-2">
-              <span className="text-3xl font-bold">{current.toFixed(2)}</span>
-              <Badge variant={status.variant} className="mb-1">
+            <div className='flex items-end gap-2'>
+              <span className='text-3xl font-bold'>{current.toFixed(2)}</span>
+              <Badge variant={status.variant} className='mb-1'>
                 {status.label}
               </Badge>
             </div>
           )
         )}
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className='p-0'>
         {!data ? (
-          <Skeleton className="h-[280px] w-full rounded-none" />
+          <Skeleton className='h-[280px] w-full rounded-none' />
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-        <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 이렇게
-          읽습니다. 7 이상이면 평균 대비 극단적 고평가(사이클 천장 경계), 0
-          미만이면 실현가치보다 싸게 거래되는 역사적 바닥권(장기 매집 구간)으로
-          해석합니다.
+        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+          시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 이렇게 읽습니다. 7 이상이면 평균 대비 극단적
+          고평가(사이클 천장 경계), 0 미만이면 실현가치보다 싸게 거래되는 역사적 바닥권(장기 매집 구간)으로 해석합니다.
         </p>
       </CardContent>
     </Card>

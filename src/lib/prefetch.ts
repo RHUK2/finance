@@ -1,7 +1,7 @@
-import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { headers } from "next/headers";
+import { dehydrate, QueryClient } from '@tanstack/react-query';
+import { headers } from 'next/headers';
 
-import { type EndpointKey } from "./cache-config";
+import { type EndpointKey } from './cache-config';
 
 /**
  * 서버에서 라우트(→Upstash 공유 캐시)를 읽어 TanStack Query 캐시를 미리 채운 뒤
@@ -21,8 +21,8 @@ import { type EndpointKey } from "./cache-config";
  */
 export async function prefetchEndpoints(keys: EndpointKey[]) {
   const h = await headers();
-  const host = h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get('host');
+  const proto = h.get('x-forwarded-proto') ?? 'http';
   const base = `${proto}://${host}`;
 
   const queryClient = new QueryClient();
@@ -33,7 +33,7 @@ export async function prefetchEndpoints(keys: EndpointKey[]) {
         queryKey: [key],
         queryFn: async () => {
           const res = await fetch(`${base}/api/${key}`, {
-            cache: "no-store",
+            cache: 'no-store',
           });
           if (!res.ok) throw new Error(`Failed to prefetch ${key}`);
           return res.json();

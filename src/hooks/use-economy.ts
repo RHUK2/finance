@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEndpoint } from "@/hooks/use-endpoint";
-import type { MacroSeries } from "@/lib/series";
+import { useEndpoint } from '@/hooks/use-endpoint';
+import type { MacroSeries } from '@/lib/series';
 
 export type { MacroSeries };
 
@@ -23,5 +23,5 @@ export type FredData = {
   us2y?: MacroSeries;
 };
 
-export const useEconomy = () => useEndpoint<EconomyData>("economy");
-export const useFred = () => useEndpoint<FredData>("fred");
+export const useEconomy = () => useEndpoint<EconomyData>('economy');
+export const useFred = () => useEndpoint<FredData>('fred');

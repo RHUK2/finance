@@ -1,4 +1,4 @@
-import { BitcoinGameTheoryView } from "./bitcoin-game-theory-view";
+import { BitcoinGameTheoryView } from './bitcoin-game-theory-view';
 
 export default function BitcoinGameTheoryPage() {
   return <BitcoinGameTheoryView />;

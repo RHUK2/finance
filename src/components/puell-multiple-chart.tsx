@@ -1,25 +1,24 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChartContainer } from "@/components/chart-container";
-import { LineSeries, addZoneLines, useChart } from "@/hooks/use-chart";
-import { dailyIssuanceBtc, movingAverage } from "@/lib/bitcoin-models";
-import type { BitcoinHistoricalData } from "@/hooks/use-crypto";
+import { useMemo } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChartContainer } from '@/components/chart-container';
+import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
+import { dailyIssuanceBtc, movingAverage } from '@/lib/bitcoin-models';
+import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
 
 const ZONE_LINES = [
-  { price: 4, label: "고평가", color: "#ef4444" },
-  { price: 0.5, label: "저평가", color: "#22c55e" },
+  { price: 4, label: '고평가', color: '#ef4444' },
+  { price: 0.5, label: '저평가', color: '#22c55e' },
 ];
 
 function getPuellStatus(value: number) {
-  if (value >= 4) return { label: "고평가", variant: "destructive" as const };
-  if (value >= 1.5)
-    return { label: "다소 높음", variant: "secondary" as const };
-  if (value >= 0.5) return { label: "적정", variant: "outline" as const };
-  return { label: "저평가 (채굴자 항복)", variant: "secondary" as const };
+  if (value >= 4) return { label: '고평가', variant: 'destructive' as const };
+  if (value >= 1.5) return { label: '다소 높음', variant: 'secondary' as const };
+  if (value >= 0.5) return { label: '적정', variant: 'outline' as const };
+  return { label: '저평가 (채굴자 항복)', variant: 'secondary' as const };
 }
 
 type Props = {
@@ -46,7 +45,7 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
-        color: "#f59e0b",
+        color: '#f59e0b',
         lineWidth: 2,
         priceLineVisible: false,
       });
@@ -63,40 +62,33 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground text-sm font-medium">
-            Puell Multiple
-          </CardTitle>
-          {updatedLabel && (
-            <span className="text-muted-foreground text-xs">
-              {updatedLabel}
-            </span>
-          )}
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-muted-foreground text-sm font-medium'>Puell Multiple</CardTitle>
+          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
         </div>
         {!data ? (
-          <Skeleton className="h-9 w-20" />
+          <Skeleton className='h-9 w-20' />
         ) : (
           current != null &&
           status && (
-            <div className="flex items-end gap-2">
-              <span className="text-3xl font-bold">{current.toFixed(2)}</span>
-              <Badge variant={status.variant} className="mb-1">
+            <div className='flex items-end gap-2'>
+              <span className='text-3xl font-bold'>{current.toFixed(2)}</span>
+              <Badge variant={status.variant} className='mb-1'>
                 {status.label}
               </Badge>
             </div>
           )
         )}
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className='p-0'>
         {!data ? (
-          <Skeleton className="h-[280px] w-full rounded-none" />
+          <Skeleton className='h-[280px] w-full rounded-none' />
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-        <p className="bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs">
-          채굴자 일일 수익 ÷ 1년 평균 수익. 채굴자 행동으로 읽습니다. 4 이상이면
-          채굴자 수익이 과도해 매도 압력이 큰 과열, 0.5 미만이면 채굴자가
-          항복하는 수준이라 역사적 바닥 신호로 해석합니다.
+        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+          채굴자 일일 수익 ÷ 1년 평균 수익. 채굴자 행동으로 읽습니다. 4 이상이면 채굴자 수익이 과도해 매도 압력이 큰
+          과열, 0.5 미만이면 채굴자가 항복하는 수준이라 역사적 바닥 신호로 해석합니다.
         </p>
       </CardContent>
     </Card>

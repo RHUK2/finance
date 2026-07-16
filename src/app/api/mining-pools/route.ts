@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
+import { cached } from '@/lib/cache';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 type Pool = { name: string; slug: string; blockCount: number };
 
 export async function GET() {
   try {
-    const data = await cached("mining-pools", async () => {
-      const res = await fetch("https://mempool.space/api/v1/mining/pools/1w", {
-        cache: "no-store",
+    const data = await cached('mining-pools', async () => {
+      const res = await fetch('https://mempool.space/api/v1/mining/pools/1w', {
+        cache: 'no-store',
       });
       if (!res.ok) throw new Error(`mining pools error: ${res.status}`);
 
@@ -26,16 +26,14 @@ export async function GET() {
         blockCount: p.blockCount,
         sharePct: Number(((p.blockCount / total) * 100).toFixed(1)),
       }));
-      const restBlocks = all
-        .slice(TOP)
-        .reduce((sum, p) => sum + p.blockCount, 0);
+      const restBlocks = all.slice(TOP).reduce((sum, p) => sum + p.blockCount, 0);
       const pools =
         restBlocks > 0
           ? [
               ...top,
               {
-                name: "기타",
-                slug: "others",
+                name: '기타',
+                slug: 'others',
                 blockCount: restBlocks,
                 sharePct: Number(((restBlocks / total) * 100).toFixed(1)),
               },
@@ -51,10 +49,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("mining-pools fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch mining pools" },
-      { status: 500 },
-    );
+    console.error('mining-pools fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch mining pools' }, { status: 500 });
   }
 }

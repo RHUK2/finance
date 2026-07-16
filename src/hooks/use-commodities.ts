@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEndpoint } from "@/hooks/use-endpoint";
-import type { MacroSeries } from "@/lib/series";
+import { useEndpoint } from '@/hooks/use-endpoint';
+import type { MacroSeries } from '@/lib/series';
 
 export type CommoditiesData = {
   fetchedAt: string;
@@ -11,4 +11,4 @@ export type CommoditiesData = {
   corn: MacroSeries;
 };
 
-export const useCommodities = () => useEndpoint<CommoditiesData>("commodities");
+export const useCommodities = () => useEndpoint<CommoditiesData>('commodities');

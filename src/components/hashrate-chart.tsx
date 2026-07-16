@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { ChartContainer } from "@/components/chart-container";
-import { LineSeries, useChart } from "@/hooks/use-chart";
-import type { HashrateHistoryData } from "@/hooks/use-mempool";
-import { BTC_COLOR } from "@/lib/utils";
+import { ChartContainer } from '@/components/chart-container';
+import { LineSeries, useChart } from '@/hooks/use-chart';
+import type { HashrateHistoryData } from '@/hooks/use-mempool';
+import { BTC_COLOR } from '@/lib/utils';
 
 type Props = {
   data: HashrateHistoryData;
@@ -17,7 +17,7 @@ export function HashrateChart({ data }: Props) {
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: true,
-        title: "EH/s",
+        title: 'EH/s',
       });
       series.setData(data.history);
     },

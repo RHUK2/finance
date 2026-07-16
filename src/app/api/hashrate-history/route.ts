@@ -1,18 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { cached } from "@/lib/cache";
+import { cached } from '@/lib/cache';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const data = await cached("hashrate-history", async () => {
-      const res = await fetch(
-        "https://mempool.space/api/v1/mining/hashrate/1y",
-        {
-          cache: "no-store",
-        },
-      );
+    const data = await cached('hashrate-history', async () => {
+      const res = await fetch('https://mempool.space/api/v1/mining/hashrate/1y', {
+        cache: 'no-store',
+      });
       if (!res.ok) throw new Error(`hashrate history error: ${res.status}`);
 
       const json = await res.json();
@@ -43,10 +40,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("hashrate-history fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch hashrate history" },
-      { status: 500 },
-    );
+    console.error('hashrate-history fetch error:', error);
+    return NextResponse.json({ error: 'Failed to fetch hashrate history' }, { status: 500 });
   }
 }

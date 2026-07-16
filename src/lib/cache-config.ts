@@ -12,20 +12,20 @@
  */
 export const ENDPOINTS = {
   market: 300,
-  "mempool-stats": 300,
-  "mining-stats": 300,
-  "mining-pools": 86400,
-  "recent-blocks": 300,
-  "hashrate-history": 86400,
-  "mempool-blocks": 300,
+  'mempool-stats': 300,
+  'mining-stats': 300,
+  'mining-pools': 86400,
+  'recent-blocks': 300,
+  'hashrate-history': 86400,
+  'mempool-blocks': 300,
   economy: 86400,
   commodities: 86400,
   fred: 86400,
-  "fear-greed": 86400,
+  'fear-greed': 86400,
   mvrv: 86400,
-  "bitcoin-historical": 86400,
-  "inflation-data": 86400,
-  "inflation-data-kr": 86400,
+  'bitcoin-historical': 86400,
+  'inflation-data': 86400,
+  'inflation-data-kr': 86400,
 } as const;
 
 export type EndpointKey = keyof typeof ENDPOINTS;

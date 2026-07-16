@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 // 스텝형 시뮬레이션의 재생 타이밍을 관리한다.
 // step()은 한 스텝 진행 후 "계속할 게 남았는가"를 boolean으로 반환한다.
