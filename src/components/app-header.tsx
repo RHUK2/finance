@@ -8,22 +8,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { NAV_GROUPS } from '@/lib/nav';
-import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 
 type BreadcrumbEntry = { label: string; href?: string };
 
@@ -33,8 +23,10 @@ type Props = {
 
 export function AppHeader({ breadcrumbs }: Props) {
   const isMobile = useIsMobile();
-  const pathname = usePathname();
-  const router = useRouter();
+
+  if (isMobile) {
+    return <MobileNavDrawer currentLabel={breadcrumbs.at(-1)?.label ?? ''} />;
+  }
 
   return (
     <header className='bg-sidebar dark:bg-background sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b px-4'>
@@ -48,35 +40,7 @@ export function AppHeader({ breadcrumbs }: Props) {
               <span key={item.label} className='flex items-center gap-1.5'>
                 {i > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
-                  {isLast && isMobile ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className='flex cursor-pointer items-center gap-1 font-medium outline-none'>
-                        {item.label}
-                        <ChevronDown className='h-3.5 w-3.5 opacity-60' />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='start' className='min-w-44'>
-                        {NAV_GROUPS.map((group) => ({
-                          label: group.label,
-                          items: group.items.filter((n) => n.href !== pathname),
-                        }))
-                          .filter((group) => group.items.length > 0)
-                          .map((group, gi) => (
-                            <span key={group.label}>
-                              {gi > 0 && <DropdownMenuSeparator />}
-                              <DropdownMenuLabel className='text-muted-foreground text-xs'>
-                                {group.label}
-                              </DropdownMenuLabel>
-                              {group.items.map(({ label, href, icon: Icon }) => (
-                                <DropdownMenuItem key={href} onClick={() => router.push(href)}>
-                                  <Icon className='h-4 w-4' />
-                                  {label}
-                                </DropdownMenuItem>
-                              ))}
-                            </span>
-                          ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : isLast ? (
+                  {isLast ? (
                     <BreadcrumbPage>{item.label}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>

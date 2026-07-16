@@ -36,10 +36,10 @@ export function PageMain({ children, hideScrollTop }: Props) {
   }, [hideScrollTop]);
 
   return (
-    <main className='min-h-[calc(100dvh-3rem)] p-4 sm:p-6 md:p-8 lg:p-10'>
+    <main className='min-h-[calc(100dvh-3rem)] p-4 pb-16 sm:p-6 md:p-8 md:pb-8 lg:p-10'>
       {children}
       {!hideScrollTop && (
-        <div className='fixed right-4 bottom-4 z-50 flex flex-col gap-2'>
+        <div className='fixed right-4 bottom-20 z-50 flex flex-col gap-2 md:bottom-4'>
           {visible && (
             <Button
               size='icon'
