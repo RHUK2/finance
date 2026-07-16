@@ -1,6 +1,13 @@
 "use client";
 
-import { ChevronDown, Pause, Play, RotateCcw, StepForward } from "lucide-react";
+import {
+  ChevronDown,
+  Pause,
+  Play,
+  RotateCcw,
+  StepForward,
+  TriangleAlert,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -330,6 +337,53 @@ export function Field({
   );
 }
 
+// 세그먼트형 토글 버튼 그룹. 값 하나를 고르는 라디오 대체.
+export function SegmentedControl<T extends string | boolean>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="flex overflow-hidden rounded-md border">
+      {options.map((o) => (
+        <button
+          key={String(o.value)}
+          onClick={() => onChange(o.value)}
+          className={cn(
+            "flex-1 px-2 py-1.5 text-sm transition-colors",
+            value === o.value
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-muted",
+          )}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// "교육용 개념 시연" 경고 카드. 개념 시연 페이지들이 공통으로 쓰는 틀.
+export function IllustrativeDisclaimer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Card className="gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm leading-relaxed">
+      <span className="flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400">
+        <TriangleAlert className="size-4" />
+        교육용 개념 시연
+      </span>
+      <p className="text-muted-foreground">{children}</p>
+    </Card>
+  );
+}
+
 // 값 배열을 폴리라인으로 그리는 작은 SVG 스파크라인.
 // min/max를 주면 고정 스케일(범위 밖은 잘라냄), 없으면 데이터 범위에 맞춰 자동 스케일.
 export function Sparkline({
@@ -387,19 +441,21 @@ export function CostBar({
   max,
   className,
   sub,
+  format = formatUsd,
 }: {
   label: string;
   value: number;
   max: number;
   className: string;
   sub?: string;
+  format?: (v: number) => string;
 }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
-        <span className="tabular-nums">{formatUsd(value)}</span>
+        <span className="tabular-nums">{format(value)}</span>
       </div>
       <div className="bg-muted h-5 w-full overflow-hidden rounded-md">
         <div

@@ -33,6 +33,11 @@ export function formatUsd(n: number): string {
   return `$${Math.round(n)}`;
 }
 
+// 긴 16진 문자열을 표시용으로 앞부분만 자른다(hash·pubkey 등 공용 표기).
+export function shortHex(hex: string, head = 10): string {
+  return hex.length <= head ? hex : hex.slice(0, head) + "…";
+}
+
 // 시드 기반 난수 (리셋 시 동일 결과 재현).
 export function mulberry32(seed: number) {
   let a = seed >>> 0;

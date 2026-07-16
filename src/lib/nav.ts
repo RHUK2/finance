@@ -3,12 +3,14 @@ import {
   BarChart3,
   Bitcoin,
   Coins,
+  Gauge,
   History,
   KeyRound,
   Landmark,
   LineChart,
   Network,
   Radar,
+  ShieldCheck,
   Swords,
   TrendingDown,
   Wheat,
@@ -44,6 +46,12 @@ export const NAV_GROUPS = [
     items: [
       { label: "지갑 키 생성", href: "/wallet-keys", icon: KeyRound },
       { label: "트랜잭션 해부", href: "/transactions", icon: Coins },
+      {
+        label: "스크립트·서명 검증",
+        href: "/script-verify",
+        icon: ShieldCheck,
+      },
+      { label: "블록·채굴·합의", href: "/block-mining", icon: Gauge },
     ],
   },
   {
