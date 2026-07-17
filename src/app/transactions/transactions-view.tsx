@@ -6,12 +6,14 @@ import { SimTabs } from '@/components/simulation';
 
 import { AddressCompare } from './address-compare';
 import { FeeCalc } from './fee-calc';
+import { TxStructure } from './tx-structure';
 import { UtxoModel } from './utxo-model';
 
 const TABS = [
   { value: 'utxo', label: '① 동전 고르기 (UTXO)', node: <UtxoModel /> },
-  { value: 'fee', label: '② 크기가 수수료다', node: <FeeCalc /> },
-  { value: 'compare', label: '③ 주소 타입별 수수료', node: <AddressCompare /> },
+  { value: 'structure', label: '② 트랜잭션 구조', node: <TxStructure /> },
+  { value: 'fee', label: '③ 크기가 수수료다', node: <FeeCalc /> },
+  { value: 'compare', label: '④ 주소 타입별 수수료', node: <AddressCompare /> },
 ];
 
 export function TransactionsView() {

@@ -9,16 +9,7 @@ import { Pipeline } from '@/components/pipeline';
 import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
 
 import { FeeRateControl } from './fee-rate-control';
-import {
-  addrMeta,
-  ADDR_TYPES,
-  type AddrType,
-  feeSats,
-  formatSats,
-  satsToBtc,
-  TX_OVERHEAD_VB,
-  txVBytes,
-} from '@/lib/tx-concept';
+import { addrMeta, ADDR_TYPES, type AddrType, feeSats, formatSats, TX_OVERHEAD_VB, txVBytes } from '@/lib/tx-concept';
 
 export function FeeCalc() {
   const [type, setType] = useState<AddrType>('native');
@@ -96,7 +87,7 @@ export function FeeCalc() {
             {
               kind: 'box',
               label: '수수료',
-              value: `${formatSats(fee)} · ${satsToBtc(fee)} BTC`,
+              value: formatSats(fee),
               tone: 'good',
             },
           ]}
@@ -105,62 +96,56 @@ export function FeeCalc() {
 
       <ExplainCard
         title='수수료는 금액이 아니라 크기에 붙는다 (블록 공간 경매)'
-        preview='한 블록의 공간은 약 4백만 weight로 고정돼 있어, 자리를 두고 벌이는 경매다.'
+        preview='블록은 크기가 정해진 상자다. 자리를 두고 vByte당 수수료로 입찰하는 경매가 벌어진다.'
         body={
           <>
-            한 블록(약 10분에 하나)에 들어갈 공간은 약 4백만 weight(≈ 1MvB)로 한정된다. 채굴자는{' '}
-            <b>vByte당 수수료가 높은</b> 트랜잭션부터 담는다. 그래서 0.001 BTC를 보내든 100 BTC를 보내든, 크기가 같으면
-            수수료도 같다. 멤풀이 붐비면 sat/vB 입찰가가 올라간다.
+            블록을 <b>크기가 정해진 상자</b>라고 보자. 약 10분마다 하나씩 생기고, 담을 수 있는 용량은 약 <b>1MvB</b>로
+            고정돼 있다. 이 상자에 실리려는 트랜잭션은 많고 자리는 한정돼 있으니, 자연스레 경매가 된다.
+            <br />
+            <br />
+            채굴자는 상자에 담을 때 <b>vByte당 수수료(sat/vB)가 높은</b> 트랜잭션부터 골라 담는다. 여기서 기준은{' '}
+            &lsquo;총액&rsquo;이 아니라 &lsquo;단위 크기당 값&rsquo;이다. 자리는 크기로 재니까, 같은 자리라면 더 비싸게
+            부른 쪽이 먼저 실린다.
+            <br />
+            <br />
+            그래서 0.001 BTC를 보내든 100 BTC를 보내든, 트랜잭션 크기가 같으면 수수료도 같다. 금액은 상자 자리를 더
+            차지하지 않기 때문이다. 반대로 멤풀에 트랜잭션이 몰리면 자리 경쟁이 세져 sat/vB 입찰가가 올라간다.
           </>
         }
       />
 
       <ExplainCard
-        title='SegWit 할인: witness는 1/4만 센다'
-        preview='블록은 바이트가 아니라 weight로 재고, 서명은 1/4 가중치만 차지해서 더 싸다.'
+        title='SegWit 할인: 서명만 1/4로 센다'
+        preview='서명은 블록 한도에 1/4만 계산된다. 물리적 크기는 그대로고, 계산되는 크기만 준다.'
         body={
           <>
-            블록 크기는 바이트가 아니라 <b>weight unit</b>으로 잰다. 일반 데이터는 4 wu, 서명(witness) 데이터는 1 wu다.
-            vByte = weight ÷ 4이므로, 서명이 witness로 빠진 SegWit·Taproot 입력은 같은 일을 하면서도 vByte가
-            작아진다(예: Legacy 입력 148 vB → Native SegWit 68 vB). 다음 탭에서 타입별 차이를 직접 비교해 보자.
-          </>
-        }
-      />
-
-      <ExplainCard
-        title='10.5 · 68 · 31은 어디서 나온 숫자일까?'
-        preview='실제 바이트를 센 값이다. 오버헤드의 0.5는 witness 할인이 만든 소수점이다.'
-        body={
-          <>
-            위 파이프라인의 세 숫자는 어림잡은 게 아니라 실제 바이트를 센 값이다. weight로 재서 4로 나누기 때문에
-            소수점이 생긴다.
+            규칙은 딱 한 줄이다: <b>서명(witness) 데이터는 블록 한도에 1/4만 계산한다</b>. 나머지(입력·출력의 일반
+            필드)는 바이트 그대로다.
+            <br />
+            <br />
+            헷갈리는 지점부터 짚자. 여기서 &lsquo;크기&rsquo;는 두 가지다.
             <div className='bg-muted/50 my-3 overflow-x-auto rounded-md p-3'>
-              <pre className='font-mono text-[11px] leading-relaxed'>{`오버헤드 10.5 vB  (트랜잭션마다 한 번)
-  비witness  version 4 + 입력수 1 + 출력수 1 + locktime 4 = 10 B → 40 wu
-  witness    marker 1 + flag 1                          =  2 B →  2 wu
-  합계       42 wu ÷ 4 = 10.5 vB
-
-입력 68 vB  (Native SegWit, 입력 1개당)
-  비witness  txid 32 + vout 4 + scriptSig 길이 1 + sequence 4 = 41 B → 164 wu
-  witness    서명 72 + 공개키 33 + 길이 표시 3              = 108 B → 108 wu
-  합계       272 wu ÷ 4 = 68 vB
-
-출력 31 vB  (출력 1개당)
-  비witness  value 8 + script 길이 1 + OP_0·push20·해시 20 = 31 B → 124 wu
-  합계       124 wu ÷ 4 = 31 vB`}</pre>
+              <pre className='font-mono text-[11px] leading-relaxed'>{`실제 전송·저장하는 크기   서명 100바이트 = 100바이트 (그대로)
+블록 한도에 계산되는 크기  서명 100바이트 =  25바이트 (1/4)`}</pre>
             </div>
-            오버헤드에 <b>0.5</b>가 붙는 건 SegWit 표시용 marker·flag 2바이트가 witness라 1/4로 계산되기 때문이다(2 ÷ 4
-            = 0.5).
+            서명은 네트워크로 100바이트를 그대로 보낸다. 줄어드는 건 물리적 크기가 아니라, 한 블록(약 1MvB)의 자리를
+            두고 벌이는 경매에서 <b>얼마를 차지한 걸로 칠지</b>다. 수수료는 이 &lsquo;계산되는 크기&rsquo;에 붙으므로,
+            서명이 무거운 트랜잭션일수록 할인폭이 커진다.
+            <br />
+            <br />왜 하필 서명만 깎아줄까. 자원 비용이 다르기 때문이다. <b>출력(UTXO)</b>은 모든 노드가 영원히 메모리에
+            들고 있어야 하는 비싼 자원이라 할인이 없다. 반면 <b>서명</b>은 검증이 끝나면 버려도 되는(가지치기 가능) 싼
+            자원이라 1/4만 매긴다. 임의의 숫자가 아니라 자원 비용에 맞춘 가격이다.
             <br />
             <br />
-            입력을 보면 할인이 어디서 오는지 드러난다. 서명 72바이트와 공개키 33바이트가 witness에 있어 1 wu로 세어진다.
-            Legacy 입력이 <b>148 vB</b>인 건 구성 요소가 거의 같은데 이 서명 뭉치가 scriptSig에 들어가 할인 없이 4 wu로
-            세어지기 때문이다.
+            같은 송금인데 Legacy 입력이 <b>148 vB</b>, Native SegWit이 <b>68 vB</b>인 이유가 이거다. ② 탭에서 봤듯
+            서명을 넣는 자리만 다르다. Legacy는 서명을 일반 영역(scriptSig)에 넣어 제값을 다 내고, SegWit은 witness로
+            빼서 1/4만 낸다. 다음 탭에서 타입별 차이를 직접 비교해 보자.
             <br />
             <br />
-            출력에는 서명이 없어 할인받을 게 없다. 그래서 바이트 수가 그대로 vByte가 된다. 다음 탭에서 Taproot 출력이 43
-            vB로 가장 큰 것도 여기에 이유가 있다. 20바이트 해시 대신 32바이트 공개키가 들어가는데, 할인이 없으니 늘어난
-            12 바이트가 고스란히 12 vB로 붙는다.
+            <span className='text-muted-foreground text-[11px]'>
+              참고: 계산 단위는 원래 weight(일반 1바이트 = 4, 서명 1바이트 = 1)로 세고, vByte = weight ÷ 4다. 서명이
+              1/4로 접히는 걸 정수 산수로 떨어뜨리기 위한 회계 단위일 뿐이다.
+            </span>
           </>
         }
       />
