@@ -95,8 +95,8 @@ export function AddressCompare() {
       </Card>
 
       <ExplainCard
-        title='Taproot이 항상 싼 건 아니다 (입력이 많아야 이긴다)'
-        preview='Taproot은 입력이 가장 작지만 출력이 가장 크다. 그래서 입력 개수에 따라 순위가 뒤집힌다.'
+        title='Taproot가 항상 싼 건 아니다 (입력이 많아야 이긴다)'
+        preview='Taproot는 입력이 가장 작지만 출력이 가장 크다. 그래서 입력 개수에 따라 순위가 뒤집힌다.'
         body={
           <>
             ③ 탭에서 본 <b>witness 할인</b>이 여기서 타입별 차이로 나타난다. 서명이 witness로 빠진 SegWit·Taproot 입력은
@@ -104,12 +104,12 @@ export function AddressCompare() {
             <br />
             <br />
             그런데 위 막대를 보면 기본값(입력 2·출력 2)에서 Taproot(211.5 vB)이 Native SegWit(208.5 vB)보다{' '}
-            <b>오히려 크다</b>. Taproot은 입력이 가장 작지만(57.5 vB, SegWit은 68 vB) <b>출력이 가장 크기</b>{' '}
+            <b>오히려 크다</b>. Taproot는 입력이 가장 작지만(57.5 vB, SegWit은 68 vB) <b>출력이 가장 크기</b>{' '}
             때문이다(43 vB, SegWit은 31 vB). 주소에 20바이트 해시 대신 32바이트 공개키를 그대로 담아서다.
             <br />
             <br />
             그래서 순위가 <b>입력 개수에 따라 뒤집힌다</b>. 입력이 늘수록 입력 쪽 이득이 출력 쪽 손해를 넘어선다. 위
-            입력 개수를 3으로 올려 보면 Taproot이 Native SegWit을 앞지르고, 5로 올리면 격차가 더 벌어진다.
+            입력 개수를 3으로 올려 보면 Taproot가 Native SegWit을 앞지르고, 5로 올리면 격차가 더 벌어진다.
           </>
         }
       />
