@@ -20,7 +20,7 @@ export function MobileNavDrawer({ currentLabel }: Props) {
   return (
     <footer className='bg-sidebar dark:bg-background fixed inset-x-0 bottom-0 z-30 flex h-12 shrink-0 items-center gap-2 border-t px-4 pb-[env(safe-area-inset-bottom)]'>
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger className='flex cursor-pointer items-center gap-1 font-medium outline-none'>
+        <DrawerTrigger className='flex cursor-pointer items-center gap-1 text-sm font-medium outline-none'>
           {currentLabel}
           <ChevronUp className='h-3.5 w-3.5 opacity-60' />
         </DrawerTrigger>

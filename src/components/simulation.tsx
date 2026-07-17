@@ -216,7 +216,7 @@ export function ExplainCard({
           <ChevronDown className='text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]/explain:rotate-180' />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className='text-muted-foreground px-4 pb-4 text-sm leading-relaxed'>{body}</div>
+          <div className='text-muted-foreground p-4 text-sm leading-relaxed'>{body}</div>
         </CollapsibleContent>
       </Card>
     </Collapsible>

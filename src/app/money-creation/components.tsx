@@ -180,7 +180,7 @@ export function StepPanel({
 }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className='sticky bottom-4 z-40'>
+    <div className='sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 md:bottom-4'>
       <Card className='bg-card gap-0 overflow-hidden p-0 shadow-xl'>
         <button
           type='button'
