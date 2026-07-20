@@ -158,6 +158,32 @@ export function Metric({
   );
 }
 
+// 아이콘 + 한 줄 메시지로 결과를 알리는 배너. tone은 Metric과 같은 어휘(good/bad/accent)를 쓴다.
+export function StatusBanner({
+  icon,
+  tone,
+  children,
+}: {
+  icon?: React.ReactNode;
+  tone?: 'good' | 'bad' | 'accent';
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-2 rounded-md border p-3 text-sm font-medium',
+        tone === 'good' && 'border-emerald-500/40 bg-emerald-500/5',
+        tone === 'bad' && 'border-rose-500/40 bg-rose-500/5',
+        tone === 'accent' && 'border-amber-500/40 bg-amber-500/5',
+        !tone && 'bg-muted border-transparent',
+      )}
+    >
+      {icon}
+      {children}
+    </div>
+  );
+}
+
 // 숫자 값이 useCountUp으로 애니메이션되는 Metric.
 export function StatCard({
   label,
