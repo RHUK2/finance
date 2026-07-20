@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Swords,
   TrendingDown,
+  Vote,
   Wheat,
   Zap,
 } from 'lucide-react';
@@ -56,6 +57,7 @@ export const NAV_GROUPS = [
       { label: 'P2P 네트워크 전파', href: '/p2p-network', icon: Radio },
       { label: '블록·채굴·합의', href: '/block-mining', icon: Gauge },
       { label: '체인 재구성·파이널리티', href: '/chain-reorg', icon: GitFork },
+      { label: '소프트포크 활성화', href: '/soft-fork-activation', icon: Vote },
     ],
   },
   {
