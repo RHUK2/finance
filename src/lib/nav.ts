@@ -16,6 +16,7 @@ import {
   Swords,
   TrendingDown,
   Vote,
+  Waypoints,
   Wheat,
   Zap,
 } from 'lucide-react';
@@ -58,6 +59,7 @@ export const NAV_GROUPS = [
       { label: '블록·채굴·합의', href: '/block-mining', icon: Gauge },
       { label: '체인 재구성·파이널리티', href: '/chain-reorg', icon: GitFork },
       { label: '소프트포크 활성화', href: '/soft-fork-activation', icon: Vote },
+      { label: '라이트닝 네트워크', href: '/lightning-network', icon: Waypoints },
     ],
   },
   {
