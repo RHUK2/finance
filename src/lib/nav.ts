@@ -3,6 +3,7 @@ import {
   BarChart3,
   Bitcoin,
   Coins,
+  EyeOff,
   Gauge,
   GitFork,
   History,
@@ -60,6 +61,7 @@ export const NAV_GROUPS = [
       { label: '체인 재구성·파이널리티', href: '/chain-reorg', icon: GitFork },
       { label: '소프트포크 활성화', href: '/soft-fork-activation', icon: Vote },
       { label: '라이트닝 네트워크', href: '/lightning-network', icon: Waypoints },
+      { label: '프라이버시', href: '/privacy', icon: EyeOff },
     ],
   },
   {
