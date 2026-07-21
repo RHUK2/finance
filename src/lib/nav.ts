@@ -1,5 +1,6 @@
 import {
   Activity,
+  Atom,
   BarChart3,
   Bitcoin,
   Coins,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   Swords,
   TrendingDown,
+  Users,
   Vote,
   Waypoints,
   Wheat,
@@ -32,7 +34,7 @@ export const NAV_GROUPS = [
     ],
   },
   {
-    label: '비트코인',
+    label: '비트코인 인사이트',
     items: [
       { label: '비트코인 차트', href: '/bitcoin', icon: Bitcoin },
       { label: '비트코인 역사', href: '/bitcoin-history', icon: History },
@@ -44,10 +46,12 @@ export const NAV_GROUPS = [
       },
       { label: '비트코인 소프트워', href: '/softwar', icon: Radar },
       { label: '비트코인 변동성', href: '/bitcoin-volatility', icon: Activity },
+      { label: '비트코인 전력망', href: '/grid-battery', icon: Zap },
+      { label: '비트코인 양자컴퓨터', href: '/bitcoin-quantum', icon: Atom },
     ],
   },
   {
-    label: '비트코인 기술',
+    label: '비트코인 프로토콜',
     items: [
       { label: '지갑 키 생성', href: '/wallet-keys', icon: KeyRound },
       { label: '트랜잭션 해부', href: '/transactions', icon: Coins },
@@ -56,6 +60,7 @@ export const NAV_GROUPS = [
         href: '/script-verify',
         icon: ShieldCheck,
       },
+      { label: '멀티시그·타임락', href: '/multisig-timelock', icon: Users },
       { label: 'P2P 네트워크 전파', href: '/p2p-network', icon: Radio },
       { label: '블록·채굴·합의', href: '/block-mining', icon: Gauge },
       { label: '체인 재구성·파이널리티', href: '/chain-reorg', icon: GitFork },
@@ -70,10 +75,6 @@ export const NAV_GROUPS = [
       { label: '신용창조', href: '/money-creation', icon: Landmark },
       { label: '구매력 붕괴', href: '/inflation', icon: TrendingDown },
     ],
-  },
-  {
-    label: '에너지',
-    items: [{ label: '전력망 배터리', href: '/grid-battery', icon: Zap }],
   },
 ];
 
