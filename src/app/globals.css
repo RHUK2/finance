@@ -1,6 +1,7 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -46,7 +47,7 @@
 }
 
 @theme inline {
-  --font-pretendard: var(--font-pretendard), sans-serif;
+  --font-pretendard: 'Pretendard Variable', sans-serif;
 }
 
 :root {
@@ -131,15 +132,15 @@
 }
 
 button:not(:disabled),
-[role="button"]:not(:disabled),
-[role="menuitem"]:not([data-disabled]),
-[role="menuitemcheckbox"]:not([data-disabled]),
-[role="menuitemradio"]:not([data-disabled]),
-[role="option"]:not([data-disabled]),
-[role="tab"],
-[role="combobox"]:not(input),
-[role="checkbox"]:not(:disabled),
-[role="radio"]:not(:disabled),
-[data-slot="slider"]:not([data-disabled]) {
+[role='button']:not(:disabled),
+[role='menuitem']:not([data-disabled]),
+[role='menuitemcheckbox']:not([data-disabled]),
+[role='menuitemradio']:not([data-disabled]),
+[role='option']:not([data-disabled]),
+[role='tab'],
+[role='combobox']:not(input),
+[role='checkbox']:not(:disabled),
+[role='radio']:not(:disabled),
+[data-slot='slider']:not([data-disabled]) {
   cursor: pointer;
 }

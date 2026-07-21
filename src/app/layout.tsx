@@ -3,16 +3,8 @@ import { QueryProvider } from '@/components/query-provider';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import type { Metadata, Viewport } from 'next';
 import { ThemeProvider } from 'next-themes';
-import localFont from 'next/font/local';
 import { Toaster } from 'sonner';
 import './globals.css';
-
-const pretendard = localFont({
-  src: './fonts/pretendard.woff2',
-  variable: '--font-pretendard',
-  display: 'swap',
-  preload: true,
-});
 
 export const metadata: Metadata = {
   title: 'Finance Dashboard',
@@ -33,7 +25,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='ko' className={pretendard.variable} suppressHydrationWarning>
+    <html lang='ko' suppressHydrationWarning>
       <body className='bg-background antialiased'>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <QueryProvider>
