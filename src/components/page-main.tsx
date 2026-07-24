@@ -44,7 +44,7 @@ export function PageMain({ children, hideScrollTop }: Props) {
             <Button
               size='icon'
               variant='outline'
-              className='h-12 w-12 rounded-full shadow-md'
+              className='size-12 rounded-full shadow-md'
               onClick={() => scrollToTop()}
             >
               <ChevronUp className='size-6' />

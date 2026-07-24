@@ -106,7 +106,7 @@ function RegimeLine({ p }: { p: number }) {
           />
         </svg>
         <div
-          className='border-background absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 bg-amber-500'
+          className='border-background absolute size-2.5 -translate-1/2 rounded-full border-2 bg-amber-500'
           style={{ left: `${p * 100}%`, top: `${(1 - p) * 100}%` }}
         />
       </div>

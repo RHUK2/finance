@@ -175,10 +175,10 @@ export function EntropyMnemonic({
           {words.map((w) => (
             <div
               key={w.position}
-              className={
-                'flex flex-col gap-0.5 rounded-md border p-2 ' +
-                (w.isChecksum ? 'border-amber-500/50 bg-amber-500/5' : '')
-              }
+              className={cn(
+                'flex flex-col gap-0.5 rounded-md border p-2',
+                w.isChecksum && 'border-amber-500/50 bg-amber-500/5',
+              )}
             >
               <span className='flex items-center justify-between'>
                 <span className='text-muted-foreground font-mono text-[10px]'>#{w.position}</span>

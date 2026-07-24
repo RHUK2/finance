@@ -83,7 +83,7 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           format={(v) => `${v}년 · 시급 ${r.wage != null ? money(r.wage) : '-'}`}
         />
 
-        <p className='bg-muted/40 rounded-lg border p-4 text-sm leading-relaxed'>
+        <p className='bg-muted/40 rounded-lg border p-4 text-sm/relaxed'>
           {ready ? (
             <>
               {startYear}년 최저임금 {hi('1시간', 'strong')}어치(시급 {money(r.wage!)})를 예금에 넣었다면 오늘{' '}

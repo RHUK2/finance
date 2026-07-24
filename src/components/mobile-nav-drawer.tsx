@@ -22,7 +22,7 @@ export function MobileNavDrawer({ currentLabel }: Props) {
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger className='flex cursor-pointer items-center gap-1 text-sm font-medium outline-none'>
           {currentLabel}
-          <ChevronUp className='h-3.5 w-3.5 opacity-60' />
+          <ChevronUp className='size-3.5 opacity-60' />
         </DrawerTrigger>
         <DrawerContent className='max-h-[70vh]'>
           <DrawerHeader>

@@ -38,10 +38,10 @@ export function ChartContainer({ containerRef, onReset }: Props) {
     <Button
       variant='ghost'
       size='icon'
-      className='bg-background/60 hover:bg-background/80 absolute top-2 left-2 z-10 h-6 w-6 backdrop-blur-sm'
+      className='bg-background/60 hover:bg-background/80 absolute top-2 left-2 z-10 size-6 backdrop-blur-sm'
       onClick={onReset}
     >
-      <RotateCcw className='h-3 w-3' />
+      <RotateCcw className='size-3' />
     </Button>
   );
 
@@ -55,7 +55,7 @@ export function ChartContainer({ containerRef, onReset }: Props) {
           onClick={() => setActive(true)}
         >
           <div className='flex flex-col items-center gap-1.5 rounded-xl border border-white/20 bg-black/50 px-5 py-3 text-white/80 backdrop-blur-sm'>
-            <MousePointer2 className='h-4 w-4' />
+            <MousePointer2 className='size-4' />
             <span className='text-xs font-medium'>{isTouch ? '탭하여 차트 조작' : '클릭하여 차트 조작'}</span>
           </div>
         </div>

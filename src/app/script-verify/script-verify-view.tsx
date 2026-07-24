@@ -26,7 +26,7 @@ export function ScriptVerifyView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>동전은 어떻게 잠기고, 서명은 어떻게 그 잠금을 풀까</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               트랜잭션 해부에서 본 UTXO는 아무나 못 쓰게 스크립트로 <b>잠겨</b> 있다. 그 잠금을 푸는 열쇠가 개인키로
               만든 <b>서명</b>이고, 노드는 그 서명이 진짜인지를 스택 위에서 한 줄씩 실행하며 확인한다. 메시지에 서명을
               만들고, 그 서명이 스택에서 검증되는 과정을 단계별로 따라가 보자.

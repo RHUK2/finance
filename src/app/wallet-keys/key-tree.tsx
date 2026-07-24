@@ -319,7 +319,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             {step + 1} / {nodes.length} 단계
           </span>
         </div>
-        <p className='text-muted-foreground text-xs leading-relaxed'>
+        <p className='text-muted-foreground text-xs/relaxed'>
           경로는 한 번에 나오지 않는다. 부모 키에서 가지 하나를 파생하면 나온 자식 키가 다시 다음 가지의 부모가 된다. 각
           노드는 확장 개인키(xprv)와 확장 공개키(xpub)를 갖는데, 하드닝(&apos;)된 가지는 부모 개인키가 있어야만
           파생된다. 노드를 눌러 단계를 오갈 수 있다.
@@ -424,7 +424,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
           <Pipeline items={detailItems} />
 
           <div className='flex flex-col gap-1.5'>
-            <span className='text-muted-foreground text-xs leading-relaxed'>
+            <span className='text-muted-foreground text-xs/relaxed'>
               방금 나온 개인키와 체인코드를 한 덩어리로 묶은 게 이 노드의 확장키다. 다음 가지는 여기서 뻗는다.
             </span>
             <div className='bg-muted flex flex-col gap-0.5 rounded-md p-2.5'>
@@ -454,7 +454,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             </div>
           </div>
 
-          <p className='text-muted-foreground text-xs leading-relaxed'>
+          <p className='text-muted-foreground text-xs/relaxed'>
             {step === 0
               ? '시드에서 나온 뿌리 키. 지갑의 모든 가지가 결국 이 한 노드에서 갈라져 나온다.'
               : node.hardened

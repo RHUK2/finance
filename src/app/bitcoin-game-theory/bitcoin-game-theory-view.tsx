@@ -24,7 +24,7 @@ export function BitcoinGameTheoryView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>비트코인을 움직이는 게임이론</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               비트코인의 가격과 보안은 수많은 행위자(개인·기업·국가·채굴자)가 서로의 선택을 의식하며 내리는 결정의
               결과다. 각자가 합리적으로 행동할 때 어떤 균형으로 수렴하는지를, 네 가지 게임으로 직접 돌려 보자.
             </p>

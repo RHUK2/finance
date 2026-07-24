@@ -62,7 +62,7 @@ export function AddressScriptCompare() {
             />
           ))}
         </div>
-        <p className='text-muted-foreground text-xs leading-relaxed'>
+        <p className='text-muted-foreground text-xs/relaxed'>
           ECDSA는 r·s 두 값을 DER로 감싸고 sighash flag 1바이트가 붙어 71~72 바이트, Schnorr는 R‖s 64바이트 고정이라 DER
           포장이 없다. 트랜잭션 해부 페이지의 입력 vByte 차이(legacy 148 vs taproot 57.5)도 이 서명·검증 스크립트 크기
           차이에서 나온다.
@@ -86,7 +86,7 @@ export function AddressScriptCompare() {
               <tr key={row.label} className='border-b last:border-0'>
                 <td className='text-muted-foreground py-2 pr-2 align-top text-xs'>{row.label}</td>
                 {SCRIPT_ADDR_TYPES.map((t) => (
-                  <td key={t.value} className='py-2 pl-3 align-top text-xs leading-relaxed'>
+                  <td key={t.value} className='py-2 pl-3 align-top text-xs/relaxed'>
                     {row.cells[t.value]}
                   </td>
                 ))}

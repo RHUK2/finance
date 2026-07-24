@@ -160,7 +160,7 @@ function ForkBranch({
           <div
             key={i}
             className={cn(
-              'h-4 w-4 rounded-[3px]',
+              'size-4 rounded-[3px]',
               i < FORK_POINT
                 ? 'bg-muted-foreground/40'
                 : isWinner

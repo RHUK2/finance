@@ -191,7 +191,7 @@ function ChainRow({
           <div
             key={i}
             className={cn(
-              'h-4 w-4 rounded-[3px]',
+              'size-4 rounded-[3px]',
               i < confirmed
                 ? 'bg-sky-500/60'
                 : tone === 'winner'

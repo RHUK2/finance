@@ -32,14 +32,14 @@ export function Bip8Taproot() {
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
           <div className='rounded-md border p-3'>
             <p className='text-sm font-medium'>BIP9 (LOT 없음)</p>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               타임아웃까지 95%를 못 넘기면 그냥 <b>FAILED</b>. 채굴자 다수가 반대(혹은 무관심)하면 활성화 자체가
               무산된다.
             </p>
           </div>
           <div className={cn('rounded-md border p-3', 'border-emerald-500/40 bg-emerald-500/5')}>
             <p className='text-sm font-medium'>BIP8 (LOT=true)</p>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               타임아웃 시점에 강제로 <b>LOCKED_IN</b>. 이 규칙을 지키지 않는 채굴자의 블록은 노드가 거부하므로, 결국
               채굴자도 따라오게 된다. 힘의 축이 채굴자에서 노드(사용자)로 옮겨간다.
             </p>
@@ -73,7 +73,7 @@ export function Bip8Taproot() {
           <Legend className='bg-amber-500' label='시그널링 중' />
           <Legend className='bg-emerald-500' label='확정·활성화' />
         </div>
-        <p className='text-muted-foreground text-sm leading-relaxed'>
+        <p className='text-muted-foreground text-sm/relaxed'>
           Taproot는 Speedy Trial이라는 3개월짜리 짧은 BIP9식 시그널링으로 시작했고, 지지율이 빠르게 90%를 넘기며 채굴자
           다수의 동의로 정상 활성화됐다. UASF의 &#39;강제 켜기&#39;가 실제로 발동되진 않았지만, 그 가능성 자체가
           채굴자들이 굳이 반대할 이유를 없앴다는 평가를 받는다.

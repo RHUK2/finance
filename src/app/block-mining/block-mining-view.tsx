@@ -26,7 +26,7 @@ export function BlockMiningView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>검증된 트랜잭션은 어떻게 체인에 새겨질까</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               스크립트·서명 검증에서 확인된 트랜잭션들은 곧바로 체인에 붙지 않는다. 채굴자가 그 트랜잭션들을 블록 헤더로
               요약하고, 목표 이하의 해시가 나올 때까지 nonce를 바꿔가며 계산 경쟁을 벌인 끝에 승자의 블록이 체인에
               이어진다. 헤더를 뜯어보고, 직접 채굴해 보고, 난이도가 스스로 조정되며 체인이 하나로 합의되는 과정을 따라가

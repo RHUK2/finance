@@ -146,7 +146,7 @@ export function PayoffMatrix() {
       <Card className='gap-3 p-4'>
         <div>
           <h3 className='font-semibold'>비교: 죄수의 딜레마</h3>
-          <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+          <p className='text-muted-foreground mt-1 text-sm/relaxed'>
             같은 &#39;우월전략&#39; 구조라도 보상이 다르면 결과가 정반대가 된다. 죄수의 딜레마에선 배신이 우월전략이라
             둘 다 배신(1/1)으로 수렴하지만, 이는 둘 다 협력(3/3)보다 <b>모두에게 더 나쁜</b> 결과다.
           </p>

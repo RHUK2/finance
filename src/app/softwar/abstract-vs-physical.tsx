@@ -94,7 +94,7 @@ export function AbstractVsPhysical() {
         )}
       >
         <ShieldCheck className={cn('size-5 shrink-0', r.physical.captured ? 'text-rose-500' : 'text-emerald-500')} />
-        <p className='text-sm leading-relaxed'>
+        <p className='text-sm/relaxed'>
           추상 권력의 탈취 비용은 자산 가치가 아무리 커져도 함께 오르지 않는다. 그래서 고가치 자산일수록 BCRA가 치솟아{' '}
           <b>늘 탈취에 노출</b>된다. 반면 물리 권력은 와트를 부과해 탈취 비용을 자산 가치 위로 끌어올릴 수 있다.{' '}
           {r.physical.captured ? (

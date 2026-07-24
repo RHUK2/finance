@@ -82,7 +82,7 @@ function PercentageChange({ value, className }: { value: number | null; classNam
         className,
       )}
     >
-      {isPositive ? <TrendingUp className='h-3 w-3 shrink-0' /> : <TrendingDown className='h-3 w-3 shrink-0' />}
+      {isPositive ? <TrendingUp className='size-3 shrink-0' /> : <TrendingDown className='size-3 shrink-0' />}
       {isPositive ? '+' : ''}
       {value.toFixed(2)}%
     </div>
@@ -145,7 +145,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
           const type = info.row.original.type;
           return (
             <div className='flex items-center gap-2'>
-              <span className={cn('h-2 w-2 shrink-0 rounded-full', TYPE_DOT_COLORS[type] ?? 'bg-muted')} />
+              <span className={cn('size-2 shrink-0 rounded-full', TYPE_DOT_COLORS[type] ?? 'bg-muted')} />
               <div>
                 <span className='font-medium'>{info.getValue()}</span>
                 <span className='text-muted-foreground ml-2 text-xs'>{info.row.original.ticker}</span>
@@ -189,7 +189,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   const filterTabs = (
     <div
       ref={filterRef}
-      className='cursor-grab [scrollbar-width:none] overflow-x-auto py-1 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden'
+      className='cursor-grab scrollbar-none overflow-x-auto py-1 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden'
       style={filterMaskStyle}
       {...filterHandlers}
     >
@@ -221,7 +221,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
 
   const searchInput = (
     <>
-      <Search className='text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2' />
+      <Search className='text-muted-foreground absolute top-1/2 left-2.5 size-4 -translate-y-1/2' />
       <Input
         placeholder='자산 검색...'
         value={globalFilter}
@@ -281,7 +281,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                 onClick={() => item.gfUrl && window.open(item.gfUrl, '_blank')}
               >
                 <div className='flex items-center gap-2.5'>
-                  <span className={cn('h-2 w-2 shrink-0 rounded-full', TYPE_DOT_COLORS[item.type] ?? 'bg-muted')} />
+                  <span className={cn('size-2 shrink-0 rounded-full', TYPE_DOT_COLORS[item.type] ?? 'bg-muted')} />
                   <div>
                     <div className='font-medium'>{item.label}</div>
                     <div className='text-muted-foreground text-xs'>{item.ticker}</div>
@@ -325,11 +325,11 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {canSort &&
                             (sorted === 'asc' ? (
-                              <ArrowUp className='h-3 w-3' />
+                              <ArrowUp className='size-3' />
                             ) : sorted === 'desc' ? (
-                              <ArrowDown className='h-3 w-3' />
+                              <ArrowDown className='size-3' />
                             ) : (
-                              <ArrowUpDown className='h-3 w-3 opacity-40' />
+                              <ArrowUpDown className='size-3 opacity-40' />
                             ))}
                         </div>
                       </th>

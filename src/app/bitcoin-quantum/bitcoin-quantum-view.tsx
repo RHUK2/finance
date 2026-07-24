@@ -44,7 +44,7 @@ export function BitcoinQuantumView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>비트코인은 양자컴퓨터에 얼마나 취약한가</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               비트코인 서명(ECDSA)은 타원곡선 이산로그 문제의 어려움에 의존한다. 충분히 강력한 양자컴퓨터는 쇼어
               알고리즘으로 공개키에서 개인키를 역산할 수 있다. 다만 모든 잔고가 똑같이 위험한 건 아니다. 아래에서 큐비트
               발전 정도와 주소 유형에 따라 위험이 어떻게 달라지는지 확인해 보자.

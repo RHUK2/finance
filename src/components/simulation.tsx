@@ -242,7 +242,7 @@ export function ExplainCard({
           <ChevronDown className='text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]/explain:rotate-180' />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className='text-muted-foreground p-4 text-sm leading-relaxed'>{body}</div>
+          <div className='text-muted-foreground p-4 text-sm/relaxed'>{body}</div>
         </CollapsibleContent>
       </Card>
     </Collapsible>
@@ -338,7 +338,7 @@ export function SegmentedControl<T extends string | boolean>({
 // "교육용 개념 시연" 경고 카드. 개념 시연 페이지들이 공통으로 쓰는 틀.
 export function IllustrativeDisclaimer({ children }: { children: React.ReactNode }) {
   return (
-    <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm leading-relaxed'>
+    <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm/relaxed'>
       <span className='flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400'>
         <TriangleAlert className='size-4' />
         교육용 개념 시연
@@ -428,7 +428,7 @@ export function SectionIntro({ title, children }: { title: string; children: Rea
   return (
     <div>
       <h2 className='text-lg font-semibold'>{title}</h2>
-      <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>{children}</p>
+      <p className='text-muted-foreground mt-1 text-sm/relaxed'>{children}</p>
     </div>
   );
 }

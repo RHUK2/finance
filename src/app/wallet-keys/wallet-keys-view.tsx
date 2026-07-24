@@ -70,14 +70,14 @@ export function WalletKeysView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>지갑은 어떻게 &#39;단어&#39;에서 만들어질까</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               비트코인 지갑은 12~24개의 영어 단어 하나로 모든 주소와 키를 복원한다. 그 비밀은 BIP-39와 BIP-32/44라는
               규칙에 있다. 무작위 동전 던지기(엔트로피)가 어떻게 단어가 되고, 그 단어가 어떻게 시드가 되며, 하나의
               시드에서 어떻게 수많은 주소가 가지치기되는지 직접 만져보며 따라가 보자.
             </p>
           </div>
 
-          <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm leading-relaxed'>
+          <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm/relaxed'>
             <span className='flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400'>
               <TriangleAlert className='size-4' />
               교육용 개념 시연

@@ -32,7 +32,7 @@ export function MempoolPolicy() {
         정책을 정하면, 그 값이 두 시연(수용 판정·RBF) 모두에 똑같이 적용된다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-1.5 border-amber-500/30 bg-amber-500/[0.03] p-4'>
+      <Card className='flex flex-col gap-1.5 border-amber-500/30 bg-amber-500/3 p-4'>
         <ControlSlider
           icon={<Gauge className='size-4 text-amber-600 dark:text-amber-400' />}
           label='이 노드의 최소 릴레이 수수료율 (아래 두 시연 공통)'

@@ -84,7 +84,7 @@ export function HtlcRouting() {
           })}
         </div>
 
-        <div className='bg-muted rounded-md border-transparent p-3 text-sm leading-relaxed'>{STEP_LABEL[step]}</div>
+        <div className='bg-muted rounded-md border-transparent p-3 text-sm/relaxed'>{STEP_LABEL[step]}</div>
       </Card>
 
       <IllustrativeDisclaimer>

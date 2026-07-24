@@ -63,7 +63,7 @@ export function ForkCompat() {
 
         <div className='rounded-md border p-3'>
           <p className='text-sm font-medium'>{ex.label}</p>
-          <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>{ex.rule}</p>
+          <p className='text-muted-foreground mt-1 text-sm/relaxed'>{ex.rule}</p>
         </div>
 
         <div className='grid grid-cols-2 gap-3'>
@@ -105,7 +105,7 @@ function CompatCell({ label, ok }: { label: string; ok: boolean }) {
       ) : (
         <CircleX className='size-6 text-rose-600 dark:text-rose-400' />
       )}
-      <span className='text-xs leading-snug'>{label}</span>
+      <span className='text-xs/snug'>{label}</span>
     </div>
   );
 }

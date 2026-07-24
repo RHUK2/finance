@@ -22,7 +22,7 @@ export function SoftForkActivationView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>합의 규칙은 어떻게 바뀌는가</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               지금까지는 정해진 규칙 위에서 트랜잭션이 어떻게 검증되고 체인에 새겨지는지를 봤다. 그런데 그 규칙 자체는
               누가, 어떻게 바꿀까. 관리자도 투표도 없이, 노드마다 독립적으로 소프트웨어를 업그레이드하는 것만으로 전체
               네트워크의 합의 규칙이 갈라지지 않고 바뀌는 과정을 살펴본다.

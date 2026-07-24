@@ -54,7 +54,7 @@ export function SoftwarVsHardwar() {
         )}
       >
         <ShieldCheck className={cn('size-5 shrink-0', r.deterred ? 'text-emerald-500' : 'text-rose-500')} />
-        <p className='text-sm leading-relaxed'>
+        <p className='text-sm/relaxed'>
           적의 BCRA ={' '}
           <b className={r.deterred ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
             {r.bcra.toFixed(2)}
@@ -73,7 +73,7 @@ export function SoftwarVsHardwar() {
             하드워 (유혈 권력 투사)
           </span>
           <Metric label='환산 인명 피해' value={`${r.hardCasualties.toLocaleString()}명`} tone='bad' />
-          <p className='text-muted-foreground text-xs leading-relaxed'>
+          <p className='text-muted-foreground text-xs/relaxed'>
             군대·핵무기로 같은 억지를 달성하려면 투사력에 비례해 인명과 자산이 파괴된다. 억지력을 키울수록 부수 피해도
             함께 커진다.
           </p>
@@ -84,7 +84,7 @@ export function SoftwarVsHardwar() {
             소프트워 (전기 권력 투사)
           </span>
           <Metric label='환산 인명 피해' value='0명' tone='good' />
-          <p className='text-muted-foreground text-xs leading-relaxed'>
+          <p className='text-muted-foreground text-xs/relaxed'>
             작업증명은 전기만 소비해 같은 억지 효과를 낸다. 비용은 전기료뿐, 흘리는 피는 없다. 권력을 키워도 인명 피해는
             0으로 유지된다.
           </p>

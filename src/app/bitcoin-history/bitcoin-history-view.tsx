@@ -97,7 +97,7 @@ export function BitcoinHistoryView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>비트코인 역사: 두 개의 타임라인</h1>
-            <p className='text-muted-foreground mt-1 text-sm leading-relaxed'>
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
               같은 역사를 두 렌즈로 본다. 하나는 프로토콜이 어떻게 (안) 바뀌어 왔는가라는 거버넌스의 전장, 다른 하나는
               세상이 비트코인을 어떻게 받아들였는가라는 시장·채택의 서사. 각 항목을 눌러 자세히 볼 수 있다.
             </p>

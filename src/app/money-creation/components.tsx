@@ -189,14 +189,14 @@ export function StepPanel({
           className='hover:bg-muted/40 flex w-full items-center gap-2 px-3 py-2 text-left transition-colors'
         >
           <span className='bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold'>
-            <span className='translate-y-[1px]'>{step}</span>
+            <span className='translate-y-px'>{step}</span>
           </span>
           <span className='flex-1 truncate font-semibold'>{title}</span>
           <ChevronDown className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')} />
         </button>
         {open && (
-          <div className='flex flex-col gap-3 border-t px-3 pt-3 pb-3'>
-            <p className='text-muted-foreground text-sm leading-relaxed'>{narration}</p>
+          <div className='flex flex-col gap-3 border-t p-3'>
+            <p className='text-muted-foreground text-sm/relaxed'>{narration}</p>
             {slider}
             <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
           </div>

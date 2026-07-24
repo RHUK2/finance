@@ -46,7 +46,7 @@ export function BitcoinView() {
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>
             <Button variant='outline' size='sm' onClick={resetAll}>
-              <RotateCcw className='h-3.5 w-3.5' />
+              <RotateCcw className='size-3.5' />
               <span className='text-xs'>전체 스케일 초기화</span>
             </Button>
           </div>

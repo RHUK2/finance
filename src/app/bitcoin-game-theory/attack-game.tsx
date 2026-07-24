@@ -123,7 +123,7 @@ export function AttackGame() {
         )}
       >
         <ShieldCheck className={cn('size-5 shrink-0', r.costToGain >= 1 ? 'text-emerald-500' : 'text-rose-500')} />
-        <p className='text-sm leading-relaxed'>
+        <p className='text-sm/relaxed'>
           {r.costToGain >= 1 ? (
             <>
               공격 비용이 이득의{' '}

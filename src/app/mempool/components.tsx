@@ -71,7 +71,7 @@ export function PoolShareChart({
                 <li key={p.slug} className='flex items-center justify-between gap-2 text-sm'>
                   <span className='flex min-w-0 items-center gap-2'>
                     <span
-                      className='h-2.5 w-2.5 shrink-0 rounded-full'
+                      className='size-2.5 shrink-0 rounded-full'
                       style={{
                         background: POOL_COLORS[i % POOL_COLORS.length],
                       }}
@@ -195,7 +195,7 @@ export function MempoolBlocksViz({
         ) : (
           <div
             ref={ref}
-            className='cursor-grab [scrollbar-width:none] overflow-x-auto pr-3 pb-3 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden'
+            className='cursor-grab scrollbar-none overflow-x-auto pr-3 pb-3 select-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden'
             style={maskStyle}
             {...handlers}
           >
@@ -214,7 +214,7 @@ export function MempoolBlocksViz({
                       style={{ transform: 'translate(3px, 3px)' }}
                     />
                     {/* 전면 */}
-                    <div className='relative flex min-w-[128px] flex-col gap-2 rounded-md border border-purple-400/40 bg-gradient-to-b from-purple-600 to-purple-800 px-3 py-3 text-purple-100'>
+                    <div className='relative flex min-w-[128px] flex-col gap-2 rounded-md border border-purple-400/40 bg-linear-to-b from-purple-600 to-purple-800 p-3 text-purple-100'>
                       <div className='text-[10px] text-purple-200/90'>#{i + 1} 예상 블록</div>
                       <div className='text-center'>
                         <span className='text-xl leading-none font-bold text-white tabular-nums'>~{b.medianFee}</span>

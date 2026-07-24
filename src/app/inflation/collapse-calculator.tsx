@@ -102,7 +102,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
           format={(v) => `${v}년`}
         />
 
-        <p className='bg-muted/40 rounded-lg border p-4 text-sm leading-relaxed'>
+        <p className='bg-muted/40 rounded-lg border p-4 text-sm/relaxed'>
           {ready ? (
             <>
               {startYear}년에 {hi(money(amount), 'strong')}을 예금에 넣었다면 오늘 통장엔{' '}
