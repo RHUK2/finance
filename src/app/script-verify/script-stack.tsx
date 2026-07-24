@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { CircleCheck, CircleX, RotateCcw, StepForward, TriangleAlert } from 'lucide-react';
+import { CircleCheck, CircleX, RotateCcw, StepForward } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -361,14 +361,6 @@ export function ScriptStack() {
           </>
         }
       />
-
-      <Card className='flex items-start gap-2 border-amber-500/40 bg-amber-500/5 p-3 text-xs'>
-        <TriangleAlert className='mt-0.5 size-3.5 shrink-0 text-amber-600 dark:text-amber-400' />
-        <p className='text-muted-foreground'>
-          여기 쌓이는 sig·pubKey·hash 값은 흐름을 보여주기 위한 결정적 가짜 값이다(SHA-256, HASH160, ECDSA/Schnorr
-          서명·검증을 단순화). 실행 순서와 스택 규칙만 실제와 같다.
-        </p>
-      </Card>
     </div>
   );
 }

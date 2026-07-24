@@ -69,8 +69,24 @@ export function AddressScriptCompare() {
         </p>
       </Card>
 
-      <Card className='overflow-x-auto p-4'>
-        <table className='w-full min-w-[560px] border-collapse text-sm'>
+      <div className='flex flex-col gap-3 md:hidden'>
+        {SCRIPT_ADDR_TYPES.map((t) => (
+          <Card key={t.value} className='flex flex-col gap-3 p-4'>
+            <span className='text-sm font-semibold'>{t.label}</span>
+            <dl className='flex flex-col gap-2'>
+              {ROWS.map((row) => (
+                <div key={row.label} className='flex flex-col gap-0.5'>
+                  <dt className='text-muted-foreground text-xs'>{row.label}</dt>
+                  <dd className='text-xs/relaxed'>{row.cells[t.value]}</dd>
+                </div>
+              ))}
+            </dl>
+          </Card>
+        ))}
+      </div>
+
+      <Card className='hidden overflow-x-auto p-4 md:block'>
+        <table className='w-full min-w-[480px] border-collapse text-sm'>
           <thead>
             <tr className='border-b text-left'>
               <th className='text-muted-foreground w-40 pb-2 font-medium'>항목</th>
