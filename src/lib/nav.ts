@@ -3,6 +3,7 @@ import {
   Atom,
   BarChart3,
   Bitcoin,
+  Building2,
   Coins,
   EyeOff,
   Gauge,
@@ -74,6 +75,7 @@ export const NAV_GROUPS = [
     items: [
       { label: '신용창조', href: '/money-creation', icon: Landmark },
       { label: '구매력 붕괴', href: '/inflation', icon: TrendingDown },
+      { label: '법인', href: '/corporation', icon: Building2 },
     ],
   },
 ];
