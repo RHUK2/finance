@@ -1,6 +1,7 @@
 import {
   Activity,
   Atom,
+  Banknote,
   BarChart3,
   Bitcoin,
   Building2,
@@ -9,8 +10,10 @@ import {
   Gauge,
   GitFork,
   History,
+  House,
   KeyRound,
   Landmark,
+  Layers,
   LineChart,
   Network,
   Radar,
@@ -75,7 +78,20 @@ export const NAV_GROUPS = [
     items: [
       { label: '신용창조', href: '/money-creation', icon: Landmark },
       { label: '구매력 붕괴', href: '/inflation', icon: TrendingDown },
+    ],
+  },
+  {
+    label: '기업',
+    items: [
       { label: '법인', href: '/corporation', icon: Building2 },
+      { label: '자본구조', href: '/capital-structure', icon: Layers },
+    ],
+  },
+  {
+    label: '부동산',
+    items: [
+      { label: '전세 구조', href: '/jeonse', icon: House },
+      { label: '주택담보대출', href: '/mortgage', icon: Banknote },
     ],
   },
 ];
