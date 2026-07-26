@@ -17,7 +17,7 @@ import {
 import { Card } from '@/components/ui/card';
 
 // 단위는 억원. 교육용 예시 수치.
-const CAPITAL = 50; // 주주가 낸 출자금 총액
+const CAPITAL = 50; // 주주가 낸 출자금 총액 (개인사업자라면 사업에 넣은 자기 자본)
 const PERSONAL = 30; // 대표 개인 재산
 
 const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
@@ -25,7 +25,7 @@ const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
 const PIERCE_CASES = [
   '회사 통장과 개인 통장을 구분 없이 섞어 썼다',
   '사업 규모에 견줘 자본금이 터무니없이 적다',
-  '주주총회·이사회 없이 사실상 한 사람이 전부 결정했다',
+  '주주총회·이사회 없이 사실상 지배주주 1인이 전부 결정했다',
   '기존 빚을 피하려고 껍데기만 새로 세웠다',
 ];
 
@@ -46,12 +46,26 @@ export function LimitedLiability() {
 
   const barMax = Math.max(debts, CAPITAL, PERSONAL, 1);
 
+  // 개인사업자에는 주주도 출자금도 없으므로 같은 수치라도 부르는 이름이 달라진다.
+  // 어휘를 한곳에 모아 두고, 문장 자체가 달라지는 곳에서만 따로 분기한다.
+  const V = isCorp
+    ? { owner: '주주', person: '대표', capital: '출자금', assets: '청산 시점의 회사 재산', debt: '회사가 진 빚' }
+    : {
+        owner: '사업주',
+        person: '사업주',
+        capital: '사업 자본',
+        assets: '청산 시점의 사업용 재산',
+        debt: '사업으로 진 빚',
+      };
+
   const banner =
     personalBurden > 0
       ? {
           tone: 'bad' as const,
           icon: <ShieldOff className='size-4 shrink-0' />,
-          text: `회사와 개인 사이의 벽이 뚫렸다. 회사 재산으로 못 갚은 ${fmt(shortfall)} 가운데 ${fmt(personalBurden)}이 대표 개인 재산에서 빠져나간다. 사업의 실패가 사람의 파산으로 이어지는 상태다.`,
+          text: isCorp
+            ? `두 인격 사이의 벽이 뚫렸다. 회사 재산으로 못 갚은 ${fmt(shortfall)} 가운데 ${fmt(personalBurden)}이 대표 개인 재산에서 빠져나간다. 법인의 실패가 자연인의 파산으로 이어지는 상태다.`
+            : `인격이 하나뿐이라 멈출 벽이 없다. 사업 재산으로 못 갚은 ${fmt(shortfall)} 가운데 ${fmt(personalBurden)}이 사업주 개인 재산에서 그대로 빠져나간다.`,
         }
       : shortfall > 0
         ? {
@@ -62,15 +76,15 @@ export function LimitedLiability() {
         : {
             tone: 'good' as const,
             icon: <ShieldCheck className='size-4 shrink-0' />,
-            text: `부채를 모두 갚고도 ${fmt(shareholderRecovered)}이 남았다. 채권자를 먼저 만족시킨 뒤 남은 재산이 주주에게 분배된다. 주주는 언제나 맨 뒤에 선다.`,
+            text: `부채를 모두 갚고도 ${fmt(shareholderRecovered)}이 남았다. 채권자를 먼저 만족시킨 뒤 남은 재산이 ${V.owner}에게 돌아간다. ${V.owner}는 언제나 맨 뒤에 선다.`,
           };
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='손실은 어디에서 멈추는가'>
         법인격의 실질적 효용은 대부분 여기서 나온다. 회사가 진 빚은 회사의 빚이므로, 회사 재산이 바닥나면 채권자의
-        추심도 거기서 멈춘다. 주주가 잃는 최대치는 처음에 낸 돈이다. 이 벽이 있기에 서로 모르는 사람들이 한 사업에 돈을
-        모을 수 있다. 다만 벽을 스스로 허무는 경우도 있다.
+        추심도 거기서 멈춘다. 주주가 잃는 최대치는 처음에 낸 돈이다. 이 벽이 있기에 서로 모르는 출자자끼리 한 사업에
+        돈을 모을 수 있다. 다만 벽을 스스로 허무는 경우도 있다.
       </SectionIntro>
 
       <Card className='gap-5 p-4'>
@@ -82,10 +96,14 @@ export function LimitedLiability() {
                 { value: false, label: '개인사업자' },
               ]}
               value={isCorp}
-              onChange={setIsCorp}
+              // 주식회사로 돌아올 때는 벽이 지켜진 상태에서 다시 시작한다.
+              onChange={(v) => {
+                setIsCorp(v);
+                if (v) setPierced(false);
+              }}
             />
             <p className='text-muted-foreground text-xs'>
-              개인사업자에게는 사업과 사람을 나누는 인격이 없다. 사업의 빚이 곧 내 빚이다.
+              개인사업자에게는 인격이 자연인 하나뿐이다. 사업의 빚이 곧 내 빚이다.
             </p>
           </Field>
           <Field label='법인격 부인'>
@@ -107,7 +125,7 @@ export function LimitedLiability() {
 
         <ControlSlider
           icon={<Banknote className='size-4 text-emerald-500' />}
-          label='청산 시점의 회사 재산'
+          label={V.assets}
           value={assets}
           onChange={setAssets}
           min={0}
@@ -117,22 +135,27 @@ export function LimitedLiability() {
         />
         <ControlSlider
           icon={<Wallet className='size-4 text-rose-500' />}
-          label='회사가 진 빚'
+          label={V.debt}
           value={debts}
           onChange={setDebts}
           min={0}
           max={300}
           step={5}
           format={fmt}
-          hint={`주주 출자금 총액 ${fmt(CAPITAL)}, 대표 개인 재산 ${fmt(PERSONAL)}을 전제로 계산한다.`}
+          hint={`${V.capital} 총액 ${fmt(CAPITAL)}, ${V.person} 개인 재산 ${fmt(PERSONAL)}을 전제로 계산한다.`}
         />
       </Card>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
         <Metric label='채권자 미회수액' value={fmt(creditorLoss)} tone={creditorLoss > 0 ? 'bad' : 'good'} />
-        <Metric label='주주 손실' value={fmt(shareholderLoss)} sub={`출자금 ${fmt(CAPITAL)}이 한도`} tone='accent' />
         <Metric
-          label='대표 개인 재산 손실'
+          label={`${V.owner} 자본 손실`}
+          value={fmt(shareholderLoss)}
+          sub={isCorp ? `${V.capital} ${fmt(CAPITAL)}이 한도` : `${V.capital} ${fmt(CAPITAL)}에서 멈추지 않는다`}
+          tone='accent'
+        />
+        <Metric
+          label={`${V.person} 개인 재산 손실`}
           value={fmt(personalBurden)}
           tone={personalBurden > 0 ? 'bad' : 'good'}
           sub={personalBurden > 0 ? '벽이 뚫렸다' : '회사 밖으로 번지지 않는다'}
@@ -157,15 +180,15 @@ export function LimitedLiability() {
           sub='유한책임의 비용은 결국 채권자가 부담한다'
         />
         <CostBar
-          label='주주가 잃는 돈'
+          label={`${V.owner}가 ${V.capital}에서 잃는 돈`}
           value={shareholderLoss}
           max={barMax}
           className='bg-amber-500'
           format={fmt}
-          sub='아무리 커져도 출자금을 넘지 않는다'
+          sub={isCorp ? `아무리 커져도 ${V.capital}을 넘지 않는다` : '여기서 끝나지 않고 개인 재산으로 이어진다'}
         />
         <CostBar
-          label='대표 개인 재산에서 나가는 돈'
+          label={`${V.person} 개인 재산에서 나가는 돈`}
           value={personalBurden}
           max={barMax}
           className='bg-fuchsia-500'
@@ -189,8 +212,8 @@ export function LimitedLiability() {
           ))}
         </ul>
         <p className='text-muted-foreground mt-1 text-xs/relaxed'>
-          법인격을 인정하는 것이 오히려 정의에 반할 때, 법원은 그 사안에 한해 회사와 개인을 같은 것으로 본다. 회사를
-          없애는 게 아니라 이번 건에서만 없는 셈 치는 것이다.
+          법인격을 인정하는 것이 오히려 정의에 반할 때, 법원은 그 사안에 한해 두 인격을 같은 것으로 본다. 회사를 없애는
+          게 아니라 이번 건에서만 없는 셈 치는 것이다.
         </p>
       </Card>
 
@@ -209,7 +232,7 @@ export function LimitedLiability() {
             <p className='mt-2'>
               회사법이 배당과 자사주 매입을 배당가능이익 안으로 묶어 두는 이유도 같다. 주주는 언제나 채권자보다 뒤에
               서야 하는데, 청산 전에 회사 재산을 미리 빼 가면 그 순서가 뒤집히기 때문이다. 자본금 제도, 배당 제한,
-              이사의 책임은 모두 벽 반대편에 선 사람들을 위한 안전장치다.
+              이사의 책임은 모두 벽 반대편에 선 채권자를 위한 안전장치다.
             </p>
           </>
         }

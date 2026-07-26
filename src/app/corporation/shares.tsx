@@ -50,8 +50,9 @@ export function Shares() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='회사가 자기 지분의 반대편에 앉는다'>
         주식은 회사라는 인격에 대한 지분 조각이다. 회사는 새 조각을 찍어내 팔 수도 있고(신주 발행), 시장에 나와 있는
-        조각을 자기 돈으로 사들일 수도 있다(자사주 매입). 사람으로 치면 자기 자신의 일부를 사고파는 셈인데, 법인이기에
-        가능한 거래다. 두 손잡이를 움직여 내 지분이 어떻게 묽어지고 짙어지는지 보자.
+        조각을 자기 돈으로 사들일 수도 있다(자사주 매입). 자연인의 인격은 조각내 거래할 수 없지만, 법인격은 지분으로
+        쪼개져 있어 회사 자신이 그 거래의 당사자가 될 수 있다. 두 손잡이를 움직여 내 지분이 어떻게 묽어지고 짙어지는지
+        보자.
       </SectionIntro>
 
       <Card className='gap-5 p-4'>
@@ -98,7 +99,13 @@ export function Shares() {
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <StatCard label='유통주식수' value={outstanding} format={fmtShares} sub='자사주 제외' />
-        <StatCard label='내 지분율' value={myPct} format={fmtPct} tone={tone} sub={`시작 ${fmtPct(BASE_PCT)}`} />
+        <StatCard
+          label='내 지분율'
+          value={myPct}
+          format={fmtPct}
+          tone={tone}
+          sub={`의결권 기준, 시작 ${fmtPct(BASE_PCT)}`}
+        />
         <StatCard
           label='주당순이익 (EPS)'
           value={eps}
