@@ -117,12 +117,20 @@ export function MempoolView() {
                     <Stat
                       label='예상 변화율'
                       value={`${mining.difficultyChangePct > 0 ? '+' : ''}${mining.difficultyChangePct}%`}
-                      valueClassName={mining.difficultyChangePct >= 0 ? 'text-green-500' : 'text-red-500'}
+                      valueClassName={
+                        mining.difficultyChangePct >= 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
+                      }
                     />
                     <Stat
                       label='이전 변화율'
                       value={`${mining.previousDifficultyChangePct > 0 ? '+' : ''}${mining.previousDifficultyChangePct}%`}
-                      valueClassName={mining.previousDifficultyChangePct >= 0 ? 'text-green-500' : 'text-red-500'}
+                      valueClassName={
+                        mining.previousDifficultyChangePct >= 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
+                      }
                     />
                   </div>
                   <div>

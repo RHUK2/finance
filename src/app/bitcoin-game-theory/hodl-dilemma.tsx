@@ -4,9 +4,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { Diamond, Zap } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-
 import {
   AgentGrid,
   ControlSlider,
@@ -16,8 +13,11 @@ import {
   SectionIntro,
   Sparkline,
 } from '@/components/simulation';
-import { type Holder, type HodlState, buildHolders, hodlStep, initialHodlState } from './models';
+import { Card } from '@/components/ui/card';
 import { useRoundEngine } from '@/hooks/use-round-engine';
+import { cn } from '@/lib/utils';
+
+import { type Holder, type HodlState, buildHolders, hodlStep, initialHodlState } from './models';
 
 const N = 180;
 const SEED = 777;

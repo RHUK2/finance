@@ -1,10 +1,14 @@
+import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { MempoolBlocksData, RecentBlocksData } from '@/hooks/use-mempool';
 import { formatRelativeTime, useMinuteTick } from '@/hooks/use-relative-time';
 import { useScrollDrag } from '@/hooks/use-scroll-drag';
 import { BTC_COLOR, cn } from '@/lib/utils';
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
+// 블록 한도는 weight 4M WU = 1 MvB다. 충전율은 실제 직렬화 크기(size)가 아니라
+// 가상 크기(vMB)로 재야 한다. 꽉 찬 블록의 실제 크기는 보통 1.5~2MB로 1MB를 넘는다.
 const MAX_BLOCK_MB = 1.0;
 
 export function CardHeading({ title, relativeTime }: { title?: string; relativeTime?: string }) {
@@ -100,15 +104,7 @@ export function RecentBlocksList({
   relativeTime,
   description,
 }: {
-  blocks?: {
-    height: number;
-    timestamp: number;
-    poolName: string;
-    txCount: number;
-    sizeMB: number;
-    rewardBTC: number;
-    medianFee: number;
-  }[];
+  blocks?: RecentBlocksData['blocks'];
   title?: string;
   relativeTime?: string;
   description?: string;
@@ -145,7 +141,7 @@ export function RecentBlocksList({
                     <div
                       className='h-full rounded-full bg-blue-500/60'
                       style={{
-                        width: `${Math.min((b.sizeMB / MAX_BLOCK_MB) * 100, 100)}%`,
+                        width: `${Math.min((b.vMB / MAX_BLOCK_MB) * 100, 100)}%`,
                       }}
                     />
                   </div>
@@ -171,13 +167,7 @@ export function MempoolBlocksViz({
   relativeTime,
   description,
 }: {
-  blocks?: {
-    medianFee: number;
-    feeMin: number;
-    feeMax: number;
-    nTx: number;
-    vMB: number;
-  }[];
+  blocks?: MempoolBlocksData['blocks'];
   title?: string;
   relativeTime?: string;
   description?: string;

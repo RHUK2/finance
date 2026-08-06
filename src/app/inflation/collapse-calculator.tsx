@@ -53,7 +53,8 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
     const holdLine = ratio != null ? amount * ratio : null;
     const lossPct = depositNominal != null && holdLine ? (depositNominal / holdLine - 1) * 100 : null;
     const gap = depositNominal != null && holdLine != null ? depositNominal - holdLine : null;
-    const headline = assets.find((a) => a.value != null);
+    // 문장에서 한 자산만 언급하므로 가장 많이 불어난 것을 고른다(노동시간 환산 탭과 같은 기준).
+    const headline = assets.filter((a) => a.value != null).sort((a, b) => b.value! - a.value!)[0];
 
     return {
       depositNominal,
@@ -114,7 +115,10 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
                 <>
                   {' '}
                   같은 돈을 {head.label}에 넣었다면{' '}
-                  {hi(`${money(head.value)} (×${(head.value / amount).toFixed(1)})`, 'good')}
+                  {hi(
+                    `${money(head.value)} (×${(head.value / amount).toFixed(1)})`,
+                    head.value >= r.holdLine! ? 'good' : 'bad',
+                  )}
                   였습니다.
                 </>
               ) : null}

@@ -1,9 +1,11 @@
-import { AppSidebar } from '@/components/app-sidebar';
-import { QueryProvider } from '@/components/query-provider';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import type { Metadata, Viewport } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
+
+import { AppSidebar } from '@/components/app-sidebar';
+import { QueryProvider } from '@/components/query-provider';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -20,7 +22,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0f172a',
+  // 모바일 브라우저 크롬 색. globals.css의 --background(라이트 흰색 / 다크 남색)와 맞춘다.
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

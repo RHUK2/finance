@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 import {
   ColorType,
   LineStyle,
@@ -13,6 +14,22 @@ import {
 
 // 차트 컴포넌트가 lightweight-charts를 직접 import하지 않도록 여기서 재수출한다 (단일 관문).
 export { AreaSeries, LineSeries, LineStyle, createSeriesMarkers, type Time } from 'lightweight-charts';
+
+// 차트는 canvas에 그려져 CSS 변수(--border 등)가 통하지 않는다. 테마별 색을 값으로 들고 있다가
+// resolvedTheme에 따라 골라 쓴다. 마운트 전에는 resolvedTheme이 undefined이므로 다크로 시작한다.
+const CHART_CHROME = {
+  dark: { text: '#9ca3af', grid: '#1f2937', border: '#374151', crosshair: '#6b7280' },
+  light: { text: '#6b7280', grid: '#e5e7eb', border: '#d1d5db', crosshair: '#9ca3af' },
+} as const;
+
+/**
+ * 차트 시리즈 색을 테마에 맞춰 고를 때 쓴다(밝은 배경에서 안 보이는 흰 선 등).
+ * 이 값을 쓰는 컴포넌트는 useChart의 deps에도 넣어 테마 전환 시 다시 그려지게 할 것.
+ */
+export function useIsDarkChart(): boolean {
+  const { resolvedTheme } = useTheme();
+  return resolvedTheme !== 'light';
+}
 
 // 지표 차트 공용. 기준선(존 경계)을 점선 price line으로 추가.
 export function addZoneLines(
@@ -44,6 +61,7 @@ export function useChart(
   deps: React.DependencyList,
   { height = 280, logScale = false, timeVisible = false, resetRef }: ChartOverrides = {},
 ) {
+  const isDark = useIsDarkChart();
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const setupRef = useRef(setup);
@@ -67,30 +85,31 @@ export function useChart(
     if (!container) return;
     dirtyRef.current = false;
 
+    const chrome = isDark ? CHART_CHROME.dark : CHART_CHROME.light;
     const chart = createChart(container, {
       autoSize: true,
       height,
       hoveredSeriesOnTop: false,
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#9ca3af',
+        textColor: chrome.text,
       },
       grid: {
-        vertLines: { color: '#1f2937' },
-        horzLines: { color: '#1f2937' },
+        vertLines: { color: chrome.grid },
+        horzLines: { color: chrome.grid },
       },
       rightPriceScale: {
-        borderColor: '#374151',
+        borderColor: chrome.border,
         ...(logScale && { mode: PriceScaleMode.Logarithmic }),
       },
       timeScale: {
-        borderColor: '#374151',
+        borderColor: chrome.border,
         minBarSpacing: 0.1,
         ...(timeVisible && { timeVisible: true }),
       },
       crosshair: {
-        vertLine: { color: '#6b7280' },
-        horzLine: { color: '#6b7280' },
+        vertLine: { color: chrome.crosshair },
+        horzLine: { color: chrome.crosshair },
       },
     });
 
@@ -123,7 +142,7 @@ export function useChart(
       chartRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [height, logScale, timeVisible, ...deps]);
+  }, [height, logScale, timeVisible, isDark, ...deps]);
 
   return { containerRef, resetView };
 }

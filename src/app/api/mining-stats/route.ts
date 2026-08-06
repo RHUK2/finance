@@ -1,6 +1,7 @@
+import { NextResponse } from 'next/server';
+
 import { cached } from '@/lib/cache';
 import { pctChange } from '@/lib/utils';
-import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 

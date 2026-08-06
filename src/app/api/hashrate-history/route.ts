@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { cached } from '@/lib/cache';
+import { dedupeByTime } from '@/lib/series';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,17 +19,12 @@ export async function GET() {
         avgHashrate: number;
       }[];
 
-      const seen = new Set<string>();
-      const history = hashrates
-        .map((h) => ({
+      const history = dedupeByTime(
+        hashrates.map((h) => ({
           time: new Date(h.timestamp * 1000).toISOString().slice(0, 10),
           value: Number((h.avgHashrate / 1e18).toFixed(2)),
-        }))
-        .filter((h) => {
-          if (seen.has(h.time)) return false;
-          seen.add(h.time);
-          return true;
-        });
+        })),
+      );
 
       return {
         fetchedAt: new Date().toISOString(),

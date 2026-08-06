@@ -1,8 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { ChevronUp } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 
 function scrollToTop(duration = 300) {
   const start = window.scrollY;
@@ -38,19 +39,15 @@ export function PageMain({ children, hideScrollTop }: Props) {
   return (
     <main className='min-h-[calc(100dvh-3rem)] px-4 pt-4 pb-(--footer-clearance) [--footer-clearance:calc(4rem+env(safe-area-inset-bottom))] sm:px-6 sm:pt-6 md:p-8 md:pb-8 lg:p-10'>
       {children}
-      {!hideScrollTop && (
-        <div className='fixed right-4 bottom-(--footer-clearance) z-50 flex flex-col gap-2 md:bottom-4'>
-          {visible && (
-            <Button
-              size='icon'
-              variant='outline'
-              className='size-12 rounded-full shadow-md'
-              onClick={() => scrollToTop()}
-            >
-              <ChevronUp className='size-6' />
-            </Button>
-          )}
-        </div>
+      {!hideScrollTop && visible && (
+        <Button
+          size='icon'
+          variant='outline'
+          className='fixed right-4 bottom-(--footer-clearance) z-50 size-12 rounded-full shadow-md md:bottom-4'
+          onClick={() => scrollToTop()}
+        >
+          <ChevronUp className='size-6' />
+        </Button>
       )}
     </main>
   );

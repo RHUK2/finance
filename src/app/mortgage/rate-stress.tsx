@@ -64,7 +64,7 @@ export function RateStress() {
       : jumpPct > 20
         ? {
             tone: 'accent' as const,
-            icon: <ShieldCheck className='size-4 shrink-0' />,
+            icon: <TrendingUp className='size-4 shrink-0' />,
             text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${jumpPct.toFixed(0)}% 늘었다. 이자만이 아니라 남은 원금을 더 짧아진 기간에 갚아야 하기 때문이다.`,
           }
         : {

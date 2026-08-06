@@ -53,7 +53,9 @@ export function DepositPriority() {
           icon: <ShieldOff className='size-4 shrink-0' />,
           text: !moveIn
             ? `전입신고와 점유가 없으면 대항력도 우선변제권도 생기지 않는다. 임차인은 경매 절차 밖의 일반 채권자가 되어 ${fmtEok(lost)}을 떼인다.`
-            : `근저당이 먼저 잡힌 집이라 은행이 ${fmtEok(bankPaid)}을 먼저 가져간다. 남은 돈에서 배당받고도 ${fmtEok(lost)}이 비지만, 후순위라 낙찰자에게 청구할 수도 없다.`,
+            : canClaim
+              ? `근저당이 먼저 잡힌 집이라 은행이 ${fmtEok(bankPaid)}을 먼저 가져간다. 남은 돈에서 배당받고도 ${fmtEok(lost)}이 비지만, 후순위라 낙찰자에게 청구할 수도 없다.`
+              : `확정일자가 없어 배당에 아예 끼지 못한다. 근저당보다 뒤라 낙찰자에게 버틸 수도 없어 ${fmtEok(lost)}을 그대로 떼인다.`,
         }
       : {
           tone: 'good' as const,

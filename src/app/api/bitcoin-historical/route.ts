@@ -4,8 +4,8 @@ import { cached } from '@/lib/cache';
 
 export const dynamic = 'force-dynamic';
 
-// Coinbase BTC-USD 상장일: 2015-07-20
-const COINBASE_START_MS = 1437436800000;
+// Coinbase BTC-USD 첫 일봉: 2015-07-20
+const COINBASE_START_MS = Date.UTC(2015, 6, 20);
 const CHUNK_DAYS = 300;
 const DAY_MS = 86_400_000;
 

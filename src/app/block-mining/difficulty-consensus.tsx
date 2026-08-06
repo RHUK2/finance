@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
+import { RETARGET_INTERVAL } from '@/lib/bitcoin-models';
 import { retargetMultiplier, TARGET_RETARGET_DAYS } from '@/lib/block-concept';
 
 const FORK_POINT = 4; // 두 체인이 갈라지기 전 공통 블록 수
@@ -19,7 +20,7 @@ export function DifficultyConsensus() {
   const multiplier = retargetMultiplier(actualDays);
   const clampedHigh = multiplier === 4;
   const clampedLow = multiplier === 0.25;
-  const avgBlockMin = (actualDays * 24 * 60) / 2016;
+  const avgBlockMin = (actualDays * 24 * 60) / RETARGET_INTERVAL;
 
   const lenA = FORK_POINT + chainA;
   const lenB = FORK_POINT + chainB;

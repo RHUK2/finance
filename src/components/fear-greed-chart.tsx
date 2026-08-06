@@ -1,8 +1,7 @@
 'use client';
 
 import { ChartContainer } from '@/components/chart-container';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { IndicatorCard } from '@/components/indicator-card';
 import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { FearGreedData } from '@/hooks/use-crypto';
 import { cn } from '@/lib/utils';
@@ -52,33 +51,28 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
     : null;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-muted-foreground text-sm font-medium'>공포 & 탐욕 지수</CardTitle>
-          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
-        </div>
-        {!data ? (
-          <Skeleton className='h-9 w-20' />
-        ) : (
+    <IndicatorCard
+      title='공포 & 탐욕 지수'
+      updatedLabel={updatedLabel}
+      ready={!!data}
+      headline={
+        data &&
+        info && (
           <div className='flex items-end gap-2'>
-            <span className={cn('text-3xl font-bold', info!.color)}>{data.value}</span>
-            <span className={cn('mb-1 text-sm font-medium', info!.color)}>{info!.label}</span>
+            <span className={cn('text-3xl font-bold', info.color)}>{data.value}</span>
+            <span className={cn('mb-1 text-sm font-medium', info.color)}>{info.label}</span>
           </div>
-        )}
-      </CardHeader>
-      <CardContent className='p-0'>
-        {!data ? (
-          <Skeleton className='h-[280px] w-full rounded-none' />
-        ) : (
-          <ChartContainer containerRef={containerRef} onReset={resetView} />
-        )}
-        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+        )
+      }
+      height={280}
+      chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
+      description={
+        <>
           시장 심리를 0~100으로 수치화한 지표. 숫자보다 &lsquo;극단&rsquo;을 역발상 신호로 읽는 것이 핵심입니다.
           0~25(극도의 공포)는 과매도로 분할 매수 기회, 75~100(극도의 탐욕)은 과열로 차익실현·리스크 관리 신호로
           해석합니다.
-        </p>
-      </CardContent>
-    </Card>
+        </>
+      }
+    />
   );
 }

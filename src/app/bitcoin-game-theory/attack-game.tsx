@@ -11,8 +11,9 @@ import { cn, formatUsd } from '@/lib/utils';
 import { attack51 } from './models';
 
 export function AttackGame() {
-  const [btcPrice, setBtcPrice] = useState(100000);
-  const [networkHashrate, setNetworkHashrate] = useState(800);
+  // 기본값은 대략의 현재 시장 상황(2026년 중반)에 맞춰 둔다. 슬라이더로 바꿔 보는 게 이 탭의 목적이다.
+  const [btcPrice, setBtcPrice] = useState(65000);
+  const [networkHashrate, setNetworkHashrate] = useState(950);
   const [attackHours, setAttackHours] = useState(6);
   const [hardwareCostPerTH, setHardwareCostPerTH] = useState(15);
   const [electricity, setElectricity] = useState(0.05);

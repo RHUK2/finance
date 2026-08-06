@@ -16,8 +16,9 @@ import {
   SectionIntro,
   Sparkline,
 } from '@/components/simulation';
-import { type CascadeAgent, buildCascadeAgents, cascadeStep } from './models';
 import { useRoundEngine } from '@/hooks/use-round-engine';
+
+import { type CascadeAgent, buildCascadeAgents, cascadeStep } from './models';
 
 const N = 180;
 const SEED = 12345;

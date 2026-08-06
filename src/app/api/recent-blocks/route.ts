@@ -9,6 +9,7 @@ type Block = {
   timestamp: number;
   tx_count: number;
   size: number;
+  weight: number;
   extras: {
     reward: number;
     medianFee: number;
@@ -31,6 +32,8 @@ export async function GET() {
         poolSlug: b.extras.pool.slug,
         txCount: b.tx_count,
         sizeMB: Number((b.size / 1_000_000).toFixed(2)),
+        // 블록 한도는 실제 크기가 아니라 weight(4M WU = 1 MvB) 기준이다. 충전율 계산에 쓴다.
+        vMB: Number((b.weight / 4 / 1_000_000).toFixed(3)),
         rewardBTC: Number((b.extras.reward / 1e8).toFixed(3)),
         medianFee: Math.round(b.extras.medianFee),
       }));

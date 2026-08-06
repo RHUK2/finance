@@ -6,9 +6,10 @@ import { CheckCircle2, Gauge, Repeat, XCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { canReplaceByFee } from '@/lib/p2p-concept';
-import { feeSats, formatSats } from '@/lib/tx-concept';
+import { feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
 
-const TX_VBYTES = 140; // 시연용 고정 크기(전형적인 2-in-2-out 트랜잭션 근사)
+// 시연용 고정 크기. 전형적인 Native SegWit 1-in-2-out 전송(약 140 vB).
+const TX_VBYTES = txVBytes('native', 1, 2);
 
 export function MempoolPolicy() {
   const [minRelayRate, setMinRelayRate] = useState(1);

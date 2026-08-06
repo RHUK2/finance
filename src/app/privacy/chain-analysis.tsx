@@ -11,7 +11,8 @@ import { walletAddress } from '@/lib/privacy-concept';
 const INPUT_A = walletAddress('철수-지갑-utxo1');
 const INPUT_B = walletAddress('철수-지갑-utxo2');
 const OUTPUT_CHANGE = walletAddress('철수-지갑-잔돈');
-const OUTPUT_PAYMENT = walletAddress('상점-taproot-주소');
+// 결제 출력은 상점의 Taproot 주소다. 화면 라벨(bc1p...)과 맞도록 purpose 86'으로 만든다.
+const OUTPUT_PAYMENT = walletAddress('상점-taproot-주소', '86');
 
 const OUTPUTS = [
   { id: 'left', address: OUTPUT_CHANGE, sats: 48_800, type: 'Native SegWit (bc1q...)', isChange: true },
@@ -102,7 +103,7 @@ export function ChainAnalysis() {
           <>
             &#39;공통 입력 소유권&#39;과 &#39;잔돈 출력 추정&#39;은 확률적 추정일 뿐 증명이 아니다. 지갑이 일부러 잔돈
             타입을 결제 타입과 맞추거나(&#39;동일 타입 잔돈 회피&#39;), 결제 금액을 일부러 어중간하게 만들면 분석가의
-            추측이 빗나간다. 하지만 대부분의 지갑이 기본 설정 그대로 쓰이기 때문에, 실제로는 이 휴리스틱만 으로도
+            추측이 빗나간다. 하지만 대부분의 지갑이 기본 설정 그대로 쓰이기 때문에, 실제로는 이 휴리스틱만으로도
             체인분석 업체들이 상당히 정확하게 지갑을 추적한다.
           </>
         }

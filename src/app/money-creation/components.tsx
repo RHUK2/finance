@@ -11,8 +11,6 @@ import { cn, formatSigned } from '@/lib/utils';
 
 import type { Line, Sheet } from './steps';
 
-const fmt = formatSigned;
-
 function AmountRow({ line, side }: { line: Line; side: 'asset' | 'liability' }) {
   const value = useCountUp(line.amount);
   const isCapital = line.item === '자본';
@@ -29,7 +27,7 @@ function AmountRow({ line, side }: { line: Line; side: 'asset' | 'liability' }) 
       )}
     >
       <span className='truncate'>{line.item}</span>
-      <span className='tabular-nums'>{fmt(value)}</span>
+      <span className='tabular-nums'>{formatSigned(value)}</span>
     </div>
   );
 }
@@ -103,11 +101,11 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
         </div>
 
         <div className='text-muted-foreground mt-auto flex items-center justify-between border-t pt-2 text-xs'>
-          <span className='tabular-nums'>자산 {fmt(assetTotal)}</span>
+          <span className='tabular-nums'>자산 {formatSigned(assetTotal)}</span>
           <span className={cn(assetTotal === liabTotal ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600')}>
             {assetTotal === liabTotal ? '균형 ✓' : '불균형'}
           </span>
-          <span className='tabular-nums'>부채·자본 {fmt(liabTotal)}</span>
+          <span className='tabular-nums'>부채·자본 {formatSigned(liabTotal)}</span>
         </div>
       </CardContent>
     </Card>

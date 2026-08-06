@@ -3,12 +3,12 @@
 import { useMemo } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
+import { ExplainCard, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LineSeries, useChart } from '@/hooks/use-chart';
 import { useBitcoinHistorical } from '@/hooks/use-crypto';
 import { rollingVolatility } from '@/lib/bitcoin-models';
-import { ExplainCard, SectionIntro } from '@/components/simulation';
 
 const WINDOW = 90;
 

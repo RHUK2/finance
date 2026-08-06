@@ -1,12 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import { ChartContainer } from '@/components/chart-container';
-import { AreaSeries, LineSeries, useChart } from '@/hooks/use-chart';
-import { RAINBOW_BANDS, daysSinceGenesis, generateModelDates, powerLawPrice } from '@/lib/bitcoin-models';
+import { IndicatorCard } from '@/components/indicator-card';
+import { AreaSeries, LineSeries, useChart, useIsDarkChart } from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
+import { RAINBOW_BANDS, daysSinceGenesis, generateModelDates, powerLawPrice } from '@/lib/bitcoin-models';
 
 const twoYearsLater = new Date(Date.now() + 2 * 365 * 86_400_000).toISOString().slice(0, 10);
 const modelDates = generateModelDates('2012-01-01', twoYearsLater, 14);
@@ -24,6 +24,7 @@ type Props = {
 };
 
 export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
+  const isDark = useIsDarkChart();
   const { containerRef, resetView } = useChart(
     (chart) => {
       if (!data) return;
@@ -41,14 +42,15 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
         series.setData(BAND_DATA[i]);
       }
       const priceSeries = chart.addSeries(LineSeries, {
-        color: '#ffffff',
+        // 9색 밴드 위에 겹치는 선이라 밴드 색과 겹치지 않는 무채색을 쓴다.
+        color: isDark ? '#ffffff' : '#111827',
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: true,
       });
       priceSeries.setData(data.history);
     },
-    [data],
+    [data, isDark],
     { height: 320, logScale: true, resetRef },
   );
 
@@ -60,34 +62,27 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
   }, [data]);
 
   return (
-    <Card>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-muted-foreground text-sm font-medium'>레인보우 차트</CardTitle>
-          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
-        </div>
-        {!data ? (
-          <Skeleton className='h-5 w-24' />
-        ) : (
-          currentBand && (
-            <span className='text-sm font-semibold' style={{ color: currentBand.color }}>
-              {currentBand.label}
-            </span>
-          )
-        )}
-      </CardHeader>
-      <CardContent className='p-0'>
-        {!data ? (
-          <Skeleton className='h-[320px] w-full rounded-none' />
-        ) : (
-          <ChartContainer containerRef={containerRef} onReset={resetView} />
-        )}
-        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+    <IndicatorCard
+      title='레인보우 차트'
+      updatedLabel={updatedLabel}
+      ready={!!data}
+      headlineSkeletonClass='h-5 w-24'
+      headline={
+        currentBand && (
+          <span className='text-sm font-semibold' style={{ color: currentBand.color }}>
+            {currentBand.label}
+          </span>
+        )
+      }
+      height={320}
+      chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
+      description={
+        <>
           Power Law 회귀 기반의 9단계 밸류에이션 밴드. 가격 자체가 아니라 &lsquo;지금 어느 색 밴드에 있는지&rsquo;로
           읽습니다. 한색(파랑) 구간은 저평가 매집권, 난색(빨강) 구간은 고평가 과열권으로 장기 사이클 위치를 직관적으로
           가늠합니다.
-        </p>
-      </CardContent>
-    </Card>
+        </>
+      }
+    />
   );
 }

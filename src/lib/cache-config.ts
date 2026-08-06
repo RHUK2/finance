@@ -2,12 +2,12 @@
  * 데이터 신선도 단일 출처.
  *
  * 각 엔드포인트의 키 = TanStack Query queryKey = `/api/<key>` 경로 세그먼트.
- * 여기 정의한 초(seconds)에서 클라이언트 `staleTime`/`refetchInterval`,
- * server prefetch의 `staleTime`을 모두 파생시켜 두 캐싱 레이어가 같은 윈도우로
+ * 여기 정의한 초(seconds)에서 클라이언트 `staleTime`/`refetchInterval`(use-endpoint.ts)과
+ * 서버 공유 캐시 TTL(cache.ts)을 함께 파생시켜, 두 캐싱 레이어가 같은 윈도우로
  * 움직이게 한다.
  *
  * 서버 측 신선도는 라우트 핸들러가 `cached()`(src/lib/cache.ts)에서 이 표를
- * 직접 import해 Upstash 공유 캐시의 TTL로 쓴다. 더 이상 `route.ts`에
+ * 직접 import해 Upstash 공유 캐시의 TTL로 쓴다. `route.ts`에
  * `export const revalidate` 리터럴을 미러링하지 않는다.
  */
 export const ENDPOINTS = {
@@ -30,7 +30,7 @@ export const ENDPOINTS = {
 
 export type EndpointKey = keyof typeof ENDPOINTS;
 
-/** 엔드포인트의 신선도 윈도우를 초 단위로 반환 (ISR revalidate, fetch next.revalidate). */
+/** 엔드포인트의 신선도 윈도우를 초 단위로 반환 (Upstash 공유 캐시 TTL). */
 export const cacheSeconds = (key: EndpointKey): number => ENDPOINTS[key];
 
 /** 엔드포인트의 신선도 윈도우를 밀리초 단위로 반환 (TanStack staleTime, refetchInterval). */

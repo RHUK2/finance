@@ -1,5 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
+import { RotateCcw } from 'lucide-react';
+
 import { AppHeader } from '@/components/app-header';
 import { FearGreedChart } from '@/components/fear-greed-chart';
 import { MayerMultipleChart } from '@/components/mayer-multiple-chart';
@@ -11,8 +14,6 @@ import { RainbowChart } from '@/components/rainbow-chart';
 import { Button } from '@/components/ui/button';
 import { useBitcoinHistorical, useFearGreed, useMvrv } from '@/hooks/use-crypto';
 import { useRelativeTime } from '@/hooks/use-relative-time';
-import { RotateCcw } from 'lucide-react';
-import { useRef } from 'react';
 
 export function BitcoinView() {
   const { data: fearGreed } = useFearGreed();
@@ -26,13 +27,11 @@ export function BitcoinView() {
   const rainbowReset = useRef<(() => void) | null>(null);
   const piCycleReset = useRef<(() => void) | null>(null);
 
+  // 차트를 추가하면 이 배열에도 넣어야 "전체 스케일 초기화"가 함께 적용된다.
+  const allResets = [fearGreedReset, mvrvZScoreReset, mayerReset, puellReset, rainbowReset, piCycleReset];
+
   function resetAll() {
-    fearGreedReset.current?.();
-    mvrvZScoreReset.current?.();
-    mayerReset.current?.();
-    puellReset.current?.();
-    rainbowReset.current?.();
-    piCycleReset.current?.();
+    allResets.forEach((r) => r.current?.());
   }
 
   const fearGreedRelTime = useRelativeTime(fearGreed?.fetchedAt);
@@ -41,7 +40,7 @@ export function BitcoinView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '비트코인 지표' }]} />
+      <AppHeader breadcrumbs={[{ label: '비트코인 차트' }]} />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

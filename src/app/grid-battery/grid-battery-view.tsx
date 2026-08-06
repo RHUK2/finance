@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from 'react';
 
-import { Battery, Bitcoin, Wind, Zap } from 'lucide-react';
+import { Battery, Bitcoin, TriangleAlert, Wind, Zap } from 'lucide-react';
 
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
-import { ControlSlider, ExplainCard, Legend, Metric } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Legend, Metric, StatusBanner } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -120,10 +120,12 @@ export function GridBatteryView() {
               ))}
             </div>
             {sim.shortage > 0 && (
-              <p className='rounded-md bg-rose-500/10 px-3 py-2 text-xs text-rose-600 dark:text-rose-400'>
-                ⚠ 공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다. 이때 채굴 부하는 즉시 차단되어 전력을
-                가정·산업에 양보한다.
-              </p>
+              <StatusBanner tone='bad' icon={<TriangleAlert className='size-4 shrink-0' />}>
+                <span className='leading-relaxed font-normal'>
+                  공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다. 이때 채굴 부하는 즉시 차단되어 전력을
+                  가정·산업에 양보한다.
+                </span>
+              </StatusBanner>
             )}
           </Card>
 

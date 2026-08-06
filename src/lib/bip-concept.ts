@@ -107,6 +107,7 @@ export function mnemonicToSeed(mnemonic: string, passphrase: string): string {
 }
 
 // BIP-44 purpose → 주소 타입 메타.
+// bodyLen은 접두어를 뺀 나머지 글자 수. 실제 주소 길이와 같게 맞춰 둔다.
 export const PURPOSES = [
   {
     value: '44',
@@ -114,6 +115,7 @@ export const PURPOSES = [
     addr: 'P2PKH',
     prefix: '1',
     charset: 'base58',
+    bodyLen: 32, // 총 33자
   },
   {
     value: '49',
@@ -121,6 +123,7 @@ export const PURPOSES = [
     addr: 'P2SH-P2WPKH',
     prefix: '3',
     charset: 'base58',
+    bodyLen: 33, // 총 34자
   },
   {
     value: '84',
@@ -128,6 +131,7 @@ export const PURPOSES = [
     addr: 'P2WPKH',
     prefix: 'bc1q',
     charset: 'bech32',
+    bodyLen: 38, // 총 42자
   },
   {
     value: '86',
@@ -135,6 +139,7 @@ export const PURPOSES = [
     addr: 'P2TR',
     prefix: 'bc1p',
     charset: 'bech32',
+    bodyLen: 58, // 총 62자
   },
 ] as const;
 
@@ -161,8 +166,6 @@ const BECH32 = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 // 시드 + 경로 → 주소 모양 문자열 (개념 시연용).
 export function illustrativeAddress(seedHex: string, path: string, purposeValue: string): string {
   const meta = PURPOSES.find((p) => p.value === purposeValue) ?? PURPOSES[0];
-  const isBech32 = meta.charset === 'bech32';
-  const charset = isBech32 ? BECH32 : BASE58;
-  const len = isBech32 ? 38 : 32;
-  return meta.prefix + illustrativeChars(seedHex + path, charset, len);
+  const charset = meta.charset === 'bech32' ? BECH32 : BASE58;
+  return meta.prefix + illustrativeChars(seedHex + path, charset, meta.bodyLen);
 }

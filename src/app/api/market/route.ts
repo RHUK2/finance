@@ -55,14 +55,14 @@ const SYMBOLS = [
   {
     symbol: 'MSTR',
     ticker: 'MSTR',
-    label: '마이크로스트래티지',
+    label: '스트래티지',
     type: 'stock',
     gfUrl: `${GF}/MSTR:NASDAQ`,
   },
   {
     symbol: 'STRC',
     ticker: 'STRC',
-    label: '스트래티지',
+    label: '스트래티지 우선주',
     type: 'stock',
     gfUrl: `${GF}/STRC:NASDAQ`,
   },

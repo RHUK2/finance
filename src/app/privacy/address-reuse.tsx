@@ -24,7 +24,7 @@ const PAYMENTS = [
 export function AddressReuse() {
   const [mode, setMode] = useState<'reuse' | 'fresh'>('reuse');
 
-  const addresses = PAYMENTS.map((p, i) =>
+  const addresses = PAYMENTS.map((_, i) =>
     mode === 'reuse' ? walletAddress('민수-지갑') : walletAddress(`민수-지갑-${i}`),
   );
   const uniqueCount = new Set(addresses).size;

@@ -1,13 +1,14 @@
 'use client';
 
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { NAV_GROUPS } from '@/lib/nav';
-import { ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { ChevronUp } from 'lucide-react';
+
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { NAV_GROUPS } from '@/lib/nav';
 
 type Props = {
   currentLabel: string;

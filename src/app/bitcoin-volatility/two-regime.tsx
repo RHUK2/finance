@@ -12,7 +12,7 @@ import { regimeImpliedPrice } from './models';
 
 export function TwoRegime() {
   const [pPct, setPPct] = useState(15); // 성공 확률 %
-  const [winCapT, setWinCapT] = useState(18); // 성공 시 목표 시총 $T
+  const [winCapT, setWinCapT] = useState(33); // 성공 시 목표 시총 $T (기본값 = 금 시가총액, models.ts 참조)
 
   const p = pPct / 100;
   const winCap = winCapT * 1e12;
@@ -65,7 +65,7 @@ export function TwoRegime() {
       <ExplainCard
         title='왜 작은 확률 변화에 가격이 크게 뛸까'
         preview='성공 시 가격이 워낙 커서, 확률 5%포인트 상승이 가격을 50% 밀어올린다.'
-        body="성공했을 때의 가격이 수십만 달러로 워낙 크기 때문에, 성공 확률이 10%에서 15%로 조금만 올라도 가격은 단숨에 50% 뛴다. 비트코인에 '적정가의 기준'이 없는 게 아니라, 그 기준이 '성공 확률이 결국 100%로 굳어질 것인가'라는 아직 풀리지 않은 질문에 묶여 있는 것이다. 슬라이더를 조금씩만 움직여 봐도 가격이 얼마나 민감하게 반응하는지 알 수 있다."
+        body="성공했을 때의 가격이 현재가의 몇 배로 워낙 크기 때문에, 성공 확률이 10%에서 15%로 조금만 올라도 가격은 단숨에 50% 뛴다. 비트코인에 '적정가의 기준'이 없는 게 아니라, 그 기준이 '성공 확률이 결국 100%로 굳어질 것인가'라는 아직 풀리지 않은 질문에 묶여 있는 것이다. 슬라이더를 조금씩만 움직여 봐도 가격이 얼마나 민감하게 반응하는지 알 수 있다."
       />
     </div>
   );

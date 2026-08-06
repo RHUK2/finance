@@ -88,7 +88,8 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
         <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
           예금 곡선이 자산 곡선과 벌어지는 폭이 곧 기회비용입니다. 자산 수익률은 배당·세금·거래비용을 제외한 가격
           기준이며, 과거 성과가 미래를 보장하지 않습니다.
-          {hasLateEntrant && ' 비트코인은 기준연도에 존재하지 않아 등장 시점을 100으로 따로 환산했습니다(원화 환산).'}
+          {/* 지수 곡선이라 통화 단위는 결과에 영향이 없다. 늦게 합류한 자산의 기준점만 설명한다. */}
+          {hasLateEntrant && ' 기준연도에 아직 존재하지 않던 자산은 등장 시점을 100으로 따로 환산했습니다.'}
         </p>
       </CardContent>
     </Card>

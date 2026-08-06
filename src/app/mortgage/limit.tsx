@@ -19,7 +19,9 @@ import { levelPayment, maxLoanByDsr } from '@/lib/mortgage';
 
 // 금액 단위는 만원.
 const DSR_CAP = 40;
-const STRESS_ADD = 1.5;
+// 스트레스 DSR 3단계(2025.7~)의 하한은 1.5%p였으나, 10·15 대책으로 2025.10.16부터
+// 수도권·규제지역 주택담보대출은 3.0%p로 올랐다. 비수도권은 더 낮다.
+const STRESS_ADD = 3.0;
 
 const fmtEok = (n: number) => `${(n / 10000).toFixed(1)}억`;
 const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
@@ -116,8 +118,8 @@ export function Limit() {
             onChange={setStress}
           />
           <p className='text-muted-foreground text-xs'>
-            한도를 계산할 때만 약정 금리에 {STRESS_ADD}%p를 얹어 본다. 나중에 금리가 올라도 갚을 수 있는지 미리 확인하는
-            장치라, 실제로 내는 이자는 약정 금리 그대로다.
+            한도를 계산할 때만 약정 금리에 {STRESS_ADD.toFixed(1)}%p를 얹어 본다(수도권·규제지역 기준, 비수도권은 더
+            낮다). 나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
           </p>
         </Field>
       </Card>

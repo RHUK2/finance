@@ -22,7 +22,7 @@ export function doubleSpendProbability(q: number, z: number): number {
 
 export const CONFIRMATION_PRESETS = [1, 2, 3, 6, 10, 20] as const;
 
-// 확률을 사람이 읽기 좋은 문자열로. 매우 작으면 "1000분의 1 미만" 식으로, 크면 %로.
+// 확률을 사람이 읽기 좋은 문자열로. 1% 이상이면 %로, 그보다 작으면 "약 1,000분의 1" 식으로.
 export function formatProbability(p: number): string {
   if (p >= 0.01) return `${(p * 100).toFixed(1)}%`;
   if (p <= 0) return '0%에 근접';

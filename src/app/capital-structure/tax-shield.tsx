@@ -13,7 +13,8 @@ const ASSETS = 1000;
 const EBIT = 150;
 const RATE = 5;
 
-// 부채가 늘수록 커지는 재무곤경 기대비용. 3차 이상으로 가파르게 두어야 최적점이 생긴다.
+// 부채가 늘수록 커지는 재무곤경 기대비용. 방패는 부채에 비례해 늘기만 하므로,
+// 이보다 가파른 4차식으로 두어야 내부 최적점이 생긴다.
 const DISTRESS_K = 0.3;
 const STEPS = Array.from({ length: 19 }, (_, i) => i * 5);
 

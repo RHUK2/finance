@@ -112,7 +112,7 @@ export function PayoffMatrix() {
           rowHeaders={[{ icon: <Flag className='size-4' />, label: '우리: 채택' }, { label: '우리: 관망' }]}
           colHeaders={[{ icon: <Flag className='size-4' />, label: '경쟁국: 채택' }, { label: '경쟁국: 관망' }]}
         />
-        <Legend />
+        <MatrixLegend />
       </Card>
 
       <Card className='flex-row items-center gap-3 p-4'>
@@ -169,7 +169,8 @@ export function PayoffMatrix() {
   );
 }
 
-function Legend() {
+// 표기법 안내(밑줄=최적대응, 링=내쉬 균형). simulation.tsx의 색 견본 Legend와는 다른 용도다.
+function MatrixLegend() {
   return (
     <div className='text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs'>
       <span className='flex items-center gap-1.5'>

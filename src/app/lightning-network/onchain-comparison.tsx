@@ -71,7 +71,8 @@ export function OnchainComparison() {
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='온체인 수수료 총합' value={formatSats(onchainFee)} tone='bad' />
-        <Metric label='라이트닝 수수료 총합' value={formatSats(lightningFee)} tone='good' />
+        {/* 채널 안 결제에는 중계 노드 라우팅 수수료가 따로 붙는다. 여기서 비교하는 건 온체인 수수료뿐이다. */}
+        <Metric label='라이트닝 온체인 수수료' value={formatSats(lightningFee)} tone='good' />
         <Metric label='절약액' value={formatSats(Math.max(0, savings))} tone='accent' />
       </div>
 
@@ -87,6 +88,7 @@ export function OnchainComparison() {
               <li>상대가 온라인이 아니면 채널을 정상적으로 닫기 어렵다(강제 종료는 가능하지만 더 느리고 비쌈)</li>
               <li>목적지까지 유동성이 충분한 경로가 없으면 결제가 실패할 수 있다(라우팅 실패)</li>
               <li>상대가 구버전 잔액을 몰래 방송하지 않는지 감시해야 한다(watchtower 필요성)</li>
+              <li>중계 노드를 거치는 결제에는 온체인 수수료와 별도로 라우팅 수수료가 붙는다(보통 아주 소액)</li>
             </ul>
           </>
         }

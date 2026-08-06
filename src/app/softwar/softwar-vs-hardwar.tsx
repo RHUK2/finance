@@ -4,10 +4,10 @@ import { useMemo, useState } from 'react';
 
 import { Bomb, HeartPulse, ShieldCheck, Swords, Zap } from 'lucide-react';
 
+import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { deterrence } from './models';
 
 export function SoftwarVsHardwar() {
@@ -19,9 +19,9 @@ export function SoftwarVsHardwar() {
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='소프트워 vs 하드워: 같은 억지, 다른 대가'>
-        적을 억지하려면 적의 BCRA(공격 이득 ÷ 내가 투사한 권력)를 1 미만으로 낮춰야 한다. 권력 투사의 매개체는
-        역사적으로 군대(영토) → 핵무기(MAD) → 비트코인(전기)으로 바뀌어 왔다. 같은 억지 효과라도 <b>하드워</b>는 유혈과
-        파괴를 동반하지만, <b>소프트워</b>는 인명 피해 없이 전기만 소비한다. (수치는 개념용 예시)
+        적을 억지하려면 적의 BCRA(공격 이득 ÷ 내가 투사한 권력)를 1 이하로 낮춰야 한다. 권력 투사의 매개체는 역사적으로
+        군대(영토) → 핵무기(MAD) → 비트코인(전기)으로 바뀌어 왔다. 같은 억지 효과라도 <b>하드워</b>는 유혈과 파괴를
+        동반하지만, <b>소프트워</b>는 인명 피해 없이 전기만 소비한다. (수치는 개념용 예시)
       </SectionIntro>
 
       <Card className='gap-4 p-4'>
@@ -61,8 +61,8 @@ export function SoftwarVsHardwar() {
           </b>{' '}
           →{' '}
           {r.deterred
-            ? '1 미만이라 공격이 손해. 억지에 성공했다. 이 결과는 하드워든 소프트워든 동일하다.'
-            : '1 이상이라 공격이 이득. 억지에 실패했다. 투사 권력을 더 올려야 한다.'}
+            ? '1 이하라 공격해도 남는 게 없다. 억지에 성공했다. 이 결과는 하드워든 소프트워든 동일하다.'
+            : '1을 넘어 공격이 이득. 억지에 실패했다. 투사 권력을 더 올려야 한다.'}
         </p>
       </Card>
 

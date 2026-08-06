@@ -2,11 +2,10 @@
 
 import { Cog, Lock } from 'lucide-react';
 
+import { Pipeline } from '@/components/pipeline';
+import { ExplainCard, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ExplainCard, SectionIntro } from '@/components/simulation';
-
-import { Pipeline } from '@/components/pipeline';
 
 export function SeedDerivation({
   mnemonic,

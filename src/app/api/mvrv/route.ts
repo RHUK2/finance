@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { cached } from '@/lib/cache';
 import { mvrvZScore } from '@/lib/bitcoin-models';
+import { dedupeByTime } from '@/lib/series';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,19 +35,15 @@ export async function GET() {
 
       if (rows.length === 0) throw new Error('No MVRV data');
 
-      const seen = new Set<string>();
-      const merged = rows
-        .map((row) => ({
-          time: row.time.slice(0, 10),
-          mvrv: Number(row.CapMVRVCur),
-          marketCap: Number(row.CapMrktCurUSD),
-        }))
-        .filter((row) => {
-          if (!isFinite(row.mvrv) || seen.has(row.time)) return false;
-          seen.add(row.time);
-          return true;
-        })
-        .sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0));
+      const merged = dedupeByTime(
+        rows
+          .map((row) => ({
+            time: row.time.slice(0, 10),
+            mvrv: Number(row.CapMVRVCur),
+            marketCap: Number(row.CapMrktCurUSD),
+          }))
+          .filter((row) => isFinite(row.mvrv)),
+      ).sort((a, b) => a.time.localeCompare(b.time));
 
       const history = merged.map((row) => ({
         time: row.time,

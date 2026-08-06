@@ -57,7 +57,8 @@ export function PaymentChannel() {
           >
             {alicePct > 15 && 'Alice'}
           </div>
-          <div className='flex flex-1 items-center pl-2 text-xs font-medium text-white transition-all duration-300'>
+          {/* Bob 구간은 배경이 bg-muted라 흰 글자를 쓰면 라이트 모드에서 안 보인다. */}
+          <div className='text-foreground flex flex-1 items-center pl-2 text-xs font-medium transition-all duration-300'>
             {100 - alicePct > 15 && 'Bob'}
           </div>
         </div>

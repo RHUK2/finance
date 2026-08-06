@@ -20,6 +20,10 @@ import type { Currency } from './components';
 
 type Country = 'US' | 'KR';
 
+// 시작연도 슬라이더의 상한이자 "오늘 최저임금"을 고를 기준연도. 해마다 손으로 올리면
+// 반드시 뒤처지므로 현재 연도에서 구한다(연도 단위라 서버·클라이언트 값이 갈리지 않는다).
+const CURRENT_YEAR = new Date().getFullYear();
+
 const CONFIG: Record<
   Country,
   {
@@ -39,7 +43,7 @@ const CONFIG: Record<
     label: '한국',
     currency: '₩',
     minYear: 2003, // M2 신계열(161Y006) 시작연도에 맞춤
-    maxYear: 2025,
+    maxYear: CURRENT_YEAR,
     principal: 1_000_000,
     gapBaseYear: 2003,
     raceBaseYear: 2000,
@@ -51,7 +55,7 @@ const CONFIG: Record<
     label: '미국',
     currency: '$',
     minYear: 1971,
-    maxYear: 2025,
+    maxYear: CURRENT_YEAR,
     principal: 10_000,
     gapBaseYear: 1971,
     raceBaseYear: 2015,

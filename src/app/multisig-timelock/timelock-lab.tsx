@@ -20,9 +20,9 @@ const fmtBlocks = (v: number) => `${v.toLocaleString('ko-KR')}블록`;
 export function TimelockLab() {
   const [type, setType] = useState<LockType>('cltv');
 
-  // CLTV: 절대 블록 높이 기준.
-  const [currentHeight, setCurrentHeight] = useState(850_000);
-  const [unlockHeight, setUnlockHeight] = useState(852_000);
+  // CLTV: 절대 블록 높이 기준. 기본값은 대략의 현재 높이(2026년 중반)에 맞춰 둔다.
+  const [currentHeight, setCurrentHeight] = useState(960_000);
+  const [unlockHeight, setUnlockHeight] = useState(962_000);
 
   // CSV: 이 UTXO가 생성된 시점부터 상대적으로 경과한 블록 수 기준.
   const [elapsedBlocks, setElapsedBlocks] = useState(100);
@@ -61,8 +61,8 @@ export function TimelockLab() {
               label='현재 블록 높이'
               value={currentHeight}
               onChange={setCurrentHeight}
-              min={850_000}
-              max={854_000}
+              min={960_000}
+              max={964_000}
               step={100}
               format={fmtBlocks}
             />
@@ -70,8 +70,8 @@ export function TimelockLab() {
               label='잠금 해제 높이 (locktime)'
               value={unlockHeight}
               onChange={setUnlockHeight}
-              min={850_000}
-              max={854_000}
+              min={960_000}
+              max={964_000}
               step={100}
               format={fmtBlocks}
             />

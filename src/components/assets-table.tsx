@@ -1,13 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import { type MarketItem } from '@/hooks/use-market';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useScrollDrag } from '@/hooks/use-scroll-drag';
-import { cn } from '@/lib/utils';
+import { useMemo, useState } from 'react';
 import {
   createColumnHelper,
   flexRender,
@@ -18,7 +11,15 @@ import {
   type SortingState,
 } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown, Search, TrendingDown, TrendingUp } from 'lucide-react';
-import { useMemo, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { type MarketItem } from '@/hooks/use-market';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useScrollDrag } from '@/hooks/use-scroll-drag';
+import { cn } from '@/lib/utils';
 
 const TYPE_LABELS: Record<string, string> = {
   all: '전체',
@@ -78,7 +79,7 @@ function PercentageChange({ value, className }: { value: number | null; classNam
     <div
       className={cn(
         'flex items-center justify-end gap-1 tabular-nums',
-        isPositive ? 'text-green-500' : 'text-red-500',
+        isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400',
         className,
       )}
     >
@@ -98,6 +99,9 @@ type Props = {
 };
 
 const ASSET_TYPES = ['all', 'macro', 'crypto', 'stock'];
+
+// 로딩 중 자리를 잡아 둘 스켈레톤 행 수. 실제 자산 수와 비슷하게 맞춰 레이아웃 점프를 줄인다.
+const SKELETON_ROWS = 22;
 
 const MOBILE_SORT_OPTIONS = [
   { value: 'default', label: '기본' },
@@ -262,7 +266,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
         {updatedRow}
         <div className='space-y-2'>
           {isLoading ? (
-            Array.from({ length: 22 }).map((_, i) => (
+            Array.from({ length: SKELETON_ROWS }).map((_, i) => (
               <div key={i} className='bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm'>
                 <Skeleton className='h-10 w-2/5' />
                 <Skeleton className='h-10 w-2/5' />
@@ -278,7 +282,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                   'bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm',
                   item.gfUrl && 'hover:bg-muted/30 cursor-pointer transition-colors',
                 )}
-                onClick={() => item.gfUrl && window.open(item.gfUrl, '_blank')}
+                onClick={() => item.gfUrl && window.open(item.gfUrl, '_blank', 'noopener,noreferrer')}
               >
                 <div className='flex items-center gap-2.5'>
                   <span className={cn('size-2 shrink-0 rounded-full', TYPE_DOT_COLORS[item.type] ?? 'bg-muted')} />
@@ -340,7 +344,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
             </thead>
             <tbody className='divide-y'>
               {isLoading ? (
-                Array.from({ length: 22 }).map((_, i) => (
+                Array.from({ length: SKELETON_ROWS }).map((_, i) => (
                   <tr key={i}>
                     <td colSpan={3} className='px-4 py-3'>
                       <Skeleton className='h-5 w-full' />
@@ -360,7 +364,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                     <tr
                       key={row.id}
                       className={cn('hover:bg-muted/30 transition-colors', gfUrl && 'cursor-pointer')}
-                      onClick={() => gfUrl && window.open(gfUrl, '_blank')}
+                      onClick={() => gfUrl && window.open(gfUrl, '_blank', 'noopener,noreferrer')}
                     >
                       {row.getVisibleCells().map((cell, i) => (
                         <td key={cell.id} className={cn('px-4 py-3', i > 0 && 'text-right')}>

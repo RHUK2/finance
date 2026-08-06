@@ -42,6 +42,7 @@ export type RecentBlocksData = {
     poolSlug: string;
     txCount: number;
     sizeMB: number;
+    vMB: number; // weight ÷ 4 (블록 한도 1 MvB 대비 충전율 계산용)
     rewardBTC: number;
     medianFee: number;
   }[];

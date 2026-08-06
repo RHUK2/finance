@@ -161,8 +161,7 @@ export function Repayment() {
           <span className='text-right'>원리금균등 대비</span>
         </div>
         {totals.map((t) => {
-          const base = totals[0].interest;
-          const diff = t.interest - base;
+          const diff = t.interest - totals[0].interest;
           return (
             <div
               key={t.method}

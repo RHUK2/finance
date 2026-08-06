@@ -39,15 +39,20 @@ export function EconomyView() {
   const usdkrwReset = useRef<(() => void) | null>(null);
   const yieldSpreadReset = useRef<(() => void) | null>(null);
 
+  // 차트를 추가하면 이 배열에도 넣어야 "전체 스케일 초기화"가 함께 적용된다.
+  const allResets = [
+    usdkrwReset,
+    dxyReset,
+    kospiReset,
+    nasdaqReset,
+    vixReset,
+    fedFundsReset,
+    us10yReset,
+    yieldSpreadReset,
+  ];
+
   function resetAll() {
-    dxyReset.current?.();
-    us10yReset.current?.();
-    vixReset.current?.();
-    fedFundsReset.current?.();
-    nasdaqReset.current?.();
-    kospiReset.current?.();
-    usdkrwReset.current?.();
-    yieldSpreadReset.current?.();
+    allResets.forEach((r) => r.current?.());
   }
 
   const ecoRelTime = useRelativeTime(eco?.fetchedAt);
@@ -56,12 +61,10 @@ export function EconomyView() {
   const yieldSpread = useMemo(() => {
     if (!eco || !fred?.us2y) return undefined;
     const us2yMap = new Map(fred.us2y.history.map((p) => [p.time, p.value]));
-    const history = eco.us10y.history
-      .filter((p) => us2yMap.has(p.time))
-      .map((p) => ({
-        time: p.time,
-        value: Number((p.value - us2yMap.get(p.time)!).toFixed(2)),
-      }));
+    const history = eco.us10y.history.flatMap((p) => {
+      const us2y = us2yMap.get(p.time);
+      return us2y == null ? [] : [{ time: p.time, value: Number((p.value - us2y).toFixed(2)) }];
+    });
     return toMacroSeries(history);
   }, [eco, fred]);
 
@@ -95,7 +98,7 @@ export function EconomyView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '경제 지표' }]} />
+      <AppHeader breadcrumbs={[{ label: '경제 차트' }]} />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

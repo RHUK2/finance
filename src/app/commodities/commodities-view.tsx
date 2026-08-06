@@ -16,10 +16,11 @@ export function CommoditiesView() {
   const oilReset = useRef<(() => void) | null>(null);
   const cornReset = useRef<(() => void) | null>(null);
 
+  // 차트를 추가하면 이 배열에도 넣어야 "전체 스케일 초기화"가 함께 적용된다.
+  const allResets = [goldReset, oilReset, cornReset];
+
   function resetAll() {
-    goldReset.current?.();
-    oilReset.current?.();
-    cornReset.current?.();
+    allResets.forEach((r) => r.current?.());
   }
 
   const relTime = useRelativeTime(data?.fetchedAt);
@@ -40,7 +41,7 @@ export function CommoditiesView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '원자재 시장' }]} />
+      <AppHeader breadcrumbs={[{ label: '원자재 차트' }]} />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

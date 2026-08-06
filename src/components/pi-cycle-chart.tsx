@@ -1,19 +1,25 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import { ChartContainer } from '@/components/chart-container';
+import { IndicatorCard, type IndicatorStatus } from '@/components/indicator-card';
+import { Badge } from '@/components/ui/badge';
 import { LineSeries, createSeriesMarkers, useChart, type Time } from '@/hooks/use-chart';
-import { movingAverage } from '@/lib/bitcoin-models';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
+import { movingAverage } from '@/lib/bitcoin-models';
 
 type Props = {
   data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
 };
+
+function getPiCycleStatus(ratio: number): IndicatorStatus {
+  if (ratio >= 1) return { label: '천장 신호', variant: 'destructive' };
+  if (ratio >= 0.9) return { label: '근접', variant: 'secondary' };
+  return { label: '정상', variant: 'outline' };
+}
 
 export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
   const { sma111, sma350x2, crossovers } = useMemo(() => {
@@ -87,47 +93,28 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
   const shortNow = sma111[sma111.length - 1]?.value;
   const longNow = sma350x2[sma350x2.length - 1]?.value;
   const ratio = shortNow != null && longNow ? shortNow / longNow : null;
-  const status =
-    ratio == null
-      ? null
-      : ratio >= 1
-        ? { label: '천장 신호', variant: 'destructive' as const }
-        : ratio >= 0.9
-          ? { label: '근접', variant: 'secondary' as const }
-          : { label: '정상', variant: 'outline' as const };
+  const status = ratio != null ? getPiCycleStatus(ratio) : null;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-muted-foreground text-sm font-medium'>Pi Cycle Top</CardTitle>
-          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
-        </div>
-        {!data ? (
-          <Skeleton className='h-5 w-24' />
-        ) : (
-          ratio != null &&
-          status && (
-            <div className='flex items-end gap-2'>
-              <span className='text-sm font-semibold'>천장선 도달 {(ratio * 100).toFixed(0)}%</span>
-              <Badge variant={status.variant} className='mb-0.5'>
-                {status.label}
-              </Badge>
-            </div>
-          )
-        )}
-      </CardHeader>
-      <CardContent className='p-0'>
-        {!data ? (
-          <Skeleton className='h-[320px] w-full rounded-none' />
-        ) : (
-          <ChartContainer containerRef={containerRef} onReset={resetView} />
-        )}
-        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
-          111일 이동평균과 350일 이동평균×2의 교차로 읽습니다. 111일선이 350일선×2를 위로 돌파하는 순간이 사이클 천장
-          신호로, 과거 고점과 며칠 안쪽으로 맞아떨어져 단기 고점 경계 신호로 활용됩니다.
-        </p>
-      </CardContent>
-    </Card>
+    <IndicatorCard
+      title='Pi Cycle Top'
+      updatedLabel={updatedLabel}
+      ready={!!data}
+      headlineSkeletonClass='h-5 w-24'
+      headline={
+        ratio != null &&
+        status && (
+          <div className='flex items-end gap-2'>
+            <span className='text-sm font-semibold'>천장선 도달 {(ratio * 100).toFixed(0)}%</span>
+            <Badge variant={status.variant} className='mb-0.5'>
+              {status.label}
+            </Badge>
+          </div>
+        )
+      }
+      height={320}
+      chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
+      description='111일 이동평균과 350일 이동평균×2의 교차로 읽습니다. 111일선이 350일선×2를 위로 돌파하는 순간이 사이클 천장 신호로, 과거 고점과 며칠 안쪽으로 맞아떨어져 단기 고점 경계 신호로 활용됩니다.'
+    />
   );
 }

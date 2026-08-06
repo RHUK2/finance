@@ -1,24 +1,23 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import { ChartContainer } from '@/components/chart-container';
+import { IndicatorCard, ScoreHeadline, type IndicatorStatus } from '@/components/indicator-card';
 import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
-import { movingAverage } from '@/lib/bitcoin-models';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
+import { movingAverage } from '@/lib/bitcoin-models';
 
 const ZONE_LINES = [
   { price: 2.4, label: '과열', color: '#ef4444' },
   { price: 1, label: '저평가', color: '#22c55e' },
 ];
 
-function getMayerStatus(value: number) {
-  if (value >= 2.4) return { label: '과열', variant: 'destructive' as const };
-  if (value >= 1.5) return { label: '고평가', variant: 'secondary' as const };
-  if (value >= 1) return { label: '적정', variant: 'outline' as const };
-  return { label: '저평가', variant: 'secondary' as const };
+function getMayerStatus(value: number): IndicatorStatus {
+  if (value >= 2.4) return { label: '과열', variant: 'destructive' };
+  if (value >= 1.5) return { label: '고평가', variant: 'secondary' };
+  if (value >= 1) return { label: '적정', variant: 'outline' };
+  return { label: '저평가', variant: 'secondary' };
 }
 
 type Props = {
@@ -53,40 +52,16 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
   );
 
   const current = mayer[mayer.length - 1]?.value;
-  const status = current != null ? getMayerStatus(current) : null;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-muted-foreground text-sm font-medium'>Mayer Multiple</CardTitle>
-          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
-        </div>
-        {!data ? (
-          <Skeleton className='h-9 w-20' />
-        ) : (
-          current != null &&
-          status && (
-            <div className='flex items-end gap-2'>
-              <span className='text-3xl font-bold'>{current.toFixed(2)}</span>
-              <Badge variant={status.variant} className='mb-1'>
-                {status.label}
-              </Badge>
-            </div>
-          )
-        )}
-      </CardHeader>
-      <CardContent className='p-0'>
-        {!data ? (
-          <Skeleton className='h-[280px] w-full rounded-none' />
-        ) : (
-          <ChartContainer containerRef={containerRef} onReset={resetView} />
-        )}
-        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
-          현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 1 미만이면 장기 추세 아래의 저평가, 2.4 이상이면 추세를
-          크게 벗어난 단기 과열로 보고 사이클 내 진입·청산 타이밍을 가늠합니다.
-        </p>
-      </CardContent>
-    </Card>
+    <IndicatorCard
+      title='Mayer Multiple'
+      updatedLabel={updatedLabel}
+      ready={!!data}
+      headline={current != null && <ScoreHeadline value={current} status={getMayerStatus(current)} />}
+      height={280}
+      chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
+      description='현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 1 미만이면 장기 추세 아래의 저평가, 2.4 이상이면 추세를 크게 벗어난 단기 과열로 보고 사이클 내 진입·청산 타이밍을 가늠합니다.'
+    />
   );
 }

@@ -5,7 +5,7 @@ import { fetchFredSeries } from '@/lib/fred';
 
 export const dynamic = 'force-dynamic';
 
-// 자산(WILL5000) 시작점에 맞춰 공통 관측 시작연도를 통일.
+// 주식(NASDAQCOM) 시계열 시작점(1971-02)에 맞춰 공통 관측 시작연도를 통일.
 const OBSERVATION_START = '1971-01-01';
 
 export async function GET() {

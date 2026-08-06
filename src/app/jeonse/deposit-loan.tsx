@@ -83,11 +83,12 @@ export function DepositLoan() {
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
         <Metric label='전세의 연 비용' value={fmtMan(jeonseCost)} sub='포기한 이자' tone='accent' />
         <Metric label='월세의 연 비용' value={fmtMan(rentCost)} sub='통장에서 나가는 돈' tone='bad' />
+        {/* 톤은 아래 배너와 같은 임차인 관점으로 읽는다. 전환율이 금리보다 높으면 전세가 유리하다. */}
         <Metric
           label='전월세전환율'
           value={fmtPct(conversionRate)}
           sub={`시장금리 ${fmtPct(rate)}`}
-          tone={conversionRate > rate ? 'bad' : 'good'}
+          tone={conversionRate > rate ? 'good' : 'accent'}
         />
       </div>
 
@@ -131,8 +132,9 @@ export function DepositLoan() {
             <p>
               전세는 제도가 만든 것이 아니라 자금 사정이 만든 관행이다. 고성장·고금리 시기에 임대인은 은행 대출을 받기
               어려웠고, 받더라도 이자가 비쌌다. 임차인에게 목돈을 받아 그 돈을 굴리면 이자 없이 자금을 조달하는
-              셈이었다. 임차인 쪽에서도 매달 나가는 돈 없이 목돈만 맡기면 되니 저축을 이어 갈 수 있었다. 양쪽 모두
-              금리가 높을수록 이득이 커지는 구조였다.
+              셈이었다. 임차인 쪽에서도 매달 나가는 돈 없이 목돈만 맡기면 되니 저축을 이어 갈 수 있었다. 금리가 높을수록
+              임대인이 보증금에서 얻는 이득이 커져 전세를 놓으려는 집이 늘었고, 전월세전환율이 금리를 웃도는 한
+              임차인에게도 월세보다 싼 선택이었다.
             </p>
             <p className='mt-2'>
               그래서 금리가 내려가면 전세의 경제적 근거가 약해진다. 임대인이 보증금을 굴려 얻을 이자가 줄어들면 차라리

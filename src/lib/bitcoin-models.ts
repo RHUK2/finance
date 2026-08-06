@@ -15,7 +15,7 @@ export function powerLawPrice(days: number): number {
   return Math.pow(10, PL_A * Math.log10(days) + PL_B);
 }
 
-// 9 bands equally spaced in log scale from 0.1x to 20x of power law
+// 9 bands equally spaced in log scale (ratio ≈ 1.804) from 0.18x to 20.13x of power law
 export const RAINBOW_BANDS = [
   { upper: 0.18, color: '#312e81', label: '불장 대청소' },
   { upper: 0.325, color: '#1d4ed8', label: '매수!' },
@@ -38,8 +38,8 @@ const HALVINGS = [
   { date: '2012-11-28', reward: 25 },
   { date: '2016-07-09', reward: 12.5 },
   { date: '2020-05-11', reward: 6.25 },
-  { date: '2024-04-19', reward: 3.125 },
-  { date: '2028-04-20', reward: 1.5625 },
+  { date: '2024-04-20', reward: 3.125 },
+  { date: '2028-04-20', reward: 1.5625 }, // 추정
 ] as const;
 
 // 상수 날짜의 epoch-ms를 모듈 로드 시 한 번만 파싱 (getEra는 히스토리 포인트마다 호출된다)

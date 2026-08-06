@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 
+import { Pipeline } from '@/components/pipeline';
+import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Pipeline } from '@/components/pipeline';
-import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
+import { addrMeta, ADDR_TYPES, type AddrType, feeSats, formatSats, TX_OVERHEAD_VB, txVBytes } from '@/lib/tx-concept';
 
 import { FeeRateControl } from './fee-rate-control';
-import { addrMeta, ADDR_TYPES, type AddrType, feeSats, formatSats, TX_OVERHEAD_VB, txVBytes } from '@/lib/tx-concept';
 
 export function FeeCalc() {
   const [type, setType] = useState<AddrType>('native');

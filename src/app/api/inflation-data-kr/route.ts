@@ -5,7 +5,7 @@ import { toMacroSeries, type MacroSeries } from '@/lib/series';
 
 export const dynamic = 'force-dynamic';
 
-const START = '199601'; // 예금금리 시계열 시작 시점에 맞춤
+const START = '199601'; // 기준금리 시계열 시작 시점에 맞춤
 const STAT = {
   // ⚠️ 통계표코드/항목코드는 ECOS "통계코드검색"으로 검증 후 확정할 것.
   //    한국은행이 표를 개편하면 코드가 바뀔 수 있다.

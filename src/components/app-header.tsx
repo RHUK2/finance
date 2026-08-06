@@ -1,5 +1,10 @@
 'use client';
 
+import { Fragment } from 'react';
+import Link from 'next/link';
+
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
+import { ThemeToggle } from '@/components/theme-toggle';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,10 +15,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
-import Link from 'next/link';
 
 type BreadcrumbEntry = { label: string; href?: string };
 
@@ -37,7 +39,9 @@ export function AppHeader({ breadcrumbs }: Props) {
           {breadcrumbs.map((item, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
-              <span key={item.label} className='flex items-center gap-1.5'>
+              // BreadcrumbList는 <ol>, Item·Separator는 각각 <li>다. 감싸는 엘리먼트를 두면
+              // <ol>의 직계 자식이 <li>가 아니게 되므로 Fragment로 나란히 놓는다.
+              <Fragment key={item.label}>
                 {i > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
                   {isLast ? (
@@ -48,7 +52,7 @@ export function AppHeader({ breadcrumbs }: Props) {
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-              </span>
+              </Fragment>
             );
           })}
         </BreadcrumbList>

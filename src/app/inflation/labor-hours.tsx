@@ -94,7 +94,8 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
               {best ? (
                 <>
                   {' '}
-                  같은 1시간어치를 {best.label}에 넣었다면 {hi(fmtHours(best.value! / r.currentWage!), 'good')}
+                  같은 1시간어치를 {best.label}에 넣었다면{' '}
+                  {hi(fmtHours(best.value! / r.currentWage!), best.value! >= r.currentWage! ? 'good' : 'bad')}
                   어치였습니다.
                 </>
               ) : null}

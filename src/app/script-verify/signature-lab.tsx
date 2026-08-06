@@ -56,14 +56,15 @@ export function SignatureLab() {
           },
           {
             kind: 'box',
-            label: `서명 (약 71~72바이트)`,
+            label: '서명 (약 71~72바이트)',
             value: `30… ∥ r(${shortHex(ecdsaSig.r)}) ∥ s(${shortHex(ecdsaSig.s)}) ∥ 0x${ecdsaSig.sighashFlag}(SIGHASH_ALL)`,
             tone: 'good',
           },
         ]
       : [
           { kind: 'box', label: '트랜잭션(서명 대상 부분)', value: message },
-          { kind: 'op', label: 'SHA-256을 두 번 (SHA-256d)' },
+          // Taproot는 SHA-256d가 아니라 BIP341의 태그 해시(SHA-256 1회 + 태그 프리픽스)로 다이제스트를 만든다.
+          { kind: 'op', label: 'BIP341 태그 해시 (SHA-256 1회, 용도별 태그 부여)' },
           {
             kind: 'box',
             label: '다이제스트 (32바이트)',

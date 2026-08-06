@@ -144,4 +144,5 @@ export const KR_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 2023, wage: 9620 },
   { year: 2024, wage: 9860 },
   { year: 2025, wage: 10030 },
+  { year: 2026, wage: 10320 },
 ];

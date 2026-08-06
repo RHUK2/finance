@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { ExplainCard, IllustrativeDisclaimer, RoundControls, SectionIntro } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
 import { cn, shortHex } from '@/lib/utils';
-import { HTLC_HOPS, paymentHash, randomPreimage } from '@/lib/lightning-concept';
+import { HTLC_HOPS, INITIAL_PREIMAGE, paymentHash, randomPreimage } from '@/lib/lightning-concept';
 
 const MAX_STEP = 3;
 const LINK_COUNT = HTLC_HOPS.length - 1;
@@ -20,7 +20,7 @@ const STEP_LABEL = [
 ];
 
 export function HtlcRouting() {
-  const [preimage, setPreimage] = useState(() => randomPreimage());
+  const [preimage, setPreimage] = useState(INITIAL_PREIMAGE);
   const hash = paymentHash(preimage);
 
   const [step, setStep] = useState(0);
