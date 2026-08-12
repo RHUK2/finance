@@ -53,7 +53,7 @@ export const NAV_GROUPS = [
       { label: '비트코인 변동성', href: '/bitcoin-volatility', icon: Activity },
       { label: '비트코인 전력망', href: '/grid-battery', icon: Zap },
       { label: '비트코인 양자컴퓨터', href: '/bitcoin-quantum', icon: Atom },
-      { label: '검은 돈 추적', href: '/illicit-funds', icon: Fingerprint },
+      { label: '비트코인 자금추적', href: '/illicit-funds', icon: Fingerprint },
     ],
   },
   {

@@ -19,7 +19,7 @@ const TABS = [
 export function IllicitFundsView() {
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '검은 돈 추적' }]} />
+      <AppHeader breadcrumbs={[{ label: '비트코인 자금추적' }]} />
       <PageMain>
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
