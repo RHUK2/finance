@@ -135,3 +135,17 @@ vercel --prod     # Vercel 프로덕션 배포
 - **새 차트 추가**: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - **UI 컴포넌트**: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용
 - **커밋 메시지**: `{type}: {한국어 설명}` 형식 (`feat` / `fix` / `refactor` / `chore` 등)
+
+## Agent skills
+
+### 이슈 트래커
+
+이슈·스펙은 이 저장소의 `.scratch/<feature>/` 아래 마크다운 파일로 관리한다. `docs/agents/issue-tracker.md` 참조.
+
+### Triage 라벨
+
+기본 5개 역할 라벨(`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`)을 그대로 사용한다. `docs/agents/triage-labels.md` 참조.
+
+### 도메인 문서
+
+단일 컨텍스트 구조: 루트 `CONTEXT.md` + `docs/adr/`. `docs/agents/domain.md` 참조.
