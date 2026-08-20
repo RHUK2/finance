@@ -14,11 +14,43 @@ import { clamp, cn, formatUsd } from '@/lib/utils';
 
 // 에이전트 격자. 상태별 배경색 className 배열을 받아 사각형으로 렌더링.
 // 라운드마다 색이 바뀌며 transition-colors로 부드럽게 전환된다.
-export function AgentGrid({ states }: { states: string[] }) {
+//
+// orientation='column'은 칸을 위→아래, 다음 열 순서로 채운다. states가 어떤 기준으로
+// 정렬돼 있고 상태 전이가 항상 앞에서부터 일어나는 시뮬레이션(임계값 캐스케이드 등)에서
+// 경계가 수직선으로 전진해 보인다. 기본값 'row'는 기존 동작(행 우선, 반응형 열 수)이다.
+// highlight[i]가 true면 그 칸에 링을 둘러 이번 라운드에 바뀐 칸을 짚어 준다.
+export function AgentGrid({
+  states,
+  orientation = 'row',
+  rows = 6,
+  highlight,
+}: {
+  states: string[];
+  orientation?: 'row' | 'column';
+  rows?: number;
+  highlight?: boolean[];
+}) {
+  const style =
+    orientation === 'column'
+      ? {
+          gridAutoFlow: 'column' as const,
+          gridTemplateRows: `repeat(${rows}, auto)`,
+          gridAutoColumns: 'minmax(0, 1fr)',
+        }
+      : { gridTemplateColumns: 'repeat(auto-fill, minmax(13px, 1fr))' };
   return (
-    <div className='grid gap-1' style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(13px, 1fr))' }}>
+    // 열 우선 격자는 열 수가 고정(=칸 수/rows)이라 좁은 화면에서 칸이 크게 줄어든다.
+    // 모바일에서는 간격을 좁혀 칸에 폭을 더 주고, 강조 링도 칸을 삼키지 않게 얇게 쓴다.
+    <div className={cn('grid', orientation === 'column' ? 'gap-[2px] sm:gap-1' : 'gap-1')} style={style}>
       {states.map((c, i) => (
-        <div key={i} className={cn('aspect-square rounded-[3px] transition-colors duration-300', c)} />
+        <div
+          key={i}
+          className={cn(
+            'aspect-square rounded-[3px] transition-colors duration-300',
+            c,
+            highlight?.[i] && 'ring-foreground ring-1 sm:ring-2',
+          )}
+        />
       ))}
     </div>
   );
@@ -32,6 +64,10 @@ const DEFAULT_SPEEDS = [
 
 // 재생 컨트롤: 재생/일시정지 · 한 스텝 · 리셋 · 속도.
 // unit으로 진행 단위 명칭("라운드"·"스텝"), speeds로 속도 프리셋을 바꿀 수 있다.
+//
+// total과 onSeek을 함께 주면 스크러버 슬라이더가 붙는다. 궤적을 미리 계산해 두는
+// 결정론적 시뮬레이션에서 라운드를 앞뒤로 왕복하며 볼 수 있다. 둘 중 하나라도
+// 없으면 슬라이더 없이 기존 동작 그대로다.
 export function RoundControls({
   playing,
   onToggle,
@@ -43,6 +79,8 @@ export function RoundControls({
   done,
   unit = '라운드',
   speeds = DEFAULT_SPEEDS,
+  total,
+  onSeek,
 }: {
   playing: boolean;
   onToggle: () => void;
@@ -54,39 +92,55 @@ export function RoundControls({
   done?: boolean;
   unit?: string;
   speeds?: { label: string; ms: number }[];
+  total?: number;
+  onSeek?: (round: number) => void;
 }) {
+  const seekable = total !== undefined && onSeek !== undefined && total > 0;
   return (
-    <div className='flex flex-wrap items-center gap-2'>
-      <Button size='sm' onClick={onToggle} disabled={done} className='gap-1.5'>
-        {playing ? <Pause className='size-4' /> : <Play className='size-4' />}
-        {playing ? '일시정지' : done ? '완료' : '재생'}
-      </Button>
-      <Button size='sm' variant='outline' onClick={onStep} disabled={playing || done} className='gap-1.5'>
-        <StepForward className='size-4' />한 {unit}
-      </Button>
-      <Button size='sm' variant='outline' onClick={onReset} className='gap-1.5'>
-        <RotateCcw className='size-4' />
-        리셋
-      </Button>
-      <div className='ml-auto flex items-center gap-2'>
-        <span className='text-muted-foreground text-sm tabular-nums'>
-          {unit} {round}
-        </span>
-        <div className='flex overflow-hidden rounded-md border'>
-          {speeds.map((s) => (
-            <button
-              key={s.ms}
-              onClick={() => onSpeed(s.ms)}
-              className={cn(
-                'px-2 py-1 text-xs tabular-nums transition-colors',
-                speedMs === s.ms ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-              )}
-            >
-              {s.label}
-            </button>
-          ))}
+    <div className='flex flex-col gap-2'>
+      <div className='flex flex-wrap items-center gap-2'>
+        <Button size='sm' onClick={onToggle} disabled={done} className='gap-1.5'>
+          {playing ? <Pause className='size-4' /> : <Play className='size-4' />}
+          {playing ? '일시정지' : done ? '완료' : '재생'}
+        </Button>
+        <Button size='sm' variant='outline' onClick={onStep} disabled={playing || done} className='gap-1.5'>
+          <StepForward className='size-4' />한 {unit}
+        </Button>
+        <Button size='sm' variant='outline' onClick={onReset} className='gap-1.5'>
+          <RotateCcw className='size-4' />
+          리셋
+        </Button>
+        <div className='ml-auto flex items-center gap-2'>
+          <span className='text-muted-foreground text-sm tabular-nums'>
+            {unit} {round}
+            {seekable && ` / ${total}`}
+          </span>
+          <div className='flex overflow-hidden rounded-md border'>
+            {speeds.map((s) => (
+              <button
+                key={s.ms}
+                onClick={() => onSpeed(s.ms)}
+                className={cn(
+                  'px-2 py-1 text-xs tabular-nums transition-colors',
+                  speedMs === s.ms ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
+                )}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
+      {seekable && (
+        <Slider
+          value={[round]}
+          onValueChange={([v]) => onSeek(v)}
+          min={0}
+          max={total}
+          step={1}
+          aria-label={`${unit} 이동`}
+        />
+      )}
     </div>
   );
 }
@@ -350,6 +404,10 @@ export function IllustrativeDisclaimer({ children }: { children: React.ReactNode
 
 // 값 배열을 폴리라인으로 그리는 작은 SVG 스파크라인.
 // min/max를 주면 고정 스케일(범위 밖은 잘라냄), 없으면 데이터 범위에 맞춰 자동 스케일.
+//
+// cursor(인덱스)를 주면 values 전체를 흐리게 깔고 0..cursor 구간만 진하게 그린 뒤
+// 현재 지점에 세로 마커를 세운다. 궤적을 미리 계산해 두는 시뮬레이션에서 곡선의
+// 최종 모양을 첫 프레임부터 보여 주려는 용도다. 없으면 기존처럼 전 구간을 그린다.
 export function Sparkline({
   values,
   label,
@@ -357,6 +415,7 @@ export function Sparkline({
   min,
   max,
   heightClass = 'h-8',
+  cursor,
 }: {
   values: number[];
   label: string;
@@ -364,29 +423,55 @@ export function Sparkline({
   min?: number;
   max?: number;
   heightClass?: string;
+  cursor?: number;
 }) {
   const W = 100;
   const H = 32;
   const lo = min ?? Math.min(...values);
   const hi = max ?? Math.max(...values);
   const span = hi - lo || 1;
-  const pts = values.map((v, i) => {
+  const xy = values.map((v, i) => {
     const x = values.length <= 1 ? 0 : (i / (values.length - 1)) * W;
     const y = H - ((clamp(v, lo, hi) - lo) / span) * H;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
+    return [x, y] as const;
   });
+  const fmt = (pts: readonly (readonly [number, number])[]) =>
+    pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  const at = cursor === undefined ? undefined : xy[clamp(cursor, 0, xy.length - 1)];
   return (
     <div className='flex items-center gap-2'>
       <span className='text-muted-foreground w-16 shrink-0 text-xs'>{label}</span>
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio='none' className={cn('w-full', heightClass)}>
+        {at && (
+          <polyline
+            points={fmt(xy)}
+            fill='none'
+            stroke='currentColor'
+            strokeWidth={1.5}
+            className={cn(className, 'opacity-25')}
+            vectorEffect='non-scaling-stroke'
+          />
+        )}
         <polyline
-          points={pts.join(' ')}
+          points={fmt(at ? xy.slice(0, clamp(cursor ?? 0, 0, xy.length - 1) + 1) : xy)}
           fill='none'
           stroke='currentColor'
           strokeWidth={1.5}
           className={className}
           vectorEffect='non-scaling-stroke'
         />
+        {at && (
+          <line
+            x1={at[0]}
+            y1={0}
+            x2={at[0]}
+            y2={H}
+            stroke='currentColor'
+            strokeWidth={1}
+            className={cn(className, 'opacity-60')}
+            vectorEffect='non-scaling-stroke'
+          />
+        )}
       </svg>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   AgentGrid,
   ControlSlider,
   ExplainCard,
+  Legend,
   Metric,
   RoundControls,
   SectionIntro,
@@ -18,17 +19,18 @@ import {
 } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
 
-import { type CascadeAgent, buildCascadeAgents, cascadeStep } from './models';
+import { type AgentType, type CascadeAgent, buildCascadeAgents, cascadeTrajectory } from './models';
 
 const N = 180;
 const SEED = 12345;
 
-// 임계값이 가장 낮은 seedCount명을 초기 채택자로 둔다.
-function seedAdopted(agents: CascadeAgent[], seedCount: number): boolean[] {
-  const order = agents.map((a, i) => [a.threshold, i] as const).sort((a, b) => a[0] - b[0]);
-  const set = new Set(order.slice(0, seedCount).map(([, i]) => i));
-  return agents.map((_, i) => set.has(i));
-}
+// 유형은 칸 색으로만 구분한다. 격자의 위치는 임계값 순서를 뜻하므로,
+// 유형을 공간으로 묶으면 임계값 축이 깨진다.
+const TYPE_COLOR: Record<AgentType, { on: string; off: string }> = {
+  개인: { on: 'bg-amber-300', off: 'bg-amber-300/15' },
+  기업: { on: 'bg-amber-500', off: 'bg-amber-500/15' },
+  국가: { on: 'bg-amber-700', off: 'bg-amber-700/20' },
+};
 
 export function AdoptionCascade() {
   const [meanThreshold, setMeanThreshold] = useState(0.3);
@@ -39,16 +41,16 @@ export function AdoptionCascade() {
 
   return (
     <div className='flex flex-col gap-4'>
-      <SectionIntro title='채택 캐스케이드: 도미노처럼 번지는 채택'>
-        각 행위자는 저마다 &#39;임계값&#39;을 갖는다. 주변 채택률이 그 선을 넘으면 채택에 동참한다(Granovetter 임계값
-        모델). 개인이 먼저 움직이고, 채택률이 오르면 기업이, 마지막엔 보수적인 국가까지 합류한다. 한 번 임계점을 넘으면
-        멈추기 어려운 연쇄가 시작된다.
+      <SectionIntro title='채택 캐스케이드: 도미노처럼 넘어가는 채택'>
+        각 행위자는 저마다 &#39;임계값&#39;을 갖는다. 전체 채택률이 그 선을 넘으면 채택에 동참한다(Granovetter 임계값
+        모델). 임계값이 낮은 개인이 먼저 움직이고, 채택률이 오르면 기업이, 마지막엔 보수적인 국가까지 합류한다. 한 번
+        임계점을 넘으면 멈추기 어려운 연쇄가 시작된다.
       </SectionIntro>
 
       <Card className='gap-4 p-4'>
         <ControlSlider
           label='따라 사는 기준 (평균 임계값)'
-          hint='주변에 몇 %가 사야 나도 따라 사는지. 낮출수록 남들 눈치 안 보고 일찍 동참해 더 잘 번진다.'
+          hint='전체의 몇 %가 사야 나도 따라 사는지. 낮출수록 눈치를 덜 보고 일찍 동참해 더 잘 번진다. 개인·기업·국가의 구성비는 그대로 두고 임계값만 함께 움직인다.'
           value={meanThreshold}
           onChange={setMeanThreshold}
           min={0.1}
@@ -59,7 +61,7 @@ export function AdoptionCascade() {
         <ControlSlider
           icon={<Users className='size-4 text-amber-500' />}
           label='처음 사는 사람 수 (시드)'
-          hint='아무도 안 사도 맨 먼저 움직이는 불씨. 이 사람들이 도미노의 첫 장을 쓰러뜨린다.'
+          hint='아무도 안 사도 맨 먼저 움직이는 불씨. 임계값이 가장 낮은 사람들이며 격자 맨 왼쪽에 있다.'
           value={seedCount}
           onChange={setSeedCount}
           min={1}
@@ -68,7 +70,7 @@ export function AdoptionCascade() {
         />
       </Card>
 
-      {/* key로 파라미터 변경 시 리마운트 → 깔끔한 초기화 */}
+      {/* key로 파라미터 변경 시 리마운트 → 궤적 재계산 + 첫 프레임으로 초기화 */}
       <CascadeSim
         key={`${meanThreshold}|${seedCount}`}
         agents={agents}
@@ -86,8 +88,6 @@ export function AdoptionCascade() {
   );
 }
 
-type Sim = { adopted: boolean[]; round: number; history: number[] };
-
 function CascadeSim({
   agents,
   seedCount,
@@ -99,32 +99,35 @@ function CascadeSim({
   speedMs: number;
   onSpeed: (ms: number) => void;
 }) {
-  const init = useCallback((): Sim => {
-    const adopted = seedAdopted(agents, seedCount);
-    return { adopted, round: 0, history: [adopted.filter(Boolean).length / N] };
-  }, [agents, seedCount]);
+  // 모델이 결정론적이라 전 궤적을 한 번에 계산해 둔다. 라운드 왕복과
+  // "최종 곡선을 처음부터 보여 주기"가 여기서 나온다.
+  const frames = useMemo(() => cascadeTrajectory(agents, seedCount), [agents, seedCount]);
+  const last = frames.length - 1;
+  const [round, setRound] = useState(0);
 
-  const [sim, setSim] = useState<Sim>(init);
-
-  // 현재 sim에서 다음 상태를 계산. 변화 여부를 동기적으로 반환해 엔진이
-  // 캐스케이드 종료 시점을 정확히 판단하게 한다.
+  // 다음 프레임으로 한 칸. 남은 프레임이 있는지 동기적으로 반환해 엔진이 종료를 판단한다.
   const step = useCallback(() => {
-    const res = cascadeStep(agents, sim.adopted);
-    if (!res.changed) return false;
-    setSim({
-      adopted: res.next,
-      round: sim.round + 1,
-      history: [...sim.history, res.next.filter(Boolean).length / N],
-    });
-    return true;
-  }, [agents, sim]);
+    if (round >= last) return false;
+    setRound(round + 1);
+    return round + 1 < last;
+  }, [round, last]);
 
   const engine = useRoundEngine(step, speedMs);
+  const seek = useCallback(
+    (r: number) => {
+      engine.pause();
+      setRound(r);
+    },
+    [engine],
+  );
 
-  const adoptedCount = sim.adopted.filter(Boolean).length;
+  const frame = frames[round];
+  const adoptedCount = frame.adopted.filter(Boolean).length;
   const p = adoptedCount / N;
-  const done = !cascadeStep(agents, sim.adopted).changed && sim.round > 0;
-  const states = sim.adopted.map((a) => (a ? 'bg-amber-500' : 'bg-muted'));
+  const done = round >= last;
+
+  const states = agents.map((a, i) => TYPE_COLOR[a.type][frame.adopted[i] ? 'on' : 'off']);
+  const curve = useMemo(() => frames.map((f) => f.p), [frames]);
 
   return (
     <>
@@ -133,17 +136,41 @@ function CascadeSim({
           playing={engine.playing}
           onToggle={engine.toggle}
           onStep={step}
-          onReset={() => {
-            engine.pause();
-            setSim(init());
-          }}
-          round={sim.round}
+          onReset={() => seek(0)}
+          round={round}
+          total={last}
+          onSeek={seek}
           speedMs={speedMs}
           onSpeed={onSpeed}
           done={done}
         />
-        <AgentGrid states={states} />
-        <Sparkline values={sim.history} label='채택 곡선' className='text-amber-500' min={0} max={1} />
+        <div className='flex flex-col gap-1.5'>
+          <div className='text-muted-foreground flex items-center justify-between text-xs'>
+            <span>임계값 낮음 (일찍 채택)</span>
+            <span>임계값 높음 (늦게 채택)</span>
+          </div>
+          <AgentGrid states={states} orientation='column' highlight={frame.justChanged} />
+          <p className='text-muted-foreground text-xs'>
+            칸은 임계값 순으로 왼쪽부터 늘어서 있다. 진한 칸이 채택자이고, 그 경계가 곧 전체 채택률{' '}
+            <span className='font-medium text-amber-600 dark:text-amber-400'>{Math.round(p * 100)}%</span>다. 채택률이
+            오르면 경계 바로 오른쪽 칸들의 임계값을 넘어서고, 그 칸들이 넘어오면 채택률이 또 오른다.
+          </p>
+        </div>
+        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
+          <Legend className='bg-amber-300' label='개인' />
+          <Legend className='bg-amber-500' label='기업' />
+          <Legend className='bg-amber-700' label='국가' />
+          <span className='ml-auto'>테두리 = 이번 라운드에 새로 채택</span>
+        </div>
+        <Sparkline
+          values={curve}
+          cursor={round}
+          label='채택 곡선'
+          className='text-amber-500'
+          min={0}
+          max={1}
+          heightClass='h-12'
+        />
       </Card>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -161,7 +188,7 @@ function CascadeSim({
         >
           {p > 0.9
             ? '🔥 임계점을 넘어 거의 전원이 채택했다. 초기 소수의 움직임이 전체로 번졌다.'
-            : '확산이 임계점에 못 미쳐 멈췄다. 시드를 늘리거나 평균 임계값을 낮춰 다시 돌려 보자.'}
+            : '확산이 임계점에 못 미쳐 멈췄다. 채택률이 남은 칸들의 임계값에 닿지 못한 것이다. 시드를 늘리거나 평균 임계값을 낮춰 다시 돌려 보자.'}
         </p>
       )}
     </>
