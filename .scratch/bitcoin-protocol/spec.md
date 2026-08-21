@@ -92,7 +92,7 @@ P2에서 확인하니 역방향 링크가 이미 `attack-scope`의 `과반 공�
 
 `transactions/fee-calc`(크기가 수수료다), `transactions/address-compare`(주소 타입별), `p2p-network/mempool-policy`(최소 릴레이 수수료·RBF), `mempool` 대시보드(실시간 권장 수수료). 층위가 다르므로 서술 중복은 없다. 링크만 검토한다.
 
-### D5. 타임락 (낮음)
+### D5. 타임락 (낮음, P3에서 해결)
 
 `multisig-timelock/timelock-lab`이 CLTV·CSV 정본이고, `lightning-network/htlc-routing`이 HTLC 안에서 그것을 쓴다. 링크한다.
 

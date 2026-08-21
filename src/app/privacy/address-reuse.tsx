@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useState } from 'react';
 import { Link2, ScanEye } from 'lucide-react';
 
@@ -76,9 +78,12 @@ export function AddressReuse() {
       </Card>
 
       <IllustrativeDisclaimer>
-        주소 문자열은 개념 시연용 가짜 값이다. 실제 HD 지갑(지갑 키 생성 페이지에서 다룬 시드 파생 구조)은 결제마다 같은
-        시드에서 새 주소를 자동으로 파생해, 사용자가 신경 쓰지 않아도 기본적으로 &#39;결제마다 새 주소&#39; 방식으로
-        동작한다.
+        주소 문자열은 개념 시연용 가짜 값이다. 실제 HD 지갑({' '}
+        <Link href='/wallet-keys' className='underline underline-offset-2'>
+          지갑 키 생성
+        </Link>{' '}
+        페이지에서 다룬 시드 파생 구조)은 결제마다 같은 시드에서 새 주소를 자동으로 파생해, 사용자가 신경 쓰지 않아도
+        기본적으로 &#39;결제마다 새 주소&#39; 방식으로 동작한다.
       </IllustrativeDisclaimer>
 
       <ExplainCard

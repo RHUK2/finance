@@ -35,6 +35,4 @@ pnpm-debug.log*
 *.pem
 
 # Ai Files
-.claude/
-.mcp.json
-.worktreeinclude
+.claude/*

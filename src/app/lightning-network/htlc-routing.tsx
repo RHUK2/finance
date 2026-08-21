@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useState } from 'react';
 import { KeyRound, Link2 } from 'lucide-react';
 
@@ -101,7 +103,12 @@ export function HtlcRouting() {
             Bob이 R을 영영 공개하지 않으면 어떻게 될까. 각 HTLC에는 <b>타임락</b>도 함께 걸려 있어서, 정해진 시간이
             지나면 돈을 건 쪽이 자동으로 환불받는다. 그래서 Carol은 &#39;돈만 받고 안 넘길&#39; 수도 없고(해시락),
             &#39;영원히 묶여버릴&#39; 수도 없다(타임락). 라우팅 경로가 길어질수록 앞 홉의 타임락을 뒤 홉보다 조금씩 더
-            길게 잡아, 뒤에서부터 안전하게 정산될 시간을 확보한다.
+            길게 잡아, 뒤에서부터 안전하게 정산될 시간을 확보한다. 여기서 쓰는 잠금 조건 자체는{' '}
+            <Link href='/multisig-timelock' className='underline underline-offset-2'>
+              멀티시그·타임락
+            </Link>{' '}
+            페이지의 CLTV·CSV와 같은 것이다. 그 페이지가 잠금 조건을 정면으로 다루고, 여기서는 그것을 여러 홉에 걸어
+            중계자를 믿지 않아도 되게 만드는 쓰임을 본다.
           </>
         }
       />

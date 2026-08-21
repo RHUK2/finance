@@ -111,12 +111,17 @@ export function PaymentChannel() {
         <StatusBanner tone={closed ? 'good' : undefined}>
           {closed
             ? `채널이 닫혔다. 최종 잔액(Alice ${formatSats(state.aliceSats)}, Bob ${formatSats(state.bobSats)})이 온체인 트랜잭션 한 번으로 각자 지갑에 기록된다.`
-            : `지금까지 ${state.updateCount}번 잔액을 옮겼지만, 온체인에는 아직 아무 기록도 없다.`}
+            : `지금까지 ${state.updateCount}번 잔액을 옮겼지만, 채널을 연 트랜잭션 하나 말고는 온체인에 아무 기록도 남지 않았다.`}
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='오프체인 업데이트' value={`${state.updateCount}회`} tone='accent' />
-          <Metric label='온체인 트랜잭션' value='2건 (열기·닫기)' tone='good' />
+          <Metric
+            label='온체인 트랜잭션'
+            value={closed ? '2건' : '1건'}
+            tone='good'
+            sub={closed ? '열기 · 닫기' : '열기. 닫을 때 한 건 더'}
+          />
           <Metric label='채널 상태' value={closed ? '닫힘' : '열림'} tone={closed ? undefined : 'good'} />
         </div>
       </Card>
