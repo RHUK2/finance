@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 
-import { ControlSlider, StatCard } from '@/components/simulation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ControlSlider, SectionIntro, StatCard } from '@/components/simulation';
+import { Card } from '@/components/ui/card';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, minWageAt, valueAt, type Point } from '@/lib/inflation-models';
 
@@ -64,15 +64,13 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
   const depositTone = depositHours != null && depositHours < 1 ? 'bad' : 'good';
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='text-base'>노동시간 환산</CardTitle>
-        <p className='text-muted-foreground text-sm'>
-          {startYear}년 최저임금 <b>1시간</b>어치를 저축했다면, 오늘 그 돈으로 몇 시간어치를 살 수 있을까요? (오늘
-          최저임금 {r.currentWage != null ? money(r.currentWage) : '-'} 기준)
-        </p>
-      </CardHeader>
-      <CardContent className='flex flex-col gap-5'>
+    <>
+      <SectionIntro title='노동시간 환산'>
+        {startYear}년 최저임금 <b>1시간</b>어치를 저축했다면, 오늘 그 돈으로 몇 시간어치를 살 수 있을까? (오늘 최저임금{' '}
+        {r.currentWage != null ? money(r.currentWage) : '-'} 기준)
+      </SectionIntro>
+
+      <Card className='flex flex-col gap-5 p-4'>
         <ControlSlider
           label='시작 연도'
           min={minYear}
@@ -87,21 +85,21 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           {ready ? (
             <>
               {startYear}년 최저임금 {hi('1시간', 'strong')}어치(시급 {money(r.wage!)})를 예금에 넣었다면 오늘{' '}
-              {hi(money(deposit!.value!), 'strong')}이 됩니다. 오늘 최저임금(
-              {money(r.currentWage!)}) 기준 {hi(fmtHours(depositHours!), depositTone)}어치입니다. 같은 1시간 노동의
-              구매력이 {hi(`${Math.abs((depositHours! - 1) * 100).toFixed(0)}%`, depositTone)}{' '}
-              {depositHours! < 1 ? '줄었습니다' : '늘었습니다'}.
+              {hi(money(deposit!.value!), 'strong')}이 된다. 오늘 최저임금(
+              {money(r.currentWage!)}) 기준 {hi(fmtHours(depositHours!), depositTone)}어치다. 같은 1시간 노동의 구매력이{' '}
+              {hi(`${Math.abs((depositHours! - 1) * 100).toFixed(0)}%`, depositTone)}{' '}
+              {depositHours! < 1 ? '줄었다' : '늘었다'}.
               {best ? (
                 <>
                   {' '}
                   같은 1시간어치를 {best.label}에 넣었다면{' '}
                   {hi(fmtHours(best.value! / r.currentWage!), best.value! >= r.currentWage! ? 'good' : 'bad')}
-                  어치였습니다.
+                  어치였다.
                 </>
               ) : null}
             </>
           ) : (
-            `${startYear}년 데이터가 없습니다. 시작 연도를 올려보세요.`
+            `${startYear}년 데이터가 없다. 시작 연도를 올려 보자.`
           )}
         </p>
 
@@ -122,10 +120,10 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           )}
         </div>
         <p className='text-muted-foreground text-xs'>
-          1시간 미만이면 같은 노동의 구매력이 그만큼 줄어든 것입니다. 예금이 최저임금 인상 속도를 따라가지 못하면 1시간
+          1시간 미만이면 같은 노동의 구매력이 그만큼 줄어든 것이다. 예금이 최저임금 인상 속도를 따라가지 못하면 1시간
           아래로 내려갑니다.
         </p>
-      </CardContent>
-    </Card>
+      </Card>
+    </>
   );
 }

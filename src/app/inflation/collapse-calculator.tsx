@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from 'react';
 
-import { ControlSlider, StatCard } from '@/components/simulation';
+import { ControlSlider, SectionIntro, StatCard } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, valueAt, type Point } from '@/lib/inflation-models';
 
@@ -75,15 +75,13 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
   const head = r.headline;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='text-base'>구매력 붕괴 계산기</CardTitle>
-        <p className='text-muted-foreground text-sm'>
-          과거에 {money(amount)}을 예금에 두었다면 오늘 그 가치가 어떻게 변했을까요? 기준을 통화량(M2)·물가(CPI)로 바꿔,
-          같은 돈을 자산에 넣었을 경우와 비교합니다.
-        </p>
-      </CardHeader>
-      <CardContent className='flex flex-col gap-5'>
+    <>
+      <SectionIntro title='구매력 붕괴 계산기'>
+        과거에 {money(amount)}을 예금에 두었다면 오늘 그 가치가 어떻게 변했을까? 기준을 통화량(M2)·물가(CPI)로 바꿔,
+        같은 돈을 자산에 넣었을 경우와 비교한다.
+      </SectionIntro>
+
+      <Card className='flex flex-col gap-5 p-4'>
         <div className='flex items-center gap-2'>
           <span className='text-sm font-medium'>기준</span>
           {(['M2', 'CPI'] as const).map((b) => (
@@ -107,10 +105,10 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
           {ready ? (
             <>
               {startYear}년에 {hi(money(amount), 'strong')}을 예금에 넣었다면 오늘 통장엔{' '}
-              {hi(money(r.depositNominal!), 'strong')}(명목)입니다. 하지만 같은 기간 {refName}이{' '}
+              {hi(money(r.depositNominal!), 'strong')}(명목)이다. 하지만 같은 기간 {refName}이{' '}
               {hi(`${r.ratio!.toFixed(1)}배`, 'amber')} 늘어, 같은 값어치를 유지하려면 오늘{' '}
-              {hi(money(r.holdLine!), 'strong')}이 있어야 합니다. 통장은 유지선 대비{' '}
-              {hi(`${Math.abs(r.lossPct!).toFixed(0)}%`, realTone)} {r.lossPct! < 0 ? '부족합니다' : '초과합니다'}.
+              {hi(money(r.holdLine!), 'strong')}이 있어야 한다. 통장은 유지선 대비{' '}
+              {hi(`${Math.abs(r.lossPct!).toFixed(0)}%`, realTone)} {r.lossPct! < 0 ? '부족하다' : '초과한다'}.
               {head && head.value != null ? (
                 <>
                   {' '}
@@ -119,12 +117,12 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
                     `${money(head.value)} (×${(head.value / amount).toFixed(1)})`,
                     head.value >= r.holdLine! ? 'good' : 'bad',
                   )}
-                  였습니다.
+                  였다.
                 </>
               ) : null}
             </>
           ) : (
-            `${startYear}년은 선택한 기준(${refName})의 데이터 범위 밖입니다. 시작 연도를 올려보세요.`
+            `${startYear}년은 선택한 기준(${refName})의 데이터 범위 밖이다. 시작 연도를 올려 보자.`
           )}
         </p>
 
@@ -164,7 +162,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
             )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </Card>
+    </>
   );
 }

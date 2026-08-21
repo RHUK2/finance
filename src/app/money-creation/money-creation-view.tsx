@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useMemo, useState } from 'react';
 
 import { AppHeader } from '@/components/app-header';
@@ -45,7 +47,11 @@ export function MoneyCreationView() {
             <h1 className='text-xl font-semibold'>돈은 어떻게 무에서 창조되는가</h1>
             <p className='text-muted-foreground mt-1 text-sm'>
               정부 · 연준 · 시중은행 · 국민의 대차대조표를 따라가며, 국채 발행부터 신용창조까지 돈이 만들어지는 과정을
-              한 단계씩 살펴본다. (단위는 개념용 예시)
+              한 단계씩 살펴본다. 여기서 만들어지는 광의통화(M2)가 예금의 구매력을 어떻게 깎는지는{' '}
+              <Link href='/inflation' className='underline underline-offset-2'>
+                구매력 붕괴
+              </Link>{' '}
+              페이지에서 이어서 본다. 수치는 개념 이해용 예시다.
             </p>
           </div>
 

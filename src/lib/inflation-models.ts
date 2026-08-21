@@ -98,6 +98,11 @@ export function minWageAt(table: { year: number; wage: number }[], year: number)
   return found;
 }
 
+// 두 표는 룩업 의미가 다르다. 미국 연방 최저임금은 2009년 이후 실제로 그대로라
+// 표에 없는 연도는 "안 바뀐 것"이고 이하 최댓값 룩업이 옳다. 한국은 매년 바뀌므로
+// 표에 없는 연도는 "아직 표에 안 넣은 것"이라 그대로 조회하면 낡은 값을 오늘 값으로
+// 쓰게 된다. 그래서 한국은 표가 커버하는 마지막 해까지만 조회하도록 아래 값으로 막는다.
+
 /** 미국 연방 최저임금 ($/시간). 주요 인상 시점만 기록(이하 최댓값 룩업). */
 export const US_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 1968, wage: 1.6 },
@@ -146,3 +151,6 @@ export const KR_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 2025, wage: 10030 },
   { year: 2026, wage: 10320 },
 ];
+
+/** 한국 최저임금 표가 커버하는 마지막 연도. 표를 갱신하면 자동으로 따라간다. */
+export const KR_WAGE_LAST_YEAR = KR_MIN_WAGE[KR_MIN_WAGE.length - 1].year;

@@ -79,17 +79,17 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
           {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
         </div>
         <p className='text-muted-foreground text-sm'>
-          {baseYear}년에 같은 금액을 각각 넣었다면, 시간에 따라 평가액이 어떻게 갈라지는지 보여줍니다. (로그 스케일,
+          {baseYear}년에 같은 금액을 각각 넣었다면, 시간에 따라 평가액이 어떻게 갈라지는지 보여준다. (로그 스케일,
           시작=100)
         </p>
       </CardHeader>
       <CardContent className='p-0'>
         <ChartContainer containerRef={containerRef} onReset={resetView} />
         <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
-          예금 곡선이 자산 곡선과 벌어지는 폭이 곧 기회비용입니다. 자산 수익률은 배당·세금·거래비용을 제외한 가격
-          기준이며, 과거 성과가 미래를 보장하지 않습니다.
+          예금 곡선이 자산 곡선과 벌어지는 폭이 곧 기회비용이다. 자산 수익률은 배당·세금·거래비용을 제외한 가격
+          기준이며, 과거 성과가 미래를 보장하지 않는다.
           {/* 지수 곡선이라 통화 단위는 결과에 영향이 없다. 늦게 합류한 자산의 기준점만 설명한다. */}
-          {hasLateEntrant && ' 기준연도에 아직 존재하지 않던 자산은 등장 시점을 100으로 따로 환산했습니다.'}
+          {hasLateEntrant && ' 기준연도에 아직 존재하지 않던 자산은 등장 시점을 100으로 따로 환산했다.'}
         </p>
       </CardContent>
     </Card>
