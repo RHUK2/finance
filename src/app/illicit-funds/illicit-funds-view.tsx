@@ -11,9 +11,9 @@ import { LaunderingTrail } from './laundering-trail';
 import { RealCases } from './real-cases';
 
 const TABS = [
-  { value: 'cash', label: '① 현금 vs 체인', node: <CashVsChain /> },
-  { value: 'trail', label: '② 세탁 경로 추적', node: <LaunderingTrail /> },
-  { value: 'cases', label: '③ 실제 사례', node: <RealCases /> },
+  { value: 'cash', label: '현금 vs 체인', node: <CashVsChain /> },
+  { value: 'trail', label: '세탁 경로 추적', node: <LaunderingTrail /> },
+  { value: 'cases', label: '실제 사례', node: <RealCases /> },
 ];
 
 export function IllicitFundsView() {
