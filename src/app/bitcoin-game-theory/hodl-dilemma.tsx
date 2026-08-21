@@ -5,18 +5,16 @@ import { useCallback, useMemo, useState } from 'react';
 import { Diamond, Zap } from 'lucide-react';
 
 import {
-  AgentGrid,
+  CascadeStage,
   ControlSlider,
   ExplainCard,
   Legend,
   Metric,
   RoundControls,
   SectionIntro,
-  Sparkline,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { useRoundEngine } from '@/hooks/use-round-engine';
-import { cn } from '@/lib/utils';
 
 import { type Holder, type HolderBand, buildHolders, hodlTrajectory } from './models';
 
@@ -45,9 +43,8 @@ export function HodlDilemma() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='홀더의 딜레마: 던질까, 버틸까'>
         모두가 버티면(HODL) 가격은 지켜지지만, 누군가 던지기 시작하면 하락이 또 다른 매도를 부른다. 각 보유자는 시작가
-        대비 누적 낙폭이 자기 확신도를 넘는 순간 던진다. 그 매도가 가격을 더 끌어내려 더 높은 확신도까지 무너뜨린다.
-        서로를 보고 파는 게 아니라 모두가 같은 가격을 보고 판다. 재생을 누르면 첫 박자에 −15% 공포 충격이 가해진다. 평균
-        확신도에 따라 붕괴하는지, 일부만 털리고 멈추는지, 아예 흡수하는지 지켜보자.
+        대비 누적 낙폭이 자기 확신도를 넘는 순간 던지고, 그 매도가 가격을 더 끌어내려 더 높은 확신도까지 무너뜨린다.
+        평균 확신도에 따라 붕괴하는지, 일부만 털리고 멈추는지, 아예 흡수하는지 지켜보자.
       </SectionIntro>
 
       <Card className='gap-4 p-4'>
@@ -110,12 +107,14 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
   const partial = done && !collapsed && !survived;
 
   return (
-    <>
-      <Card className='gap-3 p-4'>
+    <CascadeStage
+      notice={
         <div className='text-muted-foreground flex items-center gap-1.5 text-xs'>
           <Zap className='size-3.5 text-rose-500' />첫 박자에 외생 공포 충격{' '}
           <span className='font-medium text-rose-600 dark:text-rose-400'>−{Math.round(SHOCK * 100)}%</span> 자동 적용
         </div>
+      }
+      controls={
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
@@ -128,63 +127,55 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
           onSpeed={onSpeed}
           done={done}
         />
-        <div className='flex flex-col gap-1.5'>
-          <div className='text-muted-foreground flex items-center justify-between text-xs'>
-            <span>확신도 낮음 (약한 손)</span>
-            <span>확신도 높음 (다이아몬드손)</span>
-          </div>
-          <AgentGrid states={states} orientation='column' highlight={justChanged} />
-          <p className='text-muted-foreground text-xs'>
-            칸은 확신도 순으로 왼쪽부터 늘어서 있다. 매도(붉은색)는 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다.
-            누적 낙폭이 깊어질수록 더 높은 확신도까지 무너지기 때문이다. 가운데는 보유자가 촘촘해 한 번 뚫리면 빠르게
-            번지고, 오른쪽 끝은 성겨서 연쇄가 거기서 힘을 잃는다.
-          </p>
-        </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
+      }
+      axisLabels={['확신도 낮음 (약한 손)', '확신도 높음 (다이아몬드손)']}
+      states={states}
+      highlight={justChanged}
+      reading='칸은 확신도 순으로 왼쪽부터 늘어서 있다. 매도(붉은색)는 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다. 누적 낙폭이 깊어질수록 더 높은 확신도까지 무너지기 때문이다. 가운데는 보유자가 촘촘해 한 번 뚫리면 빠르게 번지고, 오른쪽 끝은 성겨서 연쇄가 거기서 힘을 잃는다.'
+      legend={
+        <>
           <Legend className='bg-emerald-500' label='버티는 손' />
           <Legend className='bg-rose-500' label='매도' />
-          <span className='ml-auto'>진할수록 확신도가 높은 구간</span>
-        </div>
-        <Sparkline
-          values={curve}
-          cursor={round}
-          label={`가격 ${PRICE_FLOOR}~100`}
-          className={state.price < 60 ? 'text-rose-500' : 'text-emerald-500'}
-          min={PRICE_FLOOR}
-          max={100}
-          heightClass='h-12'
-        />
-      </Card>
-
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric
-          label='가격 (시작 100)'
-          value={state.price.toFixed(1)}
-          sub={`누적 낙폭 ${Math.round(state.drawdown * 100)}%`}
-          tone={state.price < 60 ? 'bad' : state.price >= 95 ? 'good' : undefined}
-        />
-        <Metric label='매도자' value={`${soldCount}`} tone='bad' />
-        <Metric label='버티는 손' value={`${holding}`} tone='good' />
-      </div>
-
-      {done && (
-        <p
-          className={cn(
-            'rounded-md px-3 py-2 text-xs',
-            collapsed
-              ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-              : partial
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-          )}
-        >
-          {collapsed
-            ? '💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다.'
+        </>
+      }
+      legendNote='진할수록 확신도가 높은 구간'
+      curve={{
+        values: curve,
+        cursor: round,
+        label: `가격 ${PRICE_FLOOR}~100`,
+        className: state.price < 60 ? 'text-rose-500' : 'text-emerald-500',
+        min: PRICE_FLOOR,
+        max: 100,
+      }}
+      metrics={
+        <>
+          <Metric
+            label='가격 (시작 100)'
+            value={state.price.toFixed(1)}
+            sub={`누적 낙폭 ${Math.round(state.drawdown * 100)}%`}
+            tone={state.price < 60 ? 'bad' : state.price >= 95 ? 'good' : undefined}
+          />
+          <Metric label='매도자' value={`${soldCount}`} tone='bad' />
+          <Metric label='버티는 손' value={`${holding}`} tone='good' />
+        </>
+      }
+      outcome={
+        done
+          ? collapsed
+            ? {
+                tone: 'bad',
+                text: '💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다.',
+              }
             : partial
-              ? '🧱 약한 손은 털렸지만 연쇄가 벽에 부딪혀 멈췄다. 남은 보유자의 확신도가 지금 낙폭보다 높아 더 이상 매도가 나오지 않는다. 확신의 분포가 어디서 두꺼워지는지가 바닥을 정한다.'
-              : '💎 다이아몬드손이 충격을 흡수했다. 확신이 강한 보유자가 던지지 않으니 매도가 더 번지지 않고 첫 충격 선에서 멈췄다.'}
-        </p>
-      )}
-    </>
+              ? {
+                  text: '🧱 약한 손은 털렸지만 연쇄가 벽에 부딪혀 멈췄다. 남은 보유자의 확신도가 지금 낙폭보다 높아 더 이상 매도가 나오지 않는다. 확신의 분포가 어디서 두꺼워지는지가 바닥을 정한다.',
+                }
+              : {
+                  tone: 'good',
+                  text: '💎 다이아몬드손이 충격을 흡수했다. 확신이 강한 보유자가 던지지 않으니 매도가 더 번지지 않고 첫 충격 선에서 멈췄다.',
+                }
+          : undefined
+      }
+    />
   );
 }

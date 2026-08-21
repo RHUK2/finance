@@ -256,7 +256,13 @@ export function hodlTrajectory(holders: Holder[], shock: number): HodlFrame[] {
 }
 
 // ── 4. 51% 공격 보안 게임 ────────────────────────────────────────────────
-// 네트워크 과반 해시파워 확보·운영 비용 vs 이중지불 이득 vs 정직 채굴 수익.
+// 과반 해시파워를 갖추는 비용 vs 이중지불로 얻는 이득. 비율은 소프트워 페이지와
+// 같은 BCRA(이득 ÷ 비용) 방향을 쓴다(src/lib/bcra.ts).
+//
+// 장비값은 공격자든 정직한 채굴자든 똑같이 치르는 비용이라 둘을 가르는 항이 아니다.
+// 그래서 장비값을 정직 채굴 수익과 나란히 놓고 비교하지 않고, "정직하게 채굴하면
+// 몇 년 만에 회수되는가"로 환산한다. 공격은 그 회수 자산을 한 번의 이중지불과
+// 맞바꾸는 선택이 된다.
 export type AttackInput = {
   btcPrice: number; // USD
   networkHashrate: number; // EH/s
@@ -266,8 +272,9 @@ export type AttackInput = {
 };
 
 const J_PER_TH = 20; // 최신 ASIC 효율 ≈ 20 J/TH → 20 W per TH/s
-const BLOCK_REWARD = 3.125; // BTC
+const BLOCK_REWARD = 3.125; // BTC (2024년 반감기 이후, 다음 반감기는 2028년)
 const BLOCKS_PER_HOUR = 6;
+const HOURS_PER_YEAR = 24 * 365;
 const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불 규모(예시 상한)
 
 export function attack51({ btcPrice, networkHashrate, attackHours, hardwareCostPerTH, electricity }: AttackInput) {
@@ -278,17 +285,18 @@ export function attack51({ btcPrice, networkHashrate, attackHours, hardwareCostP
   const attackCost = hardwareCost + energyCost;
 
   const doubleSpendGain = DOUBLE_SPEND_BTC * btcPrice;
-  // 같은 장비로 정직하게 채굴했을 때 공격 시간 동안의 기대 수익(과반=50%)
-  const honestRevenue = BLOCK_REWARD * BLOCKS_PER_HOUR * attackHours * 0.5 * btcPrice;
 
-  const costToGain = attackCost / doubleSpendGain;
+  // 같은 장비로 정직하게 채굴할 때의 연 수익. 과반이라 블록의 절반을 가져간다.
+  // 수수료는 무시한다(보상의 몇 % 수준이라 결론을 바꾸지 않는다).
+  const honestYearly = BLOCK_REWARD * BLOCKS_PER_HOUR * HOURS_PER_YEAR * 0.5 * btcPrice;
+  const paybackYears = hardwareCost / honestYearly;
 
   return {
     hardwareCost,
     energyCost,
     attackCost,
     doubleSpendGain,
-    honestRevenue,
-    costToGain,
+    honestYearly,
+    paybackYears,
   };
 }

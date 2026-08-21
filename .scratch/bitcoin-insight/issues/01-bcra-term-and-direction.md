@@ -1,6 +1,6 @@
 # BCRA 비율의 이름과 방향을 통일한다
 
-Status: needs-triage
+Status: resolved
 Section: S1
 Tags: 정정, 일관성
 
@@ -13,3 +13,7 @@ Tags: 정정, 일관성
 - `attack-game`의 `비용 ÷ 이득` 지표를 BCRA(`이득 ÷ 비용`)로 방향을 맞추고 이름을 붙인다
 - 판정 문구(`탈취됨` / `방어됨`)의 임계 조건이 세 곳에서 같은 부등호를 쓰는지 확인한다
 - BCRA를 `CONTEXT.md`에 정의한다. 약어 원어(Benefit-to-Cost of Attack Ratio)의 출처가 로워리의 `Softwar`임을 밝힌다
+
+## Answer
+
+`attack-game`의 비율을 BCRA(이득÷비용)로 뒤집고 계산·표시를 `src/lib/bcra.ts`로 모았다. 소프트워의 `powerCapture`도 같은 모듈을 쓴다. 두 페이지 모두 `1 미만이면 방어`를 기준선으로 표시한다. 근거는 ADR-0002.

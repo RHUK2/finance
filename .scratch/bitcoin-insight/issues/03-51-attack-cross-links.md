@@ -1,6 +1,6 @@
 # 51% 공격을 다루는 세 곳을 서로 연결한다
 
-Status: needs-triage
+Status: resolved
 Section: S1
 Tags: 중복
 
@@ -17,3 +17,7 @@ Tags: 중복
 - `attack-game`에 51%가 뒤집을 수 있는 범위의 제약을 한 문장으로 넣고 `/chain-reorg`로 링크
 - `mempool` 채굴풀 설명에 `/chain-reorg` 링크
 - 프로토콜 그룹인 `/chain-reorg`는 이번 정비 범위 밖이므로 링크를 받기만 하고 수정하지 않는다
+
+## Answer
+
+`attack-game` 인트로에 51%가 뒤집을 수 있는 범위의 제약을 한 문장으로 넣고 `/chain-reorg`로 링크했다. `mempool` 채굴풀 링크는 S4에서 처리한다.

@@ -1,6 +1,7 @@
 // 비트코인 소프트워(파워 프로젝션) 페이지의 순수 계산 모델을 한 곳에 모은다.
 // 외부 API 없이 클라이언트에서 계산하며, 모든 수치는 개념 설명용 예시다.
 
+import { bcra, deterred } from '@/lib/bcra';
 import { clamp01, mulberry32 } from '@/lib/utils';
 
 // ── 1. 추상 권력 vs 물리 권력 (약탈자 포획) ────────────────────────────────
@@ -16,20 +17,11 @@ export type PowerCaptureInput = {
 };
 
 export function powerCapture({ value, abstractDefense, physicalWall }: PowerCaptureInput) {
-  const bcraAbstract = value / abstractDefense;
-  const bcraPhysical = value / physicalWall;
-  return {
-    abstract: {
-      cost: abstractDefense,
-      bcra: bcraAbstract,
-      captured: value > abstractDefense,
-    },
-    physical: {
-      cost: physicalWall,
-      bcra: bcraPhysical,
-      captured: value > physicalWall,
-    },
+  const regime = (cost: number) => {
+    const ratio = bcra(value, cost);
+    return { cost, bcra: ratio, captured: !deterred(ratio) };
   };
+  return { abstract: regime(abstractDefense), physical: regime(physicalWall) };
 }
 
 // ── 2. 자연의 파워 프로젝션 (원시 경제학) ──────────────────────────────────
@@ -45,12 +37,17 @@ function typeForPower(power: number): OrganismType {
 
 // meanPower(0~1): 개체군 평균 투사력. power를 [0, 2·mean]에 고르게 퍼뜨린다.
 // seed로 재현 가능.
+//
+// 투사력 오름차순으로 정렬해 돌려준다. 포식 압력이 아래에서 위로 차오르므로
+// 도태 집합이 언제나 앞에서부터의 연속 구간이 되고, 격자를 이 순서로 그리면
+// 도태 경계가 왼쪽에서 오른쪽으로 전진하는 선으로 보인다. 채택 캐스케이드·홀더
+// 딜레마와 같은 읽는 법이다(docs/adr/0001 참조).
 export function buildOrganisms(n: number, meanPower: number, seed: number): Organism[] {
   const rng = mulberry32(seed);
   return Array.from({ length: n }, () => {
     const power = clamp01(rng() * 2 * meanPower);
     return { power, type: typeForPower(power) };
-  });
+  }).sort((a, b) => a.power - b.power);
 }
 
 export type PredationState = {
@@ -90,22 +87,19 @@ export function predationStep(
   };
 }
 
-// ── 3. 소프트워 vs 하드워 (BCRA 억지) ──────────────────────────────────────
-// 적을 억지하려면 적의 BCRA(공격 이득 ÷ 투사 권력)를 1 이하로 낮춰야 한다.
-// 같은 억지를 하드워(유혈)는 인명·자산 파괴를 동반해 달성하지만, 소프트워(전기)는
-// 인명 피해 0으로 달성한다.
-export type DeterrenceInput = {
-  projectedPower: number; // 투사 권력량 (0~100)
-  adversaryBenefit: number; // 적의 공격 이득 (0~100)
-};
+export type PredationFrame = { state: PredationState; justChanged: boolean[] };
 
-const CASUALTY_K = 120; // 하드워에서 투사력 1단위당 환산 인명 피해(예시)
-
-export function deterrence({ projectedPower, adversaryBenefit }: DeterrenceInput) {
-  const bcra = adversaryBenefit / projectedPower;
-  return {
-    bcra,
-    deterred: projectedPower >= adversaryBenefit,
-    hardCasualties: Math.round(projectedPower * CASUALTY_K),
-  };
+// 포식 궤적 전체. 압력이 라운드마다 PREDATION_INC씩 정해진 폭으로 차오르는
+// 결정론적 모델이라 미리 계산할 수 있다. 덕분에 라운드를 앞뒤로 왕복하고
+// 생존 곡선의 최종 모양을 첫 프레임부터 보여 줄 수 있다.
+export function predationTrajectory(organisms: Organism[], pressure: number): PredationFrame[] {
+  const n = organisms.length;
+  const frames: PredationFrame[] = [{ state: initialPredationState(n), justChanged: Array(n).fill(false) }];
+  for (;;) {
+    const prev = frames[frames.length - 1].state;
+    const { next, changed } = predationStep(prev, organisms, pressure);
+    if (!changed) break;
+    frames.push({ state: next, justChanged: next.alive.map((a, i) => !a && prev.alive[i]) });
+  }
+  return frames;
 }

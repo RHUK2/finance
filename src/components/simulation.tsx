@@ -145,7 +145,16 @@ export function RoundControls({
   );
 }
 
+// 로그 스케일 슬라이더가 쓰는 손잡이 눈금 수. 값이 아니라 위치를 이 정수로 잡고
+// min~max 사이를 로그 등간격으로 매핑한다.
+const LOG_TICKS = 240;
+
 // 슬라이더 컨트롤 한 줄: 라벨 + 포맷된 값 + 슬라이더.
+//
+// scale='log'는 min~max가 여러 자릿수에 걸칠 때 쓴다. 선형 슬라이더는 범위가
+// $1M~$1T처럼 넓으면 의미 있는 구간이 왼쪽 몇 픽셀에 뭉쳐 손잡이를 조금만 밀어도
+// 값이 수십억씩 튄다. 로그 스케일은 자릿수당 같은 폭을 줘서 전 구간을 고르게 만진다.
+// min은 0보다 커야 한다.
 export function ControlSlider({
   icon,
   label,
@@ -155,6 +164,7 @@ export function ControlSlider({
   min = 0,
   max = 100,
   step = 1,
+  scale = 'linear',
   format,
 }: {
   icon?: React.ReactNode;
@@ -165,8 +175,14 @@ export function ControlSlider({
   min?: number;
   max?: number;
   step?: number;
+  scale?: 'linear' | 'log';
   format: (v: number) => string;
 }) {
+  const log = scale === 'log';
+  const ratio = log ? Math.log(max / min) : 0;
+  const toTick = (v: number) => Math.round((LOG_TICKS * Math.log(v / min)) / ratio);
+  const fromTick = (t: number) => min * Math.exp((ratio * t) / LOG_TICKS);
+
   return (
     <div className='flex flex-col gap-1.5'>
       <div className='flex items-center justify-between text-sm'>
@@ -176,7 +192,17 @@ export function ControlSlider({
         </span>
         <span className='tabular-nums'>{format(value)}</span>
       </div>
-      <Slider min={min} max={max} step={step} value={[value]} onValueChange={([v]) => onChange(v)} />
+      {log ? (
+        <Slider
+          min={0}
+          max={LOG_TICKS}
+          step={1}
+          value={[toTick(value)]}
+          onValueChange={([t]) => onChange(fromTick(t))}
+        />
+      ) : (
+        <Slider min={min} max={max} step={step} value={[value]} onValueChange={([v]) => onChange(v)} />
+      )}
       {hint && <p className='text-muted-foreground text-xs'>{hint}</p>}
     </div>
   );
@@ -515,5 +541,89 @@ export function SectionIntro({ title, children }: { title: string; children: Rea
       <h2 className='text-lg font-semibold'>{title}</h2>
       <p className='text-muted-foreground mt-1 text-sm/relaxed'>{children}</p>
     </div>
+  );
+}
+
+// 임계값 캐스케이드 시각화 한 벌. 채택 캐스케이드·홀더 딜레마·자연의 파워 프로젝션이
+// 공유한다. 세 시뮬레이션 모두 행위자를 하나의 축(임계값·확신도·투사력) 오름차순으로
+// 정렬해 두므로 상태가 바뀐 집합이 언제나 격자 앞에서부터의 연속 구간이 되고, 그
+// 경계의 위치가 곧 진행률이 된다(docs/adr/0001 참조). 축 라벨·읽는 법·범례·궤적
+// 스파크라인이 함께 있어야 그 경계가 읽히므로 한 컴포넌트로 묶었다.
+export function CascadeStage({
+  notice,
+  controls,
+  axisLabels,
+  states,
+  highlight,
+  reading,
+  legend,
+  legendNote,
+  curve,
+  metrics,
+  outcome,
+}: {
+  notice?: React.ReactNode;
+  controls: React.ReactNode;
+  axisLabels: [string, string];
+  states: string[];
+  highlight?: boolean[];
+  reading: React.ReactNode;
+  legend: React.ReactNode;
+  legendNote?: string;
+  curve: {
+    values: number[];
+    cursor: number;
+    label: string;
+    className: string;
+    min?: number;
+    max?: number;
+  };
+  metrics: React.ReactNode;
+  outcome?: { tone?: 'good' | 'bad' | 'accent'; text: string };
+}) {
+  return (
+    <>
+      <Card className='gap-3 p-4'>
+        {notice}
+        {controls}
+        <div className='flex flex-col gap-1.5'>
+          <div className='text-muted-foreground flex items-center justify-between text-xs'>
+            <span>{axisLabels[0]}</span>
+            <span>{axisLabels[1]}</span>
+          </div>
+          <AgentGrid states={states} orientation='column' highlight={highlight} />
+          <p className='text-muted-foreground text-xs'>{reading}</p>
+        </div>
+        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
+          {legend}
+          {legendNote && <span className='ml-auto'>{legendNote}</span>}
+        </div>
+        <Sparkline
+          values={curve.values}
+          cursor={curve.cursor}
+          label={curve.label}
+          className={curve.className}
+          min={curve.min}
+          max={curve.max}
+          heightClass='h-12'
+        />
+      </Card>
+
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>{metrics}</div>
+
+      {outcome && (
+        <p
+          className={cn(
+            'rounded-md px-3 py-2 text-xs',
+            outcome.tone === 'good' && 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+            outcome.tone === 'bad' && 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
+            outcome.tone === 'accent' && 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+            !outcome.tone && 'bg-muted text-muted-foreground',
+          )}
+        >
+          {outcome.text}
+        </p>
+      )}
+    </>
   );
 }

@@ -5,20 +5,18 @@ import { useCallback, useMemo, useState } from 'react';
 import { Skull, Zap } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 import {
-  AgentGrid,
+  CascadeStage,
   ControlSlider,
   ExplainCard,
   Legend,
   Metric,
   RoundControls,
   SectionIntro,
-  Sparkline,
 } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
-import { type Organism, type PredationState, buildOrganisms, initialPredationState, predationStep } from './models';
+import { type Organism, buildOrganisms, predationTrajectory } from './models';
 
 const N = 180;
 const SEED = 24680;
@@ -63,7 +61,7 @@ export function PrimordialEconomics() {
         />
       </Card>
 
-      {/* key로 파라미터 변경 시 리마운트 → 깔끔한 초기화 */}
+      {/* key로 파라미터 변경 시 리마운트 → 라운드 커서가 0으로 돌아간다 */}
       <PredationSim
         key={`${meanPower}|${pressure}`}
         organisms={organisms}
@@ -98,71 +96,91 @@ function PredationSim({
   speedMs: number;
   onSpeed: (ms: number) => void;
 }) {
-  const init = useCallback(() => initialPredationState(organisms.length), [organisms]);
-  const [sim, setSim] = useState<PredationState>(init);
+  // 압력이 라운드마다 정해진 폭으로 차오르는 결정론적 모델이라 궤적을 미리 계산해 둔다.
+  // 채택 캐스케이드·홀더 딜레마와 같은 구조다.
+  const frames = useMemo(() => predationTrajectory(organisms, pressure), [organisms, pressure]);
+  const last = frames.length - 1;
+  const [round, setRound] = useState(0);
 
   const step = useCallback(() => {
-    const res = predationStep(sim, organisms, pressure);
-    if (!res.changed) return false;
-    setSim(res.next);
-    return true;
-  }, [sim, organisms, pressure]);
+    if (round >= last) return false;
+    setRound(round + 1);
+    return round + 1 < last;
+  }, [round, last]);
 
   const engine = useRoundEngine(step, speedMs);
+  const seek = useCallback(
+    (r: number) => {
+      engine.pause();
+      setRound(r);
+    },
+    [engine],
+  );
 
-  const aliveCount = sim.alive.filter(Boolean).length;
+  const { state, justChanged } = frames[round];
+  const done = round >= last;
+  const aliveCount = state.alive.filter(Boolean).length;
   const dead = organisms.length - aliveCount;
   const survivorAvg =
-    aliveCount > 0 ? organisms.reduce((s, o, i) => s + (sim.alive[i] ? o.power : 0), 0) / aliveCount : 0;
-  const done = sim.threshold >= pressure;
-  const states = organisms.map((o, i) => (sim.alive[i] ? powerColor(o) : 'bg-muted'));
+    aliveCount > 0 ? organisms.reduce((s, o, i) => s + (state.alive[i] ? o.power : 0), 0) / aliveCount : 0;
+
+  const states = organisms.map((o, i) => (state.alive[i] ? powerColor(o) : 'bg-muted'));
+  const curve = useMemo(() => frames.map((f) => f.state.history[f.state.history.length - 1]), [frames]);
 
   return (
-    <>
-      <Card className='gap-3 p-4'>
+    <CascadeStage
+      controls={
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
           onStep={step}
-          onReset={() => {
-            engine.pause();
-            setSim(init());
-          }}
-          round={sim.round}
+          onReset={() => seek(0)}
+          round={round}
+          total={last}
+          onSeek={seek}
           speedMs={speedMs}
           onSpeed={onSpeed}
           done={done}
         />
-        <AgentGrid states={states} />
-        <Sparkline values={sim.history} label='생존 곡선' className='text-emerald-500' min={0} max={1} />
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
+      }
+      axisLabels={['투사력 낮음 (평화주의)', '투사력 높음 (강한 투사자)']}
+      states={states}
+      highlight={justChanged}
+      reading={
+        <>
+          칸은 투사력 순으로 왼쪽부터 늘어서 있다. 포식 압력이 차오를 때마다 그보다 약하게 투사하는 개체가 왼쪽 끝에서
+          부터 회색으로 꺼진다. 지금 압력{' '}
+          <span className='font-medium text-rose-600 dark:text-rose-400'>{Math.round(state.threshold * 100)}%</span>가
+          곧 도태 경계의 위치다.
+        </>
+      }
+      legend={
+        <>
           <Legend className='bg-emerald-500' label='강한 투사자' />
           <Legend className='bg-amber-500' label='약한 방어' />
           <Legend className='bg-sky-400' label='평화주의자' />
           <Legend className='bg-muted' label='도태됨' />
-        </div>
-      </Card>
-
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='생존 개체' value={`${aliveCount} / ${organisms.length}`} tone='good' />
-        <Metric label='도태 개체' value={`${dead}`} tone='bad' />
-        <Metric label='생존자 평균 투사력' value={`${Math.round(survivorAvg * 100)}%`} tone='accent' />
-      </div>
-
-      {done && (
-        <p
-          className={cn(
-            'rounded-md px-3 py-2 text-xs',
-            aliveCount > 0
-              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-              : 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-          )}
-        >
-          {aliveCount > 0
-            ? `포식 압력이 멈춘 시점, 압력 이상으로 물리력을 투사한 ${aliveCount}개체만 살아남았다. 살아남은 개체군의 평균 투사력은 처음보다 높아졌다.`
-            : '이 압력에서는 누구도 충분히 투사하지 못해 전멸했다. 평균 투사력을 높여 다시 돌려 보자.'}
-        </p>
-      )}
-    </>
+        </>
+      }
+      legendNote='테두리 = 이번 라운드에 도태'
+      curve={{ values: curve, cursor: round, label: '생존 곡선', className: 'text-emerald-500', min: 0, max: 1 }}
+      metrics={
+        <>
+          <Metric label='생존 개체' value={`${aliveCount} / ${organisms.length}`} tone='good' />
+          <Metric label='도태 개체' value={`${dead}`} tone='bad' />
+          <Metric label='생존자 평균 투사력' value={`${Math.round(survivorAvg * 100)}%`} tone='accent' />
+        </>
+      }
+      outcome={
+        done
+          ? aliveCount === 0
+            ? { tone: 'bad', text: '💀 포식 압력이 개체군 전체의 투사력을 넘어섰다. 아무도 살아남지 못했다.' }
+            : {
+                tone: 'accent',
+                text: `압력이 멈춘 지점에서 ${aliveCount}개체가 살아남았고, 생존자의 평균 투사력은 시작보다 높아졌다. 도태가 개체군을 더 강하게 투사하는 쪽으로 밀어 올린다.`,
+              }
+          : undefined
+      }
+    />
   );
 }

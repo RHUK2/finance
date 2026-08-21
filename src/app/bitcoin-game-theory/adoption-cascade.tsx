@@ -5,17 +5,15 @@ import { useCallback, useMemo, useState } from 'react';
 import { Users } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 import {
-  AgentGrid,
+  CascadeStage,
   ControlSlider,
   ExplainCard,
   Legend,
   Metric,
   RoundControls,
   SectionIntro,
-  Sparkline,
 } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
 
@@ -130,8 +128,8 @@ function CascadeSim({
   const curve = useMemo(() => frames.map((f) => f.p), [frames]);
 
   return (
-    <>
-      <Card className='gap-3 p-4'>
+    <CascadeStage
+      controls={
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
@@ -144,53 +142,42 @@ function CascadeSim({
           onSpeed={onSpeed}
           done={done}
         />
-        <div className='flex flex-col gap-1.5'>
-          <div className='text-muted-foreground flex items-center justify-between text-xs'>
-            <span>임계값 낮음 (일찍 채택)</span>
-            <span>임계값 높음 (늦게 채택)</span>
-          </div>
-          <AgentGrid states={states} orientation='column' highlight={frame.justChanged} />
-          <p className='text-muted-foreground text-xs'>
-            칸은 임계값 순으로 왼쪽부터 늘어서 있다. 진한 칸이 채택자이고, 그 경계가 곧 전체 채택률{' '}
-            <span className='font-medium text-amber-600 dark:text-amber-400'>{Math.round(p * 100)}%</span>다. 채택률이
-            오르면 경계 바로 오른쪽 칸들의 임계값을 넘어서고, 그 칸들이 넘어오면 채택률이 또 오른다.
-          </p>
-        </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
+      }
+      axisLabels={['임계값 낮음 (일찍 채택)', '임계값 높음 (늦게 채택)']}
+      states={states}
+      highlight={frame.justChanged}
+      reading={
+        <>
+          칸은 임계값 순으로 왼쪽부터 늘어서 있다. 진한 칸이 채택자이고, 그 경계가 곧 전체 채택률{' '}
+          <span className='font-medium text-amber-600 dark:text-amber-400'>{Math.round(p * 100)}%</span>다. 채택률이
+          오르면 경계 바로 오른쪽 칸들의 임계값을 넘어서고, 그 칸들이 넘어오면 채택률이 또 오른다.
+        </>
+      }
+      legend={
+        <>
           <Legend className='bg-amber-300' label='개인' />
           <Legend className='bg-amber-500' label='기업' />
           <Legend className='bg-amber-700' label='국가' />
-          <span className='ml-auto'>테두리 = 이번 라운드에 새로 채택</span>
-        </div>
-        <Sparkline
-          values={curve}
-          cursor={round}
-          label='채택 곡선'
-          className='text-amber-500'
-          min={0}
-          max={1}
-          heightClass='h-12'
-        />
-      </Card>
-
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='채택률' value={`${Math.round(p * 100)}%`} tone='accent' />
-        <Metric label='채택자' value={`${adoptedCount} / ${N}`} />
-        <Metric label='남은 관망자' value={`${N - adoptedCount}`} />
-      </div>
-
-      {done && (
-        <p
-          className={cn(
-            'rounded-md px-3 py-2 text-xs',
-            p > 0.9 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-muted text-muted-foreground',
-          )}
-        >
-          {p > 0.9
-            ? '🔥 임계점을 넘어 거의 전원이 채택했다. 초기 소수의 움직임이 전체로 번졌다.'
-            : '확산이 임계점에 못 미쳐 멈췄다. 채택률이 남은 칸들의 임계값에 닿지 못한 것이다. 시드를 늘리거나 평균 임계값을 낮춰 다시 돌려 보자.'}
-        </p>
-      )}
-    </>
+        </>
+      }
+      legendNote='테두리 = 이번 라운드에 새로 채택'
+      curve={{ values: curve, cursor: round, label: '채택 곡선', className: 'text-amber-500', min: 0, max: 1 }}
+      metrics={
+        <>
+          <Metric label='채택률' value={`${Math.round(p * 100)}%`} tone='accent' />
+          <Metric label='채택자' value={`${adoptedCount} / ${N}`} />
+          <Metric label='남은 관망자' value={`${N - adoptedCount}`} />
+        </>
+      }
+      outcome={
+        done
+          ? p > 0.9
+            ? { tone: 'accent', text: '🔥 임계점을 넘어 거의 전원이 채택했다. 초기 소수의 움직임이 전체로 번졌다.' }
+            : {
+                text: '확산이 임계점에 못 미쳐 멈췄다. 채택률이 남은 칸들의 임계값에 닿지 못한 것이다. 시드를 늘리거나 평균 임계값을 낮춰 다시 돌려 보자.',
+              }
+          : undefined
+      }
+    />
   );
 }

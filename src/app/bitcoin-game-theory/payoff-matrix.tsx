@@ -70,7 +70,7 @@ export function PayoffMatrix() {
         두 행위자(우리나라 vs 경쟁국)가 비트코인을 <b>채택</b>할지 <b>관망</b>
         할지 고른다. 슬라이더로 보수를 조정해 보자. 상승 기대와 낙오 페널티가 조기채택 비용을 넘어서면{' '}
         <b>채택이 우월전략</b>이 되어, 상대가 무엇을 하든 채택이 유리해진다. 결국 내쉬 균형은 모두가 채택하는 칸으로
-        수렴한다. (수치는 개념용 예시)
+        수렴한다.
       </SectionIntro>
 
       <Card className='gap-4 p-4'>
@@ -95,6 +95,7 @@ export function PayoffMatrix() {
         <ControlSlider
           icon={<UserMinus className='size-4 text-amber-500' />}
           label='낙오 페널티 (f)'
+          hint='남들이 살 때 나만 안 사면 잃는 상대적 이득. 반대로 나만 먼저 사면 같은 크기의 선점 우위가 된다.'
           value={f}
           onChange={setF}
           max={10}
@@ -112,7 +113,6 @@ export function PayoffMatrix() {
           rowHeaders={[{ icon: <Flag className='size-4' />, label: '우리: 채택' }, { label: '우리: 관망' }]}
           colHeaders={[{ icon: <Flag className='size-4' />, label: '경쟁국: 채택' }, { label: '경쟁국: 관망' }]}
         />
-        <MatrixLegend />
       </Card>
 
       <Card className='flex-row items-center gap-3 p-4'>
@@ -170,6 +170,8 @@ export function PayoffMatrix() {
 }
 
 // 표기법 안내(밑줄=최적대응, 링=내쉬 균형). simulation.tsx의 색 견본 Legend와는 다른 용도다.
+// PayoffGrid가 항상 함께 렌더한다. 표기법을 쓰는 행렬과 범례가 떨어져 있으면
+// 아래쪽 죄수의 딜레마 행렬에서 밑줄·링의 뜻을 알 길이 없다.
 function MatrixLegend() {
   return (
     <div className='text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs'>
@@ -207,21 +209,24 @@ function PayoffGrid({
     { keys: ['WA', 'WW'], header: rowHeaders[1] },
   ];
   return (
-    <div className='grid grid-cols-[auto_1fr_1fr] gap-2 text-sm'>
-      <div />
-      <ColHeader {...colHeaders[0]} />
-      <ColHeader {...colHeaders[1]} />
-      {rows.map((row) => (
-        <RowGroup
-          key={row.keys[0]}
-          header={row.header}
-          keys={row.keys}
-          cells={cells}
-          best={best}
-          nash={nash}
-          formulas={formulas}
-        />
-      ))}
+    <div className='flex flex-col gap-3'>
+      <div className='grid grid-cols-[auto_1fr_1fr] gap-2 text-sm'>
+        <div />
+        <ColHeader {...colHeaders[0]} />
+        <ColHeader {...colHeaders[1]} />
+        {rows.map((row) => (
+          <RowGroup
+            key={row.keys[0]}
+            header={row.header}
+            keys={row.keys}
+            cells={cells}
+            best={best}
+            nash={nash}
+            formulas={formulas}
+          />
+        ))}
+      </div>
+      <MatrixLegend />
     </div>
   );
 }

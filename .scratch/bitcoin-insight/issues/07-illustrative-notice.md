@@ -1,6 +1,6 @@
 # 가상 수치 고지 방식을 통일한다
 
-Status: needs-triage
+Status: needs-triage (S1 부분 완료)
 Section: S1, S2, S3
 Tags: 일관성
 
@@ -18,3 +18,7 @@ Tags: 일관성
 - 배너는 실제 위험 예측으로 오독될 여지가 큰 `bitcoin-quantum`과 `illicit-funds`만 남긴다
 - `grid-battery`의 인트로 괄호 문구는 통일 문구로 교체한다
 - `bitcoin-volatility/maturation-curve`는 실데이터 차트이므로 고지 대상이 아니다. 페이지 인트로 문구가 이 탭까지 덮지 않도록 배치에 주의한다
+
+## Comments
+
+S1 완료분: 게임이론·소프트워는 페이지 인트로 마지막 문장으로 통일하고 탭별 문구를 걷어냈다. `grid-battery`의 인트로 괄호 문구와 나머지 페이지는 S2·S3에서 처리한다.
