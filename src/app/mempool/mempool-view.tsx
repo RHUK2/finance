@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { AppHeader } from '@/components/app-header';
 import { HashrateChart } from '@/components/hashrate-chart';
 import { PageMain } from '@/components/page-main';
@@ -182,7 +184,17 @@ export function MempoolView() {
             pools={pools?.pools}
             title='채굴풀 점유율 (1주)'
             relativeTime={poolsRelTime ?? undefined}
-            description='채굴풀별 블록 점유율은 네트워크 탈중앙화(분산화) 지표로 활용됩니다. 특정 풀이 50%를 초과하면 51% 공격 위험이 커집니다.'
+            description={
+              <>
+                채굴풀별 블록 점유율은 네트워크 탈중앙화(분산화) 지표로 활용됩니다. 한 풀이 과반을 오래 유지하면 체인
+                재구성 위험이 커집니다. 다만 풀의 해시레이트는 독립 채굴자들이 빌려준 것이라 언제든 다른 풀로 옮겨갈 수
+                있고, 과반을 쥐어도 뒤집을 수 있는 범위는 공격자 자신이 최근에 보낸 거래로 한정됩니다. 자세한 내용은{' '}
+                <Link href='/chain-reorg' className='underline underline-offset-2'>
+                  체인 재구성·파이널리티
+                </Link>{' '}
+                페이지에서 다룹니다.
+              </>
+            }
           />
           {/* 반감기 */}
 
@@ -211,7 +223,9 @@ export function MempoolView() {
               )}
               <p className='bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs'>
                 반감기까지의 진행도는 신규 공급 감소 속도와 희소성 지표로 활용됩니다. 약 4년마다 보상이 절반으로 줄어
-                발행량이 감소하고, 역사적으로 반감기 이후 강세장이 나타나는 경향이 있습니다.
+                신규 발행량이 감소합니다. 지금까지 네 번의 반감기 뒤에 강세장이 뒤따랐다는 관찰이 널리 인용되지만,
+                표본이 네 번뿐이고 같은 시기의 유동성 환경·제도 편입 같은 다른 요인과 분리되지 않아 인과로 보기는
+                어렵습니다.
               </p>
             </CardContent>
           </Card>

@@ -43,7 +43,7 @@ export function PoolShareChart({
   }[];
   title?: string;
   relativeTime?: string;
-  description?: string;
+  description?: React.ReactNode;
 }) {
   return (
     <Card>
@@ -107,7 +107,7 @@ export function RecentBlocksList({
   blocks?: RecentBlocksData['blocks'];
   title?: string;
   relativeTime?: string;
-  description?: string;
+  description?: React.ReactNode;
 }) {
   // 블록의 "N분 전" 라벨을 최신으로 유지
   useMinuteTick();
@@ -170,7 +170,7 @@ export function MempoolBlocksViz({
   blocks?: MempoolBlocksData['blocks'];
   title?: string;
   relativeTime?: string;
-  description?: string;
+  description?: React.ReactNode;
 }) {
   const { ref, handlers, maskStyle } = useScrollDrag();
 
