@@ -33,6 +33,7 @@ pnpm-debug.log*
 # Misc
 .DS_Store
 *.pem
+.scratch
 
 # Ai Files
 .claude/*
