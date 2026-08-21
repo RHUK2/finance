@@ -32,14 +32,15 @@ export function BlockHeaderView() {
           <Hash className='size-4 text-amber-600 dark:text-amber-400' />
           헤더 필드 → 블록 해시
         </span>
+        <p className='text-muted-foreground text-xs'>4 + 32 + 32 + 4 + 4 + 4 = 80바이트. 이 여섯 필드가 전부다.</p>
         <Pipeline
           items={[
             {
               kind: 'split',
               boxes: [
-                { label: 'version', value: header.version.toString(16) },
+                { label: 'version · 4B', value: header.version.toString(16) },
                 {
-                  label: 'prevHash (이전 블록)',
+                  label: 'prevHash (이전 블록) · 32B',
                   value: shortHex(header.prevHash, 16),
                 },
               ],
@@ -48,17 +49,17 @@ export function BlockHeaderView() {
               kind: 'split',
               boxes: [
                 {
-                  label: 'merkleRoot (트랜잭션 대표값)',
+                  label: 'merkleRoot (트랜잭션 대표값) · 32B',
                   value: shortHex(header.merkleRoot, 16),
                 },
-                { label: 'timestamp', value: header.timestamp },
+                { label: 'timestamp · 4B', value: header.timestamp },
               ],
             },
             {
               kind: 'split',
               boxes: [
-                { label: 'bits (난이도 목표)', value: header.bits },
-                { label: 'nonce', value: header.nonce, tone: 'accent' },
+                { label: 'bits (난이도 목표) · 4B', value: header.bits },
+                { label: 'nonce · 4B', value: header.nonce, tone: 'accent' },
               ],
             },
             { kind: 'op', label: 'SHA-256을 두 번 (SHA-256d)' },

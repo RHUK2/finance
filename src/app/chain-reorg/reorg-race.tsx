@@ -95,7 +95,7 @@ export function ReorgRace() {
           min={1}
           max={10}
           step={1}
-          format={(v) => `${v}confirm`}
+          format={(v) => `확인 ${v}개`}
         />
       </Card>
 

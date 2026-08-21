@@ -47,7 +47,7 @@ export function MempoolPolicy() {
         />
       </Card>
 
-      <SectionIntro title='① 신규 트랜잭션 수용 판정'>
+      <SectionIntro title='신규 트랜잭션 수용 판정'>
         방금 정한 최소 릴레이 수수료율을 기준으로, 이 트랜잭션의 수수료율이 그 문턱을 넘는지 확인한다.
       </SectionIntro>
 
@@ -85,7 +85,7 @@ export function MempoolPolicy() {
         </div>
       </Card>
 
-      <SectionIntro title='② RBF: 멈춰 있는 tx를 수수료로 밀어내기'>
+      <SectionIntro title='RBF: 멈춰 있는 tx를 수수료로 밀어내기'>
         낮은 수수료로 보낸 tx가 멤풀에서 오래 멈춰 있으면, <b>같은 동전을 쓰되 수수료만 올린 새 tx</b>로 원본을 대체할
         수 있다(Replace-By-Fee, BIP125). 단, 아무 금액이나 올리면 되는 게 아니라 늘어난 수수료가 최소 릴레이
         수수료율만큼은 더 내야 한다. 그래야 다시 퍼뜨리는 대역폭 비용을 낸 셈이 된다.

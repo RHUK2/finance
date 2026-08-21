@@ -67,9 +67,9 @@ export function Bip9Signaling() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='BIP9 시그널링: 채굴자 투표로 활성화 시점을 정한다'>
         새 소프트포크 규칙이 정해지면, 채굴자들은 블록 헤더의 버전 비트에 &#39;준비됐다&#39;는 신호를 실어 보낸다. 한
-        기간(2016블록, 약 2주) 동안 신호를 보낸 블록 비율이 <b>{(SIGNAL_THRESHOLD * 100).toFixed(0)}%</b>를 넘으면
-        확정(LOCKED_IN)되고, 그 다음 기간부터 활성화(ACTIVE)된다. {MAX_PERIODS}기간 안에 못 넘기면 이 시도는
-        실패(FAILED)한다.
+        기간(2016블록, 약 2주) 동안 신호를 보낸 블록 비율이 임계값(여기서는{' '}
+        <b>{(SIGNAL_THRESHOLD * 100).toFixed(0)}%</b>)을 넘으면 확정(LOCKED_IN)되고, 그 다음 기간부터
+        활성화(ACTIVE)된다. {MAX_PERIODS}기간 안에 못 넘기면 이 시도는 실패(FAILED)한다.
       </SectionIntro>
 
       <Card className='flex flex-col gap-4 p-4'>

@@ -31,8 +31,8 @@ export function P2pNetworkView() {
           </div>
 
           <IllustrativeDisclaimer>
-            여기 시뮬레이션은 전파·수수료·동기화의 <b>원리와 규칙</b>을 보여주기 위한 단순화다. 전파 그래프는 실제
-            무작위 P2P 그래프 대신 격자로, 동기화 속도는 실제 네트워크 대역폭 대신 일정한 라운드 단위로 근사했다.
+            세 시뮬레이션 모두 시간을 라운드 단위로 끊어 보여준다. 실제로는 전파도 동기화도 네트워크 대역폭과 지연에
+            따라 연속으로 일어난다. 각 탭이 무엇을 더 줄였는지는 탭 안에서 따로 밝힌다.
           </IllustrativeDisclaimer>
 
           <SimTabs tabs={TABS} defaultValue='gossip' />

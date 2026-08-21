@@ -124,14 +124,15 @@ export function canReplaceByFee(
   minRelayRate: number,
 ): { accepted: boolean; feeDelta: number; requiredDelta: number } {
   const feeDelta = newFeeSats - oldFeeSats;
-  const requiredDelta = minRelayRate * newVBytes;
+  // 사토시는 정수 단위라 올림한다. BIP125도 최소 요구 증분을 사토시 단위로 본다.
+  const requiredDelta = Math.ceil(minRelayRate * newVBytes);
   return { accepted: feeDelta > 0 && feeDelta >= requiredDelta, feeDelta, requiredDelta };
 }
 
 // IBD(초기 블록 동기화) 개념 수치. 헤더는 80바이트 고정, 블록은 평균 크기로 근사.
 export const HEADER_BYTES = 80;
 export const AVG_BLOCK_BYTES = 1_500_000; // 최근 블록 평균 크기 근사(1.5MB, SegWit 할인 반영 후 체감치)
-export const TOTAL_BLOCKS_APPROX = 960_000; // 2026년 8월 기준 근사 블록 높이
+export const TOTAL_BLOCKS_APPROX = 963_000; // 2026년 8월 기준 근사 블록 높이
 
 export function headersBytes(blocks: number): number {
   return blocks * HEADER_BYTES;

@@ -43,7 +43,7 @@ export function ConfirmationSafety() {
           min={1}
           max={30}
           step={1}
-          format={(v) => `${v}confirm`}
+          format={(v) => `확인 ${v}개`}
         />
 
         <div className='flex items-center gap-2 rounded-md border p-3 text-sm font-medium'>
@@ -57,7 +57,7 @@ export function ConfirmationSafety() {
         <div className='flex flex-col divide-y'>
           {presetRows.map(({ z, p }) => (
             <div key={z} className='flex items-center justify-between py-2 text-sm'>
-              <span className='text-muted-foreground'>{z}confirm</span>
+              <span className='text-muted-foreground'>확인 {z}개</span>
               <div className='flex flex-1 items-center gap-2 px-3'>
                 <div className='bg-muted h-2 w-full overflow-hidden rounded-full'>
                   <div
