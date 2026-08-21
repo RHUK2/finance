@@ -45,7 +45,9 @@ export function MultisigLab() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='M-of-N 다중서명: 여러 키 중 일부만 있어도 된다'>
         지금까지 본 잠금은 키 하나로 풀렸다. <b>OP_CHECKMULTISIG</b>는 미리 등록해 둔 N개의 공개키 중 최소 M개의 유효한
-        서명이 모이면 지출을 허용한다. N·M과 실제로 서명한 사람을 바꿔가며 언제 잠금이 풀리는지 확인해 보자.
+        서명이 모이면 지출을 허용한다. N·M과 실제로 서명한 사람을 바꿔가며 언제 잠금이 풀리는지 확인해 보자. 아래
+        스크립트는 구조를 드러내려고 잠금 조건을 scriptPubKey에 그대로 펼친 형태(bare multisig)로 보여준다. 실전에서는
+        이 조건을 <b>P2SH·P2WSH</b>로 한 겹 감싸 해시만 출력에 넣고, 지출할 때 원본 스크립트를 함께 공개한다.
       </SectionIntro>
 
       <Card className='flex flex-col gap-4 p-4'>
@@ -122,6 +124,11 @@ export function MultisigLab() {
         title='서명 순서도 공개키 순서와 맞아야 한다'
         preview='OP_CHECKMULTISIG는 서명들을 공개키 목록과 같은 순서로 훑으며 매칭한다.'
         body='OP_CHECKMULTISIG는 스택에 쌓인 서명들을 공개키 목록 순서대로 하나씩 대조한다. 서명 자체는 순서를 건너뛸 수 있어도(예: A·C만 서명해도 B를 건너뛰고 매칭), 서명들이 나열된 순서가 공개키 나열 순서를 거슬러 올라가면 검증에 실패한다. 그래서 지갑 소프트웨어는 서명을 모을 때 항상 공개키 순서에 맞춰 재정렬한다.'
+      />
+      <ExplainCard
+        title='Taproot에서는 OP_CHECKMULTISIG를 쓰지 않는다'
+        preview='OP_CHECKSIGADD로 바뀌었고, 참가자가 모두 협조하면 아예 다중서명처럼 보이지도 않는다.'
+        body='Taproot(P2TR)는 OP_CHECKMULTISIG를 아예 지원하지 않는다. 대신 서명을 하나씩 검증하며 성공 횟수를 누적하는 OP_CHECKSIGADD를 쓴다. 게다가 참가자 전원이 협조하는 정상적인 경우에는 각자의 공개키를 하나로 합쳐(MuSig2 같은 방식) 서명 하나만 남기므로, 체인에는 평범한 단일 서명 지출로만 보인다. 몇 명이 서명했는지, 애초에 다중서명이었는지조차 드러나지 않는다. 여기서 보는 OP_CHECKMULTISIG 형태는 Legacy·SegWit 계열의 방식이다.'
       />
       <ExplainCard
         title='실전에서는 이렇게 쓰인다'

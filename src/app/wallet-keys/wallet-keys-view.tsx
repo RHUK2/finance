@@ -1,12 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { TriangleAlert } from 'lucide-react';
-
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
-import { Card } from '@/components/ui/card';
-import { ExplainCard, SimTabs } from '@/components/simulation';
+import { ExplainCard, IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 import {
   entropyToMnemonic,
   illustrativeHex,
@@ -77,16 +74,11 @@ export function WalletKeysView() {
             </p>
           </div>
 
-          <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm/relaxed'>
-            <span className='flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400'>
-              <TriangleAlert className='size-4' />
-              교육용 개념 시연
-            </span>
-            <p className='text-muted-foreground'>
-              여기서 만들어지는 단어·시드·주소는 흐름을 보여주기 위한 <b>그럴듯한 가짜 값</b>이다. 체크섬·시드·주소는
-              실제 암호 연산(SHA-256, PBKDF2, secp256k1)을 단순화했다. <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b>
-            </p>
-          </Card>
+          <IllustrativeDisclaimer>
+            체크섬·시드·주소는 실제 암호 연산(SHA-256, PBKDF2, secp256k1)을 단순화한 <b>그럴듯한 가짜 값</b>이다.{' '}
+            <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 반면 단어장 2048개와 엔트로피를 11비트씩 잘라 단어로 바꾸는
+            규칙(①)은 실제 BIP-39 그대로다.
+          </IllustrativeDisclaimer>
 
           <SimTabs tabs={TABS} defaultValue='mnemonic' />
 

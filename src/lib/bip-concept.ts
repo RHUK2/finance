@@ -6,6 +6,17 @@
 import { BIP39_WORDLIST } from './bip39-wordlist';
 import { mulberry32 } from './utils';
 
+import { ADDRESS_TYPES, type AddrType } from './address-types';
+
+// 경로 선택 UI에 쓰는 짧은 이름. address-types.ts의 label은 스크립트 이름을 괄호로
+// 달고 있어 purpose 드롭다운에는 길다.
+const PURPOSE_LABEL: Record<AddrType, string> = {
+  legacy: 'Legacy',
+  nested: 'P2SH-SegWit',
+  native: 'Native SegWit',
+  taproot: 'Taproot',
+};
+
 export const ENTROPY_OPTIONS = [128, 160, 192, 224, 256] as const;
 export type EntropyBits = (typeof ENTROPY_OPTIONS)[number];
 
@@ -106,42 +117,16 @@ export function mnemonicToSeed(mnemonic: string, passphrase: string): string {
   return illustrativeHex(`${mnemonic}::${passphrase}`, 128);
 }
 
-// BIP-44 purpose → 주소 타입 메타.
-// bodyLen은 접두어를 뺀 나머지 글자 수. 실제 주소 길이와 같게 맞춰 둔다.
-export const PURPOSES = [
-  {
-    value: '44',
-    label: "44' · Legacy",
-    addr: 'P2PKH',
-    prefix: '1',
-    charset: 'base58',
-    bodyLen: 32, // 총 33자
-  },
-  {
-    value: '49',
-    label: "49' · P2SH-SegWit",
-    addr: 'P2SH-P2WPKH',
-    prefix: '3',
-    charset: 'base58',
-    bodyLen: 33, // 총 34자
-  },
-  {
-    value: '84',
-    label: "84' · Native SegWit",
-    addr: 'P2WPKH',
-    prefix: 'bc1q',
-    charset: 'bech32',
-    bodyLen: 38, // 총 42자
-  },
-  {
-    value: '86',
-    label: "86' · Taproot",
-    addr: 'P2TR',
-    prefix: 'bc1p',
-    charset: 'bech32',
-    bodyLen: 58, // 총 62자
-  },
-] as const;
+// BIP-44 purpose → 주소 타입 메타. 정체는 address-types.ts가 정한다.
+// bodyLen은 접두어를 뺀 나머지 글자 수로 실제 주소 길이와 같게 맞춰 뒀다.
+export const PURPOSES = ADDRESS_TYPES.map((t) => ({
+  value: t.purpose.replace("'", ''),
+  label: `${t.purpose} · ${PURPOSE_LABEL[t.value]}`,
+  addr: t.script,
+  prefix: t.prefix,
+  charset: t.charset,
+  bodyLen: t.bodyLen,
+}));
 
 export const COINS = [
   { value: '0', label: "0' · Bitcoin" },

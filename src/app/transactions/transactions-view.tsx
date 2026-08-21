@@ -2,7 +2,7 @@
 
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
-import { SimTabs } from '@/components/simulation';
+import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 
 import { AddressCompare } from './address-compare';
 import { FeeCalc } from './fee-calc';
@@ -32,12 +32,12 @@ export function TransactionsView() {
             </p>
           </div>
 
-          <SimTabs tabs={TABS} defaultValue='utxo' />
+          <IllustrativeDisclaimer>
+            입력·출력 vByte는 타입별 대표 근사값이다. 서명 길이에 따라 실제로는 ±1~2 vB 변동한다. 반면 수수료 = vByte ×
+            sat/vB라는 계산식과 잔돈이 생기는 방식은 실제와 같다.
+          </IllustrativeDisclaimer>
 
-          <p className='text-muted-foreground text-xs/relaxed'>
-            입력/출력 vByte는 타입별 대표 근사값이다(서명 길이에 따라 ±1~2 vB 변동). 수수료 계산식 자체는 실제와 같다. ①
-            탭은 Native SegWit 주소를 가정한다.
-          </p>
+          <SimTabs tabs={TABS} defaultValue='utxo' />
         </div>
       </PageMain>
     </>

@@ -2,42 +2,34 @@
 // ⚠️ bip-concept.ts와 같은 방식: 서명·해시·공개키는 실제 암호 연산이 아니라
 // 그럴듯하게 보이는 결정적 값(illustrative)이며, 실제 지갑/자금에 쓰면 안 된다.
 
+import { addressType } from './address-types';
 import { illustrativeHex } from './bip-concept';
 
+// 이 페이지가 다루는 주소 타입. Nested SegWit(P2SH-P2WPKH)은 뺐다. 검증 로직이
+// Native SegWit과 같고 P2SH 래퍼 한 겹이 더해질 뿐이라, 스택 실행을 처음 배우는
+// 자리에 넣으면 단계만 늘고 배우는 게 없다. 화면에서도 그 이유를 밝힌다.
 export type ScriptAddrType = 'legacy' | 'native' | 'taproot';
 
-export const SCRIPT_ADDR_TYPES: {
-  value: ScriptAddrType;
-  label: string;
-  sigAlgo: 'ECDSA' | 'Schnorr';
-  unlockField: 'scriptSig' | 'witness';
-  sigBytes: number; // 대표 근사값 (sighash flag 포함)
-}[] = [
-  {
-    value: 'legacy',
-    label: 'Legacy (P2PKH)',
-    sigAlgo: 'ECDSA',
-    unlockField: 'scriptSig',
-    sigBytes: 72,
-  },
-  {
-    value: 'native',
-    label: 'Native SegWit (P2WPKH)',
-    sigAlgo: 'ECDSA',
-    unlockField: 'witness',
-    sigBytes: 72,
-  },
-  {
-    value: 'taproot',
-    label: 'Taproot (P2TR, key-path)',
-    sigAlgo: 'Schnorr',
-    unlockField: 'witness',
-    sigBytes: 64,
-  },
-];
+// 정체(라벨)는 address-types.ts가 정한다. 여기서는 서명·검증 정보만 덧붙인다.
+const SIG_META: Record<
+  ScriptAddrType,
+  { sigAlgo: 'ECDSA' | 'Schnorr'; unlockField: 'scriptSig' | 'witness'; sigBytes: number }
+> = {
+  // sigBytes는 대표 근사값 (sighash flag 포함)
+  legacy: { sigAlgo: 'ECDSA', unlockField: 'scriptSig', sigBytes: 72 },
+  native: { sigAlgo: 'ECDSA', unlockField: 'witness', sigBytes: 72 },
+  taproot: { sigAlgo: 'Schnorr', unlockField: 'witness', sigBytes: 64 },
+};
 
-export function addrMeta(type: ScriptAddrType) {
-  return SCRIPT_ADDR_TYPES.find((t) => t.value === type) ?? SCRIPT_ADDR_TYPES[0];
+export const SCRIPT_ADDR_TYPES = (['legacy', 'native', 'taproot'] as const).map((v) => ({
+  ...addressType(v),
+  ...SIG_META[v],
+  value: v, // addressType이 돌려주는 넓은 union 대신 이 세 값으로 좁힌다
+}));
+
+// tx-concept의 addrMeta와 이름이 겹치지 않게 한다. 한 파일에서 둘 다 쓰는 일이 생긴다.
+export function scriptAddrMeta(type: ScriptAddrType) {
+  return { ...addressType(type), ...SIG_META[type] };
 }
 
 // 32바이트 개인키.

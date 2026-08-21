@@ -134,6 +134,9 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
     return {
       priv: illustrativeHex('priv:' + seedHex + p, 64),
       cc: illustrativeHex('cc:' + seedHex + p, 64),
+      // HMAC-SHA512 출력 I = IL ‖ IR. 화면에서 이 중간값을 건너뛰면 시드(64B)와
+      // 출력(64B)의 크기가 같아 "시드를 반으로 쪼갠다"로 읽힌다.
+      hmacOut: illustrativeHex('priv:' + seedHex + p, 64) + illustrativeHex('cc:' + seedHex + p, 64),
       pub: '02' + illustrativeHex('pub:' + seedHex + p, 64),
       il: illustrativeHex('il:' + seedHex + p, 64),
     };
@@ -149,10 +152,15 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
   const detailItems: PipeItem[] =
     step === 0
       ? [
-          { kind: 'box', label: '시드 (512비트)', value: seedHex },
+          { kind: 'box', label: '시드 (512비트) · HMAC의 입력', value: seedHex },
           {
             kind: 'op',
-            label: 'HMAC-SHA512 (key = "Bitcoin seed") → 64바이트를 둘로 분할',
+            label: 'HMAC-SHA512 (key = "Bitcoin seed")',
+          },
+          { kind: 'box', label: 'HMAC 출력 I (64바이트)', value: cur.hmacOut },
+          {
+            kind: 'op',
+            label: '이 출력을 앞뒤 32바이트씩 둘로 나눈다 (쪼개지는 건 시드가 아니라 이 값이다)',
           },
           {
             kind: 'split',

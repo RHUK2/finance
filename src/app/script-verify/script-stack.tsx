@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { ExplainCard, Field, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import {
-  addrMeta,
+  scriptAddrMeta,
   illustrativeEcdsaSig,
   illustrativeHash160,
   illustrativePubKey,
@@ -204,7 +204,7 @@ export function ScriptStack() {
   const cur = snapshots[step];
   const topTone = cur.stack.at(-1)?.tone;
   const isTerminal = topTone === 'good' || topTone === 'bad';
-  const meta = addrMeta(type);
+  const meta = scriptAddrMeta(type);
 
   return (
     <div className='flex flex-col gap-4'>

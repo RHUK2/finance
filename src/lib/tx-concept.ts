@@ -3,50 +3,26 @@
 // 입력/출력 vByte는 타입별 표준 대표값(근사)이다. 서명 길이에 따라 ±1~2 vB 변동하지만
 // 수수료 = vByte × sat/vB 계산식 자체는 실제와 같다.
 
-export type AddrType = 'legacy' | 'nested' | 'native' | 'taproot';
+import { ADDRESS_TYPES, type AddrType, addressType } from './address-types';
 
-export const ADDR_TYPES: {
-  value: AddrType;
-  label: string;
-  purpose: string;
-  inputVb: number;
-  outputVb: number;
-}[] = [
-  {
-    value: 'legacy',
-    label: 'Legacy (P2PKH)',
-    purpose: "44'",
-    inputVb: 148,
-    outputVb: 34,
-  },
-  {
-    value: 'nested',
-    label: 'Nested SegWit (P2SH)',
-    purpose: "49'",
-    inputVb: 91,
-    outputVb: 32,
-  },
-  {
-    value: 'native',
-    label: 'Native SegWit (P2WPKH)',
-    purpose: "84'",
-    inputVb: 68,
-    outputVb: 31,
-  },
-  {
-    value: 'taproot',
-    label: 'Taproot (P2TR)',
-    purpose: "86'",
-    inputVb: 57.5,
-    outputVb: 43,
-  },
-];
+export type { AddrType };
+
+// 타입별 입력·출력 vByte. 정체(라벨·purpose)는 address-types.ts가 정하고 여기서는
+// 수수료 계산에 필요한 크기만 덧붙인다.
+const VBYTES: Record<AddrType, { inputVb: number; outputVb: number }> = {
+  legacy: { inputVb: 148, outputVb: 34 },
+  nested: { inputVb: 91, outputVb: 32 },
+  native: { inputVb: 68, outputVb: 31 },
+  taproot: { inputVb: 57.5, outputVb: 43 },
+};
+
+export const ADDR_TYPES = ADDRESS_TYPES.map((t) => ({ ...t, ...VBYTES[t.value] }));
 
 // version(4) + locktime(4) + 입력/출력 개수 varint + SegWit marker/flag 근사.
 export const TX_OVERHEAD_VB = 10.5;
 
 export function addrMeta(type: AddrType) {
-  return ADDR_TYPES.find((t) => t.value === type) ?? ADDR_TYPES[0];
+  return { ...addressType(type), ...VBYTES[type] };
 }
 
 export function txVBytes(type: AddrType, numIn: number, numOut: number): number {

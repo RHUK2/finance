@@ -45,7 +45,9 @@ export function AddressScriptCompare() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='세 주소 타입, 검증은 결국 뭐가 다를까'>
         ①에서 서명을, ②에서 그 서명이 스택 위에서 검증되는 과정을 봤다. 세 주소 타입은 검증 로직의 &#39;틀&#39;은 같지만
-        서명 알고리즘과 서명이 실리는 위치, 그리고 스크립트가 얼마나 노출되는지에서 갈린다.
+        서명 알고리즘과 서명이 실리는 위치, 그리고 스크립트가 얼마나 노출되는지에서 갈린다. 트랜잭션 해부에서 본 Nested
+        SegWit(P2SH-P2WPKH)은 여기서 뺐다. 검증은 Native SegWit과 같고 P2SH 래퍼 한 겹이 더해질 뿐이라 단계만 늘고 새로
+        배울 게 없다.
       </SectionIntro>
 
       <Card className='flex flex-col gap-3 p-4'>
