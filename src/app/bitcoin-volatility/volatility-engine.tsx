@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Activity, TrendingUp } from 'lucide-react';
 
@@ -33,7 +33,7 @@ export function VolatilityEngine() {
       <SectionIntro title='변동성의 정체: 확률을 실시간으로 매기는 시장'>
         시장은 매일 뉴스에 따라 성공 확률을 조금씩 고쳐 쓴다. 그런데 성공 확률이 낮을 때는 똑같은 크기의 뉴스라도 가격이
         몇 배씩 출렁이고, 확률이 높아질수록 같은 뉴스에도 덜 흔들린다. 재생을 눌러 보자. 뉴스의 크기(σ)는 그대로 둬도,
-        성공 확률이 올라갈수록 변동성이 저절로 줄어드는 걸 볼 수 있다.
+        성공 확률이 올라갈수록 변동성이 저절로 줄어드는 걸 볼 수 있다. 수치는 개념 이해용 예시다.
       </SectionIntro>
 
       <Card className='gap-4 p-4'>
@@ -50,8 +50,8 @@ export function VolatilityEngine() {
         />
         <ControlSlider
           icon={<TrendingUp className='size-4 text-amber-500' />}
-          label='채택 추세 (drift)'
-          hint='채택이 진행되며 성공 확률이 평균적으로 오르는 속도. 음수로 두면 실패 쪽으로 향한다.'
+          label='확률 추세 (drift)'
+          hint='뉴스와 무관하게 성공 확률이 평균적으로 표류하는 속도. 음수로 두면 실패 쪽으로 향한다.'
           value={drift}
           onChange={setDrift}
           min={-0.004}
@@ -83,24 +83,40 @@ function VolSim({
   speedMs: number;
   onSpeed: (ms: number) => void;
 }) {
-  // 확률 경로(ps)가 유일한 상태. 가격·수익률·스텝 수는 모두 여기서 파생된다.
-  const [ps, setPs] = useState<number[]>([START_P]);
-  const rngRef = useRef(mulberry32(SEED));
+  // 고정 시드 난수라 파라미터가 정해지면 경로 전체가 결정된다. 캐스케이드 시뮬레이션들과
+  // 마찬가지로 미리 계산해 두고, 덕분에 스텝을 앞뒤로 왕복하고 곡선의 최종 모양을
+  // 첫 프레임부터 보여 줄 수 있다.
+  const ps = useMemo(() => {
+    const rng = mulberry32(SEED);
+    const path = [START_P];
+    for (let i = 0; i < MAX_STEPS; i++) path.push(stepP(path[path.length - 1], sigma, drift, rng));
+    return path;
+  }, [sigma, drift]);
+
+  const [cursor, setCursor] = useState(0);
+  const last = ps.length - 1;
 
   const step = useCallback(() => {
-    if (ps.length > MAX_STEPS) return false;
-    setPs([...ps, stepP(ps[ps.length - 1], sigma, drift, rngRef.current)]);
-    return true;
-  }, [ps, sigma, drift]);
+    if (cursor >= last) return false;
+    setCursor(cursor + 1);
+    return cursor + 1 < last;
+  }, [cursor, last]);
 
   const engine = useRoundEngine(step, speedMs);
+  const seek = useCallback(
+    (v: number) => {
+      engine.pause();
+      setCursor(v);
+    },
+    [engine],
+  );
 
-  const p = ps[ps.length - 1];
+  const p = ps[cursor];
   // 가격 = p × 성공가, 수익률 = log(pₜ/pₜ₋₁) (성공가는 상수라 약분된다).
-  const prices = ps.map((v) => v * WIN_PRICE);
-  const returns = ps.slice(1).map((v, i) => Math.log(v / ps[i]));
+  const prices = useMemo(() => ps.map((v) => v * WIN_PRICE), [ps]);
+  const returns = ps.slice(1, cursor + 1).map((v, i) => Math.log(v / ps[i]));
   const vol = realizedVol(returns, VOL_WINDOW) * 100;
-  const done = ps.length > MAX_STEPS;
+  const done = cursor >= last;
 
   return (
     <>
@@ -109,20 +125,26 @@ function VolSim({
           playing={engine.playing}
           onToggle={engine.toggle}
           onStep={step}
-          onReset={() => {
-            engine.pause();
-            rngRef.current = mulberry32(SEED);
-            setPs([START_P]);
-          }}
-          round={ps.length - 1}
+          onReset={() => seek(0)}
+          round={cursor}
+          total={last}
+          onSeek={seek}
           speedMs={speedMs}
           onSpeed={onSpeed}
           done={done}
           unit='스텝'
           speeds={SPEEDS}
         />
-        <Sparkline values={prices} label='가격' className='text-amber-500' />
-        <Sparkline values={ps} label='성공 확률 p' className='text-sky-500' />
+        <Sparkline values={prices} cursor={cursor} label='가격' className='text-amber-500' heightClass='h-12' />
+        <Sparkline
+          values={ps}
+          cursor={cursor}
+          label='성공 확률 p'
+          className='text-sky-500'
+          min={0}
+          max={1}
+          heightClass='h-12'
+        />
       </Card>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -130,8 +152,9 @@ function VolSim({
         <Metric label='현재 가격' value={formatUsd(p * WIN_PRICE)} />
         <Metric
           label={`최근 변동성 (${VOL_WINDOW}스텝)`}
-          value={`${vol.toFixed(1)}%`}
-          tone={vol > 8 ? 'bad' : 'good'}
+          value={cursor < 2 ? '—' : `${vol.toFixed(1)}%`}
+          tone={cursor < 2 ? undefined : vol > 8 ? 'bad' : 'good'}
+          sub={cursor < 2 ? '스텝이 쌓여야 계산된다' : undefined}
         />
       </div>
     </>

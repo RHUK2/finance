@@ -6,7 +6,7 @@ import { Battery, Bitcoin, TriangleAlert, Wind, Zap } from 'lucide-react';
 
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
-import { ControlSlider, ExplainCard, Legend, Metric, StatusBanner } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Legend, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,9 @@ const SEGMENTS = [
 export function GridBatteryView() {
   const [generation, setGeneration] = useState(70);
   const [demand, setDemand] = useState(45);
-  const [minerCapacity, setMinerCapacity] = useState(25);
+  // 잉여(25 GW)보다 작게 둔다. 첫 화면에서 버려지는 전력이 보여야 슬라이더를 올려
+  // 그것이 0으로 줄어드는 걸 관찰할 수 있다.
+  const [minerCapacity, setMinerCapacity] = useState(15);
   const [minersOn, setMinersOn] = useState(true);
 
   const sim = useMemo(() => {
@@ -56,10 +58,12 @@ export function GridBatteryView() {
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>비트코인은 전력망의 배터리다</h1>
-            <p className='text-muted-foreground mt-1 text-sm'>
-              전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야 한다. 비트코인 채굴은 잉여 전력을 흡수했다가 수요가
-              늘면 즉시 양보하는 &#39;유연 부하&#39;로, 버려질 에너지를 수익으로 바꿔 전력망 효율을 높인다. 아래
-              슬라이더로 직접 확인해 보자. (단위는 개념용 예시)
+            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
+              채굴 업계와 일부 전력망 연구가 내세우는 주장이다. 전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야
+              하는데, 비트코인 채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는 &#39;유연 부하&#39;라 버려질
+              에너지를 수익으로 바꾼다는 것이다. 다만 채굴은 배터리와 달리 흡수한 전기를 전력망에 되돌려주지 않는다.
+              비유는 &#39;남는 전기를 쓸모 있게 만든다&#39;는 데까지만 유효하다. 아래 슬라이더로 그 구조를 직접 확인해
+              보자. 수치는 개념 이해용 예시다.
             </p>
           </div>
 
@@ -130,14 +134,21 @@ export function GridBatteryView() {
           </Card>
 
           {/* 지표 카드 */}
-          <div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
+          <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
             <Metric label='버려지는 전력' value={fmt(sim.curtailed)} tone='bad' />
-            <Metric label='채굴 흡수량' value={fmt(sim.absorbed)} tone='accent' />
+            <Metric
+              label='채굴 흡수량'
+              value={fmt(sim.absorbed)}
+              tone='accent'
+              sub={`채굴 가동률 ${Math.round(sim.minerUtil)}%`}
+            />
             <Metric label='전력망 효율' value={`${Math.round(sim.efficiency)}%`} tone='good' />
-            <Metric label='채굴 가동률' value={`${Math.round(sim.minerUtil)}%`} />
           </div>
 
-          {/* 설명 프로즈 */}
+          <SectionIntro title='왜 이런 주장이 나오는가'>
+            문제(전기는 저장이 어렵다)부터 해법(유연 부하)까지의 논리를 차례로 본다.
+          </SectionIntro>
+
           <ExplainCard
             icon={<Wind className='size-4 text-sky-500' />}
             title='문제: 전기는 저장이 어렵다'
@@ -155,6 +166,12 @@ export function GridBatteryView() {
             title='그리드 배터리처럼, 더 싸게'
             preview='배터리보다 싸게, 버려질 에너지를 곧장 돈으로 바꾼다.'
             body='배터리는 잉여를 저장했다 되돌려주지만 비싸고 용량도 제한적이다. 채굴은 전기를 되돌려주진 않는 대신, 버려질 에너지를 곧장 돈으로 바꾼다. 덕분에 발전소는 남는 전기로도 수익을 내 투자 회수가 빨라지고, 좌초될 뻔한 에너지가 경제성을 얻는다. 결과적으로 버려지는 전력은 줄고, 재생에너지 발전에 대한 투자 유인은 커진다.'
+          />
+          <ExplainCard
+            icon={<TriangleAlert className='size-4 text-rose-500' />}
+            title='반론: 실제 채굴이 이 그림대로 돌아가는가'
+            preview='채굴 전력의 상당 부분은 잉여가 아니라 24시간 돌아가는 기저 전력이다.'
+            body='이 시뮬레이션은 채굴이 잉여 전력만 골라 먹는다고 가정하지만, 실제 채굴장 대부분은 가동률을 최대로 유지해야 장비값을 회수할 수 있어 잉여든 아니든 24시간 돌린다. 유연 부하로 실제 양보하는 물량이 얼마나 되는지, 그 양보가 전력망 계획에 반영될 만큼 안정적인지에 대해서는 연구마다 결론이 갈린다. 채굴 수요가 붙어 화석연료 발전소의 수명이 오히려 늘어난다는 지적도 있다. 여기서 보이는 것은 유연 부하가 이상적으로 작동할 때의 구조이지, 현재 채굴 산업의 평균적인 모습이 아니다.'
           />
         </div>
       </PageMain>

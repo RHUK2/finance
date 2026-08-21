@@ -11,6 +11,7 @@ import {
   ExplainCard,
   IllustrativeDisclaimer,
   Metric,
+  SectionIntro,
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
@@ -27,8 +28,13 @@ function riskOf(pct: number) {
 }
 
 export function BitcoinQuantumView() {
-  const [qubitProgress, setQubitProgress] = useState(20);
-  const [addressReused, setAddressReused] = useState(false);
+  // 경고 구간에서 시작한다. 안전 구간에서 시작하면 슬라이더를 움직여야 비로소 무언가
+  // 바뀌는데, 첫 화면이 이미 긴장 상태여야 좌우로 밀어 보게 된다.
+  const [qubitProgress, setQubitProgress] = useState(55);
+  // 노출 주소를 기본값으로 둔다. 미사용 주소에서는 큐비트 슬라이더가 결과를 바꾸지 못해
+  // 주 컨트롤이 죽은 채로 페이지가 시작된다. 노출 상태에서 시작해 미사용으로 바꿔 보면
+  // 해시가 왜 방어가 되는지가 대비로 드러난다.
+  const [addressReused, setAddressReused] = useState(true);
 
   const sim = useMemo(() => {
     // 공개키가 아직 서명으로 노출된 적 없는 주소(해시만 공개)는 현재 위협 모델에서 안전으로 취급.
@@ -92,18 +98,12 @@ export function BitcoinQuantumView() {
           </StatusBanner>
 
           {/* 지표 카드 */}
-          <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+          <div className='grid grid-cols-2 gap-3'>
             <Metric
               label='공개키 상태'
               value={sim.exposed ? '노출됨' : '비노출'}
               tone={sim.exposed ? 'bad' : 'good'}
               sub={sim.exposed ? 'P2PK · 재사용 · 지출 완료' : 'P2PKH/P2WPKH 미사용'}
-            />
-            <Metric
-              label='위험도'
-              value={sim.risk.level}
-              tone={sim.risk.tone}
-              sub={`큐비트 확보율 ${fmt(qubitProgress)}`}
             />
             <Metric
               label='추정 노출 잔고 비중'
@@ -112,7 +112,10 @@ export function BitcoinQuantumView() {
             />
           </div>
 
-          {/* 설명 프로즈 */}
+          <SectionIntro title='무엇이 위험을 가르는가'>
+            같은 비트코인이라도 공개키가 체인에 드러났는지가 위험을 가른다. 그 이유와 대응 방향을 차례로 본다.
+          </SectionIntro>
+
           <ExplainCard
             icon={<Unlock className='size-4 text-rose-500' />}
             title='왜 공개키 노출이 핵심인가'
