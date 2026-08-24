@@ -20,7 +20,10 @@ export function ReverseJeonse() {
   const nowPrice = price * (1 - priceDrop / 100);
   const nowMarketDeposit = deposit * (1 - rentDrop / 100); // 지금 새 임차인에게 받을 수 있는 금액
   const refundGap = Math.max(0, deposit - nowMarketDeposit); // 집주인이 현금으로 메워야 할 차액
-  const nowRatio = nowPrice > 0 ? (deposit / nowPrice) * 100 : Infinity;
+  // 계약 당시 보증금을 지금 집값으로 나눈 값이다. 새 임차인이 내는 보증금으로 재는 시장의
+  // 전세가율(아래 marketRatio)과는 분자가 달라 숫자가 크게 벌어지므로 이름을 갈라 둔다.
+  const depositRatio = nowPrice > 0 ? (deposit / nowPrice) * 100 : Infinity;
+  const marketRatio = nowPrice > 0 ? (nowMarketDeposit / nowPrice) * 100 : Infinity;
   const underwater = Math.max(0, deposit - nowPrice); // 집을 팔아도 모자라는 금액
   const barMax = Math.max(price, deposit, 1);
 
@@ -106,10 +109,14 @@ export function ReverseJeonse() {
           tone={refundGap > 0 ? 'bad' : 'good'}
         />
         <Metric
-          label='현재 전세가율'
-          value={fmtPct(nowRatio)}
-          sub={nowRatio >= 100 ? '깡통전세' : `집값 ${fmtEok(nowPrice)} 대비`}
-          tone={nowRatio >= 100 ? 'bad' : nowRatio >= 90 ? 'accent' : 'good'}
+          label='내 보증금 ÷ 지금 집값'
+          value={fmtPct(depositRatio)}
+          sub={
+            depositRatio >= 100
+              ? `깡통전세. 지금 시장의 전세가율은 ${fmtPct(marketRatio)}다`
+              : `집값 ${fmtEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${fmtPct(marketRatio)}`
+          }
+          tone={depositRatio >= 100 ? 'bad' : depositRatio >= 90 ? 'accent' : 'good'}
         />
       </div>
 

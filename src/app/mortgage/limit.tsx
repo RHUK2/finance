@@ -15,13 +15,10 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { levelPayment, maxLoanByDsr } from '@/lib/mortgage';
+import { levelPayment, maxLoanByDsr, REGULATION } from '@/lib/mortgage-models';
 
-// 금액 단위는 만원.
-const DSR_CAP = 40;
-// 스트레스 DSR 3단계(2025.7~)의 하한은 1.5%p였으나, 10·15 대책으로 2025.10.16부터
-// 수도권·규제지역 주택담보대출은 3.0%p로 올랐다. 비수도권은 더 낮다.
-const STRESS_ADD = 3.0;
+// 금액 단위는 만원. 규제 수치와 그 기준은 REGULATION 한곳에서만 온다.
+const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE, stressAdd: STRESS_ADD, stressNote: STRESS_NOTE } = REGULATION;
 
 const fmtEok = (n: number) => `${(n / 10000).toFixed(1)}억`;
 const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
@@ -117,9 +114,9 @@ export function Limit() {
             value={stress}
             onChange={setStress}
           />
-          <p className='text-muted-foreground text-xs'>
-            한도를 계산할 때만 약정 금리에 {STRESS_ADD.toFixed(1)}%p를 얹어 본다(수도권·규제지역 기준, 비수도권은 더
-            낮다). 나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
+          <p className='text-muted-foreground text-xs/relaxed'>
+            한도를 계산할 때만 약정 금리에 {STRESS_ADD.toFixed(1)}%p를 얹어 본다({STRESS_NOTE}. 비수도권은 더 낮다).
+            나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
           </p>
         </Field>
       </Card>
@@ -135,7 +132,11 @@ export function Limit() {
           label='DSR이 허용하는 한도'
           value={fmtEok(byDsr)}
           tone={binding === 'dsr' ? 'accent' : undefined}
-          sub={stress ? `스트레스 금리 ${stressRate.toFixed(1)}% 기준` : `금리 ${rate.toFixed(1)}% 기준`}
+          sub={
+            stress
+              ? `스트레스 금리 ${stressRate.toFixed(1)}%, DSR ${DSR_CAP}%`
+              : `약정 금리 ${rate.toFixed(1)}%, DSR ${DSR_CAP}%`
+          }
         />
         <Metric label='실제 대출 한도' value={fmtEok(limit)} tone='good' sub='둘 중 짧은 자에 맞춘다' />
         <Metric
@@ -184,8 +185,12 @@ export function Limit() {
         <Metric
           label='소득 대비 연 원리금 비율'
           value={`${dsrActual.toFixed(1)}%`}
-          tone={dsrActual > DSR_CAP ? 'bad' : 'good'}
-          sub={`약정 금리 기준, 한도는 ${DSR_CAP}%`}
+          tone='good'
+          sub={
+            stress && binding === 'dsr'
+              ? `약정 금리 기준. 한도 ${DSR_CAP}%까지 ${(DSR_CAP - dsrActual).toFixed(1)}%p 남고, 이 여유가 스트레스 금리로 미리 깎아 둔 몫이다`
+              : `약정 금리 기준, 한도는 ${DSR_CAP}%`
+          }
         />
       </div>
 
@@ -207,8 +212,9 @@ export function Limit() {
               빠르게 오르지 않으므로, DSR이 걸리는 순간부터는 집값이 올라도 빌릴 수 있는 돈이 늘지 않는다.
             </p>
             <p className='mt-2'>
-              여기 계산은 주택담보대출 하나만 있다고 보고 기존 대출과 신용대출은 넣지 않았다. 규제 비율과 스트레스
-              가산폭은 정책에 따라 자주 바뀌므로, 실제 한도는 은행에서 확인해야 한다.
+              여기 계산은 주택담보대출 하나만 있다고 보고 기존 대출과 신용대출은 넣지 않았다. 쓴 규제 수치는 DSR 한도{' '}
+              {DSR_CAP}%({DSR_NOTE}), 스트레스 가산폭 {STRESS_ADD.toFixed(1)}%p({STRESS_NOTE})다. 둘 다 대책 한 번에
+              바뀌므로 실제 한도는 은행에서 확인해야 한다.
             </p>
           </>
         }

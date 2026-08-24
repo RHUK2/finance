@@ -40,6 +40,7 @@ vercel --prod     # Vercel 프로덕션 배포
 | 위치                          | 쓰는 곳                                                                                |
 | ----------------------------- | -------------------------------------------------------------------------------------- |
 | `src/app/<page>/models.ts`    | 비트코인 인사이트 그룹 (게임이론·소프트워·변동성)                                      |
+| `src/lib/<domain>-models.ts`  | 도메인 계산 모델 (`bitcoin-models`·`inflation-models`·`mortgage-models`)               |
 | `src/lib/<domain>-concept.ts` | 비트코인 프로토콜 그룹 (tx·script·block·chain·bip·p2p·privacy·lightning·soft-fork 9개) |
 
 `*-concept.ts` 9개 중 실제로 여러 페이지가 공유하는 건 `tx-concept`(트랜잭션·P2P·라이트닝)와 `script-concept`(스크립트 검증·멀티시그) 둘뿐이고 나머지 일곱은 한 페이지 전용이다.
@@ -47,6 +48,16 @@ vercel --prod     # Vercel 프로덕션 배포
 새 모델은 한 페이지 전용이면 `src/app/<page>/models.ts`, 여러 페이지가 공유하면 `src/lib/`에 둔다. 기존 파일을 이 기준에 맞춰 옮기지는 않는다.
 
 여러 도메인이 함께 쓰는 값은 별도 파일로 뺀다. `src/lib/address-types.ts`(주소 타입 정체)와 `src/lib/bcra.ts`(공격 이득 ÷ 비용 비율)가 그 예다.
+
+`-concept.ts`는 프로토콜 그룹이 먼저 자리잡은 이름이라 그대로 두고, 새 도메인 모델은 `-models.ts`를 쓴다.
+
+### 규제·법률·세율 수치
+
+정책 한 번에 바뀌는 값(LTV·DSR·스트레스 가산폭·세율)은 상수만 두지 말고 기준을 함께 둔다. `src/lib/mortgage-models.ts`의 `REGULATION`이 그 형태다.
+
+- 값과 기준(`dsrNote`, `stressNote`)을 한 객체에 담아 단일 출처로 만든다. 같은 값을 두 파일에 적으면 규제가 바뀔 때 한쪽만 고쳐 같은 페이지의 두 탭이 다르게 계산한다
+- 화면에 값을 쓰면 기준도 함께 쓴다. 코드 주석에만 두지 않는다. 날짜 없는 규제 수치는 조용히 틀린 문서가 된다
+- 가격대별 누진처럼 구간이 있으면 상수 대신 함수로 둔다(`acquisitionTaxRate`)
 
 ### 차트 (`src/hooks/use-chart.ts`)
 

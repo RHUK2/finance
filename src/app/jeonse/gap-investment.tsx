@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Link from 'next/link';
+
 import { ArrowDownRight, ArrowUpRight, Building2, Layers, Percent, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
@@ -132,6 +134,15 @@ export function GapInvestment() {
               전세가율은 두 방향으로 작동한다. 올라갈 때는 진입 문턱을 낮춘다. 전세가율 60%에서 6억짜리 집을 사려면
               2.4억이 필요하지만 90%면 6천만원이면 된다. 같은 돈으로 여러 채를 살 수 있게 되고, 그 매수세가 매매가를
               다시 밀어 올린다. 전세가율이 높은 지역에서 갭투자가 몰리는 것은 수익률 계산의 결과다.
+            </p>
+            <p className='mt-2'>
+              같은 지렛대를 이자 있는 부채로 거는 쪽은{' '}
+              <Link href='/capital-structure' className='underline underline-offset-2'>
+                자본구조
+              </Link>{' '}
+              페이지에서 다룬다. 거기서는 이자가 실적과 무관하게 나가는 것이 증폭의 원인인데, 전세보증금은 이자가 없는
+              대신 만기에 원금 전액이 한 번에 돌아온다. 무엇을 지렛대로 쓰든 아래쪽 손실이 자기 돈에서 먼저 깎이는 것은
+              같다.
             </p>
             <p className='mt-2'>
               내려갈 때는 반대다. 전세가율이 높다는 것은 자기 돈이 얇다는 뜻이므로, 시세가 조금만 빠져도 자기 자본이

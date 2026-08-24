@@ -15,7 +15,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { byYear, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage';
+import { byYear, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage-models';
 import { cn } from '@/lib/utils';
 
 const fmtEok = (n: number) => `${(n / 10000).toFixed(2)}억`;
@@ -120,7 +120,13 @@ export function Repayment() {
             <Coins className='size-4 text-emerald-500' />
             해마다 내는 돈은 어떻게 구성되는가
           </span>
-          <span className='text-muted-foreground text-xs'>막대 하나가 1년이고, 높이는 그해에 낸 돈의 합이다</span>
+          <span className='text-muted-foreground text-xs/relaxed'>
+            막대 하나가 1년이고, 높이는 그해에 낸 돈의 합이다. 가장 높은 막대가{' '}
+            {peak >= 10000 ? fmtEok(peak) : fmtMan(peak)}
+            {method === 'bullet'
+              ? `인 ${years}년차인데, 여기에만 원금 전액이 몰려 있어 앞의 막대들이 낮아 보인다. 그 막대들은 이자만 낸 해다`
+              : ''}
+          </span>
         </div>
         <div className='flex h-40 items-end gap-0.5'>
           {yearly.map((y, i) => {

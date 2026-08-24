@@ -6,12 +6,12 @@ import { Banknote, CalendarClock, Percent, ShieldCheck, TrendingUp, TriangleAler
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { levelPayment, schedule } from '@/lib/mortgage';
+import { levelPayment, REGULATION, schedule } from '@/lib/mortgage-models';
 
 // 변동금리가 몇 년 뒤에 움직인다고 보고 계산한다. 고정금리는 그 대가로 처음부터 가산금리를 얹는다.
 const SHIFT_YEAR = 3;
 const FIXED_PREMIUM = 0.5;
-const DSR_CAP = 40;
+const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE } = REGULATION;
 
 const fmtEok = (n: number) => `${(n / 10000).toFixed(2)}억`;
 const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
@@ -55,23 +55,29 @@ export function RateStress() {
   const barMax = Math.max(after.monthly, fixed, before, 1);
 
   const banner =
-    dsrAfter > DSR_CAP
+    delta === 0
       ? {
-          tone: 'bad' as const,
-          icon: <TriangleAlert className='size-4 shrink-0' />,
-          text: `상환액이 소득의 ${dsrAfter.toFixed(0)}%까지 올라간다. 대출을 새로 받는다면 승인되지 않았을 수준이라, 스트레스 금리로 한도를 미리 깎아 두는 이유가 여기 있다.`,
+          tone: 'accent' as const,
+          icon: <Percent className='size-4 shrink-0' />,
+          text: `금리가 그대로면 월 상환액도 그대로다. 원리금균등은 남은 잔액을 남은 기간에 다시 나누는 방식이라, 금리가 안 바뀌면 몇 년이 지나도 같은 금액이 나온다. 상승폭을 올려 보자.`,
         }
-      : jumpPct > 20
+      : dsrAfter > DSR_CAP
         ? {
-            tone: 'accent' as const,
-            icon: <TrendingUp className='size-4 shrink-0' />,
-            text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${jumpPct.toFixed(0)}% 늘었다. 이자만이 아니라 남은 원금을 더 짧아진 기간에 갚아야 하기 때문이다.`,
+            tone: 'bad' as const,
+            icon: <TriangleAlert className='size-4 shrink-0' />,
+            text: `상환액이 소득의 ${dsrAfter.toFixed(0)}%까지 올라가 DSR 한도 ${DSR_CAP}%를 넘는다. 대출을 새로 받는다면 승인되지 않았을 수준이라, 스트레스 금리로 한도를 미리 깎아 두는 이유가 여기 있다.`,
           }
-        : {
-            tone: 'good' as const,
-            icon: <ShieldCheck className='size-4 shrink-0' />,
-            text: '상승폭을 감당할 수 있는 범위다. 그래도 변동금리는 이 숫자가 계약으로 보장되지 않는다는 점이 고정금리와 다르다.',
-          };
+        : jumpPct > 20
+          ? {
+              tone: 'accent' as const,
+              icon: <TrendingUp className='size-4 shrink-0' />,
+              text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${jumpPct.toFixed(0)}% 늘었다. 이자만이 아니라 남은 원금을 더 짧아진 기간에 갚아야 하기 때문이다.`,
+            }
+          : {
+              tone: 'good' as const,
+              icon: <ShieldCheck className='size-4 shrink-0' />,
+              text: '상승폭을 감당할 수 있는 범위다. 그래도 변동금리는 이 숫자가 계약으로 보장되지 않는다는 점이 고정금리와 다르다.',
+            };
 
   return (
     <div className='flex flex-col gap-4'>
@@ -153,7 +159,7 @@ export function RateStress() {
           label='소득 대비 원리금'
           value={`${dsrAfter.toFixed(1)}%`}
           tone={dsrAfter > DSR_CAP ? 'bad' : 'good'}
-          sub={`상승 전 ${dsrBefore.toFixed(1)}%`}
+          sub={`상승 전 ${dsrBefore.toFixed(1)}%, 한도 ${DSR_CAP}% (${DSR_NOTE})`}
         />
       </div>
 
@@ -193,7 +199,11 @@ export function RateStress() {
           label='변동금리 총이자'
           value={fmtEok(after.interest)}
           tone={after.interest > fixedInterest ? 'bad' : 'good'}
-          sub={`${SHIFT_YEAR}년 뒤 ${(rate + delta).toFixed(1)}%로 오른 경우`}
+          sub={
+            delta === 0
+              ? `${rate.toFixed(1)}%가 만기까지 유지된 경우`
+              : `${SHIFT_YEAR}년 뒤 ${(rate + delta).toFixed(1)}%로 오른 경우`
+          }
         />
         <Metric
           label='고정금리 총이자'

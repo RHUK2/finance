@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
 import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
@@ -25,10 +27,13 @@ export function MortgageView() {
           <div>
             <h1 className='text-xl font-semibold'>집을 사는 돈은 어디서 오는가</h1>
             <p className='text-muted-foreground mt-1 text-sm/relaxed'>
-              전세 구조 페이지가 세입자가 맡긴 목돈을 따라갔다면, 여기서는 그 집을 산 사람이 은행에서 빌린 돈을
-              따라간다. 얼마나 빌릴 수 있는지는 집과 소득을 각각 재는 두 개의 자가 정하고, 같은 돈을 빌려도 갚는 방식에
-              따라 이자가 달라지며, 금리가 움직이면 부담이 인상폭보다 크게 뛴다. 마지막에는 사는 것과 빌리는 것의 비용을
-              나란히 놓는다.
+              <Link href='/jeonse' className='underline underline-offset-2'>
+                전세 구조
+              </Link>{' '}
+              페이지가 세입자가 맡긴 목돈을 따라갔다면, 여기서는 그 집을 산 사람이 은행에서 빌린 돈을 따라간다. 얼마나
+              빌릴 수 있는지는 집과 소득을 각각 재는 두 개의 자가 정하고, 같은 돈을 빌려도 갚는 방식에 따라 이자가
+              달라지며, 금리가 움직이면 부담이 인상폭보다 크게 뛴다. 마지막에는 사는 것과 빌리는 것의 비용을 나란히
+              놓는다.
             </p>
           </div>
 

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Link from 'next/link';
+
 import { Banknote, House, Landmark, Percent, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
@@ -80,9 +82,20 @@ export function DepositLoan() {
         />
       </Card>
 
+      {/* 두 비용 카드의 tone은 어느 쪽이 싼지로 정한다. 한쪽을 늘 빨갛게 두면 아래 배너의 결론과 어긋난다. */}
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
-        <Metric label='전세의 연 비용' value={fmtMan(jeonseCost)} sub='포기한 이자' tone='accent' />
-        <Metric label='월세의 연 비용' value={fmtMan(rentCost)} sub='통장에서 나가는 돈' tone='bad' />
+        <Metric
+          label='전세의 연 비용'
+          value={fmtMan(jeonseCost)}
+          sub='포기한 이자'
+          tone={jeonseCost <= rentCost ? 'good' : 'bad'}
+        />
+        <Metric
+          label='월세의 연 비용'
+          value={fmtMan(rentCost)}
+          sub='통장에서 나가는 돈'
+          tone={rentCost < jeonseCost ? 'good' : 'bad'}
+        />
         {/* 톤은 아래 배너와 같은 임차인 관점으로 읽는다. 전환율이 금리보다 높으면 전세가 유리하다. */}
         <Metric
           label='전월세전환율'
@@ -135,6 +148,13 @@ export function DepositLoan() {
               셈이었다. 임차인 쪽에서도 매달 나가는 돈 없이 목돈만 맡기면 되니 저축을 이어 갈 수 있었다. 금리가 높을수록
               임대인이 보증금에서 얻는 이득이 커져 전세를 놓으려는 집이 늘었고, 전월세전환율이 금리를 웃도는 한
               임차인에게도 월세보다 싼 선택이었다.
+            </p>
+            <p className='mt-2'>
+              이 숨은 비용을 매수·전세·월세 셋과 나란히 놓고 재 보는 것은{' '}
+              <Link href='/mortgage' className='underline underline-offset-2'>
+                주택담보대출
+              </Link>{' '}
+              페이지의 마지막 탭에서 한다.
             </p>
             <p className='mt-2'>
               그래서 금리가 내려가면 전세의 경제적 근거가 약해진다. 임대인이 보증금을 굴려 얻을 이자가 줄어들면 차라리

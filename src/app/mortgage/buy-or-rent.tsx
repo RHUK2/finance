@@ -2,18 +2,20 @@
 
 import { useMemo, useState } from 'react';
 
+import Link from 'next/link';
+
 import { ArrowLeftRight, CalendarClock, House, KeyRound, Percent, Repeat, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { schedule } from '@/lib/mortgage';
+import { acquisitionTaxRate, ACQUISITION_TAX_NOTE, schedule } from '@/lib/mortgage-models';
 
 // 금액 단위는 만원. 비교를 단순하게 하려고 조달 조건 몇 가지는 고정한다.
 const LOAN_RATIO = 60; // 집값 대비 대출 비중
 const LOAN_TERM = 30;
 const DEPOSIT_RATE = 3; // 묶인 돈을 예금에 뒀다면 받았을 이자
-const ACQUISITION_TAX = 1.1; // 취득세율
-const HOLDING_TAX = 0.15; // 연 보유세율
+// 취득세는 가격대별 누진이라 상수로 둘 수 없다. mortgage-models가 단일 출처다.
+const HOLDING_TAX = 0.15; // 연 보유세율. 재산세·종부세를 시가 대비 한 비율로 뭉갠 값
 const MONTHLY_DEPOSIT_RATIO = 10; // 월세 보증금은 전세 보증금의 이 비율
 
 const fmtEok = (n: number) => `${(n / 10000).toFixed(2)}억`;
@@ -40,7 +42,8 @@ export function BuyOrRent() {
 
   const interest = cumInterest[years * 12];
 
-  const acqTax = (price * ACQUISITION_TAX) / 100;
+  const acqRate = acquisitionTaxRate(price);
+  const acqTax = (price * acqRate) / 100;
   const holdTax = ((price * HOLDING_TAX) / 100) * years;
   const buyOpportunity = ((equity * DEPOSIT_RATE) / 100) * years;
   const buyFixed = interest + acqTax + holdTax + buyOpportunity;
@@ -164,8 +167,10 @@ export function BuyOrRent() {
       </div>
 
       <Card className='gap-4 p-4'>
-        <span className='text-muted-foreground text-xs'>
-          {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다
+        <span className='text-muted-foreground text-xs/relaxed'>
+          {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다. 세금은 취득세{' '}
+          {acqRate.toFixed(2)}%({ACQUISITION_TAX_NOTE}, 6억 초과 9억 이하는 가격에 따라 오른다)와 보유세 연{' '}
+          {HOLDING_TAX}%로 잡았다
         </span>
         {options.map((o) => (
           <CostBar
@@ -205,8 +210,12 @@ export function BuyOrRent() {
             </p>
             <p className='mt-2'>
               금리가 전세와 월세의 유불리를 뒤집는 것도 이 때문이다. 금리가 오르면 묶인 보증금의 기회비용이 커져 전세가
-              불리해지고, 전세대출을 썼다면 이자까지 직접 나간다. 전세 페이지에서 본 보증금의 성격, 곧 임차인이
-              임대인에게 무이자로 빌려준 돈이라는 사실이 여기서 비용으로 드러난다.
+              불리해지고, 전세대출을 썼다면 이자까지 직접 나간다.{' '}
+              <Link href='/jeonse' className='underline underline-offset-2'>
+                전세 구조
+              </Link>{' '}
+              페이지에서 본 보증금의 성격, 곧 임차인이 임대인에게 무이자로 빌려준 돈이라는 사실이 여기서 비용으로
+              드러난다.
             </p>
           </>
         }
@@ -224,10 +233,11 @@ export function BuyOrRent() {
               대부분을 집 한 채에 몰아넣게 한다. 임차는 그 반대다.
             </p>
             <p className='mt-2'>
-              계산 자체도 여러 단순화를 담고 있다. 취득세율은 주택 수와 가격대에 따라 크게 달라지고 보유세도 공시가격
-              기준이라 실제와 다르다. 매도할 때 드는 중개보수와 양도세, 전세대출 이자, 갚은 원금에 대한 기회비용, 임대료
-              상승은 넣지 않았다. 무엇보다 집값 상승률은 결과를 지배하는 변수인데 미리 알 수 없다. 이 도구는 답을 주는
-              계산기가 아니라, 어떤 변수가 결과를 흔드는지 감을 잡는 그림에 가깝다.
+              계산 자체도 여러 단순화를 담고 있다. 취득세율은 1주택 기준으로 넣었으므로 다주택이나 조정대상지역이면
+              중과세율이 적용돼 훨씬 커지고, 보유세는 공시가격 기준으로 매기는 것을 시가 대비 한 비율로 뭉갠 값이라
+              실제와 다르다. 매도할 때 드는 중개보수와 양도세, 전세대출 이자, 갚은 원금에 대한 기회비용, 임대료 상승은
+              넣지 않았다. 무엇보다 집값 상승률은 결과를 지배하는 변수인데 미리 알 수 없다. 이 도구는 답을 주는 계산기가
+              아니라, 어떤 변수가 결과를 흔드는지 감을 잡는 그림에 가깝다.
             </p>
           </>
         }
