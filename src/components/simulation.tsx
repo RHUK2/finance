@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, Pause, Play, RotateCcw, StepForward, TriangleAlert } from 'lucide-react';
+import { Check, ChevronDown, Minus, Pause, Play, RotateCcw, StepForward, TriangleAlert, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -388,24 +388,30 @@ export function Field({ label, children }: { label: string; children: React.Reac
 }
 
 // 세그먼트형 토글 버튼 그룹. 값 하나를 고르는 라디오 대체.
+// disabled는 지금 조건에서 이 선택이 결과를 바꾸지 못할 때 쓴다. 컨트롤을 숨기지 않는 이유는
+// 다른 조건에서는 살아난다는 사실 자체가 설명의 일부이기 때문이다.
 export function SegmentedControl<T extends string | boolean>({
   options,
   value,
   onChange,
+  disabled,
 }: {
   options: { value: T; label: string }[];
   value: T;
   onChange: (v: T) => void;
+  disabled?: boolean;
 }) {
   return (
-    <div className='flex overflow-hidden rounded-md border'>
+    <div className={cn('flex overflow-hidden rounded-md border', disabled && 'opacity-50')}>
       {options.map((o) => (
         <button
           key={String(o.value)}
           onClick={() => onChange(o.value)}
+          disabled={disabled}
           className={cn(
             'flex-1 px-2 py-1.5 text-sm transition-colors',
-            value === o.value ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
+            value === o.value ? 'bg-primary text-primary-foreground' : !disabled && 'hover:bg-muted',
+            disabled && 'cursor-not-allowed',
           )}
         >
           {o.label}
@@ -625,5 +631,129 @@ export function CascadeStage({
         </p>
       )}
     </>
+  );
+}
+
+// 하나의 총량이 여러 몫으로 갈리는 것을 보여 주는 가로 누적 막대 + 범례.
+// 총량이 고정된 파이를 나누는 그림(자본구조, 지분 구성, 이익의 분배, 발전량 배분)에서 쓴다.
+// 막대 폭은 value/total로만 정해지므로, 라벨의 단위는 호출하는 쪽이 정해서 넘긴다.
+export function StackedBar({
+  segments,
+  total,
+}: {
+  segments: { label: string; value: number; className: string }[];
+  total: number;
+}) {
+  // total이 0인 순간(발전량 0 등)에도 폭이 NaN이 되지 않게 막는다.
+  const shown = total > 0 ? segments.filter((s) => s.value > 0) : [];
+  return (
+    <>
+      <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
+        {shown.map((s) => (
+          <div
+            key={s.label}
+            title={s.label}
+            className={cn('h-full transition-all', s.className)}
+            style={{ width: `${(s.value / total) * 100}%` }}
+          />
+        ))}
+      </div>
+      <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
+        {shown.map((s) => (
+          <Legend key={s.label} className={s.className} label={s.label} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+// 여러 대상을 같은 잣대로 재는 비교표. 행을 누르면 어느 행이 골라졌는지 알려 주고,
+// 고른 행의 설명은 호출하는 쪽이 표 아래에 따로 그린다.
+// marks의 길이는 columns의 길이와 같아야 한다.
+export type MarkState = 'yes' | 'no' | 'partial';
+
+export type MarkRow = {
+  id: string;
+  label: string;
+  sub?: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  marks: MarkState[];
+};
+
+const MARK_TABLE_COLS: Record<number, string> = {
+  2: 'grid-cols-[1fr_3rem_3rem] sm:grid-cols-[1fr_4rem_4rem]',
+  3: 'grid-cols-[1fr_2.5rem_2.5rem_2.5rem] sm:grid-cols-[1fr_4rem_4rem_4rem]',
+};
+
+export function MarkTable({
+  title,
+  icon,
+  headers,
+  rows,
+  selected,
+  onSelect,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  headers: [string, ...string[]];
+  rows: MarkRow[];
+  selected: string;
+  onSelect: (id: string) => void;
+}) {
+  // 첫 열은 대상 이름이라 남는 폭을 전부 가져가고, 나머지 잣대 열은 좁은 고정폭을 나눠 쓴다.
+  // Tailwind는 소스에 그대로 적힌 문자열만 훑으므로 열 수별 클래스를 미리 적어 둔다.
+  const grid = cn('grid items-center gap-x-2', MARK_TABLE_COLS[headers.length - 1]);
+
+  return (
+    <Card className='gap-0 overflow-hidden p-0'>
+      <div className='flex flex-col gap-1 p-4'>
+        <span className='flex items-center gap-1.5 text-sm font-semibold'>
+          {icon}
+          {title}
+        </span>
+        <span className='text-muted-foreground text-xs'>항목을 누르면 표 아래에 설명이 열린다</span>
+      </div>
+      <div className={cn(grid, 'text-muted-foreground border-y px-4 py-2 text-xs')}>
+        {headers.map((h, i) => (
+          <span key={h} className={i === 0 ? undefined : 'text-center'}>
+            {h}
+          </span>
+        ))}
+      </div>
+      {rows.map((r) => (
+        <button
+          key={r.id}
+          onClick={() => onSelect(r.id)}
+          className={cn(
+            grid,
+            'border-b px-4 py-2.5 text-left text-sm transition-colors last:border-b-0',
+            selected === r.id ? 'bg-muted' : 'hover:bg-muted/50',
+          )}
+        >
+          <span className={cn('flex', r.icon ? 'items-center gap-2' : 'flex-col')}>
+            {r.icon && <r.icon className='text-muted-foreground size-4 shrink-0' />}
+            {r.label}
+            {r.sub && <span className='text-muted-foreground text-xs'>{r.sub}</span>}
+          </span>
+          {r.marks.map((m, i) => (
+            <Mark key={i} state={m} />
+          ))}
+        </button>
+      ))}
+    </Card>
+  );
+}
+
+function Mark({ state }: { state: MarkState }) {
+  return (
+    <span className='flex justify-center'>
+      {state === 'yes' ? (
+        <Check className='size-4 text-emerald-600 dark:text-emerald-400' />
+      ) : state === 'no' ? (
+        <X className='size-4 text-rose-600 dark:text-rose-400' />
+      ) : (
+        <Minus className='size-4 text-amber-600 dark:text-amber-400' />
+      )}
+    </span>
   );
 }

@@ -4,9 +4,8 @@ import { useState } from 'react';
 
 import { Coins, PieChart, Repeat, TrendingUp, Undo2 } from 'lucide-react';
 
-import { ControlSlider, ExplainCard, Legend, SectionIntro, StatCard, StatusBanner } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 // 교육용 예시 회사. 단위는 주와 원.
 const FOUNDER = 5_000_000;
@@ -36,15 +35,15 @@ export function Shares() {
   // 내 지분율도 EPS도 유통주식수에 반비례하므로 두 카드의 tone은 하나로 정해진다.
   const tone = outstanding > BASE_ISSUED ? 'bad' : outstanding < BASE_ISSUED ? 'good' : undefined;
 
+  // 막대는 자사주까지 포함한 발행주식이 분모다. 자사주를 뺀 유통주식이 분모인 아래 지표와
+  // 분모가 다르므로, 어느 기준인지를 라벨과 주석에서 반드시 밝힌다.
   const segments = [
-    { label: '창업자', shares: FOUNDER, className: 'bg-sky-500' },
-    { label: '나', shares: ME, className: 'bg-amber-500' },
-    { label: '기타 주주', shares: OTHERS - buyback, className: 'bg-slate-400' },
-    { label: '신규 투자자', shares: newIssue, className: 'bg-emerald-500' },
-    { label: '자사주 (의결권·배당 없음)', shares: buyback, className: 'bg-muted-foreground/25' },
-  ]
-    .filter((s) => s.shares > 0)
-    .map((s) => ({ ...s, pct: (s.shares / issued) * 100 }));
+    { label: '창업자', value: FOUNDER, className: 'bg-sky-500' },
+    { label: '나', value: ME, className: 'bg-amber-500' },
+    { label: '기타 주주', value: OTHERS - buyback, className: 'bg-slate-400' },
+    { label: '신규 투자자', value: newIssue, className: 'bg-emerald-500' },
+    { label: '자사주 (의결권·배당 없음)', value: buyback, className: 'bg-muted-foreground/25' },
+  ].map((s) => ({ ...s, label: `${s.label} ${((s.value / issued) * 100).toFixed(1)}%` }));
 
   return (
     <div className='flex flex-col gap-4'>
@@ -83,37 +82,28 @@ export function Shares() {
       <Card className='gap-3 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <PieChart className='size-4 text-sky-500' />
-          지분 구성 (발행주식 {fmtShares(issued)})
+          지분 구성 (발행주식 {fmtShares(issued)} 기준)
         </span>
-        <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
-          {segments.map((s) => (
-            <div key={s.label} className={cn('h-full transition-all', s.className)} style={{ width: `${s.pct}%` }} />
-          ))}
-        </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
-          {segments.map((s) => (
-            <Legend key={s.label} className={s.className} label={`${s.label} ${s.pct.toFixed(1)}%`} />
-          ))}
-        </div>
+        <StackedBar segments={segments} total={issued} />
+        {buyback > 0 && (
+          <p className='text-muted-foreground text-xs/relaxed'>
+            자사주 {fmtShares(buyback)}에는 의결권도 배당도 없다. 이를 뺀 유통주식 {fmtShares(outstanding)}를 분모로
+            하면 내 몫은 {fmtPct(myPct)}가 되어, 위 막대에 적힌 {fmtPct((ME / issued) * 100)}보다 크다. 아래 지표는 모두
+            유통주식 기준이다.
+          </p>
+        )}
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-        <StatCard label='유통주식수' value={outstanding} format={fmtShares} sub='자사주 제외' />
-        <StatCard
-          label='내 지분율'
-          value={myPct}
-          format={fmtPct}
-          tone={tone}
-          sub={`의결권 기준, 시작 ${fmtPct(BASE_PCT)}`}
-        />
-        <StatCard
+        <Metric label='유통주식수' value={fmtShares(outstanding)} sub='발행주식에서 자사주를 뺀 수' />
+        <Metric label='내 지분율' value={fmtPct(myPct)} tone={tone} sub={`유통주식 기준, 시작 ${fmtPct(BASE_PCT)}`} />
+        <Metric
           label='주당순이익 (EPS)'
-          value={eps}
-          format={fmtWon}
+          value={fmtWon(eps)}
           tone={tone}
-          sub={`순이익 ${fmtEok(NET_INCOME)} 고정`}
+          sub={`순이익 ${fmtEok(NET_INCOME)} 고정, 유통주식으로 나눈다`}
         />
-        <StatCard label='회사 보유 현금' value={cash} format={fmtEok} tone={cash < 0 ? 'bad' : 'accent'} />
+        <Metric label='회사 보유 현금' value={fmtEok(cash)} tone={cash < 0 ? 'bad' : 'accent'} />
       </div>
 
       {cash < 0 && (

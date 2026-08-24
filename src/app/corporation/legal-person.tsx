@@ -5,7 +5,6 @@ import { useState } from 'react';
 import {
   Banknote,
   Building2,
-  Check,
   FileSignature,
   Gavel,
   HeartHandshake,
@@ -18,12 +17,10 @@ import {
   Scale,
   Stamp,
   Vote,
-  X,
 } from 'lucide-react';
 
-import { ExplainCard, SectionIntro } from '@/components/simulation';
+import { ExplainCard, MarkTable, type MarkState, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 type Row = {
   id: string;
@@ -127,9 +124,6 @@ const ROWS: Row[] = [
   },
 ];
 
-// 표의 헤더 줄과 각 행이 같은 열 폭을 써야 하므로 한곳에서 관리한다.
-const TABLE_COLS = 'grid grid-cols-[1fr_3rem_3rem] items-center gap-x-2 sm:grid-cols-[1fr_4rem_4rem]';
-
 const BIRTH_STEPS = [
   { label: '정관 작성', sub: '회사의 목적·상호·자본을 정한다' },
   { label: '출자 납입', sub: '주주가 돈을 내고 주식을 받는다' },
@@ -166,38 +160,19 @@ export function LegalPerson() {
         </div>
       </Card>
 
-      <Card className='gap-0 overflow-hidden p-0'>
-        <div className='flex flex-col gap-1 p-4'>
-          <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <Scale className='size-4 text-sky-500' />
-            자연인과 법인, 어디까지 같은가
-          </span>
-          <span className='text-muted-foreground text-xs'>항목을 누르면 표 아래에 설명이 열린다</span>
-        </div>
-        <div className={cn(TABLE_COLS, 'text-muted-foreground border-y px-4 py-2 text-xs')}>
-          <span>할 수 있는가</span>
-          <span className='text-center'>자연인</span>
-          <span className='text-center'>법인</span>
-        </div>
-        {ROWS.map((r) => (
-          <button
-            key={r.id}
-            onClick={() => setSelected(r.id)}
-            className={cn(
-              TABLE_COLS,
-              'border-b px-4 py-2.5 text-left text-sm transition-colors last:border-b-0',
-              selected === r.id ? 'bg-muted' : 'hover:bg-muted/50',
-            )}
-          >
-            <span className='flex items-center gap-2'>
-              <r.icon className='text-muted-foreground size-4 shrink-0' />
-              {r.label}
-            </span>
-            <Mark ok={r.natural} />
-            <Mark ok={r.legal} />
-          </button>
-        ))}
-      </Card>
+      <MarkTable
+        icon={<Scale className='size-4 text-sky-500' />}
+        title='자연인과 법인, 어디까지 같은가'
+        headers={['할 수 있는가', '자연인', '법인']}
+        rows={ROWS.map((r) => ({
+          id: r.id,
+          label: r.label,
+          icon: r.icon,
+          marks: [r.natural ? 'yes' : 'no', r.legal ? 'yes' : 'no'] as MarkState[],
+        }))}
+        selected={selected}
+        onSelect={setSelected}
+      />
 
       <Card className='gap-2 p-4'>
         <span className='flex items-center gap-1.5 font-semibold'>
@@ -248,17 +223,5 @@ export function LegalPerson() {
         }
       />
     </div>
-  );
-}
-
-function Mark({ ok }: { ok: boolean }) {
-  return (
-    <span className='flex justify-center'>
-      {ok ? (
-        <Check className='size-4 text-emerald-600 dark:text-emerald-400' />
-      ) : (
-        <X className='size-4 text-rose-600 dark:text-rose-400' />
-      )}
-    </span>
   );
 }

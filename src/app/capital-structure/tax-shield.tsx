@@ -4,7 +4,15 @@ import { useState } from 'react';
 
 import { Building2, Landmark, Receipt, Scale, ShieldCheck, Users } from 'lucide-react';
 
-import { ControlSlider, ExplainCard, Legend, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import {
+  ControlSlider,
+  ExplainCard,
+  Legend,
+  Metric,
+  SectionIntro,
+  StackedBar,
+  StatusBanner,
+} from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -20,10 +28,20 @@ const STEPS = Array.from({ length: 19 }, (_, i) => i * 5);
 
 const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
 
+// 화면에는 이름이 닮은 두 값이 함께 나온다. 헷갈리지 않도록 함수 이름부터 갈라 둔다.
+//   annualShield: 올해 한 해 덜 낸 법인세. 이자 × 세율.
+//   shieldValue:  그 절감이 매년 이어진다고 보고 현재가치로 합친 값. 이자율로 할인하면
+//                 이자율이 약분돼 부채 × 세율만 남는다. 곡선이 이자율과 무관한 이유다.
+function shieldValue(debtPct: number, taxRate: number) {
+  return ((ASSETS * debtPct) / 100) * (taxRate / 100);
+}
+
+function distressCost(debtPct: number) {
+  return ASSETS * DISTRESS_K * (debtPct / 100) ** 4;
+}
+
 function firmValue(debtPct: number, taxRate: number) {
-  const shield = ((ASSETS * debtPct) / 100) * (taxRate / 100);
-  const distress = ASSETS * DISTRESS_K * (debtPct / 100) ** 4;
-  return ASSETS + shield - distress;
+  return ASSETS + shieldValue(debtPct, taxRate) - distressCost(debtPct);
 }
 
 export function TaxShield() {
@@ -34,18 +52,20 @@ export function TaxShield() {
   const interest = (debt * RATE) / 100;
   const tax = Math.max(0, EBIT - interest) * (taxRate / 100);
   const net = EBIT - interest - tax;
-  const shield = EBIT * (taxRate / 100) - tax;
+  const annualShield = EBIT * (taxRate / 100) - tax;
 
   const curve = STEPS.map((d) => ({ d, v: firmValue(d, taxRate) }));
   const best = curve.reduce((a, b) => (b.v > a.v ? b : a));
   const current = firmValue(debtRatio, taxRate);
+  const pv = shieldValue(debtRatio, taxRate);
+  const distress = distressCost(debtRatio);
 
   // 영업이익 150억이 세 곳으로 갈라진다. 부채 비중을 올리면 정부 몫이 줄어든다.
   const slices = [
-    { label: '채권자 (이자)', value: interest, className: 'bg-rose-500' },
-    { label: '정부 (법인세)', value: tax, className: 'bg-slate-400' },
-    { label: '주주 (순이익)', value: net, className: 'bg-emerald-500' },
-  ].filter((s) => s.value > 0);
+    { label: `채권자 (이자) ${fmt(interest)}`, value: interest, className: 'bg-rose-500' },
+    { label: `정부 (법인세) ${fmt(tax)}`, value: tax, className: 'bg-slate-400' },
+    { label: `주주 (순이익) ${fmt(net)}`, value: net, className: 'bg-emerald-500' },
+  ];
 
   return (
     <div className='flex flex-col gap-4'>
@@ -85,20 +105,7 @@ export function TaxShield() {
           <Users className='size-4 text-sky-500' />
           영업이익 {fmt(EBIT)}은 누구에게 갔는가
         </span>
-        <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
-          {slices.map((s) => (
-            <div
-              key={s.label}
-              className={cn('h-full transition-all', s.className)}
-              style={{ width: `${(s.value / EBIT) * 100}%` }}
-            />
-          ))}
-        </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
-          {slices.map((s) => (
-            <Legend key={s.label} className={s.className} label={`${s.label} ${fmt(s.value)}`} />
-          ))}
-        </div>
+        <StackedBar segments={slices} total={EBIT} />
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
@@ -106,16 +113,16 @@ export function TaxShield() {
         <Metric label='정부가 걷는 법인세' value={fmt(tax)} sub={`무차입이면 ${fmt(EBIT * (taxRate / 100))}`} />
         <Metric label='주주 몫 순이익' value={fmt(net)} tone={net > 0 ? undefined : 'bad'} />
         <Metric
-          label='세금 방패'
-          value={fmt(shield)}
-          tone={shield > 0 ? 'good' : undefined}
-          sub='줄어든 법인세만큼 파이가 커진다'
+          label='올해 아낀 법인세'
+          value={fmt(annualShield)}
+          tone={annualShield > 0 ? 'good' : undefined}
+          sub={`이자 ${fmt(interest)} × 세율 ${taxRate}%`}
         />
       </div>
 
-      <StatusBanner tone={shield > 0 ? 'good' : 'accent'} icon={<ShieldCheck className='size-4 shrink-0' />}>
-        {shield > 0
-          ? `이자를 비용으로 털어 낸 덕분에 정부로 나갈 ${fmt(shield)}이 회사 안에 남았다. 채권자와 주주가 나눠 갖는 몫의 합이 그만큼 커진다.`
+      <StatusBanner tone={annualShield > 0 ? 'good' : 'accent'} icon={<ShieldCheck className='size-4 shrink-0' />}>
+        {annualShield > 0
+          ? `이자를 비용으로 털어 낸 덕분에 올해 정부로 나갈 ${fmt(annualShield)}이 회사 안에 남았다. 채권자와 주주가 나눠 갖는 몫의 합이 그만큼 커진다.`
           : '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 이때 자본구조는 파이를 자르는 방식일 뿐 파이의 크기를 바꾸지 못한다.'}
       </StatusBanner>
 
@@ -125,8 +132,10 @@ export function TaxShield() {
             <Building2 className='size-4 text-amber-500' />
             그렇다면 빚을 최대한 내야 하는가
           </span>
-          <span className='text-muted-foreground text-xs'>
-            세금 방패에서 재무곤경 기대비용을 뺀 기업가치. 막대 하나가 부채 비중 5%p다
+          <span className='text-muted-foreground text-xs/relaxed'>
+            방패의 현재가치에서 재무곤경 기대비용을 뺀 기업가치. 막대 하나가 부채 비중 5%p다. 위 지표가 올해 한 해분인
+            것과 달리 여기서는 절감이 매년 이어진다고 보고 합쳤다. 이자율로 할인하면 이자율이 약분돼 부채 × 세율만
+            남으므로, 이 곡선은 이자율을 움직여도 달라지지 않는다
           </span>
         </div>
         <ValueCurve curve={curve} current={debtRatio} best={best.d} />
@@ -144,7 +153,7 @@ export function TaxShield() {
           label='무차입 대비 증감'
           value={fmt(current - ASSETS)}
           tone={current > ASSETS ? 'good' : 'bad'}
-          sub={`무차입 기업가치 ${fmt(ASSETS)}`}
+          sub={`방패 ${fmt(pv)}에서 곤경비용 ${fmt(distress)}을 뺀 값`}
         />
       </div>
 

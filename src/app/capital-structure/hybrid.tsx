@@ -2,11 +2,19 @@
 
 import { useState } from 'react';
 
-import { ArrowLeftRight, Check, Layers, Minus, Repeat, TrendingUp, X } from 'lucide-react';
+import { ArrowLeftRight, Layers, Repeat, TrendingUp } from 'lucide-react';
 
-import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import {
+  ControlSlider,
+  CostBar,
+  ExplainCard,
+  MarkTable,
+  type MarkState,
+  Metric,
+  SectionIntro,
+  StatusBanner,
+} from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 // 교육용 예시 회사. 금액 단위는 억원, 주가는 원.
 const BASE_SHARES = 10_000_000;
@@ -24,9 +32,9 @@ const fmtWon = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
 type Instrument = {
   id: string;
   label: string;
-  principal: 'yes' | 'no' | 'partial';
-  vote: 'yes' | 'no';
-  upside: 'yes' | 'no' | 'partial';
+  principal: MarkState;
+  vote: MarkState;
+  upside: MarkState;
   rank: string;
   detail: string;
 };
@@ -74,8 +82,6 @@ const INSTRUMENTS: Instrument[] = [
   },
 ];
 
-const COLS = 'grid grid-cols-[1fr_2.5rem_2.5rem_2.5rem] items-center gap-x-2 sm:grid-cols-[1fr_4rem_4rem_4rem]';
-
 export function Hybrid() {
   const [value, setValue] = useState(1500);
   const [selected, setSelected] = useState('cb');
@@ -100,39 +106,19 @@ export function Hybrid() {
         우선주가 그렇다. 어느 성질을 얼마나 가져오느냐로 값이 정해진다.
       </SectionIntro>
 
-      <Card className='gap-0 overflow-hidden p-0'>
-        <div className='flex flex-col gap-1 p-4'>
-          <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <Layers className='size-4 text-violet-500' />네 가지 증권은 무엇을 주고 무엇을 받는가
-          </span>
-          <span className='text-muted-foreground text-xs'>항목을 누르면 표 아래에 설명이 열린다</span>
-        </div>
-        <div className={cn(COLS, 'text-muted-foreground border-y px-4 py-2 text-xs')}>
-          <span>증권</span>
-          <span className='text-center'>원금</span>
-          <span className='text-center'>의결권</span>
-          <span className='text-center'>상방</span>
-        </div>
-        {INSTRUMENTS.map((i) => (
-          <button
-            key={i.id}
-            onClick={() => setSelected(i.id)}
-            className={cn(
-              COLS,
-              'border-b px-4 py-2.5 text-left text-sm transition-colors last:border-b-0',
-              selected === i.id ? 'bg-muted' : 'hover:bg-muted/50',
-            )}
-          >
-            <span className='flex flex-col'>
-              {i.label}
-              <span className='text-muted-foreground text-xs'>{i.rank}</span>
-            </span>
-            <Mark state={i.principal} />
-            <Mark state={i.vote} />
-            <Mark state={i.upside} />
-          </button>
-        ))}
-      </Card>
+      <MarkTable
+        icon={<Layers className='size-4 text-violet-500' />}
+        title='네 가지 증권은 무엇을 주고 무엇을 받는가'
+        headers={['증권', '원금', '의결권', '상방']}
+        rows={INSTRUMENTS.map((i) => ({
+          id: i.id,
+          label: i.label,
+          sub: i.rank,
+          marks: [i.principal, i.vote, i.upside],
+        }))}
+        selected={selected}
+        onSelect={setSelected}
+      />
 
       <Card className='gap-2 p-4'>
         <span className='flex items-center gap-1.5 font-semibold'>
@@ -184,8 +170,8 @@ export function Hybrid() {
         <Metric
           label='기존 주주 주당가치'
           value={fmtWon(price)}
-          tone={converts ? 'bad' : 'good'}
-          sub={converts ? '희석 반영' : '전환되지 않아 희석 없음'}
+          tone={converts ? 'accent' : undefined}
+          sub={converts ? `전환이 없었다면 ${fmtWon(priceRedeemed)}` : '전환되지 않아 희석 없음'}
         />
       </div>
 
@@ -259,19 +245,5 @@ export function Hybrid() {
         }
       />
     </div>
-  );
-}
-
-function Mark({ state }: { state: 'yes' | 'no' | 'partial' }) {
-  return (
-    <span className='flex justify-center'>
-      {state === 'yes' ? (
-        <Check className='size-4 text-emerald-600 dark:text-emerald-400' />
-      ) : state === 'no' ? (
-        <X className='size-4 text-rose-600 dark:text-rose-400' />
-      ) : (
-        <Minus className='size-4 text-amber-600 dark:text-amber-400' />
-      )}
-    </span>
   );
 }

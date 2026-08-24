@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Link from 'next/link';
+
 import { Banknote, ShieldCheck, ShieldOff, Users, Wallet } from 'lucide-react';
 
 import {
@@ -113,7 +115,8 @@ export function LimitedLiability() {
                 { value: true, label: '벽이 무너졌다' },
               ]}
               value={isCorp ? pierced : true}
-              onChange={(v) => isCorp && setPierced(v)}
+              onChange={setPierced}
+              disabled={!isCorp}
             />
             <p className='text-muted-foreground text-xs'>
               {isCorp
@@ -232,7 +235,12 @@ export function LimitedLiability() {
             <p className='mt-2'>
               회사법이 배당과 자사주 매입을 배당가능이익 안으로 묶어 두는 이유도 같다. 주주는 언제나 채권자보다 뒤에
               서야 하는데, 청산 전에 회사 재산을 미리 빼 가면 그 순서가 뒤집히기 때문이다. 자본금 제도, 배당 제한,
-              이사의 책임은 모두 벽 반대편에 선 채권자를 위한 안전장치다.
+              이사의 책임은 모두 벽 반대편에 선 채권자를 위한 안전장치다. 그 뒷줄이 실제로 어떤 층으로 나뉘고 어느
+              층에서 돈이 끊기는지는{' '}
+              <Link href='/capital-structure' className='underline underline-offset-2'>
+                자본구조
+              </Link>{' '}
+              페이지의 청산 순위에서 이어서 본다.
             </p>
           </>
         }

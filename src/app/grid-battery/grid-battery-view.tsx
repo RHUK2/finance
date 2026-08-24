@@ -6,10 +6,9 @@ import { Battery, Bitcoin, TriangleAlert, Wind, Zap } from 'lucide-react';
 
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
-import { ControlSlider, ExplainCard, Legend, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 const fmt = (n: number) => `${Math.round(n)} GW`;
 
@@ -49,7 +48,6 @@ export function GridBatteryView() {
   }, [generation, demand, minerCapacity, minersOn]);
 
   // 막대는 총 발전량(generation)을 100%로 보고 세 세그먼트로 나눈다.
-  const seg = (v: number) => (generation > 0 ? (v / generation) * 100 : 0);
 
   return (
     <>
@@ -108,21 +106,14 @@ export function GridBatteryView() {
               <span className='text-sm font-medium'>발전 전력의 분배</span>
               <span className='text-muted-foreground text-xs'>총 발전량 {fmt(generation)}</span>
             </div>
-            <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
-              {SEGMENTS.map((s) => (
-                <Segment
-                  key={s.key}
-                  pct={seg(sim[s.key])}
-                  className={s.className}
-                  title={`${s.label} ${fmt(sim[s.key])}`}
-                />
-              ))}
-            </div>
-            <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
-              {SEGMENTS.map((s) => (
-                <Legend key={s.key} className={s.className} label={`${s.label} ${fmt(sim[s.key])}`} />
-              ))}
-            </div>
+            <StackedBar
+              segments={SEGMENTS.map((s) => ({
+                label: `${s.label} ${fmt(sim[s.key])}`,
+                value: sim[s.key],
+                className: s.className,
+              }))}
+              total={generation}
+            />
             {sim.shortage > 0 && (
               <StatusBanner tone='bad' icon={<TriangleAlert className='size-4 shrink-0' />}>
                 <span className='leading-relaxed font-normal'>
@@ -177,9 +168,4 @@ export function GridBatteryView() {
       </PageMain>
     </>
   );
-}
-
-function Segment({ pct, className, title }: { pct: number; className: string; title: string }) {
-  if (pct <= 0) return null;
-  return <div className={cn('h-full transition-all', className)} style={{ width: `${pct}%` }} title={title} />;
 }

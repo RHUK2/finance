@@ -74,7 +74,17 @@ vercel --prod     # Vercel 프로덕션 배포
 
 ### 시뮬레이션 공용 프리미티브 (`src/components/simulation.tsx`)
 
-인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `Metric`/`StatCard`(useCountUp 애니메이션 변형), `Legend`, `Sparkline`, `CostBar`, `AgentGrid`, `RoundControls`, `ExplainCard`, `SectionIntro`, `Field`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import.
+인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `SegmentedControl`, `Metric`/`StatCard`, `StatusBanner`, `Legend`, `Sparkline`, `CostBar`, `StackedBar`, `MarkTable`, `AgentGrid`, `RoundControls`, `CascadeStage`, `ExplainCard`, `SectionIntro`, `IllustrativeDisclaimer`, `Field`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import.
+
+고르는 기준이 헷갈리는 것들:
+
+| 상황                                  | 쓸 것                                                                                                                                                       |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 값 카드                               | `Metric`이 기본. `StatCard`는 `useCountUp` 애니메이션 변형이라 값이 단계마다 크게 점프하는 워크스루에만 쓴다. 슬라이더로 연속해서 변하는 값에는 쓰지 않는다 |
+| 판정·결론 한 줄                       | `Metric`이 아니라 `StatusBanner`                                                                                                                            |
+| 총량 하나가 여러 몫으로 갈리는 그림   | `StackedBar`. 총량이 없는 개별 크기 비교는 `CostBar`                                                                                                        |
+| 여러 대상을 같은 잣대로 재는 표       | `MarkTable`. 고른 행의 설명은 표 아래에 따로 그린다                                                                                                         |
+| 지금 조건에서 결과를 못 바꾸는 컨트롤 | 숨기지 말고 `disabled`. 다른 조건에서 살아난다는 사실이 설명의 일부다                                                                                       |
 
 ## 컨벤션
 

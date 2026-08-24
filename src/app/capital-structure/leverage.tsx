@@ -4,7 +4,9 @@ import { useState } from 'react';
 
 import { Coins, Landmark, Percent, Scale, TrendingUp, TriangleAlert } from 'lucide-react';
 
-import { ControlSlider, ExplainCard, Legend, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import Link from 'next/link';
+
+import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -38,33 +40,44 @@ export function Leverage() {
   const interest = (debt * rate) / 100;
 
   const net = netIncome(ebit, interest);
-  const roa = (ebit / ASSETS) * 100;
+
+  // ROA와 ROE를 같은 잣대로 재야 "ROE가 ROA를 넘어선다"는 문장이 화면의 숫자와 맞는다.
+  // ROE는 세금을 뺀 뒤의 값이므로 ROA도 세후로 잡는다. 곧 빚이 없을 때의 순이익 ÷ 자산이고,
+  // 아래 표의 '무차입' 열과 정확히 같은 정의다. 이자율도 손금 효과를 반영한 세후로 비교한다.
+  const roa = (netIncome(ebit, 0) / ASSETS) * 100;
   const roe = (net / equity) * 100;
+  const afterTaxRate = rate * (1 - TAX_RATE / 100);
   const coverage = interest > 0 ? ebit / interest : null;
 
   const segments = [
-    { label: '부채', value: debt, className: 'bg-rose-500' },
-    { label: '자기자본', value: equity, className: 'bg-sky-500' },
-  ].filter((s) => s.value > 0);
+    { label: `부채 ${fmt(debt)}`, value: debt, className: 'bg-rose-500' },
+    { label: `자기자본 ${fmt(equity)}`, value: equity, className: 'bg-sky-500' },
+  ];
 
   const banner =
-    coverage !== null && coverage < 1
+    debtRatio === 0
       ? {
-          tone: 'bad' as const,
-          icon: <TriangleAlert className='size-4 shrink-0' />,
-          text: `영업이익 ${fmt(ebit)}으로 이자 ${fmt(interest)}조차 감당하지 못한다. 이자는 실적과 무관하게 약속된 금액이라, 못 내는 순간 채권자가 회사의 운명을 쥔다.`,
+          tone: 'accent' as const,
+          icon: <Percent className='size-4 shrink-0' />,
+          text: `빚이 한 푼도 없으니 증폭할 지렛대도 없다. 주주가 자산 전부를 대고 있어 ROE와 ROA가 ${fmtPct(roe)}로 같다. 부채 비중을 올려 두 값이 벌어지는 것을 보자.`,
         }
-      : roa > rate
+      : coverage !== null && coverage < 1
         ? {
-            tone: 'good' as const,
-            icon: <TrendingUp className='size-4 shrink-0' />,
-            text: `자산이 벌어들이는 수익률 ${fmtPct(roa)}이 빌린 돈의 값 ${fmtPct(rate)}보다 높다. 남는 차익이 전부 주주 몫으로 쌓여 ROE가 ROA를 넘어선다.`,
+            tone: 'bad' as const,
+            icon: <TriangleAlert className='size-4 shrink-0' />,
+            text: `영업이익 ${fmt(ebit)}으로 이자 ${fmt(interest)}조차 감당하지 못한다. 이자는 실적과 무관하게 약속된 금액이라, 못 내는 순간 채권자가 회사의 운명을 쥔다.`,
           }
-        : {
-            tone: 'accent' as const,
-            icon: <Percent className='size-4 shrink-0' />,
-            text: `자산 수익률 ${fmtPct(roa)}이 이자율 ${fmtPct(rate)}에 못 미친다. 빌린 돈이 자기 이자도 못 벌어 오는 상태라, 레버리지가 오히려 주주 수익률을 끌어내린다.`,
-          };
+        : roa > afterTaxRate
+          ? {
+              tone: 'good' as const,
+              icon: <TrendingUp className='size-4 shrink-0' />,
+              text: `자산이 세후로 벌어들이는 ${fmtPct(roa)}이 빌린 돈의 세후 부담 ${fmtPct(afterTaxRate)}보다 높다. 남는 차익이 전부 주주 몫으로 쌓여 ROE ${fmtPct(roe)}가 ROA를 넘어선다.`,
+            }
+          : {
+              tone: 'accent' as const,
+              icon: <Percent className='size-4 shrink-0' />,
+              text: `자산의 세후 수익률 ${fmtPct(roa)}이 빌린 돈의 세후 부담 ${fmtPct(afterTaxRate)}에 못 미친다. 빌린 돈이 제 값도 못 벌어 오는 상태라, 레버리지가 오히려 ROE를 ${fmtPct(roe)}까지 끌어내린다.`,
+            };
 
   return (
     <div className='flex flex-col gap-4'>
@@ -95,7 +108,7 @@ export function Leverage() {
           max={12}
           step={0.5}
           format={(v) => `${v.toFixed(1)}%`}
-          hint='부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다.'
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${fmtPct(afterTaxRate)}다.`}
         />
         <ControlSlider
           icon={<Coins className='size-4 text-emerald-500' />}
@@ -115,24 +128,11 @@ export function Leverage() {
           <Scale className='size-4 text-sky-500' />
           자산 {fmt(ASSETS)}은 어디서 왔는가
         </span>
-        <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
-          {segments.map((s) => (
-            <div
-              key={s.label}
-              className={cn('h-full transition-all', s.className)}
-              style={{ width: `${(s.value / ASSETS) * 100}%` }}
-            />
-          ))}
-        </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
-          {segments.map((s) => (
-            <Legend key={s.label} className={s.className} label={`${s.label} ${fmt(s.value)}`} />
-          ))}
-        </div>
+        <StackedBar segments={segments} total={ASSETS} />
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-        <Metric label='ROA (자산 수익률)' value={fmtPct(roa)} sub='자본구조와 무관' />
+        <Metric label='ROA (자산 수익률)' value={fmtPct(roa)} sub='세후 기준, 자본구조와 무관' />
         <Metric
           label='ROE (자기자본 수익률)'
           value={fmtPct(roe)}
@@ -227,9 +227,13 @@ export function Leverage() {
         body={
           <>
             <p>
-              주주가 잃을 수 있는 최대치는 낸 돈까지다. 위쪽 이익에는 한도가 없다. 이 비대칭 때문에 부채가 많은 회사의
-              주주는 위험한 사업을 선호하게 된다. 잘되면 이자를 갚고 남는 전부가 자기 몫이고, 잘못돼도 이미 잃을 것이
-              정해져 있기 때문이다. 손실의 뒷부분은 채권자가 진다.
+              주주가 잃을 수 있는 최대치는 낸 돈까지다(
+              <Link href='/corporation' className='underline underline-offset-2'>
+                법인
+              </Link>{' '}
+              페이지의 유한책임 탭에서 그 벽이 어디에서 서고 어떻게 무너지는지 다룬다). 위쪽 이익에는 한도가 없다. 이
+              비대칭 때문에 부채가 많은 회사의 주주는 위험한 사업을 선호하게 된다. 잘되면 이자를 갚고 남는 전부가 자기
+              몫이고, 잘못돼도 이미 잃을 것이 정해져 있기 때문이다. 손실의 뒷부분은 채권자가 진다.
             </p>
             <p className='mt-2'>
               채권자도 이 사실을 알기에 계약으로 미리 막는다. 부채비율이나 이자보상배율의 하한을 정해 두고 어기면 즉시

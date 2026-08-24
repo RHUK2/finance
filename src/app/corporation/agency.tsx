@@ -27,6 +27,9 @@ type Organ = {
   role: string;
   icon: React.ComponentType<{ className?: string }>;
   note: string;
+  // 거래 상대방은 회사의 기관이 아니라 사슬의 바깥 끝이다. 결재를 거치는 대상이 아니므로
+  // 다른 층과 같은 배지를 달면 안 된다.
+  outside?: boolean;
 };
 
 const ORGANS: Organ[] = [
@@ -56,6 +59,7 @@ const ORGANS: Organ[] = [
     name: '거래 상대방',
     role: '계약의 반대편',
     icon: Handshake,
+    outside: true,
     note: '협상 테이블에 앉은 것은 대표이사지만, 계약의 당사자가 된 것은 회사다. 대표가 바뀌어도 계약은 그대로 이어진다.',
   },
 ];
@@ -122,8 +126,18 @@ export function Agency() {
           <div key={organ.id}>
             <OrganNode organ={organ} active={i >= start} />
             {i < ORGANS.length - 1 && (
-              <div className='flex justify-center py-1'>
-                <ArrowDown className={cn('size-4', i >= start ? 'text-sky-500' : 'text-muted-foreground/40')} />
+              <div className='flex items-center justify-center gap-1.5 py-1'>
+                <ArrowDown
+                  className={cn(
+                    'size-4',
+                    ORGANS[i + 1].outside
+                      ? 'text-violet-500'
+                      : i >= start
+                        ? 'text-sky-500'
+                        : 'text-muted-foreground/40',
+                  )}
+                />
+                {ORGANS[i + 1].outside && <span className='text-muted-foreground text-xs'>여기서부터 회사 바깥</span>}
               </div>
             )}
           </div>
@@ -153,6 +167,7 @@ export function Agency() {
           ]}
           value={counterpartyKnew}
           onChange={setCounterpartyKnew}
+          disabled={needsMeeting}
         />
         <StatusBanner tone={skipOutcome.tone}>{skipOutcome.text}</StatusBanner>
       </Card>
@@ -181,24 +196,38 @@ export function Agency() {
 }
 
 function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
+  const outside = organ.outside === true;
   return (
     <Card
       className={cn(
         'gap-1 p-4 transition-colors',
-        active ? 'border-sky-500/50 bg-sky-500/5' : 'border-dashed opacity-60',
+        outside
+          ? 'border-violet-500/50 bg-violet-500/5'
+          : active
+            ? 'border-sky-500/50 bg-sky-500/5'
+            : 'border-dashed opacity-60',
       )}
     >
       <div className='flex items-center gap-2'>
-        <organ.icon className={cn('size-4 shrink-0', active ? 'text-sky-500' : 'text-muted-foreground')} />
+        <organ.icon
+          className={cn(
+            'size-4 shrink-0',
+            outside ? 'text-violet-500' : active ? 'text-sky-500' : 'text-muted-foreground',
+          )}
+        />
         <span className='font-semibold'>{organ.name}</span>
         <span className='text-muted-foreground text-xs'>{organ.role}</span>
         <span
           className={cn(
             'ml-auto shrink-0 rounded-full px-2 py-0.5 text-xs',
-            active ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400' : 'bg-muted text-muted-foreground',
+            outside
+              ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400'
+              : active
+                ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
+                : 'bg-muted text-muted-foreground',
           )}
         >
-          {active ? '거쳐야 함' : '불필요'}
+          {outside ? '회사 바깥' : active ? '거쳐야 함' : '불필요'}
         </span>
       </div>
       <p className='text-muted-foreground text-xs/relaxed'>{organ.note}</p>
