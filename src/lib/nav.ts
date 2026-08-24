@@ -1,5 +1,6 @@
 import {
   Activity,
+  ArrowLeftRight,
   Atom,
   Banknote,
   BarChart3,
@@ -88,6 +89,10 @@ export const NAV_GROUPS = [
       { label: '법인', href: '/corporation', icon: Building2 },
       { label: '자본구조', href: '/capital-structure', icon: Layers },
     ],
+  },
+  {
+    label: '파생상품',
+    items: [{ label: '선물·헤징', href: '/futures-hedging', icon: ArrowLeftRight }],
   },
   {
     label: '부동산',
