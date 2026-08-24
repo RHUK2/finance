@@ -165,7 +165,7 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
           ? collapsed
             ? {
                 tone: 'bad',
-                text: '💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 청산으로 번진다.',
+                text: '💥 데스 스파이럴: 매도가 매도를 부르며 가격이 붕괴했다. 약한 손의 비중이 높을수록 작은 충격도 연쇄 매도로 번진다.',
               }
             : partial
               ? {
