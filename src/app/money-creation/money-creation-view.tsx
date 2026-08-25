@@ -6,10 +6,10 @@ import { useMemo, useState } from 'react';
 
 import { AppHeader } from '@/components/app-header';
 import { PageMain } from '@/components/page-main';
-import { ControlSlider, StatCard } from '@/components/simulation';
+import { ControlSlider, StatCard, StepPanel } from '@/components/simulation';
 import { formatSigned } from '@/lib/utils';
 
-import { AssetEquationCard, BalanceSheet, StepPanel, TrustSection } from './components';
+import { AssetEquationCard, BalanceSheet, TrustSection } from './components';
 import { ENTITIES, buildSteps, metricsAt, sheetsAt } from './steps';
 
 export function MoneyCreationView() {

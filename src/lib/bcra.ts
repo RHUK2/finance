@@ -15,9 +15,14 @@ export function deterred(ratio: number): boolean {
   return ratio < 1;
 }
 
-// 표시용 문자열. 값이 자릿수를 넘나들어 고정 소수점 하나로는 0.03이 `0.0배`가 된다.
-export function bcraLabel(ratio: number): string {
+// 이득÷비용 비율의 표시용 문자열. 값이 자릿수를 넘나들어 고정 소수점 하나로는
+// 0.03이 `0.0배`가 된다. BCRA 전용이 아니라 같은 모양의 비율이면 무엇이든 쓴다
+// (기축통화의 이탈 유인 비율도 0.03배~200배를 오간다).
+export function ratioLabel(ratio: number): string {
   if (ratio >= 10) return `${Math.round(ratio)}배`;
   if (ratio >= 0.1) return `${ratio.toFixed(1)}배`;
   return `${ratio.toFixed(2)}배`;
 }
+
+// BCRA 문맥에서 쓰던 이름. 호출부가 이미 여럿이라 별칭으로 남긴다.
+export const bcraLabel = ratioLabel;

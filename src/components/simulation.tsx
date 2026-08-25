@@ -1,6 +1,20 @@
 'use client';
 
-import { Check, ChevronDown, Minus, Pause, Play, RotateCcw, StepForward, TriangleAlert, X } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
+
+import {
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Pause,
+  Play,
+  RotateCcw,
+  StepForward,
+  TriangleAlert,
+  X,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -755,5 +769,101 @@ function Mark({ state }: { state: MarkState }) {
         <Minus className='size-4 text-amber-600 dark:text-amber-400' />
       )}
     </span>
+  );
+}
+
+// 서사형 워크스루의 단계 컨트롤. 화면 아래에 붙어 현재 단계의 제목·해설과 이동
+// 버튼을 함께 들고 있다. RoundControls가 자동 재생·속도 조절이 달린 시뮬레이션용인
+// 반면 이쪽은 사용자가 직접 넘기는 정해진 수의 단계를 위한 것이다.
+// 신용창조와 달러 패권이 함께 쓴다.
+function StepControls({
+  step,
+  total,
+  onPrev,
+  onNext,
+  onReset,
+  onJump,
+}: {
+  step: number;
+  total: number;
+  onPrev: () => void;
+  onNext: () => void;
+  onReset: () => void;
+  onJump: (i: number) => void;
+}) {
+  return (
+    <div className='flex flex-wrap items-center gap-2'>
+      <Button variant='outline' size='sm' onClick={onPrev} disabled={step === 0}>
+        <ChevronLeft className='size-4' /> 이전
+      </Button>
+      <Button size='sm' onClick={onNext} disabled={step === total - 1}>
+        다음 단계 <ChevronRight className='size-4' />
+      </Button>
+      <Button variant='ghost' size='sm' onClick={onReset} disabled={step === 0}>
+        <RotateCcw className='size-4' /> 리셋
+      </Button>
+      <div className='ml-auto flex items-center gap-1.5'>
+        {Array.from({ length: total }, (_, i) => (
+          <button
+            key={i}
+            aria-label={`${i}단계로 이동`}
+            onClick={() => onJump(i)}
+            className={cn(
+              'size-2.5 rounded-full transition-colors',
+              i === step ? 'bg-primary' : 'bg-muted hover:bg-muted-foreground/40',
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function StepPanel({
+  step,
+  total,
+  title,
+  narration,
+  onPrev,
+  onNext,
+  onReset,
+  onJump,
+  slider,
+}: {
+  step: number;
+  total: number;
+  title: string;
+  narration: string;
+  onPrev: () => void;
+  onNext: () => void;
+  onReset: () => void;
+  onJump: (i: number) => void;
+  slider?: ReactNode;
+}) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className='sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 md:bottom-4'>
+      <Card className='bg-card gap-0 overflow-hidden p-0 shadow-xl'>
+        <button
+          type='button'
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className='hover:bg-muted/40 flex w-full items-center gap-2 px-3 py-2 text-left transition-colors'
+        >
+          <span className='bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold'>
+            <span className='translate-y-px'>{step}</span>
+          </span>
+          <span className='flex-1 truncate font-semibold'>{title}</span>
+          <ChevronDown className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')} />
+        </button>
+        {open && (
+          <div className='flex flex-col gap-3 border-t p-3'>
+            <p className='text-muted-foreground text-sm/relaxed'>{narration}</p>
+            {slider}
+            <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
+          </div>
+        )}
+      </Card>
+    </div>
   );
 }

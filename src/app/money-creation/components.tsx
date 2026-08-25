@@ -1,10 +1,8 @@
 'use client';
 
-import { ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, Minus, RotateCcw, Sparkles } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { ArrowLeftRight, Minus, Sparkles } from 'lucide-react';
 
 import { ExplainCard } from '@/components/simulation';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCountUp } from '@/hooks/use-count-up';
 import { cn, formatSigned } from '@/lib/utils';
@@ -109,98 +107,6 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-function StepControls({
-  step,
-  total,
-  onPrev,
-  onNext,
-  onReset,
-  onJump,
-}: {
-  step: number;
-  total: number;
-  onPrev: () => void;
-  onNext: () => void;
-  onReset: () => void;
-  onJump: (i: number) => void;
-}) {
-  return (
-    <div className='flex flex-wrap items-center gap-2'>
-      <Button variant='outline' size='sm' onClick={onPrev} disabled={step === 0}>
-        <ChevronLeft className='size-4' /> 이전
-      </Button>
-      <Button size='sm' onClick={onNext} disabled={step === total - 1}>
-        다음 단계 <ChevronRight className='size-4' />
-      </Button>
-      <Button variant='ghost' size='sm' onClick={onReset} disabled={step === 0}>
-        <RotateCcw className='size-4' /> 리셋
-      </Button>
-      <div className='ml-auto flex items-center gap-1.5'>
-        {Array.from({ length: total }, (_, i) => (
-          <button
-            key={i}
-            aria-label={`${i}단계로 이동`}
-            onClick={() => onJump(i)}
-            className={cn(
-              'size-2.5 rounded-full transition-colors',
-              i === step ? 'bg-primary' : 'bg-muted hover:bg-muted-foreground/40',
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function StepPanel({
-  step,
-  total,
-  title,
-  narration,
-  onPrev,
-  onNext,
-  onReset,
-  onJump,
-  slider,
-}: {
-  step: number;
-  total: number;
-  title: string;
-  narration: string;
-  onPrev: () => void;
-  onNext: () => void;
-  onReset: () => void;
-  onJump: (i: number) => void;
-  slider?: ReactNode;
-}) {
-  const [open, setOpen] = useState(true);
-  return (
-    <div className='sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 md:bottom-4'>
-      <Card className='bg-card gap-0 overflow-hidden p-0 shadow-xl'>
-        <button
-          type='button'
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          className='hover:bg-muted/40 flex w-full items-center gap-2 px-3 py-2 text-left transition-colors'
-        >
-          <span className='bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold'>
-            <span className='translate-y-px'>{step}</span>
-          </span>
-          <span className='flex-1 truncate font-semibold'>{title}</span>
-          <ChevronDown className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')} />
-        </button>
-        {open && (
-          <div className='flex flex-col gap-3 border-t p-3'>
-            <p className='text-muted-foreground text-sm/relaxed'>{narration}</p>
-            {slider}
-            <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
-          </div>
-        )}
-      </Card>
-    </div>
   );
 }
 
