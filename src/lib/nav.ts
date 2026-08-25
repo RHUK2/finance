@@ -7,6 +7,7 @@ import {
   Bitcoin,
   Building2,
   Coins,
+  Globe,
   EyeOff,
   Fingerprint,
   Gauge,
@@ -37,6 +38,7 @@ export const NAV_GROUPS = [
       { label: '자산 현황', href: '/', icon: BarChart3 },
       { label: '경제 차트', href: '/economy', icon: LineChart },
       { label: '원자재 차트', href: '/commodities', icon: Wheat },
+      { label: '선물·헤징', href: '/futures-hedging', icon: ArrowLeftRight },
     ],
   },
   {
@@ -81,6 +83,7 @@ export const NAV_GROUPS = [
     items: [
       { label: '신용창조', href: '/money-creation', icon: Landmark },
       { label: '구매력 붕괴', href: '/inflation', icon: TrendingDown },
+      { label: '달러 패권', href: '/dollar-hegemony', icon: Globe },
     ],
   },
   {
@@ -89,10 +92,6 @@ export const NAV_GROUPS = [
       { label: '법인', href: '/corporation', icon: Building2 },
       { label: '자본구조', href: '/capital-structure', icon: Layers },
     ],
-  },
-  {
-    label: '파생상품',
-    items: [{ label: '선물·헤징', href: '/futures-hedging', icon: ArrowLeftRight }],
   },
   {
     label: '부동산',
