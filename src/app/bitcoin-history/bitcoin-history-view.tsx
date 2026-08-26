@@ -1,7 +1,6 @@
 'use client';
 
-import { AppHeader } from '@/components/app-header';
-import { PageMain } from '@/components/page-main';
+import { ExplainerPage } from '@/components/explainer-page';
 import { ExplainCard, SectionIntro, SimTabs } from '@/components/simulation';
 import { Badge } from '@/components/ui/badge';
 import { BTC_COLOR, cn } from '@/lib/utils';
@@ -91,21 +90,17 @@ const TABS = [
 
 export function BitcoinHistoryView() {
   return (
-    <>
-      <AppHeader breadcrumbs={[{ label: '비트코인 역사' }]} />
-      <PageMain>
-        <div className='mx-auto flex max-w-5xl flex-col gap-4'>
-          <div>
-            <h1 className='text-xl font-semibold'>비트코인 역사: 두 개의 타임라인</h1>
-            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
-              같은 역사를 두 렌즈로 본다. 하나는 프로토콜이 어떻게 (안) 바뀌어 왔는가라는 거버넌스의 전장, 다른 하나는
-              세상이 비트코인을 어떻게 받아들였는가라는 시장·채택의 서사. 각 항목을 눌러 자세히 볼 수 있다.
-            </p>
-          </div>
-
-          <SimTabs tabs={TABS} defaultValue='governance' />
-        </div>
-      </PageMain>
-    </>
+    <ExplainerPage
+      breadcrumb='비트코인 역사'
+      title='비트코인 역사: 두 개의 타임라인'
+      intro={
+        <>
+          같은 역사를 두 렌즈로 본다. 하나는 프로토콜이 어떻게 (안) 바뀌어 왔는가라는 거버넌스의 전장, 다른 하나는
+          세상이 비트코인을 어떻게 받아들였는가라는 시장·채택의 서사. 각 항목을 눌러 자세히 볼 수 있다.
+        </>
+      }
+    >
+      <SimTabs tabs={TABS} defaultValue='governance' />
+    </ExplainerPage>
   );
 }

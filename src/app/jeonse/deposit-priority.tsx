@@ -17,8 +17,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-
-const fmtEok = (n: number) => `${n.toFixed(1)}억`;
+import { formatEok } from '@/lib/utils';
 
 export function DepositPriority() {
   const [deposit, setDeposit] = useState(4);
@@ -54,18 +53,18 @@ export function DepositPriority() {
           tone: 'bad' as const,
           icon: <ShieldOff className='size-4 shrink-0' />,
           text: !moveIn
-            ? `전입신고와 점유가 없으면 대항력도 우선변제권도 생기지 않는다. 임차인은 경매 절차 밖의 일반 채권자가 되어 ${fmtEok(lost)}을 떼인다.`
+            ? `전입신고와 점유가 없으면 대항력도 우선변제권도 생기지 않는다. 임차인은 경매 절차 밖의 일반 채권자가 되어 ${formatEok(lost)}을 떼인다.`
             : canClaim
-              ? `근저당이 먼저 잡힌 집이라 은행이 ${fmtEok(bankPaid)}을 먼저 가져간다. 남은 돈에서 배당받고도 ${fmtEok(lost)}이 비지만, 후순위라 낙찰자에게 청구할 수도 없다.`
-              : `확정일자가 없어 배당에 아예 끼지 못한다. 근저당보다 뒤라 낙찰자에게 버틸 수도 없어 ${fmtEok(lost)}을 그대로 떼인다.`,
+              ? `근저당이 먼저 잡힌 집이라 은행이 ${formatEok(bankPaid)}을 먼저 가져간다. 남은 돈에서 배당받고도 ${formatEok(lost)}이 비지만, 후순위라 낙찰자에게 청구할 수도 없다.`
+              : `확정일자가 없어 배당에 아예 끼지 못한다. 근저당보다 뒤라 낙찰자에게 버틸 수도 없어 ${formatEok(lost)}을 그대로 떼인다.`,
         }
       : {
           tone: 'good' as const,
           icon: <ShieldCheck className='size-4 shrink-0' />,
           text:
             assumed > 0
-              ? `배당으로 ${fmtEok(distributed)}을 받고, 모자란 ${fmtEok(assumed)}은 낙찰자가 떠안는다. 그 돈을 다 받을 때까지 집을 비워 주지 않아도 된다. 선순위 대항력의 힘이다.`
-              : `낙찰가에서 순위대로 나눠 보증금 ${fmtEok(deposit)}을 전액 배당받았다.`,
+              ? `배당으로 ${formatEok(distributed)}을 받고, 모자란 ${formatEok(assumed)}은 낙찰자가 떠안는다. 그 돈을 다 받을 때까지 집을 비워 주지 않아도 된다. 선순위 대항력의 힘이다.`
+              : `낙찰가에서 순위대로 나눠 보증금 ${formatEok(deposit)}을 전액 배당받았다.`,
         };
 
   return (
@@ -130,7 +129,7 @@ export function DepositPriority() {
           min={0.5}
           max={10}
           step={0.5}
-          format={fmtEok}
+          format={formatEok}
         />
         <ControlSlider
           icon={<Landmark className='size-4 text-rose-500' />}
@@ -140,7 +139,7 @@ export function DepositPriority() {
           min={0}
           max={10}
           step={0.5}
-          format={fmtEok}
+          format={formatEok}
           hint='등기부등본 을구에서 확인한다. 실제 대출 잔액이 아니라 채권최고액이 적혀 있다.'
         />
         <ControlSlider
@@ -151,33 +150,33 @@ export function DepositPriority() {
           min={0.5}
           max={15}
           step={0.5}
-          format={fmtEok}
+          format={formatEok}
           hint='경매는 시세보다 낮게 낙찰되는 경우가 많다. 나눌 수 있는 돈은 시세가 아니라 이 금액이다.'
         />
       </Card>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
-        <Metric label='배당으로 받는 돈' value={fmtEok(distributed)} tone={distributed > 0 ? 'good' : 'bad'} />
+        <Metric label='배당으로 받는 돈' value={formatEok(distributed)} tone={distributed > 0 ? 'good' : 'bad'} />
         <Metric
           label='낙찰자가 떠안는 돈'
-          value={fmtEok(assumed)}
+          value={formatEok(assumed)}
           sub={hasOpposing ? '선순위 대항력' : '대항력 없음'}
           tone={assumed > 0 ? 'accent' : undefined}
         />
-        <Metric label='총 회수액' value={fmtEok(recovered)} sub={`보증금 ${fmtEok(deposit)}`} />
-        <Metric label='못 받는 돈' value={fmtEok(lost)} tone={lost > 0 ? 'bad' : 'good'} />
+        <Metric label='총 회수액' value={formatEok(recovered)} sub={`보증금 ${formatEok(deposit)}`} />
+        <Metric label='못 받는 돈' value={formatEok(lost)} tone={lost > 0 ? 'bad' : 'good'} />
       </div>
 
       <Card className='gap-4 p-4'>
         <span className='text-muted-foreground text-xs'>
-          낙찰가 {fmtEok(salePrice)}이 {tenantFirst ? '임차인 → 은행' : '은행 → 임차인'} 순서로 배분된다
+          낙찰가 {formatEok(salePrice)}이 {tenantFirst ? '임차인 → 은행' : '은행 → 임차인'} 순서로 배분된다
         </span>
         <CostBar
           label='임차인 배당'
           value={distributed}
           max={barMax}
           className='bg-emerald-500'
-          format={fmtEok}
+          format={formatEok}
           sub={canClaim ? (tenantFirst ? '1순위' : '근저당 다음 순위') : '확정일자가 없어 배당에 못 낀다'}
         />
         <CostBar
@@ -185,15 +184,15 @@ export function DepositPriority() {
           value={bankPaid}
           max={barMax}
           className='bg-rose-500'
-          format={fmtEok}
-          sub={`채권액 ${fmtEok(mortgage)}`}
+          format={formatEok}
+          sub={`채권액 ${formatEok(mortgage)}`}
         />
         <CostBar
           label='낙찰자 인수'
           value={assumed}
           max={barMax}
           className='bg-amber-500'
-          format={fmtEok}
+          format={formatEok}
           sub={hasOpposing ? '낙찰자가 대신 갚아야 하는 금액' : '대항력이 없으면 인수되지 않는다'}
         />
         <CostBar
@@ -201,7 +200,7 @@ export function DepositPriority() {
           value={lost}
           max={barMax}
           className='bg-fuchsia-500'
-          format={fmtEok}
+          format={formatEok}
           sub='집주인에게 남은 재산이 없다면 회수가 어렵다'
         />
       </Card>

@@ -3,11 +3,13 @@
 ## 명령어
 
 ```bash
-pnpm dev          # 개발 서버 (매번 .next 캐시 삭제 후 시작)
+pnpm dev          # 개발 서버
 pnpm type         # TypeScript 타입 체크
 pnpm lint         # ESLint (max-warnings 10)
-pnpm build        # 프로덕션 빌드 (prebuild로 type + lint 선행)
+pnpm inspect      # type + lint 한 번에
+pnpm build        # 프로덕션 빌드 (type·lint를 선행하지 않는다. inspect를 먼저 돌릴 것)
 pnpm format       # Prettier 포맷
+pnpm clean:caches # .next 삭제
 vercel --prod     # Vercel 프로덕션 배포
 ```
 
@@ -22,7 +24,8 @@ vercel --prod     # Vercel 프로덕션 배포
 - **캐시 설정** (`src/lib/cache-config.ts`): 신선도(TTL)의 단일 출처. `ENDPOINTS` 표의 키 = TanStack Query queryKey = `/api/<key>` 경로 세그먼트. 서버 캐시 TTL과 클라이언트 `staleTime`/`refetchInterval`이 모두 여기서 파생
 - **Route Handler** (`src/app/api/*/route.ts`): 외부 API를 호출하고 `cached(key, fetcher)`(`src/lib/cache.ts`, Upstash read-through + 락 기반 스탬피드 차단)로 캐싱. 클라이언트에 API 키나 외부 도메인을 노출하지 않는 프록시 역할. 공용 fetch 헬퍼는 `src/lib/fred.ts`(FRED), `src/lib/yahoo.ts`(Yahoo 시계열), `src/lib/series.ts`(`MacroSeries` 타입·변환)에 위치
 - **훅** (`src/hooks/use-*.ts`): 각 훅은 `useEndpoint<T>(key)`(`src/hooks/use-endpoint.ts`) 한 줄 래퍼. 컴포넌트는 훅을 통해서만 데이터 접근
-- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
+- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재)와 Google Finance(`market` 라우트의 폴백 시세, 스크레이프), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
+- **API 키**: `FRED_API_KEY`와 `ECOS_API_KEY` 둘뿐이다. FRED는 없으면 해당 라우트가 실패하지만 ECOS는 없어도 되며, 그때 `available: false`를 돌려주고 화면이 한국 데이터 없이 그려진다. 제공처별 함정은 문서가 아니라 해당 파일 주석에 둔다(폐기 시리즈와 `Promise.all` 전파는 `src/lib/fred.ts`, 키 부재 처리는 `api/inflation-data-kr/route.ts`)
 
 ### 비트코인 지표 모델 (`src/lib/bitcoin-models.ts`)
 
@@ -39,7 +42,7 @@ vercel --prod     # Vercel 프로덕션 배포
 
 | 위치                          | 쓰는 곳                                                                                |
 | ----------------------------- | -------------------------------------------------------------------------------------- |
-| `src/app/<page>/models.ts`    | 비트코인 인사이트 그룹 (게임이론·소프트워·변동성)                                      |
+| `src/app/<page>/models.ts`    | 그 페이지 전용 모델. 한 페이지에서만 쓰이면 여기                                       |
 | `src/lib/<domain>-models.ts`  | 도메인 계산 모델 (`bitcoin-models`·`inflation-models`·`mortgage-models`)               |
 | `src/lib/<domain>-concept.ts` | 비트코인 프로토콜 그룹 (tx·script·block·chain·bip·p2p·privacy·lightning·soft-fork 9개) |
 
@@ -92,16 +95,18 @@ vercel --prod     # Vercel 프로덕션 배포
   자산 현황 · 경제 차트 · 원자재 차트 · 비트코인 차트 · 비트코인 네트워크
 
 설명형 페이지     h1 · max-w-5xl · 해라체
-  비트코인 인사이트 7개 · 프로토콜 10개 · 화폐 2개 · 기업 2개 · 부동산 2개
+  나머지 전부
 ```
 
 데이터를 보여 주는 화면은 존대, 개념을 설명하는 화면은 평서다. `/bitcoin`과 `/mempool`에 h1이 없는 것은 빠뜨린 게 아니라 대시보드 부류의 규약이다.
+
+어느 쪽인지는 개수를 세지 말고 껍데기로 판별한다. `ExplainerPage`(`src/components/explainer-page.tsx`)를 쓰면 설명형, `AppHeader`와 `PageMain`을 직접 쓰면 대시보드다. 대시보드는 위에 나열한 다섯뿐이고 늘어날 일이 드물다.
 
 설명형 페이지를 만들거나 손볼 때는 아래를 따른다.
 
 | 항목                     | 규칙                                                                                                              |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| 페이지 골격              | `AppHeader` + `PageMain` + `max-w-5xl` + h1 + 인트로 `p.text-sm/relaxed`                                          |
+| 페이지 골격              | `ExplainerPage`에 `breadcrumb`·`title`·`intro`를 넘긴다. h1·`max-w-5xl`·인트로 클래스를 직접 쓰지 않는다          |
 | h1                       | 단정형 또는 질문형 한 문장. 논지가 논쟁적이면 인트로 첫 문장에서 주장의 출처를 밝힌다                             |
 | 탭                       | 내용이 실제로 갈릴 때만 쓴다. 억지로 만들지 않는다                                                                |
 | 탭 라벨                  | 실제 순서가 있으면 번호 접두사, 병렬 관점이면 번호 없이 명사구                                                    |
@@ -114,7 +119,9 @@ vercel --prod     # Vercel 프로덕션 배포
 
 ### 시뮬레이션 공용 프리미티브 (`src/components/simulation.tsx`)
 
-인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `SegmentedControl`, `Metric`/`StatCard`, `StatusBanner`, `Legend`, `Sparkline`, `CostBar`, `StackedBar`, `MarkTable`, `AgentGrid`, `RoundControls`, `CascadeStage`, `ExplainCard`, `SectionIntro`, `IllustrativeDisclaimer`, `Field`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import.
+인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `SegmentedControl`, `Metric`/`StatCard`, `StatusBanner`, `Legend`, `Sparkline`, `CostBar`, `StackedBar`, `MarkTable`, `AgentGrid`, `RoundControls`, `CascadeStage`, `ExplainCard`, `SectionIntro`, `IllustrativeDisclaimer`, `Field`, `StepPanel`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import. 페이지 껍데기는 여기가 아니라 `ExplainerPage`다.
+
+재생 배선은 `src/hooks/use-round-engine.ts`에 둘 있다. 살아 있는 상태를 한 스텝씩 미는 시뮬레이션은 `useRoundEngine`을 직접 쓰고, 궤적을 미리 다 계산해 두는 결정론적 캐스케이드 넷은 `useTrajectoryPlayer(frames, speedMs)`를 쓴다. 후자는 `round`/`last`/`frame`/`done`/`step`/`seek`/`engine`을 한 번에 돌려주므로 `CascadeStage`에 그대로 넘길 수 있다. 파라미터를 바꿔 궤적을 다시 계산할 때 처음부터 보여 주려면 호출부에서 `key`로 리마운트한다.
 
 고르는 기준이 헷갈리는 것들:
 
@@ -134,18 +141,11 @@ vercel --prod     # Vercel 프로덕션 배포
 - **새 API 엔드포인트 추가**: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·TTL 추가 → 라우트에서 `cached(key, ...)` 사용 → 훅은 `useEndpoint<T>(key)` 한 줄
 - **새 차트 추가**: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - **UI 컴포넌트**: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용
+- **통화·비율 표기**: `src/lib/utils.ts`의 `formatMan`·`formatWon`·`formatEok`·`formatEokFromMan`·`formatEokFromWon`·`formatPct`를 쓴다. 로컬에 `fmtEok` 같은 걸 다시 만들지 않는다. 억으로 찍는 함수가 셋인 것은 입력 단위가 페이지마다 다르기 때문이고, 이름 뒤 `From`이 입력 단위다. 자릿수만 다르면 인자로 넘긴다
 - **커밋 메시지**: `{type}: {한국어 설명}` 형식 (`feat` / `fix` / `refactor` / `chore` 등)
 
 ## Agent skills
 
-### 이슈 트래커
-
-이슈·스펙은 이 저장소의 `.scratch/<feature>/` 아래 마크다운 파일로 관리한다. `docs/agents/issue-tracker.md` 참조.
-
-### Triage 라벨
-
-기본 5개 역할 라벨(`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`)을 그대로 사용한다. `docs/agents/triage-labels.md` 참조.
-
-### 도메인 문서
-
-단일 컨텍스트 구조: 루트 `CONTEXT.md` + `docs/adr/`. `docs/agents/domain.md` 참조.
+- **이슈 트래커**: 이슈·스펙은 `.scratch/<feature>/` 아래 마크다운 파일로 관리한다(gitignore되어 로컬에만 남는다). 규약은 `docs/agents/issue-tracker.md`
+- **Triage 라벨**: `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix` 다섯을 그대로 쓴다. 이슈 파일 상단 `Status:` 줄에 적는다
+- **도메인 문서**: 단일 컨텍스트 구조로 루트 `CONTEXT.md` + `docs/adr/`. 규약은 `docs/agents/domain.md`

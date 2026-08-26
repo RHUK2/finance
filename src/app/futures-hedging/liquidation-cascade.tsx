@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Gauge, Zap } from 'lucide-react';
 
@@ -14,7 +14,7 @@ import {
   SectionIntro,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 
 import { CASCADE_IMPACT, ENTRY_PRICE, OPENING_SHOCK, type Position, buildPositions, cascadeTrajectory } from './models';
 
@@ -82,26 +82,8 @@ function CascadeSim({
 }) {
   // 난수가 개입하지 않는 결정론적 연쇄라 전 궤적을 미리 계산할 수 있다.
   const frames = useMemo(() => cascadeTrajectory(positions, CASCADE_IMPACT), [positions]);
-  const last = frames.length - 1;
-  const [round, setRound] = useState(0);
+  const { round, last, frame, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
 
-  const step = useCallback(() => {
-    if (round >= last) return false;
-    setRound(round + 1);
-    return round + 1 < last;
-  }, [round, last]);
-
-  const engine = useRoundEngine(step, speedMs);
-  const seek = useCallback(
-    (r: number) => {
-      engine.pause();
-      setRound(r);
-    },
-    [engine],
-  );
-
-  const frame = frames[round];
-  const done = round >= last;
   const wiped = frame.liquidated.filter(Boolean).length;
   const alive = positions.length - wiped;
 

@@ -8,11 +8,10 @@ import { Banknote, House, Landmark, Percent, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
+import { formatEok, formatMan, formatPct } from '@/lib/utils';
 
 // 금액 단위는 만원. 보증금만 억 단위 슬라이더로 받고 내부에서 만원으로 환산한다.
-const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
-const fmtEok = (n: number) => `${n.toFixed(1)}억`;
-const fmtPct = (n: number) => `${n.toFixed(2)}%`;
+const fmtPct = (n: number) => formatPct(n, 2);
 
 export function DepositLoan() {
   const [depositEok, setDepositEok] = useState(4);
@@ -31,12 +30,12 @@ export function DepositLoan() {
       ? {
           tone: 'good' as const,
           icon: <House className='size-4 shrink-0' />,
-          text: `전월세전환율 ${fmtPct(conversionRate)}가 시장금리 ${fmtPct(rate)}보다 높다. 같은 집에 사는 값을 월세로 치르면 연 ${fmtMan(gap)}을 더 낸다. 임차인은 전세를 고른다.`,
+          text: `전월세전환율 ${fmtPct(conversionRate)}가 시장금리 ${fmtPct(rate)}보다 높다. 같은 집에 사는 값을 월세로 치르면 연 ${formatMan(gap)}을 더 낸다. 임차인은 전세를 고른다.`,
         }
       : {
           tone: 'accent' as const,
           icon: <Wallet className='size-4 shrink-0' />,
-          text: `전월세전환율 ${fmtPct(conversionRate)}가 시장금리 ${fmtPct(rate)}보다 낮다. 보증금을 은행에 넣고 월세를 내는 편이 연 ${fmtMan(-gap)} 이득이다. 금리가 오르면 전세 수요가 월세로 옮겨 가는 이유다.`,
+          text: `전월세전환율 ${fmtPct(conversionRate)}가 시장금리 ${fmtPct(rate)}보다 낮다. 보증금을 은행에 넣고 월세를 내는 편이 연 ${formatMan(-gap)} 이득이다. 금리가 오르면 전세 수요가 월세로 옮겨 가는 이유다.`,
         };
 
   return (
@@ -56,7 +55,7 @@ export function DepositLoan() {
           min={1}
           max={10}
           step={0.5}
-          format={fmtEok}
+          format={formatEok}
         />
         <ControlSlider
           icon={<Percent className='size-4 text-emerald-500' />}
@@ -77,7 +76,7 @@ export function DepositLoan() {
           min={20}
           max={400}
           step={5}
-          format={fmtMan}
+          format={formatMan}
           hint='비교를 단순하게 하려고 월세 보증금은 없다고 본다.'
         />
       </Card>
@@ -86,13 +85,13 @@ export function DepositLoan() {
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
         <Metric
           label='전세의 연 비용'
-          value={fmtMan(jeonseCost)}
+          value={formatMan(jeonseCost)}
           sub='포기한 이자'
           tone={jeonseCost <= rentCost ? 'good' : 'bad'}
         />
         <Metric
           label='월세의 연 비용'
-          value={fmtMan(rentCost)}
+          value={formatMan(rentCost)}
           sub='통장에서 나가는 돈'
           tone={rentCost < jeonseCost ? 'good' : 'bad'}
         />
@@ -111,23 +110,23 @@ export function DepositLoan() {
           value={jeonseCost}
           max={barMax}
           className='bg-sky-500'
-          format={fmtMan}
-          sub={`보증금 ${fmtEok(depositEok)}을 묶어 두며 포기한 이자`}
+          format={formatMan}
+          sub={`보증금 ${formatEok(depositEok)}을 묶어 두며 포기한 이자`}
         />
         <CostBar
           label='월세로 살 때 1년치 값'
           value={rentCost}
           max={barMax}
           className='bg-amber-500'
-          format={fmtMan}
-          sub={`월 ${fmtMan(monthlyRent)} × 12개월`}
+          format={formatMan}
+          sub={`월 ${formatMan(monthlyRent)} × 12개월`}
         />
         <CostBar
           label='임대인이 보증금에서 얻는 연 수익'
           value={jeonseCost}
           max={barMax}
           className='bg-emerald-500'
-          format={fmtMan}
+          format={formatMan}
           sub='임차인이 포기한 이자가 그대로 임대인에게 간다'
         />
       </Card>

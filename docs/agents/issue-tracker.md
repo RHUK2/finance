@@ -18,7 +18,7 @@
 - 기능 하나당 디렉터리 하나: `.scratch/<feature-slug>/`
 - 스펙 파일은 `.scratch/<feature-slug>/spec.md`
 - 구현 이슈는 티켓당 파일 하나, `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, `01`부터 번호 매김. 하나로 합친 티켓 파일은 만들지 않는다
-- Triage 상태는 각 이슈 파일 상단의 `Status:` 줄에 기록한다 (역할 문자열은 `triage-labels.md` 참조)
+- Triage 상태는 각 이슈 파일 상단의 `Status:` 줄에 기록한다. 값은 표준 5개 역할 문자열을 그대로 쓴다: `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`
 - 코멘트와 대화 이력은 파일 하단 `## Comments` 제목 아래에 덧붙인다
 
 ## 스킬이 "이슈 트래커에 발행"이라고 할 때

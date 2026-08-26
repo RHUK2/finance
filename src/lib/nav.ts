@@ -103,5 +103,3 @@ export const NAV_GROUPS = [
     ],
   },
 ];
-
-export const NAV_ITEMS = NAV_GROUPS.flatMap((group) => group.items);

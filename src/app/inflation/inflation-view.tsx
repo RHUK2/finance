@@ -4,8 +4,7 @@ import Link from 'next/link';
 
 import { useMemo, useState } from 'react';
 
-import { AppHeader } from '@/components/app-header';
-import { PageMain } from '@/components/page-main';
+import { ExplainerPage } from '@/components/explainer-page';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { SimTabs } from '@/components/simulation';
@@ -86,53 +85,49 @@ export function InflationView() {
   );
 
   return (
-    <>
-      <AppHeader breadcrumbs={[{ label: '구매력 붕괴' }]} />
-      <PageMain>
-        <div className='mx-auto flex max-w-5xl flex-col gap-4'>
-          <div>
-            <h1 className='text-xl font-semibold'>예금은 노동의 가치를 지켜주는가</h1>
-            <p className='text-muted-foreground mt-1 text-sm'>
-              CPI(소비재 물가)·M2(통화량)·자산가격은 서로 다른 것을 측정한다. 예금 금리가 통화 팽창에 못 미치면, 저축한
-              과거 노동의 구매력은 조용히 줄어든다. 어느 쪽이 얼마나 벌어지는지 데이터로 비교해 보자. 여기서 기준으로
-              쓰는 M2가 애초에 어떻게 불어나는지는{' '}
-              <Link href='/money-creation' className='underline underline-offset-2'>
-                신용창조
-              </Link>{' '}
-              페이지에서 다룬다.
-            </p>
-          </div>
+    <ExplainerPage
+      breadcrumb='구매력 붕괴'
+      title='예금은 노동의 가치를 지켜주는가'
+      intro={
+        <>
+          CPI(소비재 물가)·M2(통화량)·자산가격은 서로 다른 것을 측정한다. 예금 금리가 통화 팽창에 못 미치면, 저축한 과거
+          노동의 구매력은 조용히 줄어든다. 어느 쪽이 얼마나 벌어지는지 데이터로 비교해 보자. 여기서 기준으로 쓰는 M2가
+          애초에 어떻게 불어나는지는{' '}
+          <Link href='/money-creation' className='underline underline-offset-2'>
+            신용창조
+          </Link>{' '}
+          페이지에서 다룬다.
+        </>
+      }
+    >
+      <div className='flex gap-2'>
+        {(Object.keys(CONFIG) as Country[]).map((c) => (
+          <Button key={c} size='sm' variant={country === c ? 'default' : 'outline'} onClick={() => setCountry(c)}>
+            {CONFIG[c].label}
+          </Button>
+        ))}
+      </div>
 
-          <div className='flex gap-2'>
-            {(Object.keys(CONFIG) as Country[]).map((c) => (
-              <Button key={c} size='sm' variant={country === c ? 'default' : 'outline'} onClick={() => setCountry(c)}>
-                {CONFIG[c].label}
-              </Button>
-            ))}
-          </div>
+      {!data ? (
+        <Card>
+          <CardContent className='text-muted-foreground text-sm'>데이터를 불러오는 중…</CardContent>
+        </Card>
+      ) : data.available === false ? (
+        <Card>
+          <CardContent className='text-muted-foreground text-sm'>
+            {cfg.label} 데이터는 <code className='text-foreground'>{cfg.envKey}</code> 환경변수를 설정하면 표시된다.
+          </CardContent>
+        </Card>
+      ) : (
+        <Devices country={country} cfg={cfg} data={data} btc={btc} />
+      )}
 
-          {!data ? (
-            <Card>
-              <CardContent className='text-muted-foreground text-sm'>데이터를 불러오는 중…</CardContent>
-            </Card>
-          ) : data.available === false ? (
-            <Card>
-              <CardContent className='text-muted-foreground text-sm'>
-                {cfg.label} 데이터는 <code className='text-foreground'>{cfg.envKey}</code> 환경변수를 설정하면 표시된다.
-              </CardContent>
-            </Card>
-          ) : (
-            <Devices country={country} cfg={cfg} data={data} btc={btc} />
-          )}
-
-          <p className='text-muted-foreground border-t pt-4 text-xs/relaxed'>
-            CPI는 통계청/BLS 정의에 따른 측정치이며, 통화 팽창·자산가격은 별개 지표다. 이 페이지는 특정 측정의 오류를
-            단정하지 않고, 예금 금리와 통화·자산 지표 간의 격차를 보여준다. M2는 2021년 정의가 변경되었고, 예금 금리는
-            단기 안전금리(미국: 3개월 국채) 근사이며, 자산 수익률은 배당·세금·거래비용을 제외한 가격 기준이다.
-          </p>
-        </div>
-      </PageMain>
-    </>
+      <p className='text-muted-foreground border-t pt-4 text-xs/relaxed'>
+        CPI는 통계청/BLS 정의에 따른 측정치이며, 통화 팽창·자산가격은 별개 지표다. 이 페이지는 특정 측정의 오류를
+        단정하지 않고, 예금 금리와 통화·자산 지표 간의 격차를 보여준다. M2는 2021년 정의가 변경되었고, 예금 금리는 단기
+        안전금리(미국: 3개월 국채) 근사이며, 자산 수익률은 배당·세금·거래비용을 제외한 가격 기준이다.
+      </p>
+    </ExplainerPage>
   );
 }
 

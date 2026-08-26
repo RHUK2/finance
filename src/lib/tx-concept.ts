@@ -46,7 +46,3 @@ export type Utxo = { id: number; sats: number };
 export function formatSats(sats: number): string {
   return `${sats.toLocaleString('en-US')} sat`;
 }
-
-export function satsToBtc(sats: number): string {
-  return (sats / 1e8).toFixed(8);
-}

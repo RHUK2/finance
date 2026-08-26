@@ -4,8 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { Battery, Bitcoin, TriangleAlert, Wind, Zap } from 'lucide-react';
 
-import { AppHeader } from '@/components/app-header';
-import { PageMain } from '@/components/page-main';
+import { ExplainerPage } from '@/components/explainer-page';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -50,122 +49,118 @@ export function GridBatteryView() {
   // 막대는 총 발전량(generation)을 100%로 보고 세 세그먼트로 나눈다.
 
   return (
-    <>
-      <AppHeader breadcrumbs={[{ label: '비트코인 전력망' }]} />
-      <PageMain>
-        <div className='mx-auto flex max-w-5xl flex-col gap-4'>
-          <div>
-            <h1 className='text-xl font-semibold'>비트코인은 전력망의 배터리다</h1>
-            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
-              채굴 업계와 일부 전력망 연구가 내세우는 주장이다. 전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야
-              하는데, 비트코인 채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는 &#39;유연 부하&#39;라 버려질
-              에너지를 수익으로 바꾼다는 것이다. 다만 채굴은 배터리와 달리 흡수한 전기를 전력망에 되돌려주지 않는다.
-              비유는 &#39;남는 전기를 쓸모 있게 만든다&#39;는 데까지만 유효하다. 아래 슬라이더로 그 구조를 직접 확인해
-              보자. 수치는 개념 이해용 예시다.
-            </p>
-          </div>
-
-          {/* 컨트롤 */}
-          <Card className='gap-4 p-4'>
-            <ControlSlider
-              icon={<Wind className='size-4 text-sky-500' />}
-              label='재생에너지 발전량'
-              value={generation}
-              onChange={setGeneration}
-              format={fmt}
-            />
-            <ControlSlider
-              icon={<Zap className='size-4 text-emerald-500' />}
-              label='전력 수요'
-              value={demand}
-              onChange={setDemand}
-              format={fmt}
-            />
-            <ControlSlider
-              icon={<Bitcoin className='size-4 text-amber-500' />}
-              label='채굴 부하 용량 (최대 흡수)'
-              value={minerCapacity}
-              onChange={setMinerCapacity}
-              max={60}
-              format={fmt}
-            />
-            <div className='flex items-center justify-between border-t pt-3'>
-              <span className='flex items-center gap-1.5 text-sm font-medium'>
-                <Battery className='size-4 text-amber-500' />
-                채굴 부하 연결
-              </span>
-              <Button variant={minersOn ? 'default' : 'outline'} size='sm' onClick={() => setMinersOn((v) => !v)}>
-                {minersOn ? 'ON · 잉여 흡수 중' : 'OFF · 잉여 방치'}
-              </Button>
-            </div>
-          </Card>
-
-          {/* 시각화: 발전량 분배 막대 */}
-          <Card className='gap-3 p-4'>
-            <div className='flex items-baseline justify-between'>
-              <span className='text-sm font-medium'>발전 전력의 분배</span>
-              <span className='text-muted-foreground text-xs'>총 발전량 {fmt(generation)}</span>
-            </div>
-            <StackedBar
-              segments={SEGMENTS.map((s) => ({
-                label: `${s.label} ${fmt(sim[s.key])}`,
-                value: sim[s.key],
-                className: s.className,
-              }))}
-              total={generation}
-            />
-            {sim.shortage > 0 && (
-              <StatusBanner tone='bad' icon={<TriangleAlert className='size-4 shrink-0' />}>
-                <span className='leading-relaxed font-normal'>
-                  공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다. 이때 채굴 부하는 즉시 차단되어 전력을
-                  가정·산업에 양보한다.
-                </span>
-              </StatusBanner>
-            )}
-          </Card>
-
-          {/* 지표 카드 */}
-          <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-            <Metric label='버려지는 전력' value={fmt(sim.curtailed)} tone='bad' />
-            <Metric
-              label='채굴 흡수량'
-              value={fmt(sim.absorbed)}
-              tone='accent'
-              sub={`채굴 가동률 ${Math.round(sim.minerUtil)}%`}
-            />
-            <Metric label='전력망 효율' value={`${Math.round(sim.efficiency)}%`} tone='good' />
-          </div>
-
-          <SectionIntro title='왜 이런 주장이 나오는가'>
-            문제(전기는 저장이 어렵다)부터 해법(유연 부하)까지의 논리를 차례로 본다.
-          </SectionIntro>
-
-          <ExplainCard
-            icon={<Wind className='size-4 text-sky-500' />}
-            title='문제: 전기는 저장이 어렵다'
-            preview='재생에너지는 들쭉날쭉한데 전력망은 발전·수요가 매 순간 맞아야 해서, 남는 전기는 버려진다.'
-            body='태양광·풍력 같은 재생에너지는 햇빛과 바람에 따라 들쭉날쭉 생산된다. 그런데 전력망은 발전과 수요가 매 순간 정확히 일치해야 한다. 수요보다 많이 생산된 전기는 마땅히 저장할 곳이 없어 그냥 버려진다(curtailment). 송전망이 닿지 않는 오지의 가스전에서 태워 없애는 플레어링도 같은 낭비다.'
-          />
-          <ExplainCard
-            icon={<Bitcoin className='size-4 text-amber-500' />}
-            title='비트코인 채굴 = 유연 부하'
-            preview='1초 만에 껐다 켤 수 있는 대형 수요, 잉여 전력만 골라 먹는다.'
-            body="채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 '수요 반응(demand response)' 자원인 셈이다."
-          />
-          <ExplainCard
-            icon={<Battery className='size-4 text-emerald-500' />}
-            title='그리드 배터리처럼, 더 싸게'
-            preview='배터리보다 싸게, 버려질 에너지를 곧장 돈으로 바꾼다.'
-            body='배터리는 잉여를 저장했다 되돌려주지만 비싸고 용량도 제한적이다. 채굴은 전기를 되돌려주진 않는 대신, 버려질 에너지를 곧장 돈으로 바꾼다. 덕분에 발전소는 남는 전기로도 수익을 내 투자 회수가 빨라지고, 좌초될 뻔한 에너지가 경제성을 얻는다. 결과적으로 버려지는 전력은 줄고, 재생에너지 발전에 대한 투자 유인은 커진다.'
-          />
-          <ExplainCard
-            icon={<TriangleAlert className='size-4 text-rose-500' />}
-            title='반론: 실제 채굴이 이 그림대로 돌아가는가'
-            preview='채굴 전력의 상당 부분은 잉여가 아니라 24시간 돌아가는 기저 전력이다.'
-            body='이 시뮬레이션은 채굴이 잉여 전력만 골라 먹는다고 가정하지만, 실제 채굴장 대부분은 가동률을 최대로 유지해야 장비값을 회수할 수 있어 잉여든 아니든 24시간 돌린다. 유연 부하로 실제 양보하는 물량이 얼마나 되는지, 그 양보가 전력망 계획에 반영될 만큼 안정적인지에 대해서는 연구마다 결론이 갈린다. 채굴 수요가 붙어 화석연료 발전소의 수명이 오히려 늘어난다는 지적도 있다. 여기서 보이는 것은 유연 부하가 이상적으로 작동할 때의 구조이지, 현재 채굴 산업의 평균적인 모습이 아니다.'
-          />
+    <ExplainerPage
+      breadcrumb='비트코인 전력망'
+      title='비트코인은 전력망의 배터리다'
+      intro={
+        <>
+          채굴 업계와 일부 전력망 연구가 내세우는 주장이다. 전기는 저장이 어려워 발전과 수요가 실시간으로 맞아야 하는데,
+          비트코인 채굴은 잉여 전력을 흡수했다가 수요가 늘면 즉시 양보하는 &#39;유연 부하&#39;라 버려질 에너지를
+          수익으로 바꾼다는 것이다. 다만 채굴은 배터리와 달리 흡수한 전기를 전력망에 되돌려주지 않는다. 비유는 &#39;남는
+          전기를 쓸모 있게 만든다&#39;는 데까지만 유효하다. 아래 슬라이더로 그 구조를 직접 확인해 보자. 수치는 개념
+          이해용 예시다.
+        </>
+      }
+    >
+      {/* 컨트롤 */}
+      <Card className='gap-4 p-4'>
+        <ControlSlider
+          icon={<Wind className='size-4 text-sky-500' />}
+          label='재생에너지 발전량'
+          value={generation}
+          onChange={setGeneration}
+          format={fmt}
+        />
+        <ControlSlider
+          icon={<Zap className='size-4 text-emerald-500' />}
+          label='전력 수요'
+          value={demand}
+          onChange={setDemand}
+          format={fmt}
+        />
+        <ControlSlider
+          icon={<Bitcoin className='size-4 text-amber-500' />}
+          label='채굴 부하 용량 (최대 흡수)'
+          value={minerCapacity}
+          onChange={setMinerCapacity}
+          max={60}
+          format={fmt}
+        />
+        <div className='flex items-center justify-between border-t pt-3'>
+          <span className='flex items-center gap-1.5 text-sm font-medium'>
+            <Battery className='size-4 text-amber-500' />
+            채굴 부하 연결
+          </span>
+          <Button variant={minersOn ? 'default' : 'outline'} size='sm' onClick={() => setMinersOn((v) => !v)}>
+            {minersOn ? 'ON · 잉여 흡수 중' : 'OFF · 잉여 방치'}
+          </Button>
         </div>
-      </PageMain>
-    </>
+      </Card>
+
+      {/* 시각화: 발전량 분배 막대 */}
+      <Card className='gap-3 p-4'>
+        <div className='flex items-baseline justify-between'>
+          <span className='text-sm font-medium'>발전 전력의 분배</span>
+          <span className='text-muted-foreground text-xs'>총 발전량 {fmt(generation)}</span>
+        </div>
+        <StackedBar
+          segments={SEGMENTS.map((s) => ({
+            label: `${s.label} ${fmt(sim[s.key])}`,
+            value: sim[s.key],
+            className: s.className,
+          }))}
+          total={generation}
+        />
+        {sim.shortage > 0 && (
+          <StatusBanner tone='bad' icon={<TriangleAlert className='size-4 shrink-0' />}>
+            <span className='leading-relaxed font-normal'>
+              공급 부족 {fmt(sim.shortage)}: 발전량이 수요에 못 미친다. 이때 채굴 부하는 즉시 차단되어 전력을
+              가정·산업에 양보한다.
+            </span>
+          </StatusBanner>
+        )}
+      </Card>
+
+      {/* 지표 카드 */}
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+        <Metric label='버려지는 전력' value={fmt(sim.curtailed)} tone='bad' />
+        <Metric
+          label='채굴 흡수량'
+          value={fmt(sim.absorbed)}
+          tone='accent'
+          sub={`채굴 가동률 ${Math.round(sim.minerUtil)}%`}
+        />
+        <Metric label='전력망 효율' value={`${Math.round(sim.efficiency)}%`} tone='good' />
+      </div>
+
+      <SectionIntro title='왜 이런 주장이 나오는가'>
+        문제(전기는 저장이 어렵다)부터 해법(유연 부하)까지의 논리를 차례로 본다.
+      </SectionIntro>
+
+      <ExplainCard
+        icon={<Wind className='size-4 text-sky-500' />}
+        title='문제: 전기는 저장이 어렵다'
+        preview='재생에너지는 들쭉날쭉한데 전력망은 발전·수요가 매 순간 맞아야 해서, 남는 전기는 버려진다.'
+        body='태양광·풍력 같은 재생에너지는 햇빛과 바람에 따라 들쭉날쭉 생산된다. 그런데 전력망은 발전과 수요가 매 순간 정확히 일치해야 한다. 수요보다 많이 생산된 전기는 마땅히 저장할 곳이 없어 그냥 버려진다(curtailment). 송전망이 닿지 않는 오지의 가스전에서 태워 없애는 플레어링도 같은 낭비다.'
+      />
+      <ExplainCard
+        icon={<Bitcoin className='size-4 text-amber-500' />}
+        title='비트코인 채굴 = 유연 부하'
+        preview='1초 만에 껐다 켤 수 있는 대형 수요, 잉여 전력만 골라 먹는다.'
+        body="채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 '수요 반응(demand response)' 자원인 셈이다."
+      />
+      <ExplainCard
+        icon={<Battery className='size-4 text-emerald-500' />}
+        title='그리드 배터리처럼, 더 싸게'
+        preview='배터리보다 싸게, 버려질 에너지를 곧장 돈으로 바꾼다.'
+        body='배터리는 잉여를 저장했다 되돌려주지만 비싸고 용량도 제한적이다. 채굴은 전기를 되돌려주진 않는 대신, 버려질 에너지를 곧장 돈으로 바꾼다. 덕분에 발전소는 남는 전기로도 수익을 내 투자 회수가 빨라지고, 좌초될 뻔한 에너지가 경제성을 얻는다. 결과적으로 버려지는 전력은 줄고, 재생에너지 발전에 대한 투자 유인은 커진다.'
+      />
+      <ExplainCard
+        icon={<TriangleAlert className='size-4 text-rose-500' />}
+        title='반론: 실제 채굴이 이 그림대로 돌아가는가'
+        preview='채굴 전력의 상당 부분은 잉여가 아니라 24시간 돌아가는 기저 전력이다.'
+        body='이 시뮬레이션은 채굴이 잉여 전력만 골라 먹는다고 가정하지만, 실제 채굴장 대부분은 가동률을 최대로 유지해야 장비값을 회수할 수 있어 잉여든 아니든 24시간 돌린다. 유연 부하로 실제 양보하는 물량이 얼마나 되는지, 그 양보가 전력망 계획에 반영될 만큼 안정적인지에 대해서는 연구마다 결론이 갈린다. 채굴 수요가 붙어 화석연료 발전소의 수명이 오히려 늘어난다는 지적도 있다. 여기서 보이는 것은 유연 부하가 이상적으로 작동할 때의 구조이지, 현재 채굴 산업의 평균적인 모습이 아니다.'
+      />
+    </ExplainerPage>
   );
 }

@@ -8,9 +8,8 @@ import { ArrowDownRight, ArrowUpRight, Building2, Layers, Percent, TrendingUp } 
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
+import { formatEok, formatPct } from '@/lib/utils';
 
-const fmtEok = (n: number) => `${n.toFixed(1)}억`;
-const fmtPct = (n: number) => `${n.toFixed(1)}%`;
 const fmtSigned = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}억`;
 
 export function GapInvestment() {
@@ -31,12 +30,12 @@ export function GapInvestment() {
       ? {
           tone: 'good' as const,
           icon: <ArrowUpRight className='size-4 shrink-0' />,
-          text: `집값이 ${fmtPct(change)} 오르는 동안 자기 돈 ${fmtEok(gap)}은 ${fmtPct(roe)} 불었다. 보증금이 이자도 만기도 없는 레버리지로 작동해 수익률을 ${leverage.toFixed(1)}배로 키운다.`,
+          text: `집값이 ${formatPct(change)} 오르는 동안 자기 돈 ${formatEok(gap)}은 ${formatPct(roe)} 불었다. 보증금이 이자도 만기도 없는 레버리지로 작동해 수익률을 ${leverage.toFixed(1)}배로 키운다.`,
         }
       : {
           tone: 'bad' as const,
           icon: <ArrowDownRight className='size-4 shrink-0' />,
-          text: `집값이 ${fmtPct(Math.abs(change))} 빠지자 자기 돈은 ${fmtPct(roe)} 줄었다. 보증금은 시세와 무관하게 전액 그대로 돌려줘야 하므로 하락은 온전히 자기 자본에서만 깎인다.`,
+          text: `집값이 ${formatPct(Math.abs(change))} 빠지자 자기 돈은 ${formatPct(roe)} 줄었다. 보증금은 시세와 무관하게 전액 그대로 돌려줘야 하므로 하락은 온전히 자기 자본에서만 깎인다.`,
         };
 
   return (
@@ -56,7 +55,7 @@ export function GapInvestment() {
           min={2}
           max={20}
           step={0.5}
-          format={fmtEok}
+          format={formatEok}
         />
         <ControlSlider
           icon={<Percent className='size-4 text-emerald-500' />}
@@ -66,7 +65,7 @@ export function GapInvestment() {
           min={30}
           max={95}
           step={1}
-          format={fmtPct}
+          format={formatPct}
           hint='매매가 대비 전세가의 비율. 이 값이 높을수록 더 적은 돈으로 집을 살 수 있다.'
         />
         <ControlSlider
@@ -82,12 +81,12 @@ export function GapInvestment() {
       </Card>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
-        <Metric label='전세보증금' value={fmtEok(deposit)} sub='임차인에게 빌린 돈' />
-        <Metric label='필요한 자기 돈' value={fmtEok(gap)} sub='매매가 − 보증금' tone='accent' />
+        <Metric label='전세보증금' value={formatEok(deposit)} sub='임차인에게 빌린 돈' />
+        <Metric label='필요한 자기 돈' value={formatEok(gap)} sub='매매가 − 보증금' tone='accent' />
         <Metric label='레버리지 배수' value={`${leverage.toFixed(1)}배`} sub='자기 돈 1원이 움직이는 자산' />
         <Metric
           label='자기자본 수익률'
-          value={fmtPct(roe)}
+          value={formatPct(roe)}
           sub={`시세 손익 ${fmtSigned(profit)}`}
           tone={roe >= 0 ? 'good' : 'bad'}
         />
@@ -99,15 +98,15 @@ export function GapInvestment() {
           value={deposit}
           max={barMax}
           className='bg-sky-500'
-          format={fmtEok}
-          sub={`매매가의 ${fmtPct(ratio)}`}
+          format={formatEok}
+          sub={`매매가의 ${formatPct(ratio)}`}
         />
         <CostBar
           label='매수자가 대는 돈'
           value={gap}
           max={barMax}
           className='bg-amber-500'
-          format={fmtEok}
+          format={formatEok}
           sub='이 돈만으로 소유권이 넘어온다'
         />
         <CostBar
@@ -115,8 +114,8 @@ export function GapInvestment() {
           value={Math.max(0, newPrice)}
           max={Math.max(barMax, newPrice)}
           className={profit >= 0 ? 'bg-emerald-500' : 'bg-rose-500'}
-          format={fmtEok}
-          sub={`처음 ${fmtEok(price)}에서 ${fmtSigned(profit)}`}
+          format={formatEok}
+          sub={`처음 ${formatEok(price)}에서 ${fmtSigned(profit)}`}
         />
       </Card>
 

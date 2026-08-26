@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Skull, Zap } from 'lucide-react';
 
@@ -15,7 +15,7 @@ import {
   RoundControls,
   SectionIntro,
 } from '@/components/simulation';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { type Organism, buildOrganisms, predationTrajectory } from './models';
 
 const N = 180;
@@ -99,26 +99,8 @@ function PredationSim({
   // 압력이 라운드마다 정해진 폭으로 차오르는 결정론적 모델이라 궤적을 미리 계산해 둔다.
   // 채택 캐스케이드·홀더 딜레마와 같은 구조다.
   const frames = useMemo(() => predationTrajectory(organisms, pressure), [organisms, pressure]);
-  const last = frames.length - 1;
-  const [round, setRound] = useState(0);
-
-  const step = useCallback(() => {
-    if (round >= last) return false;
-    setRound(round + 1);
-    return round + 1 < last;
-  }, [round, last]);
-
-  const engine = useRoundEngine(step, speedMs);
-  const seek = useCallback(
-    (r: number) => {
-      engine.pause();
-      setRound(r);
-    },
-    [engine],
-  );
-
+  const { round, last, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
   const { state, justChanged } = frames[round];
-  const done = round >= last;
   const aliveCount = state.alive.filter(Boolean).length;
   const dead = organisms.length - aliveCount;
   const survivorAvg =

@@ -45,6 +45,9 @@ async function fetchSeries(key: string, stat: string, item: string): Promise<Mac
 export async function GET() {
   try {
     const data = await cached('inflation-data-kr', async () => {
+      // 이 저장소에서 유일하게 없어도 되는 키다. 없으면 500 대신 `available: false`를
+      // 돌려주고, 화면은 한국 데이터 없이 미국만 그린다. 필수로 만들면 키가 없는
+      // 환경에서 구매력 붕괴 페이지 전체가 죽는다.
       const key = process.env.ECOS_API_KEY;
       if (!key) {
         return { fetchedAt: new Date().toISOString(), available: false };

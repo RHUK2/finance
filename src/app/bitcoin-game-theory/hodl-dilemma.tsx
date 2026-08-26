@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Diamond, Zap } from 'lucide-react';
 
@@ -14,7 +14,7 @@ import {
   SectionIntro,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 
 import { type Holder, type HolderBand, buildHolders, hodlTrajectory } from './models';
 
@@ -77,26 +77,8 @@ export function HodlDilemma() {
 function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: number; onSpeed: (ms: number) => void }) {
   // 난수가 개입하지 않는 결정론적 연쇄라 전 궤적을 미리 계산할 수 있다.
   const frames = useMemo(() => hodlTrajectory(holders, SHOCK), [holders]);
-  const last = frames.length - 1;
-  const [round, setRound] = useState(0);
-
-  const step = useCallback(() => {
-    if (round >= last) return false;
-    setRound(round + 1);
-    return round + 1 < last;
-  }, [round, last]);
-
-  const engine = useRoundEngine(step, speedMs);
-  const seek = useCallback(
-    (r: number) => {
-      engine.pause();
-      setRound(r);
-    },
-    [engine],
-  );
-
+  const { round, last, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
   const { state, justChanged } = frames[round];
-  const done = round >= last;
   const soldCount = state.sold.filter(Boolean).length;
   const holding = N - soldCount;
 
