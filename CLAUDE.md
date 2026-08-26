@@ -3,11 +3,13 @@
 ## 명령어
 
 ```bash
-pnpm dev          # 개발 서버 (매번 .next 캐시 삭제 후 시작)
+pnpm dev          # 개발 서버
 pnpm type         # TypeScript 타입 체크
 pnpm lint         # ESLint (max-warnings 10)
-pnpm build        # 프로덕션 빌드 (prebuild로 type + lint 선행)
+pnpm inspect      # type + lint 한 번에
+pnpm build        # 프로덕션 빌드 (type·lint를 선행하지 않는다. inspect를 먼저 돌릴 것)
 pnpm format       # Prettier 포맷
+pnpm clean:caches # .next 삭제
 vercel --prod     # Vercel 프로덕션 배포
 ```
 
@@ -22,7 +24,8 @@ vercel --prod     # Vercel 프로덕션 배포
 - **캐시 설정** (`src/lib/cache-config.ts`): 신선도(TTL)의 단일 출처. `ENDPOINTS` 표의 키 = TanStack Query queryKey = `/api/<key>` 경로 세그먼트. 서버 캐시 TTL과 클라이언트 `staleTime`/`refetchInterval`이 모두 여기서 파생
 - **Route Handler** (`src/app/api/*/route.ts`): 외부 API를 호출하고 `cached(key, fetcher)`(`src/lib/cache.ts`, Upstash read-through + 락 기반 스탬피드 차단)로 캐싱. 클라이언트에 API 키나 외부 도메인을 노출하지 않는 프록시 역할. 공용 fetch 헬퍼는 `src/lib/fred.ts`(FRED), `src/lib/yahoo.ts`(Yahoo 시계열), `src/lib/series.ts`(`MacroSeries` 타입·변환)에 위치
 - **훅** (`src/hooks/use-*.ts`): 각 훅은 `useEndpoint<T>(key)`(`src/hooks/use-endpoint.ts`) 한 줄 래퍼. 컴포넌트는 훅을 통해서만 데이터 접근
-- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
+- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재)와 Google Finance(`market` 라우트의 폴백 시세, 스크레이프), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
+- **API 키**: `FRED_API_KEY`와 `ECOS_API_KEY` 둘뿐이다. FRED는 없으면 해당 라우트가 실패하지만 ECOS는 없어도 되며, 그때 `available: false`를 돌려주고 화면이 한국 데이터 없이 그려진다. 제공처별 함정은 문서가 아니라 해당 파일 주석에 둔다(폐기 시리즈와 `Promise.all` 전파는 `src/lib/fred.ts`, 키 부재 처리는 `api/inflation-data-kr/route.ts`)
 
 ### 비트코인 지표 모델 (`src/lib/bitcoin-models.ts`)
 
@@ -39,7 +42,7 @@ vercel --prod     # Vercel 프로덕션 배포
 
 | 위치                          | 쓰는 곳                                                                                |
 | ----------------------------- | -------------------------------------------------------------------------------------- |
-| `src/app/<page>/models.ts`    | 비트코인 인사이트 그룹 (게임이론·소프트워·변동성)                                      |
+| `src/app/<page>/models.ts`    | 그 페이지 전용 모델. 한 페이지에서만 쓰이면 여기                                       |
 | `src/lib/<domain>-models.ts`  | 도메인 계산 모델 (`bitcoin-models`·`inflation-models`·`mortgage-models`)               |
 | `src/lib/<domain>-concept.ts` | 비트코인 프로토콜 그룹 (tx·script·block·chain·bip·p2p·privacy·lightning·soft-fork 9개) |
 
@@ -92,10 +95,12 @@ vercel --prod     # Vercel 프로덕션 배포
   자산 현황 · 경제 차트 · 원자재 차트 · 비트코인 차트 · 비트코인 네트워크
 
 설명형 페이지     h1 · max-w-5xl · 해라체
-  비트코인 인사이트 7개 · 프로토콜 10개 · 화폐 2개 · 기업 2개 · 부동산 2개
+  나머지 전부
 ```
 
 데이터를 보여 주는 화면은 존대, 개념을 설명하는 화면은 평서다. `/bitcoin`과 `/mempool`에 h1이 없는 것은 빠뜨린 게 아니라 대시보드 부류의 규약이다.
+
+어느 쪽인지는 개수를 세지 말고 껍데기로 판별한다. h1과 `max-w-5xl`이 있으면 설명형, 없으면 대시보드다. 대시보드는 위에 나열한 다섯뿐이고 늘어날 일이 드물다.
 
 설명형 페이지를 만들거나 손볼 때는 아래를 따른다.
 
@@ -138,14 +143,6 @@ vercel --prod     # Vercel 프로덕션 배포
 
 ## Agent skills
 
-### 이슈 트래커
-
-이슈·스펙은 이 저장소의 `.scratch/<feature>/` 아래 마크다운 파일로 관리한다. `docs/agents/issue-tracker.md` 참조.
-
-### Triage 라벨
-
-기본 5개 역할 라벨(`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`)을 그대로 사용한다. `docs/agents/triage-labels.md` 참조.
-
-### 도메인 문서
-
-단일 컨텍스트 구조: 루트 `CONTEXT.md` + `docs/adr/`. `docs/agents/domain.md` 참조.
+- **이슈 트래커**: 이슈·스펙은 `.scratch/<feature>/` 아래 마크다운 파일로 관리한다(gitignore되어 로컬에만 남는다). 규약은 `docs/agents/issue-tracker.md`
+- **Triage 라벨**: `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix` 다섯을 그대로 쓴다. 이슈 파일 상단 `Status:` 줄에 적는다
+- **도메인 문서**: 단일 컨텍스트 구조로 루트 `CONTEXT.md` + `docs/adr/`. 규약은 `docs/agents/domain.md`
