@@ -34,12 +34,6 @@ export function hashWithNonce(prefix: string, nonce: number): string {
   return illustrativeHex('blockhash:' + prefix + '|' + nonce, 64);
 }
 
-// 헤더 6개 필드를 직렬화해 결정적 해시를 만든다. 반복 호출하는 채굴 루프에서는
-// blockHeaderPrefix + hashWithNonce를 대신 써서 매번 접두어를 다시 만들지 않는 게 낫다.
-export function illustrativeBlockHash(header: BlockHeader): string {
-  return hashWithNonce(blockHeaderPrefix(header), header.nonce);
-}
-
 // 해시 앞자리가 leadingZeros개 연속 '0'인지 (난이도 목표를 16진 자릿수로 단순화).
 export function meetsTarget(hash: string, leadingZeros: number): boolean {
   return hash.slice(0, leadingZeros) === '0'.repeat(leadingZeros);
