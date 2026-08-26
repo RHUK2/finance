@@ -6,6 +6,7 @@ import { Coins, PieChart, Repeat, TrendingUp, Undo2 } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
+import { formatEokFromWon, formatPct, formatWon } from '@/lib/utils';
 
 // 교육용 예시 회사. 단위는 주와 원.
 const FOUNDER = 5_000_000;
@@ -18,9 +19,7 @@ const BASE_CASH = 50_000_000_000;
 const BASE_PCT = (ME / BASE_ISSUED) * 100;
 
 const fmtShares = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}주`;
-const fmtPct = (n: number) => `${n.toFixed(2)}%`;
-const fmtWon = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
-const fmtEok = (n: number) => `${Math.round(n / 1e8).toLocaleString('ko-KR')}억원`;
+const fmtPct = (n: number) => formatPct(n, 2);
 
 export function Shares() {
   const [newIssue, setNewIssue] = useState(0);
@@ -64,7 +63,7 @@ export function Shares() {
           max={5_000_000}
           step={100_000}
           format={fmtShares}
-          hint={`주당 ${fmtWon(PRICE)}에 새 주식을 찍어 판다. 회사 금고에 현금이 들어오지만, 파이의 조각 수가 늘어 기존 주주의 몫은 묽어진다.`}
+          hint={`주당 ${formatWon(PRICE)}에 새 주식을 찍어 판다. 회사 금고에 현금이 들어오지만, 파이의 조각 수가 늘어 기존 주주의 몫은 묽어진다.`}
         />
         <ControlSlider
           icon={<Undo2 className='size-4 text-amber-500' />}
@@ -99,11 +98,11 @@ export function Shares() {
         <Metric label='내 지분율' value={fmtPct(myPct)} tone={tone} sub={`유통주식 기준, 시작 ${fmtPct(BASE_PCT)}`} />
         <Metric
           label='주당순이익 (EPS)'
-          value={fmtWon(eps)}
+          value={formatWon(eps)}
           tone={tone}
-          sub={`순이익 ${fmtEok(NET_INCOME)} 고정, 유통주식으로 나눈다`}
+          sub={`순이익 ${formatEokFromWon(NET_INCOME)} 고정, 유통주식으로 나눈다`}
         />
-        <Metric label='회사 보유 현금' value={fmtEok(cash)} tone={cash < 0 ? 'bad' : 'accent'} />
+        <Metric label='회사 보유 현금' value={formatEokFromWon(cash)} tone={cash < 0 ? 'bad' : 'accent'} />
       </div>
 
       {cash < 0 && (

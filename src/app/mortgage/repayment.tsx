@@ -16,10 +16,7 @@ import {
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { byYear, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage-models';
-import { cn } from '@/lib/utils';
-
-const fmtEok = (n: number) => `${(n / 10000).toFixed(2)}억`;
-const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
+import { cn, formatEokFromMan, formatMan } from '@/lib/utils';
 
 export function Repayment() {
   const [loan, setLoan] = useState(40000);
@@ -70,7 +67,7 @@ export function Repayment() {
           min={5000}
           max={100000}
           step={1000}
-          format={fmtEok}
+          format={formatEokFromMan}
         />
         <ControlSlider
           icon={<Percent className='size-4 text-rose-500' />}
@@ -97,21 +94,25 @@ export function Repayment() {
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric
           label='첫 달 상환액'
-          value={fmtMan(first.interest + first.principal)}
-          sub={`이자 ${fmtMan(first.interest)}`}
+          value={formatMan(first.interest + first.principal)}
+          sub={`이자 ${formatMan(first.interest)}`}
         />
         <Metric
           label='마지막 달 상환액'
-          value={fmtMan(last.interest + last.principal)}
-          sub={method === 'bullet' ? '원금을 한 번에 갚는다' : `이자 ${fmtMan(last.interest)}`}
+          value={formatMan(last.interest + last.principal)}
+          sub={method === 'bullet' ? '원금을 한 번에 갚는다' : `이자 ${formatMan(last.interest)}`}
         />
         <Metric
           label='총 이자'
-          value={fmtEok(totalInterest)}
+          value={formatEokFromMan(totalInterest)}
           tone='bad'
           sub={`원금의 ${((totalInterest / loan) * 100).toFixed(0)}%`}
         />
-        <Metric label='총 상환액' value={fmtEok(loan + totalInterest)} sub={`원금 ${fmtEok(loan)} 포함`} />
+        <Metric
+          label='총 상환액'
+          value={formatEokFromMan(loan + totalInterest)}
+          sub={`원금 ${formatEokFromMan(loan)} 포함`}
+        />
       </div>
 
       <Card className='gap-3 p-4'>
@@ -122,7 +123,7 @@ export function Repayment() {
           </span>
           <span className='text-muted-foreground text-xs/relaxed'>
             막대 하나가 1년이고, 높이는 그해에 낸 돈의 합이다. 가장 높은 막대가{' '}
-            {peak >= 10000 ? fmtEok(peak) : fmtMan(peak)}
+            {peak >= 10000 ? formatEokFromMan(peak) : formatMan(peak)}
             {method === 'bullet'
               ? `인 ${years}년차인데, 여기에만 원금 전액이 몰려 있어 앞의 막대들이 낮아 보인다. 그 막대들은 이자만 낸 해다`
               : ''}
@@ -177,7 +178,7 @@ export function Repayment() {
               )}
             >
               <span>{REPAY_LABEL[t.method]}</span>
-              <span className='text-right tabular-nums'>{fmtEok(t.interest)}</span>
+              <span className='text-right tabular-nums'>{formatEokFromMan(t.interest)}</span>
               <span
                 className={cn(
                   'text-right tabular-nums',
@@ -186,7 +187,7 @@ export function Repayment() {
                   diff === 0 && 'text-muted-foreground',
                 )}
               >
-                {diff === 0 ? '기준' : `${diff > 0 ? '+' : ''}${fmtEok(diff)}`}
+                {diff === 0 ? '기준' : `${diff > 0 ? '+' : ''}${formatEokFromMan(diff)}`}
               </span>
             </div>
           );

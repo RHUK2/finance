@@ -8,14 +8,13 @@ import Link from 'next/link';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { cn, formatPct } from '@/lib/utils';
 
 // 단위는 억원. 총자산을 1,000억으로 고정하고 그 안에서 부채와 자본의 비율만 바꾼다.
 const ASSETS = 1000;
 const TAX_RATE = 20;
 
 const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
-const fmtPct = (n: number) => `${n.toFixed(1)}%`;
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -59,7 +58,7 @@ export function Leverage() {
       ? {
           tone: 'accent' as const,
           icon: <Percent className='size-4 shrink-0' />,
-          text: `빚이 한 푼도 없으니 증폭할 지렛대도 없다. 주주가 자산 전부를 대고 있어 ROE와 ROA가 ${fmtPct(roe)}로 같다. 부채 비중을 올려 두 값이 벌어지는 것을 보자.`,
+          text: `빚이 한 푼도 없으니 증폭할 지렛대도 없다. 주주가 자산 전부를 대고 있어 ROE와 ROA가 ${formatPct(roe)}로 같다. 부채 비중을 올려 두 값이 벌어지는 것을 보자.`,
         }
       : coverage !== null && coverage < 1
         ? {
@@ -71,12 +70,12 @@ export function Leverage() {
           ? {
               tone: 'good' as const,
               icon: <TrendingUp className='size-4 shrink-0' />,
-              text: `자산이 세후로 벌어들이는 ${fmtPct(roa)}이 빌린 돈의 세후 부담 ${fmtPct(afterTaxRate)}보다 높다. 남는 차익이 전부 주주 몫으로 쌓여 ROE ${fmtPct(roe)}가 ROA를 넘어선다.`,
+              text: `자산이 세후로 벌어들이는 ${formatPct(roa)}이 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}보다 높다. 남는 차익이 전부 주주 몫으로 쌓여 ROE ${formatPct(roe)}가 ROA를 넘어선다.`,
             }
           : {
               tone: 'accent' as const,
               icon: <Percent className='size-4 shrink-0' />,
-              text: `자산의 세후 수익률 ${fmtPct(roa)}이 빌린 돈의 세후 부담 ${fmtPct(afterTaxRate)}에 못 미친다. 빌린 돈이 제 값도 못 벌어 오는 상태라, 레버리지가 오히려 ROE를 ${fmtPct(roe)}까지 끌어내린다.`,
+              text: `자산의 세후 수익률 ${formatPct(roa)}이 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}에 못 미친다. 빌린 돈이 제 값도 못 벌어 오는 상태라, 레버리지가 오히려 ROE를 ${formatPct(roe)}까지 끌어내린다.`,
             };
 
   return (
@@ -108,7 +107,7 @@ export function Leverage() {
           max={12}
           step={0.5}
           format={(v) => `${v.toFixed(1)}%`}
-          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${fmtPct(afterTaxRate)}다.`}
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${formatPct(afterTaxRate)}다.`}
         />
         <ControlSlider
           icon={<Coins className='size-4 text-emerald-500' />}
@@ -132,10 +131,10 @@ export function Leverage() {
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-        <Metric label='ROA (자산 수익률)' value={fmtPct(roa)} sub='세후 기준, 자본구조와 무관' />
+        <Metric label='ROA (자산 수익률)' value={formatPct(roa)} sub='세후 기준, 자본구조와 무관' />
         <Metric
           label='ROE (자기자본 수익률)'
-          value={fmtPct(roe)}
+          value={formatPct(roe)}
           tone={roe > roa ? 'good' : roe < 0 ? 'bad' : 'accent'}
           sub={`자기자본 ${fmt(equity)} 기준`}
         />
@@ -184,7 +183,7 @@ export function Leverage() {
                 {s.label}
                 <span className='text-muted-foreground ml-1.5 text-xs tabular-nums'>{fmt(s.ebit)}</span>
               </span>
-              <span className='text-muted-foreground text-right tabular-nums'>{fmtPct(unlevered)}</span>
+              <span className='text-muted-foreground text-right tabular-nums'>{formatPct(unlevered)}</span>
               <span
                 className={cn(
                   'text-right font-medium tabular-nums',
@@ -192,7 +191,7 @@ export function Leverage() {
                   levered < unlevered && 'text-rose-600 dark:text-rose-400',
                 )}
               >
-                {fmtPct(levered)}
+                {formatPct(levered)}
               </span>
             </div>
           );

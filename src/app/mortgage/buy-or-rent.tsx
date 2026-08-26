@@ -9,6 +9,7 @@ import { ArrowLeftRight, CalendarClock, House, KeyRound, Percent, Repeat, Trendi
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { acquisitionTaxRate, ACQUISITION_TAX_NOTE, schedule } from '@/lib/mortgage-models';
+import { formatEokFromMan, formatMan } from '@/lib/utils';
 
 // 금액 단위는 만원. 비교를 단순하게 하려고 조달 조건 몇 가지는 고정한다.
 const LOAN_RATIO = 60; // 집값 대비 대출 비중
@@ -17,9 +18,6 @@ const DEPOSIT_RATE = 3; // 묶인 돈을 예금에 뒀다면 받았을 이자
 // 취득세는 가격대별 누진이라 상수로 둘 수 없다. mortgage-models가 단일 출처다.
 const HOLDING_TAX = 0.15; // 연 보유세율. 재산세·종부세를 시가 대비 한 비율로 뭉갠 값
 const MONTHLY_DEPOSIT_RATIO = 10; // 월세 보증금은 전세 보증금의 이 비율
-
-const fmtEok = (n: number) => `${(n / 10000).toFixed(2)}억`;
-const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
 
 export function BuyOrRent() {
   const [price, setPrice] = useState(80000);
@@ -89,8 +87,8 @@ export function BuyOrRent() {
           min={30000}
           max={200000}
           step={1000}
-          format={fmtEok}
-          hint={`매수하면 ${LOAN_RATIO}%인 ${fmtEok(loan)}을 ${LOAN_TERM}년 원리금균등으로 빌리고 ${fmtEok(equity)}을 자기 돈으로 넣는다고 본다.`}
+          format={formatEokFromMan}
+          hint={`매수하면 ${LOAN_RATIO}%인 ${formatEokFromMan(loan)}을 ${LOAN_TERM}년 원리금균등으로 빌리고 ${formatEokFromMan(equity)}을 자기 돈으로 넣는다고 본다.`}
         />
         <ControlSlider
           icon={<CalendarClock className='size-4 text-violet-500' />}
@@ -133,7 +131,7 @@ export function BuyOrRent() {
           max={90}
           step={5}
           format={(v) => `${v}%`}
-          hint={`전세 보증금 ${fmtEok(deposit)}. 전세대출 없이 자기 돈으로 넣는다고 본다.`}
+          hint={`전세 보증금 ${formatEokFromMan(deposit)}. 전세대출 없이 자기 돈으로 넣는다고 본다.`}
         />
         <ControlSlider
           icon={<Repeat className='size-4 text-amber-500' />}
@@ -144,7 +142,7 @@ export function BuyOrRent() {
           max={9}
           step={0.5}
           format={(v) => `${v.toFixed(1)}%`}
-          hint={`보증금을 월세로 바꿀 때 적용하는 비율. 보증금 ${fmtEok(monthlyDeposit)}에 월세 ${fmtMan(monthlyRent)}이 된다.`}
+          hint={`보증금을 월세로 바꿀 때 적용하는 비율. 보증금 ${formatEokFromMan(monthlyDeposit)}에 월세 ${formatMan(monthlyRent)}이 된다.`}
         />
       </Card>
 
@@ -153,14 +151,14 @@ export function BuyOrRent() {
           <Metric
             key={o.id}
             label={`${o.label} ${years}년 총비용`}
-            value={fmtEok(o.cost)}
+            value={formatEokFromMan(o.cost)}
             tone={o.id === cheapest.id ? 'good' : undefined}
             sub={
               o.id === 'buy'
-                ? `집값 변동 ${priceGain >= 0 ? '+' : ''}${fmtEok(priceGain)} 반영`
+                ? `집값 변동 ${priceGain >= 0 ? '+' : ''}${formatEokFromMan(priceGain)} 반영`
                 : o.id === 'jeonse'
                   ? '묶인 보증금의 기회비용'
-                  : `월세 ${fmtMan(monthlyRent)} 기준`
+                  : `월세 ${formatMan(monthlyRent)} 기준`
             }
           />
         ))}
@@ -179,13 +177,13 @@ export function BuyOrRent() {
             value={Math.abs(o.cost)}
             max={barMax}
             className={o.className}
-            format={(v) => (o.cost < 0 ? `-${fmtEok(v)}` : fmtEok(v))}
+            format={(v) => (o.cost < 0 ? `-${formatEokFromMan(v)}` : formatEokFromMan(v))}
             sub={
               o.id === 'buy'
-                ? `이자 ${fmtEok(interest)}, 세금 ${fmtEok(acqTax + holdTax)}, 자기자본 기회비용 ${fmtEok(buyOpportunity)}`
+                ? `이자 ${formatEokFromMan(interest)}, 세금 ${formatEokFromMan(acqTax + holdTax)}, 자기자본 기회비용 ${formatEokFromMan(buyOpportunity)}`
                 : o.id === 'jeonse'
-                  ? `보증금 ${fmtEok(deposit)}을 예금에 뒀다면 받았을 이자`
-                  : `월세 ${fmtEok(monthlyRent * 12 * years)} + 보증금 기회비용`
+                  ? `보증금 ${formatEokFromMan(deposit)}을 예금에 뒀다면 받았을 이자`
+                  : `월세 ${formatEokFromMan(monthlyRent * 12 * years)} + 보증금 기회비용`
             }
           />
         ))}

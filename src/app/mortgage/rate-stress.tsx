@@ -7,14 +7,12 @@ import { Banknote, CalendarClock, Percent, ShieldCheck, TrendingUp, TriangleAler
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { levelPayment, REGULATION, schedule } from '@/lib/mortgage-models';
+import { formatEokFromMan, formatMan } from '@/lib/utils';
 
 // 변동금리가 몇 년 뒤에 움직인다고 보고 계산한다. 고정금리는 그 대가로 처음부터 가산금리를 얹는다.
 const SHIFT_YEAR = 3;
 const FIXED_PREMIUM = 0.5;
 const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE } = REGULATION;
-
-const fmtEok = (n: number) => `${(n / 10000).toFixed(2)}억`;
-const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
 
 export function RateStress() {
   const [loan, setLoan] = useState(40000);
@@ -96,7 +94,7 @@ export function RateStress() {
           min={5000}
           max={100000}
           step={1000}
-          format={fmtEok}
+          format={formatEokFromMan}
         />
         <ControlSlider
           icon={<Percent className='size-4 text-emerald-500' />}
@@ -137,21 +135,21 @@ export function RateStress() {
           min={3000}
           max={20000}
           step={500}
-          format={fmtMan}
+          format={formatMan}
         />
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-        <Metric label='지금 월 상환액' value={fmtMan(before)} sub={`금리 ${rate.toFixed(1)}%`} />
+        <Metric label='지금 월 상환액' value={formatMan(before)} sub={`금리 ${rate.toFixed(1)}%`} />
         <Metric
           label={`${SHIFT_YEAR}년 뒤 월 상환액`}
-          value={fmtMan(after.monthly)}
+          value={formatMan(after.monthly)}
           tone={jumpPct > 20 ? 'bad' : jumpPct > 0 ? 'accent' : 'good'}
-          sub={`금리 ${(rate + delta).toFixed(1)}%, 잔액 ${fmtEok(after.balance)}`}
+          sub={`금리 ${(rate + delta).toFixed(1)}%, 잔액 ${formatEokFromMan(after.balance)}`}
         />
         <Metric
           label='월 부담 증가'
-          value={fmtMan(jump)}
+          value={formatMan(jump)}
           tone={jump > 0 ? 'bad' : 'good'}
           sub={`${jumpPct >= 0 ? '+' : ''}${jumpPct.toFixed(1)}%`}
         />
@@ -169,7 +167,7 @@ export function RateStress() {
           value={before}
           max={barMax}
           className='bg-emerald-500'
-          format={fmtMan}
+          format={formatMan}
           sub={`처음 ${SHIFT_YEAR}년 동안의 월 상환액`}
         />
         <CostBar
@@ -177,7 +175,7 @@ export function RateStress() {
           value={after.monthly}
           max={barMax}
           className='bg-rose-500'
-          format={fmtMan}
+          format={formatMan}
           sub='남은 기간에 잔액을 다 갚아야 하므로 인상폭보다 크게 뛴다'
         />
         <CostBar
@@ -185,7 +183,7 @@ export function RateStress() {
           value={fixed}
           max={barMax}
           className='bg-sky-500'
-          format={fmtMan}
+          format={formatMan}
           sub='처음부터 끝까지 이 금액으로 고정된다'
         />
       </Card>
@@ -197,7 +195,7 @@ export function RateStress() {
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
         <Metric
           label='변동금리 총이자'
-          value={fmtEok(after.interest)}
+          value={formatEokFromMan(after.interest)}
           tone={after.interest > fixedInterest ? 'bad' : 'good'}
           sub={
             delta === 0
@@ -207,7 +205,7 @@ export function RateStress() {
         />
         <Metric
           label='고정금리 총이자'
-          value={fmtEok(fixedInterest)}
+          value={formatEokFromMan(fixedInterest)}
           tone={fixedInterest > after.interest ? 'bad' : 'good'}
           sub={`처음부터 ${(rate + FIXED_PREMIUM).toFixed(1)}%`}
         />

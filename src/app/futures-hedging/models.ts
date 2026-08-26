@@ -153,6 +153,10 @@ export function buildPositions(n: number, meanMultiple: number, seed: number): P
   return out.sort((a, b) => a.drawdown - b.drawdown);
 }
 
+// 라운드 수 안전장치. 연쇄는 유한 라운드에 수렴하지만, 파라미터를 잘못 넣어
+// 수렴하지 않을 때 무한 루프 대신 잘린 궤적을 돌려준다. 채택 캐스케이드와 같은 값.
+const MAX_ROUNDS = 200;
+
 // 결정론적 궤적을 미리 전부 계산한다. 라운드마다 지금 낙폭이 청산 낙폭을 넘긴
 // 포지션이 강제청산되고, 쏟아진 명목가가 가격을 더 끌어내려 다음 층을 넘긴다.
 export function cascadeTrajectory(positions: Position[], impact: number): CascadeFrame[] {
@@ -166,7 +170,7 @@ export function cascadeTrajectory(positions: Position[], impact: number): Cascad
   // 첫 프레임: 충격만 들어온 상태
   frames.push({ price, drawdown: OPENING_SHOCK, liquidated: [...liquidated], justChanged: new Array(n).fill(false) });
 
-  for (let guard = 0; guard < 200; guard++) {
+  for (let round = 0; round < MAX_ROUNDS; round++) {
     const drawdown = 1 - price / ENTRY_PRICE;
     const justChanged = new Array<boolean>(n).fill(false);
     let dumped = 0;

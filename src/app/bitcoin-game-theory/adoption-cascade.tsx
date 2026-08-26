@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Users } from 'lucide-react';
 
@@ -15,7 +15,7 @@ import {
   RoundControls,
   SectionIntro,
 } from '@/components/simulation';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 
 import { type AgentType, type CascadeAgent, buildCascadeAgents, cascadeTrajectory } from './models';
 
@@ -100,29 +100,10 @@ function CascadeSim({
   // 모델이 결정론적이라 전 궤적을 한 번에 계산해 둔다. 라운드 왕복과
   // "최종 곡선을 처음부터 보여 주기"가 여기서 나온다.
   const frames = useMemo(() => cascadeTrajectory(agents, seedCount), [agents, seedCount]);
-  const last = frames.length - 1;
-  const [round, setRound] = useState(0);
+  const { round, last, frame, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
 
-  // 다음 프레임으로 한 칸. 남은 프레임이 있는지 동기적으로 반환해 엔진이 종료를 판단한다.
-  const step = useCallback(() => {
-    if (round >= last) return false;
-    setRound(round + 1);
-    return round + 1 < last;
-  }, [round, last]);
-
-  const engine = useRoundEngine(step, speedMs);
-  const seek = useCallback(
-    (r: number) => {
-      engine.pause();
-      setRound(r);
-    },
-    [engine],
-  );
-
-  const frame = frames[round];
   const adoptedCount = frame.adopted.filter(Boolean).length;
   const p = adoptedCount / N;
-  const done = round >= last;
 
   const states = agents.map((a, i) => TYPE_COLOR[a.type][frame.adopted[i] ? 'on' : 'off']);
   const curve = useMemo(() => frames.map((f) => f.p), [frames]);

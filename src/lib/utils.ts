@@ -32,6 +32,30 @@ export function formatUsd(n: number): string {
   return `$${Math.round(n)}`;
 }
 
+// ── 한국어 통화·비율 표기 ────────────────────────────────────────────────
+// 억으로 찍는 함수가 셋인 것은 입력 단위가 페이지마다 다르기 때문이다. 전세는
+// 억으로, 주택담보대출은 만원으로, 법인은 원으로 계산한다. 예전에는 세 페이지가
+// 모두 `fmtEok`이라는 같은 이름을 로컬에 두어 파일을 열기 전에는 어느 단위를
+// 넣어야 하는지 알 수 없었다. 이름 뒤 `From`이 입력 단위다.
+
+/** 만원 단위 입력. 1234 → `1,234만원` */
+export const formatMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
+
+/** 원 단위 입력. 1234567 → `1,234,567원` */
+export const formatWon = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
+
+/** 억 단위 입력. 3.25 → `3.3억` */
+export const formatEok = (n: number, digits = 1) => `${n.toFixed(digits)}억`;
+
+/** 만원 단위 입력을 억으로. 52500 → `5.25억` */
+export const formatEokFromMan = (n: number, digits = 2) => `${(n / 10000).toFixed(digits)}억`;
+
+/** 원 단위 입력을 억으로. 접미사가 `억원`인 것은 법인 자본금 표기 관례다. 1.2e9 → `12억원` */
+export const formatEokFromWon = (n: number) => `${Math.round(n / 1e8).toLocaleString('ko-KR')}억원`;
+
+/** 백분율. 12.345 → `12.3%` */
+export const formatPct = (n: number, digits = 1) => `${n.toFixed(digits)}%`;
+
 // 긴 16진 문자열을 표시용으로 앞부분만 자른다(hash·pubkey 등 공용 표기).
 export function shortHex(hex: string, head = 10): string {
   return hex.length <= head ? hex : hex.slice(0, head) + '…';

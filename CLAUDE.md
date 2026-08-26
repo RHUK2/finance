@@ -100,13 +100,13 @@ vercel --prod     # Vercel 프로덕션 배포
 
 데이터를 보여 주는 화면은 존대, 개념을 설명하는 화면은 평서다. `/bitcoin`과 `/mempool`에 h1이 없는 것은 빠뜨린 게 아니라 대시보드 부류의 규약이다.
 
-어느 쪽인지는 개수를 세지 말고 껍데기로 판별한다. h1과 `max-w-5xl`이 있으면 설명형, 없으면 대시보드다. 대시보드는 위에 나열한 다섯뿐이고 늘어날 일이 드물다.
+어느 쪽인지는 개수를 세지 말고 껍데기로 판별한다. `ExplainerPage`(`src/components/explainer-page.tsx`)를 쓰면 설명형, `AppHeader`와 `PageMain`을 직접 쓰면 대시보드다. 대시보드는 위에 나열한 다섯뿐이고 늘어날 일이 드물다.
 
 설명형 페이지를 만들거나 손볼 때는 아래를 따른다.
 
 | 항목                     | 규칙                                                                                                              |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| 페이지 골격              | `AppHeader` + `PageMain` + `max-w-5xl` + h1 + 인트로 `p.text-sm/relaxed`                                          |
+| 페이지 골격              | `ExplainerPage`에 `breadcrumb`·`title`·`intro`를 넘긴다. h1·`max-w-5xl`·인트로 클래스를 직접 쓰지 않는다          |
 | h1                       | 단정형 또는 질문형 한 문장. 논지가 논쟁적이면 인트로 첫 문장에서 주장의 출처를 밝힌다                             |
 | 탭                       | 내용이 실제로 갈릴 때만 쓴다. 억지로 만들지 않는다                                                                |
 | 탭 라벨                  | 실제 순서가 있으면 번호 접두사, 병렬 관점이면 번호 없이 명사구                                                    |
@@ -119,7 +119,9 @@ vercel --prod     # Vercel 프로덕션 배포
 
 ### 시뮬레이션 공용 프리미티브 (`src/components/simulation.tsx`)
 
-인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `SegmentedControl`, `Metric`/`StatCard`, `StatusBanner`, `Legend`, `Sparkline`, `CostBar`, `StackedBar`, `MarkTable`, `AgentGrid`, `RoundControls`, `CascadeStage`, `ExplainCard`, `SectionIntro`, `IllustrativeDisclaimer`, `Field`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import.
+인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `SegmentedControl`, `Metric`/`StatCard`, `StatusBanner`, `Legend`, `Sparkline`, `CostBar`, `StackedBar`, `MarkTable`, `AgentGrid`, `RoundControls`, `CascadeStage`, `ExplainCard`, `SectionIntro`, `IllustrativeDisclaimer`, `Field`, `StepPanel`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import. 페이지 껍데기는 여기가 아니라 `ExplainerPage`다.
+
+재생 배선은 `src/hooks/use-round-engine.ts`에 둘 있다. 살아 있는 상태를 한 스텝씩 미는 시뮬레이션은 `useRoundEngine`을 직접 쓰고, 궤적을 미리 다 계산해 두는 결정론적 캐스케이드 넷은 `useTrajectoryPlayer(frames, speedMs)`를 쓴다. 후자는 `round`/`last`/`frame`/`done`/`step`/`seek`/`engine`을 한 번에 돌려주므로 `CascadeStage`에 그대로 넘길 수 있다. 파라미터를 바꿔 궤적을 다시 계산할 때 처음부터 보여 주려면 호출부에서 `key`로 리마운트한다.
 
 고르는 기준이 헷갈리는 것들:
 
@@ -139,6 +141,7 @@ vercel --prod     # Vercel 프로덕션 배포
 - **새 API 엔드포인트 추가**: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·TTL 추가 → 라우트에서 `cached(key, ...)` 사용 → 훅은 `useEndpoint<T>(key)` 한 줄
 - **새 차트 추가**: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - **UI 컴포넌트**: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용
+- **통화·비율 표기**: `src/lib/utils.ts`의 `formatMan`·`formatWon`·`formatEok`·`formatEokFromMan`·`formatEokFromWon`·`formatPct`를 쓴다. 로컬에 `fmtEok` 같은 걸 다시 만들지 않는다. 억으로 찍는 함수가 셋인 것은 입력 단위가 페이지마다 다르기 때문이고, 이름 뒤 `From`이 입력 단위다. 자릿수만 다르면 인자로 넘긴다
 - **커밋 메시지**: `{type}: {한국어 설명}` 형식 (`feat` / `fix` / `refactor` / `chore` 등)
 
 ## Agent skills

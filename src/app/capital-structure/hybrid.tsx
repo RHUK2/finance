@@ -15,6 +15,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
+import { formatWon } from '@/lib/utils';
 
 // 교육용 예시 회사. 금액 단위는 억원, 주가는 원.
 const BASE_SHARES = 10_000_000;
@@ -27,7 +28,6 @@ const CONV_STAKE = CB_SHARES / (BASE_SHARES + CB_SHARES);
 const BREAKEVEN = REDEEM / CONV_STAKE;
 
 const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
-const fmtWon = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
 
 type Instrument = {
   id: string;
@@ -130,7 +130,7 @@ export function Hybrid() {
 
       <SectionIntro title='전환사채는 언제 주식이 되는가'>
         액면 {fmt(CB_FACE)}짜리 전환사채를 발행했다. 만기까지 들고 있으면 원금과 이자를 합쳐 {fmt(REDEEM)}을 받고,
-        주식으로 바꾸면 전환가 {fmtWon(CONV_PRICE)} 기준으로 {CB_SHARES.toLocaleString('ko-KR')}주를 받는다. 회사가
+        주식으로 바꾸면 전환가 {formatWon(CONV_PRICE)} 기준으로 {CB_SHARES.toLocaleString('ko-KR')}주를 받는다. 회사가
         얼마나 커졌느냐에 따라 보유자의 선택이 갈린다.
       </SectionIntro>
 
@@ -169,9 +169,9 @@ export function Hybrid() {
         />
         <Metric
           label='기존 주주 주당가치'
-          value={fmtWon(price)}
+          value={formatWon(price)}
           tone={converts ? 'accent' : undefined}
-          sub={converts ? `전환이 없었다면 ${fmtWon(priceRedeemed)}` : '전환되지 않아 희석 없음'}
+          sub={converts ? `전환이 없었다면 ${formatWon(priceRedeemed)}` : '전환되지 않아 희석 없음'}
         />
       </div>
 
@@ -231,7 +231,7 @@ export function Hybrid() {
         body={
           <>
             <p>
-              위 계산은 전환가가 {fmtWon(CONV_PRICE)}으로 고정된 경우다. 실제 발행 조건에는 주가가 떨어지면 전환가도
+              위 계산은 전환가가 {formatWon(CONV_PRICE)}으로 고정된 경우다. 실제 발행 조건에는 주가가 떨어지면 전환가도
               따라 내리는 조항이 붙는 일이 많다. 전환가가 절반이 되면 같은 액면으로 받아 가는 주식 수는 두 배가 된다.
               주가가 내려갈수록 기존 주주의 희석이 커지는 구조라, 악재가 희석을 부르고 희석이 다시 주가를 누르는 고리가
               생긴다.

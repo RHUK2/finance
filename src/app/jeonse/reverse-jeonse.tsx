@@ -6,9 +6,7 @@ import { Building2, CircleAlert, Percent, ShieldAlert, TrendingDown } from 'luci
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-
-const fmtEok = (n: number) => `${n.toFixed(1)}억`;
-const fmtPct = (n: number) => `${n.toFixed(1)}%`;
+import { formatEok, formatPct } from '@/lib/utils';
 
 export function ReverseJeonse() {
   const [price, setPrice] = useState(6);
@@ -32,13 +30,13 @@ export function ReverseJeonse() {
       ? {
           tone: 'bad' as const,
           icon: <ShieldAlert className='size-4 shrink-0' />,
-          text: `보증금 ${fmtEok(deposit)}이 집값 ${fmtEok(nowPrice)}을 넘어섰다. 집을 팔아 전액을 보증금에 써도 ${fmtEok(underwater)}이 모자란다. 집주인의 자기 자본은 이미 사라졌고, 남은 손실은 임차인 쪽으로 넘어간다.`,
+          text: `보증금 ${formatEok(deposit)}이 집값 ${formatEok(nowPrice)}을 넘어섰다. 집을 팔아 전액을 보증금에 써도 ${formatEok(underwater)}이 모자란다. 집주인의 자기 자본은 이미 사라졌고, 남은 손실은 임차인 쪽으로 넘어간다.`,
         }
       : refundGap > 0
         ? {
             tone: 'accent' as const,
             icon: <CircleAlert className='size-4 shrink-0' />,
-            text: `새 임차인에게 받을 수 있는 돈이 ${fmtEok(nowMarketDeposit)}뿐이라 만기에 ${fmtEok(refundGap)}이 빈다. 집주인이 현금을 넣거나 대출을 일으켜야 하고, 그러지 못하면 만기가 와도 보증금이 나오지 않는다.`,
+            text: `새 임차인에게 받을 수 있는 돈이 ${formatEok(nowMarketDeposit)}뿐이라 만기에 ${formatEok(refundGap)}이 빈다. 집주인이 현금을 넣거나 대출을 일으켜야 하고, 그러지 못하면 만기가 와도 보증금이 나오지 않는다.`,
           }
         : {
             tone: 'good' as const,
@@ -63,7 +61,7 @@ export function ReverseJeonse() {
           min={2}
           max={20}
           step={0.5}
-          format={fmtEok}
+          format={formatEok}
         />
         <ControlSlider
           icon={<Percent className='size-4 text-emerald-500' />}
@@ -73,8 +71,8 @@ export function ReverseJeonse() {
           min={40}
           max={95}
           step={1}
-          format={fmtPct}
-          hint={`이 조건에서 계약한 보증금은 ${fmtEok(deposit)}이다. 만기에 돌려줄 금액은 앞으로 무슨 일이 있어도 이 금액이다.`}
+          format={formatPct}
+          hint={`이 조건에서 계약한 보증금은 ${formatEok(deposit)}이다. 만기에 돌려줄 금액은 앞으로 무슨 일이 있어도 이 금액이다.`}
         />
         <ControlSlider
           icon={<TrendingDown className='size-4 text-rose-500' />}
@@ -84,7 +82,7 @@ export function ReverseJeonse() {
           min={0}
           max={50}
           step={1}
-          format={fmtPct}
+          format={formatPct}
         />
         <ControlSlider
           icon={<TrendingDown className='size-4 text-amber-500' />}
@@ -94,27 +92,32 @@ export function ReverseJeonse() {
           min={0}
           max={50}
           step={1}
-          format={fmtPct}
+          format={formatPct}
           hint='지금 새 임차인을 구하면 받을 수 있는 보증금이 그만큼 줄어든다.'
         />
       </Card>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
-        <Metric label='돌려줘야 할 보증금' value={fmtEok(deposit)} sub='계약서에 적힌 금액' />
-        <Metric label='새로 받을 수 있는 보증금' value={fmtEok(nowMarketDeposit)} sub='지금 전세 시세' tone='accent' />
+        <Metric label='돌려줘야 할 보증금' value={formatEok(deposit)} sub='계약서에 적힌 금액' />
+        <Metric
+          label='새로 받을 수 있는 보증금'
+          value={formatEok(nowMarketDeposit)}
+          sub='지금 전세 시세'
+          tone='accent'
+        />
         <Metric
           label='집주인이 메워야 할 차액'
-          value={fmtEok(refundGap)}
+          value={formatEok(refundGap)}
           sub={refundGap > 0 ? '만기에 현금으로 필요하다' : '다음 임차인 돈으로 덮인다'}
           tone={refundGap > 0 ? 'bad' : 'good'}
         />
         <Metric
           label='내 보증금 ÷ 지금 집값'
-          value={fmtPct(depositRatio)}
+          value={formatPct(depositRatio)}
           sub={
             depositRatio >= 100
-              ? `깡통전세. 지금 시장의 전세가율은 ${fmtPct(marketRatio)}다`
-              : `집값 ${fmtEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${fmtPct(marketRatio)}`
+              ? `깡통전세. 지금 시장의 전세가율은 ${formatPct(marketRatio)}다`
+              : `집값 ${formatEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
           }
           tone={depositRatio >= 100 ? 'bad' : depositRatio >= 90 ? 'accent' : 'good'}
         />
@@ -126,7 +129,7 @@ export function ReverseJeonse() {
           value={deposit}
           max={barMax}
           className='bg-sky-500'
-          format={fmtEok}
+          format={formatEok}
           sub='시세가 어떻게 되든 줄지 않는다'
         />
         <CostBar
@@ -134,16 +137,16 @@ export function ReverseJeonse() {
           value={nowPrice}
           max={barMax}
           className={underwater > 0 ? 'bg-rose-500' : 'bg-emerald-500'}
-          format={fmtEok}
-          sub={`계약 당시 ${fmtEok(price)}에서 ${fmtPct(priceDrop)} 하락`}
+          format={formatEok}
+          sub={`계약 당시 ${formatEok(price)}에서 ${formatPct(priceDrop)} 하락`}
         />
         <CostBar
           label='새 임차인에게 받을 수 있는 돈'
           value={nowMarketDeposit}
           max={barMax}
           className='bg-amber-500'
-          format={fmtEok}
-          sub={refundGap > 0 ? `${fmtEok(refundGap)} 부족` : '기존 보증금을 덮는다'}
+          format={formatEok}
+          sub={refundGap > 0 ? `${formatEok(refundGap)} 부족` : '기존 보증금을 덮는다'}
         />
       </Card>
 

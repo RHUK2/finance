@@ -16,12 +16,12 @@ import {
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { levelPayment, maxLoanByDsr, REGULATION } from '@/lib/mortgage-models';
+import { formatEokFromMan, formatMan } from '@/lib/utils';
 
 // 금액 단위는 만원. 규제 수치와 그 기준은 REGULATION 한곳에서만 온다.
 const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE, stressAdd: STRESS_ADD, stressNote: STRESS_NOTE } = REGULATION;
 
-const fmtEok = (n: number) => `${(n / 10000).toFixed(1)}억`;
-const fmtMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
+const fmtEok = (n: number) => formatEokFromMan(n, 1);
 
 export function Limit() {
   const [price, setPrice] = useState(80000);
@@ -70,7 +70,7 @@ export function Limit() {
           min={3000}
           max={20000}
           step={500}
-          format={fmtMan}
+          format={formatMan}
           hint='DSR은 담보가 아니라 이 숫자를 본다. 소득이 늘지 않으면 집값이 올라도 빌릴 수 있는 돈은 늘지 않는다.'
         />
         <ControlSlider
@@ -181,7 +181,7 @@ export function Limit() {
       </StatusBanner>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-        <Metric label='월 원리금 상환액' value={fmtMan(monthly)} sub={`원리금균등, 만기 ${years}년`} />
+        <Metric label='월 원리금 상환액' value={formatMan(monthly)} sub={`원리금균등, 만기 ${years}년`} />
         <Metric
           label='소득 대비 연 원리금 비율'
           value={`${dsrActual.toFixed(1)}%`}
