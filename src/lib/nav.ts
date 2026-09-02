@@ -11,6 +11,7 @@ import {
   EyeOff,
   Fingerprint,
   Gauge,
+  Gem,
   GitFork,
   History,
   House,
@@ -83,6 +84,7 @@ export const NAV_GROUPS = [
   {
     label: '화폐',
     items: [
+      { label: '가치론', href: '/value-theory', icon: Gem },
       { label: '신용창조', href: '/money-creation', icon: Landmark },
       { label: '구매력 붕괴', href: '/inflation', icon: TrendingDown },
       { label: '달러 패권', href: '/dollar-hegemony', icon: Globe },
