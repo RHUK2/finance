@@ -1,6 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
+
 import { ExplainerPage } from '@/components/explainer-page';
 import { ExplainCard, IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 import {
@@ -74,7 +76,11 @@ export function WalletKeysView() {
       <IllustrativeDisclaimer>
         체크섬·시드·주소는 실제 암호 연산(SHA-256, PBKDF2, secp256k1)을 단순화한 <b>그럴듯한 가짜 값</b>이다.{' '}
         <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 반면 단어장 2048개와 엔트로피를 11비트씩 잘라 단어로 바꾸는
-        규칙(①)은 실제 BIP-39 그대로다.
+        규칙(①)은 실제 BIP-39 그대로다. 여기서 상자로 남겨 둔 secp256k1 연산 자체는{' '}
+        <Link href='/ecdsa' className='underline underline-offset-2'>
+          ECDSA·타원곡선
+        </Link>{' '}
+        페이지에서 작은 곡선 위의 진짜 계산으로 다룬다.
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='mnemonic' />

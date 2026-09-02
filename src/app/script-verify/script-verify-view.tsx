@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { ExplainerPage } from '@/components/explainer-page';
 import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 
@@ -33,7 +35,12 @@ export function ScriptVerifyView() {
       <IllustrativeDisclaimer>
         여기서 만들어지는 개인키·공개키·서명·해시는 흐름을 보여주기 위한 <b>그럴듯한 가짜 값</b>이다. 실제 암호
         연산(secp256k1 ECDSA/Schnorr, SHA-256, RIPEMD-160)을 단순화했다.{' '}
-        <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 스크립트 실행 순서와 스택 규칙(②)만 실제와 같다.
+        <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 스크립트 실행 순서와 스택 규칙(②)만 실제와 같다. ①탭에서 상자로
+        남겨 둔 ECDSA 연산 자체는{' '}
+        <Link href='/ecdsa' className='underline underline-offset-2'>
+          ECDSA·타원곡선
+        </Link>{' '}
+        페이지에서 작은 곡선 위의 진짜 계산으로 다룬다.
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='signature' />
