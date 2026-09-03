@@ -10,9 +10,10 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBan
 import { Card } from '@/components/ui/card';
 import { cn, formatEok, formatPct } from '@/lib/utils';
 
+import { TAX_RATE, TAX_RATE_NOTE } from './models';
+
 // 단위는 억원. 총자산을 1,000억으로 고정하고 그 안에서 부채와 자본의 비율만 바꾼다.
 const ASSETS = 1000;
-const TAX_RATE = 20;
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -105,7 +106,7 @@ export function Leverage() {
           max={12}
           step={0.5}
           format={(v) => `${v.toFixed(1)}%`}
-          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${formatPct(afterTaxRate)}다.`}
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${formatPct(afterTaxRate)}다. 쓴 세율은 ${TAX_RATE_NOTE}이다.`}
         />
         <ControlSlider
           icon={<Coins className='size-4 text-emerald-500' />}

@@ -25,6 +25,13 @@ export function acquisitionTaxRate(priceMan: number) {
   return base * 1.1;
 }
 
+// 연 보유세율(%). 재산세·종부세를 시가 대비 한 비율로 뭉갠 근사라 법정 세율이 아니다.
+// 실제 보유세는 공시가격에 공정시장가액비율을 곱한 과세표준에 누진세율을 매기고,
+// 1주택 여부와 공시가격 구간에 따라 크게 갈린다. 매수·임차 비교에서 자릿수를 맞추려고
+// 하나의 비율로 눌러 둔 값이라, 화면에 쓸 때 반드시 note를 함께 적는다.
+export const HOLDING_TAX_RATE = 0.15;
+export const HOLDING_TAX_NOTE = '재산세·종부세를 시가 대비로 뭉갠 근사, 법정 세율 아님';
+
 export type RepayMethod = 'equal-payment' | 'equal-principal' | 'bullet';
 
 export const REPAY_LABEL: Record<RepayMethod, string> = {

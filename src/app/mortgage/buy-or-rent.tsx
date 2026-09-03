@@ -8,7 +8,13 @@ import { ArrowLeftRight, CalendarClock, House, KeyRound, Percent, Repeat, Trendi
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { acquisitionTaxRate, ACQUISITION_TAX_NOTE, schedule } from '@/lib/mortgage-models';
+import {
+  acquisitionTaxRate,
+  ACQUISITION_TAX_NOTE,
+  HOLDING_TAX_NOTE,
+  HOLDING_TAX_RATE,
+  schedule,
+} from '@/lib/mortgage-models';
 import { formatEokFromMan, formatMan } from '@/lib/utils';
 
 // 금액 단위는 만원. 비교를 단순하게 하려고 조달 조건 몇 가지는 고정한다.
@@ -16,7 +22,6 @@ const LOAN_RATIO = 60; // 집값 대비 대출 비중
 const LOAN_TERM = 30;
 const DEPOSIT_RATE = 3; // 묶인 돈을 예금에 뒀다면 받았을 이자
 // 취득세는 가격대별 누진이라 상수로 둘 수 없다. mortgage-models가 단일 출처다.
-const HOLDING_TAX = 0.15; // 연 보유세율. 재산세·종부세를 시가 대비 한 비율로 뭉갠 값
 const MONTHLY_DEPOSIT_RATIO = 10; // 월세 보증금은 전세 보증금의 이 비율
 
 export function BuyOrRent() {
@@ -42,7 +47,7 @@ export function BuyOrRent() {
 
   const acqRate = acquisitionTaxRate(price);
   const acqTax = (price * acqRate) / 100;
-  const holdTax = ((price * HOLDING_TAX) / 100) * years;
+  const holdTax = ((price * HOLDING_TAX_RATE) / 100) * years;
   const buyOpportunity = ((equity * DEPOSIT_RATE) / 100) * years;
   const buyFixed = interest + acqTax + holdTax + buyOpportunity;
 
@@ -168,7 +173,7 @@ export function BuyOrRent() {
         <span className='text-muted-foreground text-xs/relaxed'>
           {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다. 세금은 취득세{' '}
           {acqRate.toFixed(2)}%({ACQUISITION_TAX_NOTE}, 6억 초과 9억 이하는 가격에 따라 오른다)와 보유세 연{' '}
-          {HOLDING_TAX}%로 잡았다
+          {HOLDING_TAX_RATE}%로 잡았다. 보유세율은 {HOLDING_TAX_NOTE}이다
         </span>
         {options.map((o) => (
           <CostBar

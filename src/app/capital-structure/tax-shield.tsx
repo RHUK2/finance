@@ -16,6 +16,8 @@ import {
 import { Card } from '@/components/ui/card';
 import { cn, formatEok } from '@/lib/utils';
 
+import { TAX_RATE } from './models';
+
 // 단위는 억원. 세금 방패만 떼어 보기 위해 영업이익과 이자율은 고정한다.
 const ASSETS = 1000;
 const EBIT = 150;
@@ -44,7 +46,7 @@ function firmValue(debtPct: number, taxRate: number) {
 
 export function TaxShield() {
   const [debtRatio, setDebtRatio] = useState(40);
-  const [taxRate, setTaxRate] = useState(20);
+  const [taxRate, setTaxRate] = useState(TAX_RATE);
 
   const debt = (ASSETS * debtRatio) / 100;
   const interest = (debt * RATE) / 100;
