@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { ControlSlider, SectionIntro, StatCard } from '@/components/simulation';
+import { ControlSlider, Metric, SectionIntro } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { InflationData } from '@/hooks/use-inflation';
@@ -127,17 +127,15 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
         </p>
 
         <div className='grid gap-3 sm:grid-cols-3'>
-          <StatCard label='통장 잔고 (명목)' value={r.depositNominal ?? amount} format={money} />
-          <StatCard
+          <Metric label='통장 잔고 (명목)' value={money(r.depositNominal ?? amount)} />
+          <Metric
             label={holdLabel}
-            value={r.holdLine ?? amount}
-            format={money}
+            value={money(r.holdLine ?? amount)}
             sub={r.ratio != null ? `${refName} ×${r.ratio.toFixed(1)}` : '-'}
           />
-          <StatCard
+          <Metric
             label='유지선 대비'
-            value={r.gap ?? 0}
-            format={money}
+            value={money(r.gap ?? 0)}
             tone={r.lossPct != null && r.lossPct < 0 ? 'bad' : 'good'}
             sub={r.lossPct != null ? `${r.lossPct >= 0 ? '+' : ''}${r.lossPct.toFixed(0)}%` : '데이터 범위 밖'}
           />
@@ -150,11 +148,10 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
               a.value == null ? (
                 <EmptyCard key={a.key} label={a.label} note={`${startYear}년 데이터 없음`} />
               ) : (
-                <StatCard
+                <Metric
                   key={a.key}
                   label={a.label}
-                  value={a.value}
-                  format={money}
+                  value={money(a.value)}
                   tone='accent'
                   sub={fmtMultiple(a.value / amount)}
                 />

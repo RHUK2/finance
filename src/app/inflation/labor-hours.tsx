@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { ControlSlider, SectionIntro, StatCard } from '@/components/simulation';
+import { ControlSlider, Metric, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, minWageAt, valueAt, type Point } from '@/lib/inflation-models';
@@ -108,11 +108,10 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
             e.value == null || r.currentWage == null ? (
               <EmptyCard key={e.key} label={e.label} note={`${startYear}년 데이터 없음`} />
             ) : (
-              <StatCard
+              <Metric
                 key={e.key}
                 label={e.label}
-                value={e.value / r.currentWage}
-                format={fmtHours}
+                value={fmtHours(e.value / r.currentWage)}
                 tone={e.key !== 'deposit' ? 'accent' : e.value / r.currentWage < 1 ? 'bad' : undefined}
                 sub={money(e.value)}
               />

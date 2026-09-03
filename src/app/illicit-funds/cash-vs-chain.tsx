@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Banknote, Bitcoin, DollarSign } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
-import { ControlSlider, ExplainCard, Metric, SectionIntro, StatCard, StatusBanner } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { BTC_COLOR, formatUsd } from '@/lib/utils';
 
 // 미화 100달러권 실측치: 1장 = 1.0 g, 156.1 × 66.3 × 0.1093 mm ≈ 1.13 cm³.
@@ -52,15 +52,10 @@ export function CashVsChain() {
               현금 (100달러권)
             </span>
             <div className='grid grid-cols-2 gap-2'>
-              <StatCard label='지폐 장수' value={notes} format={(n) => `${fmtNum(n)}장`} />
-              <StatCard label='무게' value={kg} format={(n) => `${fmtNum(n)} kg`} />
-              <StatCard label='부피' value={liters} format={(n) => `${fmtNum(n)} L`} />
-              <StatCard
-                label={`캐리어 (${SUITCASE_KG}kg 기준)`}
-                value={suitcases}
-                format={(n) => `${fmtNum(n)}개`}
-                tone='bad'
-              />
+              <Metric label='지폐 장수' value={`${fmtNum(notes)}장`} />
+              <Metric label='무게' value={`${fmtNum(kg)} kg`} />
+              <Metric label='부피' value={`${fmtNum(liters)} L`} />
+              <Metric label={`캐리어 (${SUITCASE_KG}kg 기준)`} value={`${fmtNum(suitcases)}개`} tone='bad' />
             </div>
             <p className='text-muted-foreground text-xs/relaxed'>
               대부분의 나라에서 일정 금액(미국·EU는 1만 달러/유로 상당) 이상의 현금을 신고 없이 반출입하면 그 자체로

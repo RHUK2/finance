@@ -13,7 +13,6 @@ import {
   Metric,
   SectionIntro,
   SegmentedControl,
-  StatCard,
   StatusBanner,
 } from '@/components/simulation';
 import { cn } from '@/lib/utils';
@@ -120,18 +119,12 @@ export function LaunderingTrail() {
 
         <div className='grid grid-cols-2 gap-2 lg:grid-cols-4'>
           <Metric label='체인상 경로 보존' value='100%' tone='bad' sub='홉 수와 무관' />
-          <StatCard
+          <Metric
             label='신원 특정 가능성'
-            value={identify * 100}
-            format={(n) => `${Math.round(n)}%`}
+            value={`${Math.round(identify * 100)}%`}
             tone={identify > 0.5 ? 'bad' : 'accent'}
           />
-          <StatCard
-            label='추적 소요 시간'
-            value={days}
-            format={(n) => `${Math.round(n)}일`}
-            sub='홉·믹서가 늘리는 건 이것뿐'
-          />
+          <Metric label='추적 소요 시간' value={`${Math.round(days)}일`} sub='홉·믹서가 늘리는 건 이것뿐' />
           <Metric label='실제로 쓸 수 있는 돈' value={profile.usable} tone={exit === 'hold' ? 'bad' : undefined} />
         </div>
 
