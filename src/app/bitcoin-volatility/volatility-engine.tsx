@@ -16,7 +16,7 @@ const MAX_STEPS = 240;
 const VOL_WINDOW = 20;
 const WIN_PRICE = GOLD_CAP / SUPPLY; // 성공했을 때 가정 가격 (목표 시장 ÷ 공급량)
 const START_P = 0.05;
-// 스텝 수가 많아 게임이론 기본값보다 빠른 속도 프리셋을 쓴다.
+// 라운드 수가 많아 게임이론 기본값보다 빠른 속도 프리셋을 쓴다.
 const SPEEDS = [
   { label: '0.5×', ms: 560 },
   { label: '1×', ms: 280 },
@@ -115,7 +115,7 @@ function VolSim({
           speedMs={speedMs}
           onSpeed={onSpeed}
           done={done}
-          unit='스텝'
+          unit='라운드'
           speeds={SPEEDS}
         />
         <Sparkline values={prices} cursor={round} label='가격' className='text-amber-500' heightClass='h-12' />
@@ -134,10 +134,10 @@ function VolSim({
         <Metric label='성공 확률 p' value={`${Math.round(p * 100)}%`} tone='accent' />
         <Metric label='현재 가격' value={formatUsd(p * WIN_PRICE)} />
         <Metric
-          label={`최근 변동성 (${VOL_WINDOW}스텝)`}
+          label={`최근 실현 변동성 (${VOL_WINDOW}라운드)`}
           value={round < 2 ? '—' : `${vol.toFixed(1)}%`}
           tone={round < 2 ? undefined : vol > 8 ? 'bad' : 'good'}
-          sub={round < 2 ? '스텝이 쌓여야 계산된다' : undefined}
+          sub={round < 2 ? '라운드가 쌓여야 계산된다' : undefined}
         />
       </div>
     </>

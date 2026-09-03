@@ -42,7 +42,7 @@ export function SignatureLab() {
             value: digest,
             tone: 'accent',
           },
-          { kind: 'op', label: 'ECDSA 서명(다이제스트, 개인키, 난수 k)' },
+          { kind: 'op', label: 'ECDSA 서명(다이제스트, 개인키, 일회용 비밀값 k)' },
           {
             kind: 'split',
             boxes: [
@@ -71,7 +71,7 @@ export function SignatureLab() {
             value: digest,
             tone: 'accent',
           },
-          { kind: 'op', label: 'Schnorr 서명(다이제스트, 개인키, 결정적 난수)' },
+          { kind: 'op', label: 'Schnorr 서명(다이제스트, 개인키, 결정적 일회용 비밀값)' },
           {
             kind: 'box',
             label: '서명 (64바이트)',
@@ -134,8 +134,8 @@ export function SignatureLab() {
             메시지와는 아무 상관이 없다. 주소를 만들 때 한 번 해두면 계속 재사용한다.
             <br />
             <br />
-            <b>서명</b>은 여기에 <b>다이제스트(메시지)와 난수</b>를 더해 (r, s)를 만드는 별개의 계산이다. 개인키가
-            들어가는 건 같지만 트랜잭션마다 매번 새로 하고 결과도 매번 다르다. 위 파이프라인이 바로 이 단계다.
+            <b>서명</b>은 여기에 <b>다이제스트(메시지)와 일회용 비밀값</b>을 더해 (r, s)를 만드는 별개의 계산이다.
+            개인키가 들어가는 건 같지만 트랜잭션마다 매번 새로 하고 결과도 매번 다르다. 위 파이프라인이 바로 이 단계다.
             <br />
             <br />
             <b>검증</b>은 이 둘과 또 다른 동작으로, 개인키 없이 <b>공개키</b>만으로 한다. 그 원리는 이어지는 설명에서,

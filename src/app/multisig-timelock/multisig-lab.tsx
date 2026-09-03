@@ -126,8 +126,8 @@ export function MultisigLab() {
       />
       <ExplainCard
         title='Taproot에서는 OP_CHECKMULTISIG를 쓰지 않는다'
-        preview='OP_CHECKSIGADD로 바뀌었고, 참가자가 모두 협조하면 아예 다중서명처럼 보이지도 않는다.'
-        body='Taproot(P2TR)는 OP_CHECKMULTISIG를 아예 지원하지 않는다. 대신 서명을 하나씩 검증하며 성공 횟수를 누적하는 OP_CHECKSIGADD를 쓴다. 게다가 참가자 전원이 협조하는 정상적인 경우에는 각자의 공개키를 하나로 합쳐(MuSig2 같은 방식) 서명 하나만 남기므로, 체인에는 평범한 단일 서명 지출로만 보인다. 몇 명이 서명했는지, 애초에 다중서명이었는지조차 드러나지 않는다. 여기서 보는 OP_CHECKMULTISIG 형태는 Legacy·SegWit 계열의 방식이다.'
+        preview='OP_CHECKSIGADD로 바뀌었고, 서명자가 모두 협조하면 아예 다중서명처럼 보이지도 않는다.'
+        body='Taproot(P2TR)는 OP_CHECKMULTISIG를 아예 지원하지 않는다. 대신 서명을 하나씩 검증하며 성공 횟수를 누적하는 OP_CHECKSIGADD를 쓴다. 게다가 서명자 전원이 협조하는 정상적인 경우에는 각자의 공개키를 하나로 합쳐(MuSig2 같은 방식) 서명 하나만 남기므로, 체인에는 평범한 단일 서명 지출로만 보인다. 몇 명이 서명했는지, 애초에 다중서명이었는지조차 드러나지 않는다. 여기서 보는 OP_CHECKMULTISIG 형태는 Legacy·SegWit 계열의 방식이다.'
       />
       <ExplainCard
         title='실전에서는 이렇게 쓰인다'

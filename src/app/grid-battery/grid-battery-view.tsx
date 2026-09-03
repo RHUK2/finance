@@ -160,7 +160,7 @@ export function GridBatteryView() {
         icon={<Bitcoin className='size-4 text-amber-500' />}
         title='비트코인 채굴 = 유연 부하'
         preview='1초 만에 껐다 켤 수 있는 대형 수요, 잉여 전력만 골라 먹는다.'
-        body="채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 '수요 반응(demand response)' 자원인 셈이다."
+        body='채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 유연 부하 자원인 셈이다.'
       />
       <ExplainCard
         icon={<Battery className='size-4 text-emerald-500' />}

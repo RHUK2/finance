@@ -142,7 +142,7 @@ export function FiniteField() {
       <ExplainCard
         icon={<Spline className='size-4 text-amber-500' />}
         title='실제 secp256k1은 얼마나 큰가'
-        preview={`같은 식을 p = ${SECP256K1.p} 위에서 돌린다. 점 개수가 약 1.158 × 10⁷⁷개다.`}
+        preview={`같은 식을 p = ${SECP256K1.p} 위에서 돌린다. 위수 n이 약 1.158 × 10⁷⁷이다.`}
         body={
           <>
             <p>

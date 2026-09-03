@@ -59,7 +59,7 @@ export function AdoptionCascade() {
         <ControlSlider
           icon={<Users className='size-4 text-amber-500' />}
           label='처음 사는 사람 수 (시드)'
-          hint='아무도 안 사도 맨 먼저 움직이는 불씨. 임계값이 가장 낮은 사람들이며 격자 맨 왼쪽에 있다.'
+          hint='아무도 안 사도 맨 먼저 움직이는 사람들. 임계값이 가장 낮아 격자 맨 왼쪽에 있다.'
           value={seedCount}
           onChange={setSeedCount}
           min={1}
@@ -153,9 +153,12 @@ function CascadeSim({
       outcome={
         done
           ? p > 0.9
-            ? { tone: 'accent', text: '🔥 임계점을 넘어 거의 전원이 채택했다. 초기 소수의 움직임이 전체로 번졌다.' }
+            ? {
+                tone: 'accent',
+                text: '🔥 채택률이 남은 임계값을 모두 넘겨 거의 전원이 채택했다. 초기 소수의 움직임이 캐스케이드로 이어졌다.',
+              }
             : {
-                text: '확산이 임계점에 못 미쳐 멈췄다. 채택률이 남은 칸들의 임계값에 닿지 못한 것이다. 시드를 늘리거나 평균 임계값을 낮춰 다시 돌려 보자.',
+                text: '캐스케이드가 멈췄다. 채택률이 남은 칸들의 임계값에 닿지 못한 것이다. 시드를 늘리거나 평균 임계값을 낮춰 다시 돌려 보자.',
               }
           : undefined
       }

@@ -11,7 +11,7 @@ import { WhyTwoChains } from './why-two-chains';
 
 const TABS = [
   { value: 'why', label: '왜 두 체인이 남는가', node: <WhyTwoChains /> },
-  { value: 'replay', label: '리플레이 공격', node: <ReplayAttack /> },
+  { value: 'replay', label: '리플레이', node: <ReplayAttack /> },
   { value: 'separation', label: '코인 분리', node: <CoinSeparation /> },
   { value: 'august', label: '2026년 8월', node: <August2026 /> },
 ];
