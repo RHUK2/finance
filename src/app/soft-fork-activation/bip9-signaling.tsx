@@ -138,17 +138,12 @@ export function Bip9Signaling() {
           현재 상태: {BIP9_STATE_LABEL[state]}
         </StatusBanner>
 
-        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+        <div className='grid grid-cols-2 gap-3'>
           <Metric label='경과 기간' value={`${round} / ${MAX_PERIODS}`} />
           <Metric
             label='임계값'
             value={`${(SIGNAL_THRESHOLD * 100).toFixed(0)}%`}
             sub={`채굴자 지지율 ${supportPct}% 설정`}
-          />
-          <Metric
-            label='결과'
-            value={state === 'ACTIVE' ? '활성화' : state === 'FAILED' ? '실패' : '진행 중'}
-            tone={state === 'ACTIVE' ? 'good' : state === 'FAILED' ? 'bad' : 'accent'}
           />
         </div>
       </Card>

@@ -78,10 +78,9 @@ export function MempoolPolicy() {
             : `수수료 ${formatSats(fee)} < 최소 ${formatSats(minFee)}. 거부되어 아무 데도 퍼지지 않는다.`}
         </StatusBanner>
 
-        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+        <div className='grid grid-cols-2 gap-3'>
           <Metric label='이 tx 수수료' value={formatSats(fee)} tone='accent' />
           <Metric label='노드가 요구하는 최소' value={formatSats(minFee)} />
-          <Metric label='결과' value={accepted ? '수용' : '거부'} tone={accepted ? 'good' : 'bad'} />
         </div>
       </Card>
 
@@ -133,10 +132,9 @@ export function MempoolPolicy() {
             : `수수료 증가분 ${formatSats(Math.max(0, rbf.feeDelta))}가 요구치(${formatSats(rbf.requiredDelta)})에 못 미친다. 대체 거부.`}
         </StatusBanner>
 
-        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+        <div className='grid grid-cols-2 gap-3'>
           <Metric label='원본 수수료' value={formatSats(oldFee)} />
           <Metric label='대체 tx 수수료' value={formatSats(newFee)} tone='accent' />
-          <Metric label='대체 결과' value={rbf.accepted ? '성공' : '거부'} tone={rbf.accepted ? 'good' : 'bad'} />
         </div>
       </Card>
 

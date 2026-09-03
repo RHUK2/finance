@@ -95,10 +95,9 @@ export function MultisigLab() {
           : `유효한 서명 ${validCount}개 < 필요 서명 ${m}개 → 지출 거부`}
       </StatusBanner>
 
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3'>
         <Metric label='서명한 사람' value={`${validCount} / ${n}`} tone={unlocked ? 'good' : 'bad'} />
         <Metric label='정족수' value={`${m}-of-${n}`} tone='accent' />
-        <Metric label='결과' value={unlocked ? '지출 허용' : '지출 거부'} tone={unlocked ? 'good' : 'bad'} />
       </div>
 
       <Card className='flex flex-col gap-2 p-4'>

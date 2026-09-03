@@ -111,7 +111,7 @@ export function TimelockLab() {
             : `경과 ${fmtBlocks(elapsedBlocks)} < 요구 ${fmtBlocks(requiredBlocks)} → 지출 거부`}
       </StatusBanner>
 
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3'>
         <Metric label='잠금 방식' value={type === 'cltv' ? '절대 시간' : '상대 시간'} tone='accent' />
         <Metric
           label='남은 블록'
@@ -121,7 +121,6 @@ export function TimelockLab() {
               : fmtBlocks(Math.max(0, requiredBlocks - elapsedBlocks))
           }
         />
-        <Metric label='결과' value={unlocked ? '지출 허용' : '지출 거부'} tone={unlocked ? 'good' : 'bad'} />
       </div>
 
       <Card className='flex flex-col gap-2 p-4'>
