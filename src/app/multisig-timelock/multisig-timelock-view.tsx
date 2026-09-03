@@ -25,8 +25,9 @@ export function MultisigTimelockView() {
       }
     >
       <IllustrativeDisclaimer>
-        여기서 보이는 공개키·스크립트는 흐름을 보여주기 위한 예시 표기다. 정족수 비교(다중서명)와 블록 높이 비교(타임락)
-        로직 자체는 실제 검증 규칙과 같지만, 실제 secp256k1 서명 검증이나 컨센서스 코드를 그대로 재현한 것은 아니다.
+        여기서 보이는 공개키·스크립트는 실제 연산을 단순화한 <b>그럴듯한 가짜 값</b>이다. 정족수 비교(다중서명)와 블록
+        높이 비교(타임락) 로직 자체는 실제 검증 규칙과 같지만, 실제 secp256k1 서명 검증이나 컨센서스 코드를 그대로
+        재현한 것은 아니다. <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b>
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='multisig' />
