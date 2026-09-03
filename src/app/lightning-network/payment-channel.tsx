@@ -67,33 +67,37 @@ export function PaymentChannel() {
           <span>{formatSats(state.bobSats)}</span>
         </div>
 
-        {!closed && (
-          <>
-            <div className='grid grid-cols-2 gap-3'>
-              <SegmentedControl
-                options={[
-                  { value: 'toBob', label: 'Alice → Bob' },
-                  { value: 'toAlice', label: 'Bob → Alice' },
-                ]}
-                value={direction}
-                onChange={setDirection}
-              />
-              <Button onClick={pay} className='gap-1.5'>
-                <ArrowLeftRight className='size-4' />
-                오프체인 송금
-              </Button>
-            </div>
-            <ControlSlider
-              label='송금액'
-              value={amount}
-              onChange={setAmount}
-              min={10_000}
-              max={300_000}
-              step={10_000}
-              format={formatSats}
-            />
-          </>
-        )}
+        {/*
+          채널을 닫아도 컨트롤을 숨기지 않고 disabled로 둔다. 닫힌 뒤 오프체인 송금이
+          불가능해진다는 것이 이 탭의 논지인데, 컨트롤이 사라져 버리면 무엇이 막혔는지
+          대비가 남지 않는다(CLAUDE.md P5).
+        */}
+        <div className='grid grid-cols-2 gap-3'>
+          <SegmentedControl
+            options={[
+              { value: 'toBob', label: 'Alice → Bob' },
+              { value: 'toAlice', label: 'Bob → Alice' },
+            ]}
+            value={direction}
+            onChange={setDirection}
+            disabled={closed}
+          />
+          <Button onClick={pay} className='gap-1.5' disabled={closed}>
+            <ArrowLeftRight className='size-4' />
+            오프체인 송금
+          </Button>
+        </div>
+        <ControlSlider
+          label='송금액'
+          value={amount}
+          onChange={setAmount}
+          min={10_000}
+          max={300_000}
+          step={10_000}
+          format={formatSats}
+          disabled={closed}
+          hint={closed ? '채널이 닫혀 더 이상 오프체인으로 옮길 수 없다. 새 채널을 열면 다시 살아난다.' : undefined}
+        />
 
         <div className='flex gap-2 border-t pt-3'>
           {!closed ? (

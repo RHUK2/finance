@@ -64,10 +64,15 @@ export function BitcoinQuantumView() {
         <ControlSlider
           icon={<Atom className='size-4 text-violet-500' />}
           label='양자컴퓨터 논리 큐비트 확보율'
-          hint='secp256k1 해독에 필요한 규모 대비 진행률 (가상 시나리오)'
+          hint={
+            addressReused
+              ? 'secp256k1 해독에 필요한 규모 대비 진행률 (가상 눈금)'
+              : '공개키가 노출되지 않은 주소에는 큐비트가 아무리 늘어도 노릴 대상이 없다. 주소 유형을 바꾸면 이 슬라이더가 살아난다.'
+          }
           value={qubitProgress}
           onChange={setQubitProgress}
           format={fmt}
+          disabled={!addressReused}
         />
         <div className='flex flex-col gap-1.5'>
           <span className='text-sm font-medium'>주소 유형</span>

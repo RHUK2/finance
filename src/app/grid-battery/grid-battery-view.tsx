@@ -85,6 +85,8 @@ export function GridBatteryView() {
           onChange={setMinerCapacity}
           max={60}
           format={fmt}
+          disabled={!minersOn}
+          hint={minersOn ? undefined : '채굴 부하를 연결해야 이 용량이 흡수에 쓰인다.'}
         />
         <div className='flex items-center justify-between border-t pt-3'>
           <span className='flex items-center gap-1.5 text-sm font-medium'>

@@ -180,6 +180,7 @@ export function ControlSlider({
   step = 1,
   scale = 'linear',
   format,
+  disabled,
 }: {
   icon?: React.ReactNode;
   label: string;
@@ -191,6 +192,11 @@ export function ControlSlider({
   step?: number;
   scale?: 'linear' | 'log';
   format: (v: number) => string;
+  /**
+   * 지금 조건에서 이 슬라이더가 결과를 바꾸지 못할 때 켠다. 숨기지 않는 이유는
+   * 다른 조건에서는 살아난다는 사실이 설명의 일부이기 때문이다(CLAUDE.md P5).
+   */
+  disabled?: boolean;
 }) {
   const log = scale === 'log';
   const ratio = log ? Math.log(max / min) : 0;
@@ -199,7 +205,8 @@ export function ControlSlider({
 
   return (
     <div className='flex flex-col gap-1.5'>
-      <div className='flex items-center justify-between text-sm'>
+      {/* Slider는 data-disabled로 스스로 흐려지므로 래퍼에는 걸지 않는다. 라벨·힌트만 맞춘다. */}
+      <div className={cn('flex items-center justify-between text-sm', disabled && 'opacity-60')}>
         <span className='flex items-center gap-1.5 font-medium'>
           {icon}
           {label}
@@ -213,11 +220,19 @@ export function ControlSlider({
           step={1}
           value={[toTick(value)]}
           onValueChange={([t]) => onChange(fromTick(t))}
+          disabled={disabled}
         />
       ) : (
-        <Slider min={min} max={max} step={step} value={[value]} onValueChange={([v]) => onChange(v)} />
+        <Slider
+          min={min}
+          max={max}
+          step={step}
+          value={[value]}
+          onValueChange={([v]) => onChange(v)}
+          disabled={disabled}
+        />
       )}
-      {hint && <p className='text-muted-foreground text-xs'>{hint}</p>}
+      {hint && <p className={cn('text-muted-foreground text-xs', disabled && 'opacity-60')}>{hint}</p>}
     </div>
   );
 }
