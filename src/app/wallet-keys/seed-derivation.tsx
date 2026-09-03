@@ -64,7 +64,7 @@ export function SeedDerivation({
           items={[
             {
               kind: 'box',
-              label: '비밀번호 = 니모닉 단어들 (①에서 생성됨)',
+              label: '비밀번호 = 니모닉 단어들 (앞 탭에서 생성됨)',
               value: mnemonic,
             },
             {

@@ -99,8 +99,8 @@ export function AddressCompare() {
         preview='Taproot는 입력이 가장 작지만 출력이 가장 크다. 그래서 입력 개수에 따라 순위가 뒤집힌다.'
         body={
           <>
-            ③ 탭에서 본 <b>witness 할인</b>이 여기서 타입별 차이로 나타난다. 서명이 witness로 빠진 SegWit·Taproot 입력은
-            Legacy보다 훨씬 작다.
+            크기가 수수료다 탭에서 본 <b>witness 할인</b>이 여기서 타입별 차이로 나타난다. 서명이 witness로 빠진
+            SegWit·Taproot 입력은 Legacy보다 훨씬 작다.
             <br />
             <br />
             그런데 위 막대를 보면 기본값(입력 2·출력 2)에서 Taproot(211.5 vB)이 Native SegWit(208.5 vB)보다{' '}

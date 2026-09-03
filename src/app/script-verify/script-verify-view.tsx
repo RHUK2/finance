@@ -10,11 +10,11 @@ import { ScriptStack } from './script-stack';
 import { SignatureLab } from './signature-lab';
 
 const TABS = [
-  { value: 'signature', label: '① 서명 만들기', node: <SignatureLab /> },
-  { value: 'stack', label: '② 스크립트 실행', node: <ScriptStack /> },
+  { value: 'signature', label: '서명 만들기', node: <SignatureLab /> },
+  { value: 'stack', label: '스크립트 실행', node: <ScriptStack /> },
   {
     value: 'compare',
-    label: '③ 주소 타입별 비교',
+    label: '주소 타입별 비교',
     node: <AddressScriptCompare />,
   },
 ];
@@ -35,8 +35,8 @@ export function ScriptVerifyView() {
       <IllustrativeDisclaimer>
         여기서 만들어지는 개인키·공개키·서명·해시는 흐름을 보여주기 위한 <b>그럴듯한 가짜 값</b>이다. 실제 암호
         연산(secp256k1 ECDSA/Schnorr, SHA-256, RIPEMD-160)을 단순화했다.{' '}
-        <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 스크립트 실행 순서와 스택 규칙(②)만 실제와 같다. ①탭에서 상자로
-        남겨 둔 ECDSA 연산 자체는{' '}
+        <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 스크립트 실행 순서와 스택 규칙만 실제와 같다. 서명 만들기
+        탭에서 상자로 남겨 둔 ECDSA 연산 자체는{' '}
         <Link href='/ecdsa' className='underline underline-offset-2'>
           ECDSA·타원곡선
         </Link>{' '}

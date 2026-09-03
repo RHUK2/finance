@@ -69,7 +69,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
       <Card className='gap-4 p-4'>
         <ControlSlider
           label='두 번째 메시지 해시 z₂'
-          hint={`첫 번째는 ③탭에서 고른 z = ${z}다. 개인키 d = ${d}와 일회용 비밀값 k = ${k}는 두 서명이 똑같이 쓴다.`}
+          hint={`첫 번째는 서명 만들기 탭에서 고른 z = ${z}다. 개인키 d = ${d}와 일회용 비밀값 k = ${k}는 두 서명이 똑같이 쓴다.`}
           value={z2}
           onChange={setZ2}
           min={0}

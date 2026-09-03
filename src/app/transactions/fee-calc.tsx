@@ -137,9 +137,9 @@ export function FeeCalc() {
             자원이라 1/4만 매긴다. 임의의 숫자가 아니라 자원 비용에 맞춘 가격이다.
             <br />
             <br />
-            같은 송금인데 Legacy 입력이 <b>148 vB</b>, Native SegWit이 <b>68 vB</b>인 이유가 이거다. ② 탭에서 봤듯
-            서명을 넣는 자리만 다르다. Legacy는 서명을 일반 영역(scriptSig)에 넣어 제값을 다 내고, SegWit은 witness로
-            빼서 1/4만 낸다. 다음 탭에서 타입별 차이를 직접 비교해 보자.
+            같은 송금인데 Legacy 입력이 <b>148 vB</b>, Native SegWit이 <b>68 vB</b>인 이유가 이거다. 트랜잭션 구조
+            탭에서 봤듯 서명을 넣는 자리만 다르다. Legacy는 서명을 일반 영역(scriptSig)에 넣어 제값을 다 내고, SegWit은
+            witness로 빼서 1/4만 낸다. 다음 탭에서 타입별 차이를 직접 비교해 보자.
             <br />
             <br />
             <span className='text-muted-foreground text-[11px]'>

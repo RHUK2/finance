@@ -8,11 +8,11 @@ import { DifficultyConsensus } from './difficulty-consensus';
 import { MiningSim } from './mining-sim';
 
 const TABS = [
-  { value: 'header', label: '① 블록 헤더 해부', node: <BlockHeaderView /> },
-  { value: 'mining', label: '② 채굴 시뮬레이션', node: <MiningSim /> },
+  { value: 'header', label: '블록 헤더 해부', node: <BlockHeaderView /> },
+  { value: 'mining', label: '채굴 시뮬레이션', node: <MiningSim /> },
   {
     value: 'consensus',
-    label: '③ 난이도 조정·합의',
+    label: '난이도 조정·합의',
     node: <DifficultyConsensus />,
   },
 ];

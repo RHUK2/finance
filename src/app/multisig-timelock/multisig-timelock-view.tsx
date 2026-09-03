@@ -7,8 +7,8 @@ import { MultisigLab } from './multisig-lab';
 import { TimelockLab } from './timelock-lab';
 
 const TABS = [
-  { value: 'multisig', label: '① 다중서명', node: <MultisigLab /> },
-  { value: 'timelock', label: '② 타임락', node: <TimelockLab /> },
+  { value: 'multisig', label: '다중서명', node: <MultisigLab /> },
+  { value: 'timelock', label: '타임락', node: <TimelockLab /> },
 ];
 
 export function MultisigTimelockView() {

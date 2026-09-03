@@ -8,9 +8,9 @@ import { OnchainComparison } from './onchain-comparison';
 import { PaymentChannel } from './payment-channel';
 
 const TABS = [
-  { value: 'channel', label: '① 결제 채널', node: <PaymentChannel /> },
-  { value: 'htlc', label: '② HTLC와 라우팅', node: <HtlcRouting /> },
-  { value: 'compare', label: '③ 온체인과 비교', node: <OnchainComparison /> },
+  { value: 'channel', label: '결제 채널', node: <PaymentChannel /> },
+  { value: 'htlc', label: 'HTLC와 라우팅', node: <HtlcRouting /> },
+  { value: 'compare', label: '온체인과 비교', node: <OnchainComparison /> },
 ];
 
 export function LightningNetworkView() {

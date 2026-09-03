@@ -166,7 +166,7 @@ export function bruteForce(Q: Pt): number | null {
   return null;
 }
 
-// 실수 위의 y² = x³ + 7. 점 덧셈의 기하를 세우는 ①탭에서만 쓴다.
+// 실수 위의 y² = x³ + 7. 점 덧셈의 기하를 세우는 유한체 위의 곡선 탭에서만 쓴다.
 // 곡선이 x축과 만나는 곳은 x³ = −7, 즉 x = −∛7이다. 이 값을 소수로 반올림해 적으면
 // 근보다 아주 조금 바깥이 되어 x³ + 7이 음수가 되고, 제곱근이 NaN이 되어 그림의
 // 경로가 통째로 끊긴다. 그래서 상수로 적지 않고 계산한다.
@@ -190,7 +190,7 @@ export const REAL_EXAMPLE = (() => {
   return { px, py, qx, qy, l, rx, thirdY, sumY: -thirdY };
 })();
 
-// 실제 secp256k1의 규모. ①탭에서 크기 비교로만 쓴다.
+// 실제 secp256k1의 규모. 유한체 위의 곡선 탭에서 크기 비교로만 쓴다.
 export const SECP256K1 = {
   equation: 'y² = x³ + 7',
   p: '2²⁵⁶ − 2³² − 977',

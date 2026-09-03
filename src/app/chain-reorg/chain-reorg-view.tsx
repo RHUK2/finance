@@ -8,9 +8,9 @@ import { ConfirmationSafety } from './confirmation-safety';
 import { ReorgRace } from './reorg-race';
 
 const TABS = [
-  { value: 'race', label: '① 재구성 경주', node: <ReorgRace /> },
-  { value: 'confirmations', label: '② 확인 수와 안전', node: <ConfirmationSafety /> },
-  { value: 'scope', label: '③ 51%의 실제 범위', node: <AttackScope /> },
+  { value: 'race', label: '재구성 경주', node: <ReorgRace /> },
+  { value: 'confirmations', label: '확인 수와 안전', node: <ConfirmationSafety /> },
+  { value: 'scope', label: '51%의 실제 범위', node: <AttackScope /> },
 ];
 
 export function ChainReorgView() {

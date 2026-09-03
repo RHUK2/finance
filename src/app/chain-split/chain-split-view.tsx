@@ -10,10 +10,10 @@ import { ReplayAttack } from './replay-attack';
 import { WhyTwoChains } from './why-two-chains';
 
 const TABS = [
-  { value: 'why', label: '① 왜 두 체인이 남는가', node: <WhyTwoChains /> },
-  { value: 'replay', label: '② 리플레이 공격', node: <ReplayAttack /> },
-  { value: 'separation', label: '③ 코인 분리', node: <CoinSeparation /> },
-  { value: 'august', label: '④ 2026년 8월', node: <August2026 /> },
+  { value: 'why', label: '왜 두 체인이 남는가', node: <WhyTwoChains /> },
+  { value: 'replay', label: '리플레이 공격', node: <ReplayAttack /> },
+  { value: 'separation', label: '코인 분리', node: <CoinSeparation /> },
+  { value: 'august', label: '2026년 8월', node: <August2026 /> },
 ];
 
 export function ChainSplitView() {
@@ -32,7 +32,7 @@ export function ChainSplitView() {
     >
       <IllustrativeDisclaimer>
         잔고·금액과 분리 방법은 원리를 보여 주기 위한 개념 시연이며 실행 절차가 아니다. 실제 분기 상황에서 어떻게 해야
-        하는지는 자신이 쓰는 지갑과 거래소의 공지를 따라야 한다. ④ 탭의 사건 수치는 {AS_OF} 기준이다.
+        하는지는 자신이 쓰는 지갑과 거래소의 공지를 따라야 한다. 마지막 탭의 사건 수치는 {AS_OF} 기준이다.
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='why' />

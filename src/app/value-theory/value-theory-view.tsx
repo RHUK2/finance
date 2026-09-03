@@ -11,10 +11,10 @@ import { MiningCost } from './mining-cost';
 import { WaterDiamond } from './water-diamond';
 
 const TABS = [
-  { value: 'paradox', label: '① 물과 다이아몬드', node: <WaterDiamond /> },
-  { value: 'imputation', label: '② 가치의 역류', node: <Imputation /> },
-  { value: 'causation', label: '③ 인과가 반대다', node: <Causation /> },
-  { value: 'mining', label: '④ 채굴비용은 바닥이 아니다', node: <MiningCost /> },
+  { value: 'paradox', label: '물과 다이아몬드', node: <WaterDiamond /> },
+  { value: 'imputation', label: '가치의 역류', node: <Imputation /> },
+  { value: 'causation', label: '인과가 반대다', node: <Causation /> },
+  { value: 'mining', label: '채굴비용은 바닥이 아니다', node: <MiningCost /> },
 ];
 
 export function ValueTheoryView() {

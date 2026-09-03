@@ -10,9 +10,9 @@ import { ChainAnalysis } from './chain-analysis';
 import { CoinJoin } from './coinjoin';
 
 const TABS = [
-  { value: 'reuse', label: '① 주소 재사용', node: <AddressReuse /> },
-  { value: 'analysis', label: '② 체인분석 휴리스틱', node: <ChainAnalysis /> },
-  { value: 'coinjoin', label: '③ CoinJoin', node: <CoinJoin /> },
+  { value: 'reuse', label: '주소 재사용', node: <AddressReuse /> },
+  { value: 'analysis', label: '체인분석 휴리스틱', node: <ChainAnalysis /> },
+  { value: 'coinjoin', label: 'CoinJoin', node: <CoinJoin /> },
 ];
 
 export function PrivacyView() {

@@ -8,9 +8,9 @@ import { IbdSync } from './ibd-sync';
 import { MempoolPolicy } from './mempool-policy';
 
 const TABS = [
-  { value: 'gossip', label: '① 가십 프로토콜', node: <GossipSim /> },
-  { value: 'policy', label: '② 멤풀 수용 정책', node: <MempoolPolicy /> },
-  { value: 'ibd', label: '③ 초기 블록 동기화', node: <IbdSync /> },
+  { value: 'gossip', label: '가십 프로토콜', node: <GossipSim /> },
+  { value: 'policy', label: '멤풀 수용 정책', node: <MempoolPolicy /> },
+  { value: 'ibd', label: '초기 블록 동기화', node: <IbdSync /> },
 ];
 
 export function P2pNetworkView() {

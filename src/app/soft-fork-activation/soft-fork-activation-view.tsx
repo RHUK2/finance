@@ -8,9 +8,9 @@ import { Bip9Signaling } from './bip9-signaling';
 import { ForkCompat } from './fork-compat';
 
 const TABS = [
-  { value: 'compat', label: '① 소프트포크 vs 하드포크', node: <ForkCompat /> },
-  { value: 'bip9', label: '② BIP9 시그널링', node: <Bip9Signaling /> },
-  { value: 'bip8', label: '③ BIP8·UASF와 Taproot', node: <Bip8Taproot /> },
+  { value: 'compat', label: '소프트포크 vs 하드포크', node: <ForkCompat /> },
+  { value: 'bip9', label: 'BIP9 시그널링', node: <Bip9Signaling /> },
+  { value: 'bip8', label: 'BIP8·UASF와 Taproot', node: <Bip8Taproot /> },
 ];
 
 export function SoftForkActivationView() {
