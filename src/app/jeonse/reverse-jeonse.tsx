@@ -97,7 +97,7 @@ export function ReverseJeonse() {
         />
       </Card>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='돌려줘야 할 보증금' value={formatEok(deposit)} sub='계약서에 적힌 금액' />
         <Metric
           label='새로 받을 수 있는 보증금'

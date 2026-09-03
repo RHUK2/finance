@@ -48,7 +48,7 @@ export function SeedDerivation({
         <Input
           value={passphrase}
           onChange={(e) => onPassphrase(e.target.value)}
-          placeholder='비워 두어도 됨 · 한 글자 바꿔 보세요'
+          placeholder='비워 두어도 됨 · 한 글자 바꿔 보자'
         />
         <p className='text-muted-foreground text-xs'>
           passphrase는 단어를 적어둔 종이를 누가 훔쳐도 자금을 지키는 추가 비밀이다. 단, 잊으면 복구가 불가능하다.

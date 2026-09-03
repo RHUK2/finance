@@ -150,7 +150,7 @@ export function TaxShield() {
         </div>
       </Card>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='지금 자본구조의 기업가치' value={formatEok(current, 0)} />
         <Metric label='가치가 가장 커지는 부채 비중' value={`${best.d}%`} tone='accent' sub={formatEok(best.v, 0)} />
         <Metric

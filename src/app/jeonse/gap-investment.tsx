@@ -81,7 +81,7 @@ export function GapInvestment() {
         />
       </Card>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='전세보증금' value={formatEok(deposit)} sub='임차인에게 빌린 돈' />
         <Metric label='필요한 자기 돈' value={formatEok(gap)} sub='매매가 − 보증금' tone='accent' />
         <Metric label='레버리지 배수' value={`${leverage.toFixed(1)}배`} sub='자기 돈 1원이 움직이는 자산' />

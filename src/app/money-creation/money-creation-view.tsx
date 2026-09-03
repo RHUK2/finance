@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 import { ExplainerPage } from '@/components/explainer-page';
-import { ControlSlider, StatCard, StepPanel } from '@/components/simulation';
+import { ControlSlider, SectionIntro, StatCard, StepPanel } from '@/components/simulation';
 import { formatSigned } from '@/lib/utils';
 
 import { AssetEquationCard, BalanceSheet, TrustSection } from './components';
@@ -53,7 +53,12 @@ export function MoneyCreationView() {
       }
       hideScrollTop
     >
-      <div className='grid grid-cols-3 gap-3'>
+      <SectionIntro title='네 주체의 장부를 동시에 본다'>
+        맨 아래 단계 패널을 한 걸음씩 밀면 정부·연준·시중은행·국민의 대차대조표가 함께 바뀐다. 어느 칸이 무에서 새로
+        생긴 돈이고 어느 칸이 기존 돈의 이동인지를 색으로 갈라 두었다.
+      </SectionIntro>
+
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <StatCard label='본원통화 (M0)' value={metrics.m0} format={formatSigned} tone='accent' />
         <StatCard label='광의통화 (M2)' value={metrics.m2} format={formatSigned} tone='accent' />
         <StatCard label='통화승수' value={metrics.multiplier} format={(n) => `${n.toFixed(1)}배`} />
@@ -77,6 +82,10 @@ export function MoneyCreationView() {
       </div>
 
       <AssetEquationCard />
+
+      <SectionIntro title='그렇다면 그 돈은 왜 가치를 가질까'>
+        무에서 만들어진 돈이 값을 갖는 이유는 장부 안에 없다.
+      </SectionIntro>
 
       <TrustSection />
 

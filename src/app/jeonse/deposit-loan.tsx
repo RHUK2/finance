@@ -81,7 +81,7 @@ export function DepositLoan() {
       </Card>
 
       {/* 두 비용 카드의 tone은 어느 쪽이 싼지로 정한다. 한쪽을 늘 빨갛게 두면 아래 배너의 결론과 어긋난다. */}
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='전세의 연 비용'
           value={formatMan(jeonseCost)}

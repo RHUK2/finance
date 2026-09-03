@@ -155,7 +155,7 @@ export function DepositPriority() {
         />
       </Card>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='배당으로 받는 돈' value={formatEok(distributed)} tone={distributed > 0 ? 'good' : 'bad'} />
         <Metric
           label='낙찰자가 떠안는 돈'

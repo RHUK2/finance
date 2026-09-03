@@ -19,7 +19,7 @@ export function BitcoinGameTheoryView() {
   return (
     <ExplainerPage
       breadcrumb='비트코인 게임이론'
-      title='비트코인을 움직이는 게임이론'
+      title='각자 합리적으로 굴면 어떤 균형에 이를까?'
       intro={
         <>
           비트코인의 가격과 보안은 개인·기업·국가·채굴자가 서로의 선택을 의식하며 내리는 결정의 결과다. 각자가

@@ -109,14 +109,11 @@ export function AbstractVsPhysical() {
       </Card>
 
       <Card className='gap-3 p-4'>
-        <div>
-          <h3 className='font-semibold'>같은 벽, 다른 대가</h3>
-          <p className='text-muted-foreground mt-1 text-sm/relaxed'>
-            탈취 비용의 벽을 세우는 매개체는 역사적으로 군대(영토) → 핵무기(상호확증파괴) → 작업증명(전기)으로 바뀌어
-            왔다. 로워리는 앞의 둘을 유혈 권력 투사(하드워), 마지막을 유혈 없는 권력 투사(소프트워)라 부르며 후자가 같은
-            억지를 인명 피해 없이 달성한다고 주장한다.
-          </p>
-        </div>
+        <SectionIntro title='같은 벽, 다른 대가'>
+          탈취 비용의 벽을 세우는 매개체는 역사적으로 군대(영토) → 핵무기(상호확증파괴) → 작업증명(전기)으로 바뀌어
+          왔다. 로워리는 앞의 둘을 유혈 권력 투사(하드워), 마지막을 유혈 없는 권력 투사(소프트워)라 부르며 후자가 같은
+          억지를 인명 피해 없이 달성한다고 주장한다.
+        </SectionIntro>
         <div className='grid gap-3 sm:grid-cols-2'>
           <div className='flex flex-col gap-1.5 rounded-md border p-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>

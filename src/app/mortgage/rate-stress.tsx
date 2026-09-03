@@ -192,7 +192,7 @@ export function RateStress() {
         {banner.text}
       </StatusBanner>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+      <div className='grid grid-cols-2 gap-3'>
         <Metric
           label='변동금리 총이자'
           value={formatEokFromMan(after.interest)}

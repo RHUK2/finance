@@ -15,7 +15,7 @@ export function SoftwarView() {
   return (
     <ExplainerPage
       breadcrumb='비트코인 소프트워'
-      title='비트코인 소프트워: 파워 프로젝션'
+      title='비트코인은 화폐가 아니라 권력 투사 수단이다'
       intro={
         <>
           제이슨 로워리(Jason Lowery)의 <i>Softwar</i>는 비트코인을 화폐가 아닌 &#39;권력 투사 수단&#39;으로 본다.

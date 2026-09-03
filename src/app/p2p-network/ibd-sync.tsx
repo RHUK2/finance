@@ -57,7 +57,8 @@ export function IbdSync() {
         새 노드가 네트워크에 처음 참여하면 지금까지의 전체 체인(약 {TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개
         블록)을 검증해야 한다. 블록 전체({formatBytes(AVG_BLOCK_BYTES)} 안팎)를 처음부터 순서대로 받으면 너무 느리니,
         먼저 <b>80바이트짜리 헤더만 이어 붙여 작업량이 가장 많은 체인을 빠르게 확정</b>한 다음, 그 체인을 따라 블록
-        본문을 여러 피어에게서 병렬로 받는다.
+        본문을 여러 피어에게서 병렬로 받는다. 헤더 {HEADER_ROUNDS}라운드·본문 {BLOCK_ROUNDS}라운드라는 눈금은 둘의 무게
+        차이를 보이기 위한 예시이고, 실제 동기화 시간은 대역폭과 피어 수에 따라 달라진다.
       </SectionIntro>
 
       <Card className='flex flex-col gap-4 p-4'>

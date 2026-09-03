@@ -29,7 +29,7 @@ export function PrivacyView() {
           <Link href='/illicit-funds' className='underline underline-offset-2'>
             비트코인 자금추적
           </Link>{' '}
-          페이지에서 다룬다.
+          페이지에서 다룬다. 주소·금액은 개념 이해용 예시다.
         </>
       }
     >

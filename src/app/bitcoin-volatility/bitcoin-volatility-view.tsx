@@ -1,7 +1,7 @@
 'use client';
 
 import { ExplainerPage } from '@/components/explainer-page';
-import { SimTabs } from '@/components/simulation';
+import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 
 import { MaturationCurve } from './maturation-curve';
 import { TwoRegime } from './two-regime';
@@ -28,6 +28,12 @@ export function BitcoinVolatilityView() {
         </>
       }
     >
+      <IllustrativeDisclaimer>
+        여기 찍히는 <b>성공 시 가격</b>·<b>실패 시 가격</b>·<b>현재 함의 가격</b>은 성공 확률 하나로만 계산한 개념
+        시연용 값이다. 실시세를 함께 보여 주지만 그것은 지금 시세가 이 모델에서 어떤 확률을 함의하는지를 되짚기 위한
+        것이지, 목표가나 적정 가격을 말하는 것이 아니다. <b>투자 판단의 근거로 삼지 말 것.</b>
+      </IllustrativeDisclaimer>
+
       <SimTabs tabs={TABS} defaultValue='regime' />
     </ExplainerPage>
   );

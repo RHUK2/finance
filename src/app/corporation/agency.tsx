@@ -144,7 +144,7 @@ export function Agency() {
         ))}
       </div>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='필요한 절차' value={procedure} tone='accent' />
         <Metric label='계약 효과가 귀속되는 곳' value='회사' sub='대표이사 개인이 아니다' />
         <Metric label='대표 개인 재산' value='무관' sub='회사에 대한 손해배상책임은 별개' tone='good' />

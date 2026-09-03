@@ -151,7 +151,7 @@ export function Waterfall() {
         ))}
       </Card>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='채권 전체 회수율'
           value={`${((debtPaid / DEBT_CLAIM) * 100).toFixed(0)}%`}

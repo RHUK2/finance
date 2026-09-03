@@ -19,7 +19,7 @@ export function TransactionsView() {
   return (
     <ExplainerPage
       breadcrumb='트랜잭션 해부'
-      title='비트코인은 어떻게 돈을 보낼까? UTXO와 수수료'
+      title='비트코인은 어떻게 돈을 보낼까?'
       intro={
         <>
           지갑에서 만든 주소로 코인이 들어오면, 그 코인은 &#39;잔액&#39;이 아니라 액면가가 정해진 <b>동전(UTXO)</b>{' '}

@@ -148,7 +148,7 @@ export function LimitedLiability() {
         />
       </Card>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='채권자 미회수액' value={formatEok(creditorLoss, 0)} tone={creditorLoss > 0 ? 'bad' : 'good'} />
         <Metric
           label={`${V.owner} 자본 손실`}

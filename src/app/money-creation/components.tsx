@@ -165,7 +165,7 @@ export function TrustSection() {
   return (
     <ExplainCard
       title="자산의 가치는 결국 '상호합의'다"
-      preview='종이 자체엔 내재가치가 없다. 달러도 금이 아니라 신뢰가 떠받친다.'
+      preview='종이 자체엔 내재가치가 없다. 달러도 담보가 아니라 수요원이 떠받친다.'
       body={
         <div className='space-y-2'>
           <p>

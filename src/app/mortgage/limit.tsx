@@ -178,7 +178,7 @@ export function Limit() {
           : `담보가 먼저 걸린다. 소득 기준으로는 ${formatEokFromMan(byDsr, 1)}까지 감당할 수 있지만 집값의 ${ltv}%인 ${formatEokFromMan(byLtv, 1)}이 상한이다. 이 경우 규제 비율이 곧 대출액을 정한다.`}
       </StatusBanner>
 
-      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+      <div className='grid grid-cols-2 gap-3'>
         <Metric label='월 원리금 상환액' value={formatMan(monthly)} sub={`원리금균등, 만기 ${years}년`} />
         <Metric
           label='소득 대비 연 원리금 비율'

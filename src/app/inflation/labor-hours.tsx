@@ -120,7 +120,7 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
         </div>
         <p className='text-muted-foreground text-xs'>
           1시간 미만이면 같은 노동의 구매력이 그만큼 줄어든 것이다. 예금이 최저임금 인상 속도를 따라가지 못하면 1시간
-          아래로 내려갑니다.
+          아래로 내려간다.
         </p>
       </Card>
     </>

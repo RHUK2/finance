@@ -3,7 +3,8 @@
 import { useMemo } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SectionIntro } from '@/components/simulation';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { LineSeries, useChart } from '@/hooks/use-chart';
 import type { InflationData } from '@/hooks/use-inflation';
 import { depositIndex, normalizeToBase, type Point } from '@/lib/inflation-models';
@@ -74,14 +75,14 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
   return (
     <Card>
       <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-base'>예금 vs 자산 레이스</CardTitle>
-          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
+        {/* 갱신 시각은 이 차트에만 붙는 값이라 SectionIntro를 넓히지 않고 여기서 나란히 둔다. */}
+        <div className='flex items-start justify-between gap-3'>
+          <SectionIntro title='예금 vs 자산 레이스'>
+            {baseYear}년에 같은 금액을 각각 넣었다면, 시간에 따라 평가액이 어떻게 갈라지는지 보여준다. (로그 스케일,
+            시작=100)
+          </SectionIntro>
+          {updatedLabel && <span className='text-muted-foreground shrink-0 text-xs'>{updatedLabel}</span>}
         </div>
-        <p className='text-muted-foreground text-sm'>
-          {baseYear}년에 같은 금액을 각각 넣었다면, 시간에 따라 평가액이 어떻게 갈라지는지 보여준다. (로그 스케일,
-          시작=100)
-        </p>
       </CardHeader>
       <CardContent className='p-0'>
         <ChartContainer containerRef={containerRef} onReset={resetView} />
