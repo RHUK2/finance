@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Activity, TrendingUp } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
 import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro, Sparkline } from '@/components/simulation';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatUsd, mulberry32 } from '@/lib/utils';
 
 import { GOLD_CAP, SUPPLY, realizedVol, stepP } from './models';
@@ -84,8 +84,9 @@ function VolSim({
   onSpeed: (ms: number) => void;
 }) {
   // 고정 시드 난수라 파라미터가 정해지면 경로 전체가 결정된다. 캐스케이드 시뮬레이션들과
-  // 마찬가지로 미리 계산해 두고, 덕분에 스텝을 앞뒤로 왕복하고 곡선의 최종 모양을
-  // 첫 프레임부터 보여 줄 수 있다.
+  // 마찬가지로 궤적을 미리 계산해 두고 useTrajectoryPlayer로 재생한다. 덕분에 라운드를
+  // 앞뒤로 왕복하고 곡선의 최종 모양을 첫 프레임부터 보여 줄 수 있다. 격자가 없어
+  // CascadeStage는 쓰지 않지만, 재생 배선은 캐스케이드 넷과 같은 것을 쓴다.
   const ps = useMemo(() => {
     const rng = mulberry32(SEED);
     const path = [START_P];
@@ -93,30 +94,12 @@ function VolSim({
     return path;
   }, [sigma, drift]);
 
-  const [cursor, setCursor] = useState(0);
-  const last = ps.length - 1;
+  const { round, last, frame: p, done, step, seek, engine } = useTrajectoryPlayer(ps, speedMs);
 
-  const step = useCallback(() => {
-    if (cursor >= last) return false;
-    setCursor(cursor + 1);
-    return cursor + 1 < last;
-  }, [cursor, last]);
-
-  const engine = useRoundEngine(step, speedMs);
-  const seek = useCallback(
-    (v: number) => {
-      engine.pause();
-      setCursor(v);
-    },
-    [engine],
-  );
-
-  const p = ps[cursor];
   // 가격 = p × 성공가, 수익률 = log(pₜ/pₜ₋₁) (성공가는 상수라 약분된다).
   const prices = useMemo(() => ps.map((v) => v * WIN_PRICE), [ps]);
-  const returns = ps.slice(1, cursor + 1).map((v, i) => Math.log(v / ps[i]));
+  const returns = ps.slice(1, round + 1).map((v, i) => Math.log(v / ps[i]));
   const vol = realizedVol(returns, VOL_WINDOW) * 100;
-  const done = cursor >= last;
 
   return (
     <>
@@ -126,7 +109,7 @@ function VolSim({
           onToggle={engine.toggle}
           onStep={step}
           onReset={() => seek(0)}
-          round={cursor}
+          round={round}
           total={last}
           onSeek={seek}
           speedMs={speedMs}
@@ -135,10 +118,10 @@ function VolSim({
           unit='스텝'
           speeds={SPEEDS}
         />
-        <Sparkline values={prices} cursor={cursor} label='가격' className='text-amber-500' heightClass='h-12' />
+        <Sparkline values={prices} cursor={round} label='가격' className='text-amber-500' heightClass='h-12' />
         <Sparkline
           values={ps}
-          cursor={cursor}
+          cursor={round}
           label='성공 확률 p'
           className='text-sky-500'
           min={0}
@@ -152,9 +135,9 @@ function VolSim({
         <Metric label='현재 가격' value={formatUsd(p * WIN_PRICE)} />
         <Metric
           label={`최근 변동성 (${VOL_WINDOW}스텝)`}
-          value={cursor < 2 ? '—' : `${vol.toFixed(1)}%`}
-          tone={cursor < 2 ? undefined : vol > 8 ? 'bad' : 'good'}
-          sub={cursor < 2 ? '스텝이 쌓여야 계산된다' : undefined}
+          value={round < 2 ? '—' : `${vol.toFixed(1)}%`}
+          tone={round < 2 ? undefined : vol > 8 ? 'bad' : 'good'}
+          sub={round < 2 ? '스텝이 쌓여야 계산된다' : undefined}
         />
       </div>
     </>
