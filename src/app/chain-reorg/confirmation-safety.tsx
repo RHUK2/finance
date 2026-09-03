@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, TriangleAlert } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
-import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 import { CONFIRMATION_PRESETS, doubleSpendProbability, formatProbability } from '@/lib/chain-concept';
 
@@ -17,6 +17,7 @@ export function ConfirmationSafety() {
 
   const [confirmations, setConfirmations] = useState(6);
   const selectedProbability = doubleSpendProbability(q, confirmations);
+  const reversalLikely = selectedProbability >= 0.01;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -46,10 +47,22 @@ export function ConfirmationSafety() {
           format={(v) => `확인 ${v}개`}
         />
 
-        <div className='flex items-center gap-2 rounded-md border p-3 text-sm font-medium'>
-          <ShieldCheck className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+        {/*
+          tone의 경계는 1%다. formatProbability가 그 선에서 표기를 %에서 "약 N분의 1"로
+          바꾸므로, 색과 숫자 모양이 같은 지점에서 함께 넘어간다. 새 임계값을 세우지 않는다.
+        */}
+        <StatusBanner
+          tone={reversalLikely ? 'bad' : 'good'}
+          icon={
+            reversalLikely ? (
+              <TriangleAlert className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />
+            ) : (
+              <ShieldCheck className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+            )
+          }
+        >
           확인 {confirmations}개 뒤 이 트랜잭션이 뒤집힐 확률: {formatProbability(selectedProbability)}
-        </div>
+        </StatusBanner>
       </Card>
 
       <Card className='flex flex-col gap-2 p-4'>
