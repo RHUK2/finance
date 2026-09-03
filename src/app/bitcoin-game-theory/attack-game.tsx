@@ -11,7 +11,7 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { bcra, bcraLabel, deterred } from '@/lib/bcra';
 import { formatUsd } from '@/lib/utils';
 
-import { attack51 } from './models';
+import { attack51, HARDWARE_LIFE_YEARS } from './models';
 
 export function AttackGame() {
   // 2026년 8월 기준 시장 상황을 기본값으로 둔다. 슬라이더로 바꿔 보는 게 이 탭의 목적이다.
@@ -112,13 +112,14 @@ export function AttackGame() {
       </Card>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='공격 비용' value={formatUsd(r.attackCost)} tone='bad' />
+        {/* 공격 비용 자체에는 좋고 나쁨이 없다. 이득과 견준 결과는 바로 옆 BCRA 카드가 말한다. */}
+        <Metric label='공격 비용' value={formatUsd(r.attackCost)} sub={`이득 ${formatUsd(r.doubleSpendGain)} 대비`} />
         <Metric label='BCRA (이득÷비용)' value={bcraLabel(ratio)} tone={safe ? 'good' : 'bad'} sub='1 미만이면 방어' />
         <Metric
           label='장비 회수 기간'
           value={`${r.paybackYears.toFixed(1)}년`}
-          tone='good'
-          sub={`정직 채굴 연 ${formatUsd(r.honestYearly)}`}
+          tone={r.paybackYears < HARDWARE_LIFE_YEARS ? 'good' : 'bad'}
+          sub={`정직 채굴 연 ${formatUsd(r.honestYearly)} · 장비 수명 ${HARDWARE_LIFE_YEARS}년`}
         />
       </div>
 
@@ -126,9 +127,12 @@ export function AttackGame() {
         {safe ? (
           <span className='text-sm/relaxed font-normal'>
             BCRA가 <b className='text-emerald-600 dark:text-emerald-400'>{bcraLabel(ratio)}</b>다. 같은 장비를 정직
-            채굴에 쓰면 <b>{r.paybackYears.toFixed(1)}년</b>이면 장비값을 회수하고 그 뒤로는 계속 번다. 공격은 그 자산을
-            단 한 번의 이중지불과 맞바꾸는 선택이고, 성공하는 순간 신뢰가 무너져 BTC 가격이 폭락하면 채굴에만 쓰이는
-            장비와 보유 코인이 함께 휴지가 된다.
+            채굴에 쓰면 <b>{r.paybackYears.toFixed(1)}년</b>
+            {r.paybackYears < HARDWARE_LIFE_YEARS
+              ? `이면 장비값을 회수하고 그 뒤로는 계속 번다`
+              : `이 걸려 장비 수명 ${HARDWARE_LIFE_YEARS}년 안에는 장비값도 못 건진다. 이 설정에선 정직 채굴 자체가 수지가 맞지 않아, 공격을 막는 것은 회수 전망이 아니라 아래의 자기 파괴 논리뿐이다`}
+            . 공격은 그 자산을 단 한 번의 이중지불과 맞바꾸는 선택이고, 성공하는 순간 신뢰가 무너져 BTC 가격이 폭락하면
+            채굴에만 쓰이는 장비와 보유 코인이 함께 휴지가 된다.
           </span>
         ) : (
           <span className='text-sm/relaxed font-normal'>

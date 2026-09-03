@@ -35,6 +35,9 @@ export function GridBatteryView() {
     const used = demandMet + absorbed;
     const efficiency = generation > 0 ? (used / generation) * 100 : 100;
     const minerUtil = minerCapacity > 0 ? (absorbed / minerCapacity) * 100 : 0;
+    // 버려지는 전력과 전력망 효율은 '잉여를 얼마나 흡수했는가'라는 한 사실의 두 얼굴이다.
+    // 판정을 각각 매기면 같은 상태가 두 색으로 나오므로, 잉여 대비 낭비 비율 하나로 함께 정한다.
+    const wasteRatio = surplus > 0 ? curtailed / surplus : 0;
     return {
       demandMet,
       shortage,
@@ -43,8 +46,11 @@ export function GridBatteryView() {
       curtailed,
       efficiency,
       minerUtil,
+      wasteRatio,
     };
   }, [generation, demand, minerCapacity, minersOn]);
+
+  const wasteTone = sim.wasteRatio === 0 ? 'good' : sim.wasteRatio < 0.5 ? 'accent' : 'bad';
 
   // 막대는 총 발전량(generation)을 100%로 보고 세 세그먼트로 나눈다.
 
@@ -125,14 +131,19 @@ export function GridBatteryView() {
 
       {/* 지표 카드 */}
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='버려지는 전력' value={fmt(sim.curtailed)} tone='bad' />
+        <Metric label='버려지는 전력' value={fmt(sim.curtailed)} tone={wasteTone} sub={`잉여 ${fmt(sim.surplus)} 중`} />
         <Metric
           label='채굴 흡수량'
           value={fmt(sim.absorbed)}
           tone='accent'
           sub={`채굴 가동률 ${Math.round(sim.minerUtil)}%`}
         />
-        <Metric label='전력망 효율' value={`${Math.round(sim.efficiency)}%`} tone='good' />
+        <Metric
+          label='전력망 효율'
+          value={`${Math.round(sim.efficiency)}%`}
+          tone={wasteTone}
+          sub='발전량 중 실제로 쓰인 몫'
+        />
       </div>
 
       <SectionIntro title='왜 이런 주장이 나오는가'>

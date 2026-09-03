@@ -21,6 +21,9 @@ export function DifficultyConsensus() {
   const clampedHigh = multiplier === 4;
   const clampedLow = multiplier === 0.25;
   const avgBlockMin = (actualDays * 24 * 60) / RETARGET_INTERVAL;
+  // 블록이 목표보다 빠른 것도 느린 것도 좋고 나쁨이 아니다. 난이도가 그것을 되돌린다는 게 이 탭의 논지라,
+  // 두 카드 모두 "목표에서 벗어났다"는 사실만 accent로 알리고 판정(good/bad)은 쓰지 않는다.
+  const onTarget = actualDays === TARGET_RETARGET_DAYS;
 
   const lenA = FORK_POINT + chainA;
   const lenB = FORK_POINT + chainB;
@@ -52,13 +55,9 @@ export function DifficultyConsensus() {
           <Metric
             label='실제 평균 블록 시간'
             value={`${avgBlockMin.toFixed(1)}분`}
-            tone={avgBlockMin < 10 ? 'bad' : avgBlockMin > 10 ? 'accent' : undefined}
+            tone={onTarget ? undefined : 'accent'}
           />
-          <Metric
-            label='새 난이도 배율'
-            value={`× ${multiplier.toFixed(2)}`}
-            tone={multiplier > 1 ? 'bad' : multiplier < 1 ? 'good' : 'accent'}
-          />
+          <Metric label='새 난이도 배율' value={`× ${multiplier.toFixed(2)}`} tone={onTarget ? undefined : 'accent'} />
         </div>
 
         {(clampedHigh || clampedLow) && (

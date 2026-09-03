@@ -44,6 +44,12 @@ export function Repayment() {
   const last = rows[rows.length - 1];
   const peak = Math.max(...yearly.map((y) => y.interest + y.principal));
 
+  // 총이자는 어느 방식이든 비용이라 늘 빨강으로 둘 수도 있지만, 그러면 이 탭의 요점인
+  // '방식에 따라 총이자가 갈린다'가 색에서 사라진다. 세 방식을 이미 계산해 두었으므로 그 비교를 쓴다.
+  const cheapest = Math.min(...totals.map((t) => t.interest));
+  const dearest = Math.max(...totals.map((t) => t.interest));
+  const interestRank = totalInterest === cheapest ? '가장 적다' : totalInterest === dearest ? '가장 많다' : '중간이다';
+
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='같은 돈을 빌려도 갚는 모양이 다르다'>
@@ -105,8 +111,8 @@ export function Repayment() {
         <Metric
           label='총 이자'
           value={formatEokFromMan(totalInterest)}
-          tone='bad'
-          sub={`원금의 ${((totalInterest / loan) * 100).toFixed(0)}%`}
+          tone={totalInterest === cheapest ? 'good' : totalInterest === dearest ? 'bad' : 'accent'}
+          sub={`원금의 ${((totalInterest / loan) * 100).toFixed(0)}% · 세 방식 중 ${interestRank}`}
         />
         <Metric
           label='총 상환액'

@@ -116,14 +116,10 @@ export function ReorgRace() {
           label='정직한 체인 (공개)'
           confirmed={confirmations}
           extra={honestExtra}
-          tone={caughtUp ? 'orphan' : 'safe'}
+          tone='good'
+          faded={caughtUp}
         />
-        <ChainRow
-          label='공격자의 비밀 체인'
-          confirmed={0}
-          extra={attackerBlocks}
-          tone={caughtUp ? 'winner' : 'losing'}
-        />
+        <ChainRow label='공격자의 비밀 체인' confirmed={0} extra={attackerBlocks} tone={caughtUp ? 'bad' : 'accent'} />
 
         <StatusBanner tone={caughtUp ? 'bad' : safe ? 'good' : undefined}>
           {caughtUp
@@ -134,9 +130,14 @@ export function ReorgRace() {
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-          <Metric label='정직한 체인' value={`${honestTotal}블록`} tone='good' />
+          <Metric label='정직한 체인' value={`${honestTotal}블록`} />
           <Metric label='공격자 체인' value={`${attackerBlocks}블록`} tone={caughtUp ? 'bad' : 'accent'} />
-          <Metric label='격차' value={`${honestTotal - attackerBlocks}블록`} />
+          <Metric
+            label='격차'
+            value={`${honestTotal - attackerBlocks}블록`}
+            tone={caughtUp ? 'bad' : 'good'}
+            sub='정직한 체인 − 공격자 체인'
+          />
         </div>
       </Card>
 
@@ -161,25 +162,31 @@ export function ReorgRace() {
   );
 }
 
+// tone은 공용 어휘(good/bad/accent)를 그대로 쓴다. 여기서 로컬 어휘를 만들면
+// 바로 아래 StatusBanner와 같은 사건에 다른 색이 붙는다. 공격자가 따라잡는 것은
+// '승리'가 아니라 이 페이지가 경고하는 결과이므로 rose다.
+// faded는 판정이 아니라 '이 체인은 버려졌다'는 표시라 tone과 따로 둔다.
 function ChainRow({
   label,
   confirmed,
   extra,
   tone,
+  faded,
 }: {
   label: string;
   confirmed: number;
   extra: number;
-  tone: 'safe' | 'orphan' | 'winner' | 'losing';
+  tone?: 'good' | 'bad' | 'accent';
+  faded?: boolean;
 }) {
   const total = confirmed + extra;
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 rounded-md border p-3',
-        tone === 'winner' && 'border-emerald-500/40 bg-emerald-500/5',
-        tone === 'orphan' && 'border-transparent opacity-50',
-        (tone === 'safe' || tone === 'losing') && 'bg-muted border-transparent',
+        'bg-muted flex flex-col gap-2 rounded-md border border-transparent p-3',
+        // 테두리를 칠하는 건 승부가 났을 때뿐이다. 여기서 결판나는 결과는 재구성 하나라 rose만 쓴다.
+        tone === 'bad' && 'border-rose-500/40 bg-rose-500/5',
+        faded && 'bg-transparent opacity-50',
       )}
     >
       <div className='flex items-center justify-between'>
@@ -194,11 +201,11 @@ function ChainRow({
               'size-4 rounded-[3px]',
               i < confirmed
                 ? 'bg-sky-500/60'
-                : tone === 'winner'
-                  ? 'bg-emerald-500'
-                  : tone === 'orphan'
-                    ? 'bg-muted-foreground/30'
-                    : tone === 'losing'
+                : faded
+                  ? 'bg-muted-foreground/30'
+                  : tone === 'bad'
+                    ? 'bg-rose-500'
+                    : tone === 'accent'
                       ? 'bg-amber-500'
                       : 'bg-emerald-500',
             )}

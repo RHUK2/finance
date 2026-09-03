@@ -277,6 +277,11 @@ const BLOCKS_PER_HOUR = 6;
 const HOURS_PER_YEAR = 24 * 365;
 const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불 규모(예시 상한)
 
+// ASIC 채굴기의 실효 수명. 신형이 나오면 효율에서 밀려 채산성이 사라지는 시점까지를 본다.
+// 회수 기간이 이 값을 넘으면 "정직하게 채굴하면 장비값을 회수하고 그 뒤로 계속 번다"는
+// 이 탭의 논지 자체가 성립하지 않으므로, 화면의 판정 기준으로 쓴다.
+export const HARDWARE_LIFE_YEARS = 5;
+
 export function attack51({ btcPrice, networkHashrate, attackHours, hardwareCostPerTH, electricity }: AttackInput) {
   const requiredTH = networkHashrate * 1e6; // EH/s → TH/s (과반=네트워크 동급)
   const hardwareCost = requiredTH * hardwareCostPerTH;

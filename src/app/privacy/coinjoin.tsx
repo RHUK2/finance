@@ -85,7 +85,14 @@ export function CoinJoin() {
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='익명 집합 크기' value={`${participants}명`} tone='accent' />
-          <Metric label='특정 출력 주인 추측 확률' value={`${(chance * 100).toFixed(0)}%`} tone='good' />
+          {/* 1/N에는 '여기부터 안전'이라 부를 문턱이 없다. 참가자가 늘수록 나아질 뿐이라
+              good/bad를 붙이면 2명(50%)까지 안전하다고 말하게 된다. 기준선만 sub에 적는다. */}
+          <Metric
+            label='특정 출력 주인 추측 확률'
+            value={`${(chance * 100).toFixed(0)}%`}
+            tone='accent'
+            sub='CoinJoin을 안 쓰면 100%'
+          />
           <Metric label='가능한 대응 조합 수' value={`${factorial(participants).toLocaleString('ko-KR')}가지`} />
         </div>
       </Card>
