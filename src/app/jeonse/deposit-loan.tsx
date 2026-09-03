@@ -11,7 +11,6 @@ import { Card } from '@/components/ui/card';
 import { formatEok, formatMan, formatPct } from '@/lib/utils';
 
 // 금액 단위는 만원. 보증금만 억 단위 슬라이더로 받고 내부에서 만원으로 환산한다.
-const fmtPct = (n: number) => formatPct(n, 2);
 
 export function DepositLoan() {
   const [depositEok, setDepositEok] = useState(4);
@@ -30,12 +29,12 @@ export function DepositLoan() {
       ? {
           tone: 'good' as const,
           icon: <House className='size-4 shrink-0' />,
-          text: `전월세전환율 ${fmtPct(conversionRate)}가 시장금리 ${fmtPct(rate)}보다 높다. 같은 집에 사는 값을 월세로 치르면 연 ${formatMan(gap)}을 더 낸다. 임차인은 전세를 고른다.`,
+          text: `전월세전환율 ${formatPct(conversionRate, 2)}가 시장금리 ${formatPct(rate, 2)}보다 높다. 같은 집에 사는 값을 월세로 치르면 연 ${formatMan(gap)}을 더 낸다. 임차인은 전세를 고른다.`,
         }
       : {
           tone: 'accent' as const,
           icon: <Wallet className='size-4 shrink-0' />,
-          text: `전월세전환율 ${fmtPct(conversionRate)}가 시장금리 ${fmtPct(rate)}보다 낮다. 보증금을 은행에 넣고 월세를 내는 편이 연 ${formatMan(-gap)} 이득이다. 금리가 오르면 전세 수요가 월세로 옮겨 가는 이유다.`,
+          text: `전월세전환율 ${formatPct(conversionRate, 2)}가 시장금리 ${formatPct(rate, 2)}보다 낮다. 보증금을 은행에 넣고 월세를 내는 편이 연 ${formatMan(-gap)} 이득이다. 금리가 오르면 전세 수요가 월세로 옮겨 가는 이유다.`,
         };
 
   return (
@@ -65,7 +64,7 @@ export function DepositLoan() {
           min={0}
           max={8}
           step={0.1}
-          format={fmtPct}
+          format={(v) => formatPct(v, 2)}
           hint='보증금을 은행에 넣어 두었다면 받았을 이자율. 전세대출을 썼다면 그 대출 금리로 읽어도 된다.'
         />
         <ControlSlider
@@ -98,8 +97,8 @@ export function DepositLoan() {
         {/* 톤은 아래 배너와 같은 임차인 관점으로 읽는다. 전환율이 금리보다 높으면 전세가 유리하다. */}
         <Metric
           label='전월세전환율'
-          value={fmtPct(conversionRate)}
-          sub={`시장금리 ${fmtPct(rate)}`}
+          value={formatPct(conversionRate, 2)}
+          sub={`시장금리 ${formatPct(rate, 2)}`}
           tone={conversionRate > rate ? 'good' : 'accent'}
         />
       </div>

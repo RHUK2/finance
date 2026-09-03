@@ -8,13 +8,11 @@ import Link from 'next/link';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn, formatPct } from '@/lib/utils';
+import { cn, formatEok, formatPct } from '@/lib/utils';
 
 // 단위는 억원. 총자산을 1,000억으로 고정하고 그 안에서 부채와 자본의 비율만 바꾼다.
 const ASSETS = 1000;
 const TAX_RATE = 20;
-
-const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -49,8 +47,8 @@ export function Leverage() {
   const coverage = interest > 0 ? ebit / interest : null;
 
   const segments = [
-    { label: `부채 ${fmt(debt)}`, value: debt, className: 'bg-rose-500' },
-    { label: `자기자본 ${fmt(equity)}`, value: equity, className: 'bg-sky-500' },
+    { label: `부채 ${formatEok(debt, 0)}`, value: debt, className: 'bg-rose-500' },
+    { label: `자기자본 ${formatEok(equity, 0)}`, value: equity, className: 'bg-sky-500' },
   ];
 
   const banner =
@@ -64,7 +62,7 @@ export function Leverage() {
         ? {
             tone: 'bad' as const,
             icon: <TriangleAlert className='size-4 shrink-0' />,
-            text: `영업이익 ${fmt(ebit)}으로 이자 ${fmt(interest)}조차 감당하지 못한다. 이자는 실적과 무관하게 약속된 금액이라, 못 내는 순간 채권자가 회사의 운명을 쥔다.`,
+            text: `영업이익 ${formatEok(ebit, 0)}으로 이자 ${formatEok(interest, 0)}조차 감당하지 못한다. 이자는 실적과 무관하게 약속된 금액이라, 못 내는 순간 채권자가 회사의 운명을 쥔다.`,
           }
         : roa > afterTaxRate
           ? {
@@ -96,7 +94,7 @@ export function Leverage() {
           max={80}
           step={5}
           format={(v) => `${v}%`}
-          hint={`총자산 ${fmt(ASSETS)} 가운데 ${fmt(debt)}을 빌리고 나머지 ${fmt(equity)}을 주주가 댄다.`}
+          hint={`총자산 ${formatEok(ASSETS, 0)} 가운데 ${formatEok(debt, 0)}을 빌리고 나머지 ${formatEok(equity, 0)}을 주주가 댄다.`}
         />
         <ControlSlider
           icon={<Landmark className='size-4 text-amber-500' />}
@@ -117,7 +115,7 @@ export function Leverage() {
           min={-50}
           max={250}
           step={10}
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
           hint='이자와 세금을 빼기 전, 자산이 사업으로 벌어들인 돈이다. 자본구조와는 무관하게 결정된다.'
         />
       </Card>
@@ -125,7 +123,7 @@ export function Leverage() {
       <Card className='gap-3 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Scale className='size-4 text-sky-500' />
-          자산 {fmt(ASSETS)}은 어디서 왔는가
+          자산 {formatEok(ASSETS, 0)}은 어디서 왔는가
         </span>
         <StackedBar segments={segments} total={ASSETS} />
       </Card>
@@ -136,7 +134,7 @@ export function Leverage() {
           label='ROE (자기자본 수익률)'
           value={formatPct(roe)}
           tone={roe > roa ? 'good' : roe < 0 ? 'bad' : 'accent'}
-          sub={`자기자본 ${fmt(equity)} 기준`}
+          sub={`자기자본 ${formatEok(equity, 0)} 기준`}
         />
         <Metric
           label='이자보상배율'
@@ -146,9 +144,9 @@ export function Leverage() {
         />
         <Metric
           label='주주 몫 순이익'
-          value={fmt(net)}
+          value={formatEok(net, 0)}
           tone={net < 0 ? 'bad' : undefined}
-          sub={`이자 ${fmt(interest)}`}
+          sub={`이자 ${formatEok(interest, 0)}`}
         />
       </div>
 
@@ -181,7 +179,7 @@ export function Leverage() {
             >
               <span>
                 {s.label}
-                <span className='text-muted-foreground ml-1.5 text-xs tabular-nums'>{fmt(s.ebit)}</span>
+                <span className='text-muted-foreground ml-1.5 text-xs tabular-nums'>{formatEok(s.ebit, 0)}</span>
               </span>
               <span className='text-muted-foreground text-right tabular-nums'>{formatPct(unlevered)}</span>
               <span

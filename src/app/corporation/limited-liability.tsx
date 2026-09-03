@@ -17,12 +17,11 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
+import { formatEok } from '@/lib/utils';
 
 // 단위는 억원. 교육용 예시 수치.
 const CAPITAL = 50; // 주주가 낸 출자금 총액 (개인사업자라면 사업에 넣은 자기 자본)
 const PERSONAL = 30; // 대표 개인 재산
-
-const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
 
 const PIERCE_CASES = [
   '회사 통장과 개인 통장을 구분 없이 섞어 썼다',
@@ -66,19 +65,19 @@ export function LimitedLiability() {
           tone: 'bad' as const,
           icon: <ShieldOff className='size-4 shrink-0' />,
           text: isCorp
-            ? `두 인격 사이의 벽이 뚫렸다. 회사 재산으로 못 갚은 ${fmt(shortfall)} 가운데 ${fmt(personalBurden)}이 대표 개인 재산에서 빠져나간다. 법인의 실패가 자연인의 파산으로 이어지는 상태다.`
-            : `인격이 하나뿐이라 멈출 벽이 없다. 사업 재산으로 못 갚은 ${fmt(shortfall)} 가운데 ${fmt(personalBurden)}이 사업주 개인 재산에서 그대로 빠져나간다.`,
+            ? `두 인격 사이의 벽이 뚫렸다. 회사 재산으로 못 갚은 ${formatEok(shortfall, 0)} 가운데 ${formatEok(personalBurden, 0)}이 대표 개인 재산에서 빠져나간다. 법인의 실패가 자연인의 파산으로 이어지는 상태다.`
+            : `인격이 하나뿐이라 멈출 벽이 없다. 사업 재산으로 못 갚은 ${formatEok(shortfall, 0)} 가운데 ${formatEok(personalBurden, 0)}이 사업주 개인 재산에서 그대로 빠져나간다.`,
         }
       : shortfall > 0
         ? {
             tone: 'accent' as const,
             icon: <ShieldCheck className='size-4 shrink-0' />,
-            text: `손실이 회사에서 멈춘다. 채권자는 ${fmt(creditorLoss)}을 끝내 회수하지 못하지만, 주주와 대표의 개인 재산에는 손댈 수 없다. 주주가 잃는 것은 처음에 낸 출자금까지다.`,
+            text: `손실이 회사에서 멈춘다. 채권자는 ${formatEok(creditorLoss, 0)}을 끝내 회수하지 못하지만, 주주와 대표의 개인 재산에는 손댈 수 없다. 주주가 잃는 것은 처음에 낸 출자금까지다.`,
           }
         : {
             tone: 'good' as const,
             icon: <ShieldCheck className='size-4 shrink-0' />,
-            text: `부채를 모두 갚고도 ${fmt(shareholderRecovered)}이 남았다. 채권자를 먼저 만족시킨 뒤 남은 재산이 ${V.owner}에게 돌아간다. ${V.owner}는 언제나 맨 뒤에 선다.`,
+            text: `부채를 모두 갚고도 ${formatEok(shareholderRecovered, 0)}이 남았다. 채권자를 먼저 만족시킨 뒤 남은 재산이 ${V.owner}에게 돌아간다. ${V.owner}는 언제나 맨 뒤에 선다.`,
           };
 
   return (
@@ -134,7 +133,7 @@ export function LimitedLiability() {
           min={0}
           max={300}
           step={5}
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
         />
         <ControlSlider
           icon={<Wallet className='size-4 text-rose-500' />}
@@ -144,22 +143,26 @@ export function LimitedLiability() {
           min={0}
           max={300}
           step={5}
-          format={fmt}
-          hint={`${V.capital} 총액 ${fmt(CAPITAL)}, ${V.person} 개인 재산 ${fmt(PERSONAL)}을 전제로 계산한다.`}
+          format={(v) => formatEok(v, 0)}
+          hint={`${V.capital} 총액 ${formatEok(CAPITAL, 0)}, ${V.person} 개인 재산 ${formatEok(PERSONAL, 0)}을 전제로 계산한다.`}
         />
       </Card>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
-        <Metric label='채권자 미회수액' value={fmt(creditorLoss)} tone={creditorLoss > 0 ? 'bad' : 'good'} />
+        <Metric label='채권자 미회수액' value={formatEok(creditorLoss, 0)} tone={creditorLoss > 0 ? 'bad' : 'good'} />
         <Metric
           label={`${V.owner} 자본 손실`}
-          value={fmt(shareholderLoss)}
-          sub={isCorp ? `${V.capital} ${fmt(CAPITAL)}이 한도` : `${V.capital} ${fmt(CAPITAL)}에서 멈추지 않는다`}
+          value={formatEok(shareholderLoss, 0)}
+          sub={
+            isCorp
+              ? `${V.capital} ${formatEok(CAPITAL, 0)}이 한도`
+              : `${V.capital} ${formatEok(CAPITAL, 0)}에서 멈추지 않는다`
+          }
           tone='accent'
         />
         <Metric
           label={`${V.person} 개인 재산 손실`}
-          value={fmt(personalBurden)}
+          value={formatEok(personalBurden, 0)}
           tone={personalBurden > 0 ? 'bad' : 'good'}
           sub={personalBurden > 0 ? '벽이 뚫렸다' : '회사 밖으로 번지지 않는다'}
         />
@@ -171,15 +174,15 @@ export function LimitedLiability() {
           value={creditorRecovered}
           max={barMax}
           className='bg-emerald-500'
-          format={fmt}
-          sub={`청구액 ${fmt(debts)}`}
+          format={(v) => formatEok(v, 0)}
+          sub={`청구액 ${formatEok(debts, 0)}`}
         />
         <CostBar
           label='채권자가 떼이는 돈'
           value={creditorLoss}
           max={barMax}
           className='bg-rose-500'
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
           sub='유한책임의 비용은 결국 채권자가 부담한다'
         />
         <CostBar
@@ -187,7 +190,7 @@ export function LimitedLiability() {
           value={shareholderLoss}
           max={barMax}
           className='bg-amber-500'
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
           sub={isCorp ? `아무리 커져도 ${V.capital}을 넘지 않는다` : '여기서 끝나지 않고 개인 재산으로 이어진다'}
         />
         <CostBar
@@ -195,8 +198,8 @@ export function LimitedLiability() {
           value={personalBurden}
           max={barMax}
           className='bg-fuchsia-500'
-          format={fmt}
-          sub={`보유 재산 ${fmt(PERSONAL)}`}
+          format={(v) => formatEok(v, 0)}
+          sub={`보유 재산 ${formatEok(PERSONAL, 0)}`}
         />
       </Card>
 

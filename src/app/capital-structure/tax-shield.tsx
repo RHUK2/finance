@@ -14,7 +14,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { cn, formatEok } from '@/lib/utils';
 
 // 단위는 억원. 세금 방패만 떼어 보기 위해 영업이익과 이자율은 고정한다.
 const ASSETS = 1000;
@@ -25,8 +25,6 @@ const RATE = 5;
 // 이보다 가파른 4차식으로 두어야 내부 최적점이 생긴다.
 const DISTRESS_K = 0.3;
 const STEPS = Array.from({ length: 19 }, (_, i) => i * 5);
-
-const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
 
 // 화면에는 이름이 닮은 두 값이 함께 나온다. 헷갈리지 않도록 함수 이름부터 갈라 둔다.
 //   annualShield: 올해 한 해 덜 낸 법인세. 이자 × 세율.
@@ -62,9 +60,9 @@ export function TaxShield() {
 
   // 영업이익 150억이 세 곳으로 갈라진다. 부채 비중을 올리면 정부 몫이 줄어든다.
   const slices = [
-    { label: `채권자 (이자) ${fmt(interest)}`, value: interest, className: 'bg-rose-500' },
-    { label: `정부 (법인세) ${fmt(tax)}`, value: tax, className: 'bg-slate-400' },
-    { label: `주주 (순이익) ${fmt(net)}`, value: net, className: 'bg-emerald-500' },
+    { label: `채권자 (이자) ${formatEok(interest, 0)}`, value: interest, className: 'bg-rose-500' },
+    { label: `정부 (법인세) ${formatEok(tax, 0)}`, value: tax, className: 'bg-slate-400' },
+    { label: `주주 (순이익) ${formatEok(net, 0)}`, value: net, className: 'bg-emerald-500' },
   ];
 
   return (
@@ -85,7 +83,7 @@ export function TaxShield() {
           max={90}
           step={5}
           format={(v) => `${v}%`}
-          hint={`영업이익 ${fmt(EBIT)}, 이자율 ${RATE}%로 고정해 두고 조달 방식만 바꾼다. 부채 ${fmt(debt)}에 이자 ${fmt(interest)}.`}
+          hint={`영업이익 ${formatEok(EBIT, 0)}, 이자율 ${RATE}%로 고정해 두고 조달 방식만 바꾼다. 부채 ${formatEok(debt, 0)}에 이자 ${formatEok(interest, 0)}.`}
         />
         <ControlSlider
           icon={<Receipt className='size-4 text-slate-500' />}
@@ -103,26 +101,30 @@ export function TaxShield() {
       <Card className='gap-3 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Users className='size-4 text-sky-500' />
-          영업이익 {fmt(EBIT)}은 누구에게 갔는가
+          영업이익 {formatEok(EBIT, 0)}은 누구에게 갔는가
         </span>
         <StackedBar segments={slices} total={EBIT} />
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-        <Metric label='채권자가 받는 이자' value={fmt(interest)} sub='실적과 무관하게 확정' />
-        <Metric label='정부가 걷는 법인세' value={fmt(tax)} sub={`무차입이면 ${fmt(EBIT * (taxRate / 100))}`} />
-        <Metric label='주주 몫 순이익' value={fmt(net)} tone={net > 0 ? undefined : 'bad'} />
+        <Metric label='채권자가 받는 이자' value={formatEok(interest, 0)} sub='실적과 무관하게 확정' />
+        <Metric
+          label='정부가 걷는 법인세'
+          value={formatEok(tax, 0)}
+          sub={`무차입이면 ${formatEok(EBIT * (taxRate / 100), 0)}`}
+        />
+        <Metric label='주주 몫 순이익' value={formatEok(net, 0)} tone={net > 0 ? undefined : 'bad'} />
         <Metric
           label='올해 아낀 법인세'
-          value={fmt(annualShield)}
+          value={formatEok(annualShield, 0)}
           tone={annualShield > 0 ? 'good' : undefined}
-          sub={`이자 ${fmt(interest)} × 세율 ${taxRate}%`}
+          sub={`이자 ${formatEok(interest, 0)} × 세율 ${taxRate}%`}
         />
       </div>
 
       <StatusBanner tone={annualShield > 0 ? 'good' : 'accent'} icon={<ShieldCheck className='size-4 shrink-0' />}>
         {annualShield > 0
-          ? `이자를 비용으로 털어 낸 덕분에 올해 정부로 나갈 ${fmt(annualShield)}이 회사 안에 남았다. 채권자와 주주가 나눠 갖는 몫의 합이 그만큼 커진다.`
+          ? `이자를 비용으로 털어 낸 덕분에 올해 정부로 나갈 ${formatEok(annualShield, 0)}이 회사 안에 남았다. 채권자와 주주가 나눠 갖는 몫의 합이 그만큼 커진다.`
           : '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 이때 자본구조는 파이를 자르는 방식일 뿐 파이의 크기를 바꾸지 못한다.'}
       </StatusBanner>
 
@@ -147,13 +149,13 @@ export function TaxShield() {
       </Card>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
-        <Metric label='지금 자본구조의 기업가치' value={fmt(current)} />
-        <Metric label='가치가 가장 커지는 부채 비중' value={`${best.d}%`} tone='accent' sub={fmt(best.v)} />
+        <Metric label='지금 자본구조의 기업가치' value={formatEok(current, 0)} />
+        <Metric label='가치가 가장 커지는 부채 비중' value={`${best.d}%`} tone='accent' sub={formatEok(best.v, 0)} />
         <Metric
           label='무차입 대비 증감'
-          value={fmt(current - ASSETS)}
+          value={formatEok(current - ASSETS, 0)}
           tone={current > ASSETS ? 'good' : 'bad'}
-          sub={`방패 ${fmt(pv)}에서 곤경비용 ${fmt(distress)}을 뺀 값`}
+          sub={`방패 ${formatEok(pv, 0)}에서 곤경비용 ${formatEok(distress, 0)}을 뺀 값`}
         />
       </div>
 

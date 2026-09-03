@@ -21,8 +21,6 @@ import { formatEokFromMan, formatMan } from '@/lib/utils';
 // 금액 단위는 만원. 규제 수치와 그 기준은 REGULATION 한곳에서만 온다.
 const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE, stressAdd: STRESS_ADD, stressNote: STRESS_NOTE } = REGULATION;
 
-const fmtEok = (n: number) => formatEokFromMan(n, 1);
-
 export function Limit() {
   const [price, setPrice] = useState(80000);
   const [income, setIncome] = useState(7000);
@@ -60,7 +58,7 @@ export function Limit() {
           min={30000}
           max={200000}
           step={1000}
-          format={fmtEok}
+          format={(v) => formatEokFromMan(v, 1)}
         />
         <ControlSlider
           icon={<Wallet className='size-4 text-emerald-500' />}
@@ -124,13 +122,13 @@ export function Limit() {
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric
           label='LTV가 허용하는 한도'
-          value={fmtEok(byLtv)}
+          value={formatEokFromMan(byLtv, 1)}
           tone={binding === 'ltv' ? 'accent' : undefined}
           sub={`집값의 ${ltv}%`}
         />
         <Metric
           label='DSR이 허용하는 한도'
-          value={fmtEok(byDsr)}
+          value={formatEokFromMan(byDsr, 1)}
           tone={binding === 'dsr' ? 'accent' : undefined}
           sub={
             stress
@@ -138,10 +136,10 @@ export function Limit() {
               : `약정 금리 ${rate.toFixed(1)}%, DSR ${DSR_CAP}%`
           }
         />
-        <Metric label='실제 대출 한도' value={fmtEok(limit)} tone='good' sub='둘 중 짧은 자에 맞춘다' />
+        <Metric label='실제 대출 한도' value={formatEokFromMan(limit, 1)} tone='good' sub='둘 중 짧은 자에 맞춘다' />
         <Metric
           label='필요한 자기 현금'
-          value={fmtEok(cash)}
+          value={formatEokFromMan(cash, 1)}
           tone={cash > price * 0.5 ? 'bad' : undefined}
           sub='취득세와 중개보수는 별도'
         />
@@ -153,7 +151,7 @@ export function Limit() {
           value={byLtv}
           max={barMax}
           className='bg-amber-500'
-          format={fmtEok}
+          format={(v) => formatEokFromMan(v, 1)}
           sub='집을 보는 자, 담보 가치에 비례한다'
         />
         <CostBar
@@ -161,7 +159,7 @@ export function Limit() {
           value={byDsr}
           max={barMax}
           className='bg-sky-500'
-          format={fmtEok}
+          format={(v) => formatEokFromMan(v, 1)}
           sub='사람을 보는 자, 소득에 비례한다'
         />
         <CostBar
@@ -169,15 +167,15 @@ export function Limit() {
           value={cash}
           max={barMax}
           className='bg-rose-500'
-          format={fmtEok}
-          sub={`집값 ${fmtEok(price)} 중 대출로 안 되는 부분`}
+          format={(v) => formatEokFromMan(v, 1)}
+          sub={`집값 ${formatEokFromMan(price, 1)} 중 대출로 안 되는 부분`}
         />
       </Card>
 
       <StatusBanner tone={binding === 'dsr' ? 'accent' : 'good'} icon={<Scale className='size-4 shrink-0' />}>
         {binding === 'dsr'
-          ? `소득이 먼저 걸린다. 담보로는 ${fmtEok(byLtv)}까지 가능하지만 갚을 능력 기준으로 ${fmtEok(byDsr)}에서 잘린다. 집값이 더 올라도 이 사람이 빌릴 수 있는 돈은 늘지 않는다.`
-          : `담보가 먼저 걸린다. 소득 기준으로는 ${fmtEok(byDsr)}까지 감당할 수 있지만 집값의 ${ltv}%인 ${fmtEok(byLtv)}이 상한이다. 이 경우 규제 비율이 곧 대출액을 정한다.`}
+          ? `소득이 먼저 걸린다. 담보로는 ${formatEokFromMan(byLtv, 1)}까지 가능하지만 갚을 능력 기준으로 ${formatEokFromMan(byDsr, 1)}에서 잘린다. 집값이 더 올라도 이 사람이 빌릴 수 있는 돈은 늘지 않는다.`
+          : `담보가 먼저 걸린다. 소득 기준으로는 ${formatEokFromMan(byDsr, 1)}까지 감당할 수 있지만 집값의 ${ltv}%인 ${formatEokFromMan(byLtv, 1)}이 상한이다. 이 경우 규제 비율이 곧 대출액을 정한다.`}
       </StatusBanner>
 
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>

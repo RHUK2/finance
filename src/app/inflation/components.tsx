@@ -1,19 +1,24 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
-import { cn, formatSigned } from '@/lib/utils';
+import { cn, formatMan, formatWon } from '@/lib/utils';
 
 export type Currency = '$' | '₩';
 
 /**
- * 통화 포맷터 생성. 음수는 마이너스 부호 "−" 사용(money-creation 컨벤션).
- * krwInMan=true면 원화를 만원 단위로 표기(큰 금액의 자릿수를 줄여 가독성↑).
+ * 나라 설정에 맞는 통화 포맷터를 고른다. 원화 쪽은 utils의 표기를 그대로 쓰고,
+ * 이 함수가 하는 일은 통화와 단위를 보고 어느 것을 쓸지 고르는 것뿐이다.
+ * krwInMan=true면 만원 단위로 표기한다(큰 금액의 자릿수를 줄여 가독성↑).
+ *
+ * 달러 쪽만 여기 남아 있는 것은 utils의 formatUsd가 `$1.2K`처럼 접미사로 줄이는
+ * 컴팩트 표기라, 자릿수를 그대로 보여야 하는 이 페이지에 맞지 않기 때문이다.
+ * 음수 부호 "−"(U+2212)는 formatSigned가 세운 컨벤션을 따른다.
  */
 export function makeMoneyFmt(currency: Currency, krwInMan = false) {
   if (currency === '$') {
     return (n: number) => `${n < 0 ? '−' : ''}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
   }
-  return krwInMan ? (n: number) => `${formatSigned(n / 10000)}만원` : (n: number) => `${formatSigned(n)}원`;
+  return krwInMan ? (n: number) => formatMan(n / 10000) : formatWon;
 }
 
 export type HiTone = 'strong' | 'bad' | 'good' | 'amber';

@@ -15,7 +15,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { formatWon } from '@/lib/utils';
+import { formatEok, formatWon } from '@/lib/utils';
 
 // 교육용 예시 회사. 금액 단위는 억원, 주가는 원.
 const BASE_SHARES = 10_000_000;
@@ -26,8 +26,6 @@ const CB_SHARES = (CB_FACE * 1e8) / CONV_PRICE;
 const REDEEM = CB_FACE + CB_COUPON;
 const CONV_STAKE = CB_SHARES / (BASE_SHARES + CB_SHARES);
 const BREAKEVEN = REDEEM / CONV_STAKE;
-
-const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
 
 type Instrument = {
   id: string;
@@ -129,9 +127,9 @@ export function Hybrid() {
       </Card>
 
       <SectionIntro title='전환사채는 언제 주식이 되는가'>
-        액면 {fmt(CB_FACE)}짜리 전환사채를 발행했다. 만기까지 들고 있으면 원금과 이자를 합쳐 {fmt(REDEEM)}을 받고,
-        주식으로 바꾸면 전환가 {formatWon(CONV_PRICE)} 기준으로 {CB_SHARES.toLocaleString('ko-KR')}주를 받는다. 회사가
-        얼마나 커졌느냐에 따라 보유자의 선택이 갈린다.
+        액면 {formatEok(CB_FACE, 0)}짜리 전환사채를 발행했다. 만기까지 들고 있으면 원금과 이자를 합쳐{' '}
+        {formatEok(REDEEM, 0)}을 받고, 주식으로 바꾸면 전환가 {formatWon(CONV_PRICE)} 기준으로{' '}
+        {CB_SHARES.toLocaleString('ko-KR')}주를 받는다. 회사가 얼마나 커졌느냐에 따라 보유자의 선택이 갈린다.
       </SectionIntro>
 
       <Card className='p-4'>
@@ -143,7 +141,7 @@ export function Hybrid() {
           min={200}
           max={5000}
           step={50}
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
           hint={`기존 주식 ${BASE_SHARES.toLocaleString('ko-KR')}주에 전환사채 하나만 있는 회사다. 전환하면 지분의 ${(CONV_STAKE * 100).toFixed(2)}%를 가져간다.`}
         />
       </Card>
@@ -151,13 +149,13 @@ export function Hybrid() {
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric
           label='상환받으면'
-          value={fmt(REDEEM)}
+          value={formatEok(REDEEM, 0)}
           tone={converts ? undefined : 'good'}
-          sub={`원금 ${fmt(CB_FACE)} + 이자 ${fmt(CB_COUPON)}`}
+          sub={`원금 ${formatEok(CB_FACE, 0)} + 이자 ${formatEok(CB_COUPON, 0)}`}
         />
         <Metric
           label='전환하면'
-          value={fmt(convValue)}
+          value={formatEok(convValue, 0)}
           tone={converts ? 'good' : undefined}
           sub={`지분 ${(CONV_STAKE * 100).toFixed(2)}%의 값`}
         />
@@ -165,7 +163,7 @@ export function Hybrid() {
           label='보유자의 선택'
           value={converts ? '주식 전환' : '만기 상환'}
           tone='accent'
-          sub={`분기점 ${fmt(BREAKEVEN)}`}
+          sub={`분기점 ${formatEok(BREAKEVEN, 0)}`}
         />
         <Metric
           label='기존 주주 주당가치'
@@ -177,14 +175,14 @@ export function Hybrid() {
 
       <Card className='gap-4 p-4'>
         <span className='text-muted-foreground text-xs'>
-          회사 가치 {fmt(value)}이 보유자와 기존 주주에게 어떻게 갈리는가
+          회사 가치 {formatEok(value, 0)}이 보유자와 기존 주주에게 어떻게 갈리는가
         </span>
         <CostBar
           label='전환사채 보유자'
           value={holder}
           max={barMax}
           className='bg-violet-500'
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
           sub={converts ? '주식으로 바꿔 지분만큼 가져간다' : '약속된 원리금까지만 가져간다'}
         />
         <CostBar
@@ -192,15 +190,15 @@ export function Hybrid() {
           value={existing}
           max={barMax}
           className='bg-sky-500'
-          format={fmt}
+          format={(v) => formatEok(v, 0)}
           sub={converts ? '늘어난 주식 수만큼 몫이 묽어졌다' : '원리금을 내주고 나머지를 전부 가져간다'}
         />
       </Card>
 
       <StatusBanner tone={converts ? 'accent' : 'good'} icon={<ArrowLeftRight className='size-4 shrink-0' />}>
         {converts
-          ? `회사 가치가 분기점 ${fmt(BREAKEVEN)}을 넘어 전환이 유리해졌다. 기존 주주는 ${fmt(convValue - REDEEM)}만큼을 원리금 대신 지분으로 내주는 셈이다.`
-          : `아직 전환할 이유가 없다. 보유자는 채권자로 남아 ${fmt(REDEEM)}을 받고, 기존 주주의 지분은 그대로 유지된다.`}
+          ? `회사 가치가 분기점 ${formatEok(BREAKEVEN, 0)}을 넘어 전환이 유리해졌다. 기존 주주는 ${formatEok(convValue - REDEEM, 0)}만큼을 원리금 대신 지분으로 내주는 셈이다.`
+          : `아직 전환할 이유가 없다. 보유자는 채권자로 남아 ${formatEok(REDEEM, 0)}을 받고, 기존 주주의 지분은 그대로 유지된다.`}
       </StatusBanner>
 
       <ExplainCard

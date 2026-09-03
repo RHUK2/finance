@@ -6,7 +6,7 @@ import { Banknote, Gavel, HardHat, Landmark, PieChart, Receipt, Users } from 'lu
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { cn, formatEok } from '@/lib/utils';
 
 // 단위는 억원. 장부상 자산 1,000억짜리 회사가 청산에 들어갔다고 하자.
 const BOOK_ASSETS = 1000;
@@ -81,8 +81,6 @@ const TIERS: Tier[] = [
 const TOTAL_CLAIM = TIERS.reduce((s, t) => s + t.claim, 0);
 const DEBT_CLAIM = TIERS.filter((t) => t.kind === 'debt').reduce((s, t) => s + t.claim, 0);
 
-const fmt = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}억`;
-
 export function Waterfall() {
   const [proceeds, setProceeds] = useState(550);
 
@@ -118,14 +116,14 @@ export function Waterfall() {
           min={0}
           max={1100}
           step={25}
-          format={fmt}
-          hint={`장부상 자산은 ${fmt(BOOK_ASSETS)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금은 장부가 대비 ${discount > 0 ? `${discount.toFixed(0)}% 할인` : `${(-discount).toFixed(0)}% 웃돈`}이다.`}
+          format={(v) => formatEok(v, 0)}
+          hint={`장부상 자산은 ${formatEok(BOOK_ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금은 장부가 대비 ${discount > 0 ? `${discount.toFixed(0)}% 할인` : `${(-discount).toFixed(0)}% 웃돈`}이다.`}
         />
       </Card>
 
       <Card className='gap-4 p-4'>
         <span className='text-muted-foreground text-xs'>
-          매각 대금 {fmt(proceeds)}이 위에서 아래로 흐른다. 총 청구액은 {fmt(TOTAL_CLAIM)}
+          매각 대금 {formatEok(proceeds, 0)}이 위에서 아래로 흐른다. 총 청구액은 {formatEok(TOTAL_CLAIM, 0)}
         </span>
         {rows.map((r) => (
           <div key={r.id} className='flex flex-col gap-1'>
@@ -135,8 +133,8 @@ export function Waterfall() {
                 {r.label}
               </span>
               <span className='shrink-0 tabular-nums'>
-                {fmt(r.paid)}
-                <span className='text-muted-foreground'> / {fmt(r.claim)}</span>
+                {formatEok(r.paid, 0)}
+                <span className='text-muted-foreground'> / {formatEok(r.claim, 0)}</span>
               </span>
             </div>
             <div className='bg-muted h-5 w-full overflow-hidden rounded-md'>
@@ -158,13 +156,13 @@ export function Waterfall() {
           label='채권 전체 회수율'
           value={`${((debtPaid / DEBT_CLAIM) * 100).toFixed(0)}%`}
           tone={debtPaid >= DEBT_CLAIM ? 'good' : 'bad'}
-          sub={`청구 ${fmt(DEBT_CLAIM)} 중 ${fmt(debtPaid)}`}
+          sub={`청구 ${formatEok(DEBT_CLAIM, 0)} 중 ${formatEok(debtPaid, 0)}`}
         />
         <Metric
           label='보통주주에게 남는 돈'
-          value={fmt(common.paid)}
+          value={formatEok(common.paid, 0)}
           tone={common.paid > 0 ? 'good' : 'bad'}
-          sub={common.paid > 0 ? `출자 ${fmt(common.claim)} 대비` : '앞에서 모두 소진됐다'}
+          sub={common.paid > 0 ? `출자 ${formatEok(common.claim, 0)} 대비` : '앞에서 모두 소진됐다'}
         />
         <Metric
           label='손실을 나눠 지는 계층'
@@ -179,7 +177,7 @@ export function Waterfall() {
         icon={<Gavel className='size-4 shrink-0' />}
       >
         {common.paid > 0
-          ? `모든 채권과 우선주를 만족시키고도 ${fmt(common.paid)}이 남아 보통주주에게 돌아간다. 주주가 무언가를 받는 청산은 드물다.`
+          ? `모든 채권과 우선주를 만족시키고도 ${formatEok(common.paid, 0)}이 남아 보통주주에게 돌아간다. 주주가 무언가를 받는 청산은 드물다.`
           : debtPaid >= DEBT_CLAIM
             ? '빚은 모두 갚았지만 주식에 배분할 돈이 부족하다. 채권자는 온전히 회수하고 주주만 손실을 진다.'
             : `채권 단계에서 이미 물이 끊겼다. 이 상태에서 주식은 값이 0이고, 회사의 사실상 주인은 손실을 나눠 지게 된 채권자다.`}

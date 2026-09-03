@@ -19,7 +19,6 @@ const BASE_CASH = 50_000_000_000;
 const BASE_PCT = (ME / BASE_ISSUED) * 100;
 
 const fmtShares = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}주`;
-const fmtPct = (n: number) => formatPct(n, 2);
 
 export function Shares() {
   const [newIssue, setNewIssue] = useState(0);
@@ -87,15 +86,20 @@ export function Shares() {
         {buyback > 0 && (
           <p className='text-muted-foreground text-xs/relaxed'>
             자사주 {fmtShares(buyback)}에는 의결권도 배당도 없다. 이를 뺀 유통주식 {fmtShares(outstanding)}를 분모로
-            하면 내 몫은 {fmtPct(myPct)}가 되어, 위 막대에 적힌 {fmtPct((ME / issued) * 100)}보다 크다. 아래 지표는 모두
-            유통주식 기준이다.
+            하면 내 몫은 {formatPct(myPct, 2)}가 되어, 위 막대에 적힌 {formatPct((ME / issued) * 100, 2)}보다 크다. 아래
+            지표는 모두 유통주식 기준이다.
           </p>
         )}
       </Card>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='유통주식수' value={fmtShares(outstanding)} sub='발행주식에서 자사주를 뺀 수' />
-        <Metric label='내 지분율' value={fmtPct(myPct)} tone={tone} sub={`유통주식 기준, 시작 ${fmtPct(BASE_PCT)}`} />
+        <Metric
+          label='내 지분율'
+          value={formatPct(myPct, 2)}
+          tone={tone}
+          sub={`유통주식 기준, 시작 ${formatPct(BASE_PCT, 2)}`}
+        />
         <Metric
           label='주당순이익 (EPS)'
           value={formatWon(eps)}

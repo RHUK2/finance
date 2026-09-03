@@ -38,14 +38,20 @@ export function formatUsd(n: number): string {
 // 모두 `fmtEok`이라는 같은 이름을 로컬에 두어 파일을 열기 전에는 어느 단위를
 // 넣어야 하는지 알 수 없었다. 이름 뒤 `From`이 입력 단위다.
 
-/** 만원 단위 입력. 1234 → `1,234만원` */
-export const formatMan = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}만원`;
+/** 만원 단위 입력. 1234 → `1,234만원`, -50 → `−50만원` */
+export const formatMan = (n: number) => `${formatSigned(n)}만원`;
 
-/** 원 단위 입력. 1234567 → `1,234,567원` */
-export const formatWon = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
+/** 원 단위 입력. 1234567 → `1,234,567원`, -50 → `−50원` */
+export const formatWon = (n: number) => `${formatSigned(n)}원`;
 
-/** 억 단위 입력. 3.25 → `3.3억` */
-export const formatEok = (n: number, digits = 1) => `${n.toFixed(digits)}억`;
+/**
+ * 억 단위 입력. 3.25 → `3.3억`, `formatEok(1000, 0)` → `1,000억`
+ *
+ * 천 단위 구분자를 넣는 것은 자본구조·법인 페이지가 네 자리 억을 다루기 때문이다.
+ * 구분자가 없으면 `5000억`이 되어 자릿수가 한눈에 안 읽힌다.
+ */
+export const formatEok = (n: number, digits = 1) =>
+  `${n.toLocaleString('ko-KR', { minimumFractionDigits: digits, maximumFractionDigits: digits })}억`;
 
 /** 만원 단위 입력을 억으로. 52500 → `5.25억` */
 export const formatEokFromMan = (n: number, digits = 2) => `${(n / 10000).toFixed(digits)}억`;

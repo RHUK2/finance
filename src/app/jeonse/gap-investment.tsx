@@ -10,7 +10,8 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Card } from '@/components/ui/card';
 import { formatEok, formatPct } from '@/lib/utils';
 
-const fmtSigned = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}억`;
+// 부호를 붙인 억 표기. 표기 자체는 formatEok에 맡기고 여기서는 부호만 얹는다.
+const signedEok = (n: number) => `${n >= 0 ? '+' : '−'}${formatEok(Math.abs(n))}`;
 
 export function GapInvestment() {
   const [price, setPrice] = useState(6);
@@ -87,7 +88,7 @@ export function GapInvestment() {
         <Metric
           label='자기자본 수익률'
           value={formatPct(roe)}
-          sub={`시세 손익 ${fmtSigned(profit)}`}
+          sub={`시세 손익 ${signedEok(profit)}`}
           tone={roe >= 0 ? 'good' : 'bad'}
         />
       </div>
@@ -115,7 +116,7 @@ export function GapInvestment() {
           max={Math.max(barMax, newPrice)}
           className={profit >= 0 ? 'bg-emerald-500' : 'bg-rose-500'}
           format={formatEok}
-          sub={`처음 ${formatEok(price)}에서 ${fmtSigned(profit)}`}
+          sub={`처음 ${formatEok(price)}에서 ${signedEok(profit)}`}
         />
       </Card>
 
