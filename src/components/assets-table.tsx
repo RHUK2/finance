@@ -103,9 +103,19 @@ const ASSET_TYPES = ['all', 'macro', 'crypto', 'stock'];
 // 로딩 중 자리를 잡아 둘 스켈레톤 행 수. 실제 자산 수와 비슷하게 맞춰 레이아웃 점프를 줄인다.
 const SKELETON_ROWS = 22;
 
+// 검색은 자산명과 티커만 훑는다. 모바일·데스크탑이 렌더링 경로가 달라 각자 필터를 짜면
+// 같은 검색어가 다른 결과를 낸다. 실제로 데스크탑 기본값(includesString)은 컬럼만 훑어
+// 티커를 놓치고(`KRW` → `달러 환율` 행을 못 찾음) 가격 숫자에는 걸렸다.
+export function matchesQuery(item: MarketItem, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return item.label.toLowerCase().includes(q) || item.ticker.toLowerCase().includes(q);
+}
+
 const MOBILE_SORT_OPTIONS = [
   { value: 'default', label: '기본' },
   { value: 'label-asc', label: '자산명 오름차순' },
+  { value: 'label-desc', label: '자산명 내림차순' },
   { value: 'price-desc', label: '가격 높은순' },
   { value: 'price-asc', label: '가격 낮은순' },
   { value: 'changePercent-desc', label: '증감 높은순' },
@@ -126,10 +136,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   );
 
   const mobileSorted = useMemo(() => {
-    const q = globalFilter.trim().toLowerCase();
-    const searched = q
-      ? filtered.filter((item) => item.label.toLowerCase().includes(q) || item.ticker.toLowerCase().includes(q))
-      : filtered;
+    const searched = filtered.filter((item) => matchesQuery(item, globalFilter));
     if (mobileSortKey === 'default') return searched;
     const [col, dir] = mobileSortKey.split('-') as [string, 'asc' | 'desc'];
     return searched.toSorted((a, b) => {
@@ -183,7 +190,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: 'includesString',
+    globalFilterFn: (row, _columnId, value) => matchesQuery(row.original, String(value)),
   });
 
   if (isMobile === undefined) {

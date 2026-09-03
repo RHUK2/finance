@@ -44,15 +44,21 @@ async function fetchSeries(key: string, stat: string, item: string): Promise<Mac
 
 export async function GET() {
   try {
-    const data = await cached('inflation-data-kr', async () => {
-      // 이 저장소에서 유일하게 없어도 되는 키다. 없으면 500 대신 `available: false`를
-      // 돌려주고, 화면은 한국 데이터 없이 미국만 그린다. 필수로 만들면 키가 없는
-      // 환경에서 구매력 붕괴 페이지 전체가 죽는다.
-      const key = process.env.ECOS_API_KEY;
-      if (!key) {
-        return { fetchedAt: new Date().toISOString(), available: false };
-      }
+    // 키가 없으면 500 대신 `available: false`를 돌려주고, 화면은 한국 데이터 없이 미국만
+    // 그린다. 필수로 만들면 키가 없는 환경에서 구매력 붕괴 페이지 전체가 죽는다.
+    // FRED 키를 읽는 두 라우트도 같은 분기를 갖는다.
+    //
+    // 이 응답은 cached() 바깥에서 돌려준다. 키 부재는 데이터가 아니라 설정 상태라,
+    // 캐시에 넣으면 키를 넣고 배포해도 TTL(하루) 동안 안내 카드가 그대로 나온다.
+    const key = process.env.ECOS_API_KEY;
+    if (!key) {
+      return NextResponse.json({ fetchedAt: new Date().toISOString(), available: false });
+    }
 
+    const data = await cached('inflation-data-kr', async () => {
+      // 여섯을 Promise.all로 함께 받으므로 하나만 실패해도 이 라우트가 통째로 500이 된다.
+      // 위 STAT의 통계표 코드는 한국은행 개편으로 바뀔 수 있고, 그때 한 코드가 죽으면
+      // 나머지 다섯도 함께 죽는다(같은 함정과 이유는 src/lib/fred.ts).
       const [cpi, m2, deposit, stock, house, fx] = await Promise.all([
         fetchSeries(key, STAT.cpi.stat, STAT.cpi.item),
         fetchSeries(key, STAT.m2.stat, STAT.m2.item),
