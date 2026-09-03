@@ -6,7 +6,13 @@ import { ExplainCard, SectionIntro } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-import { AS_OF, FACTS } from './models';
+import { AS_OF, FACTS, RETARGET_BLOCKS } from './models';
+
+// 신호율·임계값·조정 주기는 models.ts의 FACTS와 프로토콜 상수가 단일 출처다.
+// 화면 문구에 숫자를 다시 적으면 사실이 바뀔 때 한쪽만 고치게 된다.
+const SIGNAL_PCT = `${(FACTS.signalingShare.value * 100).toFixed(2)}%`;
+const THRESHOLD_PCT = `${Math.round(FACTS.lockInThreshold.value * 100)}%`;
+const RETARGET_LABEL = RETARGET_BLOCKS.toLocaleString('ko-KR');
 
 const TIMELINE = [
   {
@@ -16,7 +22,7 @@ const TIMELINE = [
   },
   {
     date: '2026.08.07',
-    label: `${FACTS.signalingHeight.value.toLocaleString()}블록에서 mandatory signaling 개시, 신호율 2.53% (임계값 55%)`,
+    label: `${FACTS.signalingHeight.value.toLocaleString()}블록에서 mandatory signaling 개시, 신호율 ${SIGNAL_PCT} (임계값 ${THRESHOLD_PCT})`,
     tone: 'accent' as const,
   },
   {
@@ -65,7 +71,7 @@ export function August2026() {
       <ExplainCard
         icon={<GitBranch className='size-4 text-rose-500' />}
         title='BIP-110: 활성화에 실패하고도 체인은 갈렸다'
-        preview='2.53%의 신호로는 활성화도 못 하고, 갈라져 나온 체인도 못 굴린다'
+        preview={`${SIGNAL_PCT}의 신호로는 활성화도 못 하고, 갈라져 나온 체인도 못 굴린다`}
         body={
           <div className='flex flex-col gap-2'>
             <p>
@@ -75,11 +81,11 @@ export function August2026() {
               두면서 블록 공간의 비금융 데이터 사용만 줄이는 것이었다.
             </p>
             <p>
-              {FACTS.signalingHeight.value.toLocaleString()}블록에서 mandatory signaling 구간이 열렸을 때 직전 2,016블록
-              중 신호한 블록은 51개, 2.53%였다. 조기 활성화 임계값 55%에 한참 못 미쳤다. 그런데도 규칙을 강제하도록
-              설정된 노드들은 신호하지 않는 블록을 거부했고, 그 결과 소수 체인이 갈라져 나왔다. 이 체인은 두 블록을 캔
-              뒤 멈췄고 8월 9일 오후까지 세 번째 블록이 나오지 않았다. 첫 탭에서 본 대로다. 2%대 해시레이트로는 난이도
-              조정에 필요한 2,016블록에 도달할 방법이 없다.
+              {FACTS.signalingHeight.value.toLocaleString()}블록에서 mandatory signaling 구간이 열렸을 때 직전{' '}
+              {RETARGET_LABEL}블록 중 신호한 블록은 51개, {SIGNAL_PCT}였다. 조기 활성화 임계값 {THRESHOLD_PCT}에 한참 못
+              미쳤다. 그런데도 규칙을 강제하도록 설정된 노드들은 신호하지 않는 블록을 거부했고, 그 결과 소수 체인이
+              갈라져 나왔다. 이 체인은 두 블록을 캔 뒤 멈췄고 8월 9일 오후까지 세 번째 블록이 나오지 않았다. 첫 탭에서
+              본 대로다. 2%대 해시레이트로는 난이도 조정에 필요한 {RETARGET_LABEL}블록에 도달할 방법이 없다.
             </p>
             <p>
               분기 코인은 값이 붙지 않았다. 안전하게 거래할 방법이 없었고, 주요 거래소 중 상장을 확약한 곳도 없었다. 이

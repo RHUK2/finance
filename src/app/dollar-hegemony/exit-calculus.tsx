@@ -17,7 +17,7 @@ import {
 import { Card } from '@/components/ui/card';
 import { ratioLabel } from '@/lib/bcra';
 
-import { EXIT_COUNTRIES, type Grade, exitLedger } from './models';
+import { COST_FLOOR, EXIT_COUNTRIES, type Grade, exitLedger } from './models';
 
 const MARK: Record<Grade, MarkState> = { high: 'yes', mid: 'partial', low: 'no' };
 
@@ -104,7 +104,7 @@ export function ExitCalculus() {
             { label: '결제 마비', value: ledger.paymentCost, className: 'bg-sky-500' },
             { label: '안보 상실', value: ledger.securityCost, className: 'bg-amber-500' },
             { label: '자산 동결', value: ledger.freezeCost, className: 'bg-rose-500' },
-            { label: '기본 마찰', value: 0.15, className: 'bg-muted-foreground/40' },
+            { label: '기본 마찰', value: COST_FLOOR, className: 'bg-muted-foreground/40' },
           ]}
         />
       </Card>

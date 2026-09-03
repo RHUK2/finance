@@ -4,6 +4,7 @@
 // 있는지를 오직 두 체인의 규칙 집합이 어떻게 겹치는지로만 결정한다. 서명 알고리즘
 // 차이·체인 ID·SIGHASH 플래그는 모델에 넣지 않는다(docs/adr/0005 참조).
 
+import { RETARGET_INTERVAL } from '@/lib/bitcoin-models';
 import { clamp } from '@/lib/utils';
 
 // 화면에 쓰는 사건 수치는 값과 기준 시점을 한 객체에 묶어 단일 출처로 둔다.
@@ -60,7 +61,10 @@ export const AS_OF = '2026년 8월 25일';
 // ─────────────────────────────────────────────────────────────
 
 export const TARGET_BLOCK_MINUTES = 10;
-export const RETARGET_BLOCKS = 2016;
+
+// 난이도 조정 주기는 프로토콜 상수라 bitcoin-models가 단일 출처다. 이 페이지의
+// 화면 문구가 블록 수를 직접 부르므로 이름만 여기서 다시 내보낸다.
+export { RETARGET_INTERVAL as RETARGET_BLOCKS };
 
 // 해시레이트 비중(0~1)을 가진 체인의 평균 블록 간격(분).
 export function blockIntervalMinutes(hashShare: number): number {
@@ -70,7 +74,7 @@ export function blockIntervalMinutes(hashShare: number): number {
 // 다음 난이도 조정까지 걸리는 시간(일). 조정 전까지는 난이도가 내려가지 않으므로
 // 이 값이 소수 체인이 정상 속도를 되찾기까지 갇혀 있는 기간이 된다.
 export function daysToRetarget(hashShare: number): number {
-  return (blockIntervalMinutes(hashShare) * RETARGET_BLOCKS) / (60 * 24);
+  return (blockIntervalMinutes(hashShare) * RETARGET_INTERVAL) / (60 * 24);
 }
 
 export function formatDuration(minutes: number): string {

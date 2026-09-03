@@ -7,7 +7,14 @@ import { Card } from '@/components/ui/card';
 import { ExplainCard, Metric, RoundControls, SectionIntro } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
 import { cn } from '@/lib/utils';
-import { AVG_BLOCK_BYTES, blocksBytes, formatBytes, headersBytes, TOTAL_BLOCKS_APPROX } from '@/lib/p2p-concept';
+import {
+  AVG_BLOCK_BYTES,
+  blocksBytes,
+  formatBytes,
+  HEADER_BYTES,
+  headersBytes,
+  TOTAL_BLOCKS_APPROX,
+} from '@/lib/p2p-concept';
 
 const HEADER_ROUNDS = 10; // 헤더 체인은 가볍기 때문에 빠르게 끝난다
 const BLOCK_ROUNDS = 30; // 블록 본문은 헤더보다 훨씬 무거워 더 오래 걸린다
@@ -87,7 +94,10 @@ export function IbdSync() {
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='헤더 전체 용량' value={formatBytes(headersBytes(TOTAL_BLOCKS_APPROX))} />
           <Metric label='블록 전체 용량' value={formatBytes(blocksBytes(TOTAL_BLOCKS_APPROX))} tone='accent' />
-          <Metric label='크기 비율' value={`약 ${Math.round(AVG_BLOCK_BYTES / 80).toLocaleString('ko-KR')}배`} />
+          <Metric
+            label='크기 비율'
+            value={`약 ${Math.round(AVG_BLOCK_BYTES / HEADER_BYTES).toLocaleString('ko-KR')}배`}
+          />
         </div>
       </Card>
 

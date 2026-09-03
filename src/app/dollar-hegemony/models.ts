@@ -154,7 +154,7 @@ export const EXIT_COUNTRIES: ExitCountry[] = [
 // 행사될 때만 실현되므로 제재 적극성이 곱해진다.
 const COST_W = { payment: 1.0, security: 0.9, freeze: 0.8 };
 // 비용의 하한. 어느 나라도 이탈에 마찰이 0일 수는 없고, 0으로 나누는 것도 막는다.
-const COST_FLOOR = 0.15;
+export const COST_FLOOR = 0.15;
 const BENEFIT_W = { immunity: 1.0, autonomy: 0.7 };
 // 대체망이 완전히 성숙해도 결제 마비 비용이 완전히 사라지지는 않는다.
 const NETWORK_RELIEF = 0.8;
