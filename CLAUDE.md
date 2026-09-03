@@ -24,8 +24,8 @@ vercel --prod     # Vercel 프로덕션 배포
 - **캐시 설정** (`src/lib/cache-config.ts`): 신선도(TTL)의 단일 출처. `ENDPOINTS` 표의 키 = TanStack Query queryKey = `/api/<key>` 경로 세그먼트. 서버 캐시 TTL과 클라이언트 `staleTime`/`refetchInterval`이 모두 여기서 파생
 - **Route Handler** (`src/app/api/*/route.ts`): 외부 API를 호출하고 `cached(key, fetcher)`(`src/lib/cache.ts`, Upstash read-through + 락 기반 스탬피드 차단)로 캐싱. 클라이언트에 API 키나 외부 도메인을 노출하지 않는 프록시 역할. 공용 fetch 헬퍼는 `src/lib/fred.ts`(FRED), `src/lib/yahoo.ts`(Yahoo 시계열), `src/lib/series.ts`(`MacroSeries` 타입·변환)에 위치
 - **훅** (`src/hooks/use-*.ts`): 각 훅은 `useEndpoint<T>(key)`(`src/hooks/use-endpoint.ts`) 한 줄 래퍼. 컴포넌트는 훅을 통해서만 데이터 접근
-- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재)와 Google Finance(`market` 라우트의 폴백 시세, 스크레이프), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
-- **API 키**: `FRED_API_KEY`와 `ECOS_API_KEY` 둘뿐이다. FRED는 없으면 해당 라우트가 실패하지만 ECOS는 없어도 되며, 그때 `available: false`를 돌려주고 화면이 한국 데이터 없이 그려진다. 제공처별 함정은 문서가 아니라 해당 파일 주석에 둔다(폐기 시리즈와 `Promise.all` 전파는 `src/lib/fred.ts`, 키 부재 처리는 `api/inflation-data-kr/route.ts`)
+- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조. Google Finance는 데이터 출처가 아니다. `market` 라우트의 `GF` 상수는 자산 테이블 행을 눌렀을 때 열리는 바깥 링크(`gfUrl`)를 조립할 뿐이고, 시세는 전부 `yf.quote` 하나에서 온다
+- **API 키**: `FRED_API_KEY`와 `ECOS_API_KEY` 둘뿐이고 둘 다 없어도 된다. 키를 읽는 세 라우트(`fred`·`inflation-data`·`inflation-data-kr`)가 모두 키가 없으면 `available: false`를 돌려주고, 화면은 그 데이터 없이 그려진다(`economy`의 `FredGate`, `inflation`의 안내 카드). 셋 중 어느 하나만 필수인 것이 아니므로 새 키 기반 라우트를 만들 때도 이 분기를 넣는다. 제공처별 함정은 문서가 아니라 해당 파일 주석에 둔다(폐기 시리즈와 `Promise.all` 전파는 `src/lib/fred.ts`, 키 부재를 500으로 만들지 않는 이유는 `api/inflation-data-kr/route.ts`)
 
 ### 비트코인 지표 모델 (`src/lib/bitcoin-models.ts`)
 
