@@ -12,7 +12,7 @@ import {
   RoundControls,
   SectionIntro,
 } from '@/components/simulation';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectory } from '@/hooks/use-round-engine';
 import { cn } from '@/lib/utils';
 import { generateGossipGraph, graphHopDistances, maxHops } from '@/lib/p2p-concept';
 
@@ -26,20 +26,11 @@ export function GossipSim() {
   const dist = useMemo(() => graphHopDistances(graph.adjacency, ORIGIN), [graph]);
   const maxRound = maxHops(dist);
 
-  const [round, setRound] = useState(0);
   const [speedMs, setSpeedMs] = useState(600);
-
-  function step(): boolean {
-    if (round >= maxRound) return false;
-    setRound((r) => r + 1);
-    return round + 1 < maxRound;
-  }
-
-  const engine = useRoundEngine(step, speedMs);
+  const { round, done, step, seek, engine } = useTrajectory(maxRound, speedMs);
 
   const informed = dist.filter((d) => d <= round).length;
   const pct = (informed / NODE_COUNT) * 100;
-  const done = round >= maxRound;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -63,8 +54,7 @@ export function GossipSim() {
           onToggle={engine.toggle}
           onStep={step}
           onReset={() => {
-            engine.pause();
-            setRound(0);
+            seek(0);
           }}
           round={round}
           speedMs={speedMs}

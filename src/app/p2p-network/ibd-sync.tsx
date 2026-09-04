@@ -5,7 +5,7 @@ import { Download, FileStack } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
 import { ExplainCard, Metric, RoundControls, SectionIntro } from '@/components/simulation';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectory } from '@/hooks/use-round-engine';
 import { cn } from '@/lib/utils';
 import {
   AVG_BLOCK_BYTES,
@@ -33,20 +33,11 @@ function blocksAt(round: number): number {
 }
 
 export function IbdSync() {
-  const [round, setRound] = useState(0);
   const [speedMs, setSpeedMs] = useState(280);
+  const { round, done, step, seek, engine } = useTrajectory(TOTAL_ROUNDS, speedMs);
 
   const headersDownloaded = headersAt(round);
   const blocksDownloaded = blocksAt(round);
-  const done = round >= TOTAL_ROUNDS;
-
-  function step(): boolean {
-    if (round >= TOTAL_ROUNDS) return false;
-    setRound((r) => r + 1);
-    return round + 1 < TOTAL_ROUNDS;
-  }
-
-  const engine = useRoundEngine(step, speedMs);
 
   const headersPct = (headersDownloaded / TOTAL_BLOCKS_APPROX) * 100;
   const blocksPct = (blocksDownloaded / TOTAL_BLOCKS_APPROX) * 100;
@@ -67,8 +58,7 @@ export function IbdSync() {
           onToggle={engine.toggle}
           onStep={step}
           onReset={() => {
-            engine.pause();
-            setRound(0);
+            seek(0);
           }}
           round={round}
           speedMs={speedMs}

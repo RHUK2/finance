@@ -7,7 +7,7 @@ import { KeyRound, Link2 } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
 import { ExplainCard, IllustrativeDisclaimer, RoundControls, SectionIntro } from '@/components/simulation';
-import { useRoundEngine } from '@/hooks/use-round-engine';
+import { useTrajectory } from '@/hooks/use-round-engine';
 import { cn, shortHex } from '@/lib/utils';
 import { HTLC_HOPS, INITIAL_PREIMAGE, paymentHash, randomPreimage } from '@/lib/lightning-concept';
 
@@ -25,21 +25,11 @@ export function HtlcRouting() {
   const [preimage, setPreimage] = useState(INITIAL_PREIMAGE);
   const hash = paymentHash(preimage);
 
-  const [step, setStep] = useState(0);
   const [speedMs, setSpeedMs] = useState(900);
-  const done = step >= MAX_STEP;
-
-  function advance(): boolean {
-    if (done) return false;
-    setStep((s) => s + 1);
-    return step + 1 < MAX_STEP;
-  }
-
-  const engine = useRoundEngine(advance, speedMs);
+  const { round: step, done, step: advance, seek, engine } = useTrajectory(MAX_STEP, speedMs);
 
   function reset() {
-    engine.pause();
-    setStep(0);
+    seek(0);
     setPreimage(randomPreimage());
   }
 

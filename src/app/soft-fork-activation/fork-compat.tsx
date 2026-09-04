@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { CircleCheck, CircleX } from 'lucide-react';
+import { GitCompare } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
-import { ExplainCard, Field, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
-import { cn } from '@/lib/utils';
+import { ExplainCard, MarkTable, SectionIntro, StatusBanner } from '@/components/simulation';
 
 type ForkKind = 'soft' | 'hard';
 
@@ -37,6 +36,17 @@ const EXAMPLES: Record<
   },
 };
 
+// 표의 행·표시를 EXAMPLES에서 파생시킨다. 잣대 둘을 손으로 다시 적으면 headers 순서와 어긋난다.
+const ROWS = (['soft', 'hard'] as const).map((kind) => ({
+  id: kind,
+  label: kind === 'soft' ? '소프트포크' : '하드포크',
+  sub: kind === 'soft' ? '규칙을 좁힌다' : '규칙을 넓힌다',
+  marks: [
+    EXAMPLES[kind].oldSeesNew ? ('yes' as const) : ('no' as const),
+    EXAMPLES[kind].newSeesOld ? ('yes' as const) : ('no' as const),
+  ],
+}));
+
 export function ForkCompat() {
   const [kind, setKind] = useState<ForkKind>('soft');
   const ex = EXAMPLES[kind];
@@ -49,32 +59,23 @@ export function ForkCompat() {
         블록을 아예 거부해버려서, 전원이 업그레이드하지 않으면 체인이 갈라진다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
-        <Field label='예시 선택'>
-          <SegmentedControl
-            options={[
-              { value: 'soft', label: '소프트포크' },
-              { value: 'hard', label: '하드포크' },
-            ]}
-            value={kind}
-            onChange={setKind}
-          />
-        </Field>
+      <MarkTable
+        title='두 종류를 같은 잣대 둘로 재면'
+        icon={<GitCompare className='size-4 text-sky-600 dark:text-sky-400' />}
+        headers={['포크 종류', '구버전이 새 블록을 봄', '신버전이 구 블록을 봄']}
+        rows={ROWS}
+        selected={kind}
+        onSelect={(id) => setKind(id as ForkKind)}
+      />
 
-        <div className='rounded-md border p-3'>
-          <p className='text-sm font-medium'>{ex.label}</p>
-          <p className='text-muted-foreground mt-1 text-sm/relaxed'>{ex.rule}</p>
-        </div>
-
-        <div className='grid grid-cols-2 gap-3'>
-          <CompatCell label='구버전 노드가 새 규칙 블록을 유효하다고 봄' ok={ex.oldSeesNew} />
-          <CompatCell label='신버전 노드가 구규칙 블록을 유효하다고 봄' ok={ex.newSeesOld} />
-        </div>
-
-        <StatusBanner tone={ex.oldSeesNew ? 'good' : 'bad'}>
-          <span className='leading-relaxed font-normal'>{ex.verdict}</span>
-        </StatusBanner>
+      <Card className='gap-1.5 p-4'>
+        <span className='text-sm font-semibold'>{ex.label}</span>
+        <p className='text-muted-foreground text-sm/relaxed'>{ex.rule}</p>
       </Card>
+
+      <StatusBanner tone={ex.oldSeesNew ? 'good' : 'bad'}>
+        <span className='leading-relaxed font-normal'>{ex.verdict}</span>
+      </StatusBanner>
 
       <ExplainCard
         title="왜 '규칙을 좁힌다'는 게 핵심 기준일까"
@@ -88,24 +89,6 @@ export function ForkCompat() {
           </>
         }
       />
-    </div>
-  );
-}
-
-function CompatCell({ label, ok }: { label: string; ok: boolean }) {
-  return (
-    <div
-      className={cn(
-        'flex flex-col items-center gap-2 rounded-md border p-4 text-center',
-        ok ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-rose-500/40 bg-rose-500/5',
-      )}
-    >
-      {ok ? (
-        <CircleCheck className='size-6 text-emerald-600 dark:text-emerald-400' />
-      ) : (
-        <CircleX className='size-6 text-rose-600 dark:text-rose-400' />
-      )}
-      <span className='text-xs/snug'>{label}</span>
     </div>
   );
 }
