@@ -41,7 +41,7 @@ export function CommoditiesView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '원자재 차트' }]} />
+      <AppHeader />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

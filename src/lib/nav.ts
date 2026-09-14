@@ -117,3 +117,16 @@ export const NAV_GROUPS = [
     ],
   },
 ];
+
+/**
+ * 경로로 그 페이지의 이름을 찾는다. 사이드바·모바일 드로어·breadcrumb이 같은
+ * 문자열을 쓰게 하는 단일 출처다. 예전에는 페이지마다 breadcrumb 문자열을 따로
+ * 적어 두어, 여기 라벨을 고치면 같은 페이지가 두 이름으로 보였다.
+ */
+export function navLabel(pathname: string): string | undefined {
+  for (const group of NAV_GROUPS) {
+    const hit = group.items.find((i) => i.href === pathname);
+    if (hit) return hit.label;
+  }
+  return undefined;
+}

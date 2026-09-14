@@ -20,7 +20,6 @@ const TABS = [
 export function MortgageView() {
   return (
     <ExplainerPage
-      breadcrumb='주택담보대출'
       title='집을 사는 돈은 어디서 오는가'
       intro={
         <>

@@ -21,7 +21,6 @@ export function DollarHegemonyView() {
 
   return (
     <ExplainerPage
-      breadcrumb='달러 패권'
       title='달러는 왜 최악인데도 대체되지 않는가'
       intro={
         <>

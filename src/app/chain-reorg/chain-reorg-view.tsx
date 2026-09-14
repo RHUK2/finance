@@ -16,7 +16,6 @@ const TABS = [
 export function ChainReorgView() {
   return (
     <ExplainerPage
-      breadcrumb='체인 재구성·파이널리티'
       title='트랜잭션은 언제 &#39;확정&#39;되는가'
       intro={
         <>

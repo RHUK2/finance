@@ -44,7 +44,6 @@ export function BitcoinQuantumView() {
 
   return (
     <ExplainerPage
-      breadcrumb='양자컴퓨터'
       title='비트코인은 양자컴퓨터에 얼마나 취약한가'
       intro={
         <>

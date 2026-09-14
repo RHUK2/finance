@@ -7,19 +7,19 @@ import { PageMain } from '@/components/page-main';
 // 갈리는데(CLAUDE.md "페이지 두 갈래"), 이 컴포넌트를 쓰면 설명형, AppHeader와
 // PageMain을 직접 쓰면 데이터 대시보드다. 대시보드는 다섯뿐이고 h1도 폭 제한도 없다.
 //
-// breadcrumb이 문자열 하나인 것은 설명형 페이지가 모두 최상위이기 때문이다.
-// 계층이 생기면 AppHeader가 이미 여러 단계를 그릴 수 있으므로 그때 prop을 넓힌다.
+// breadcrumb은 prop이 아니라 경로로 nav에서 끌어온다. 페이지 이름을 여기와
+// nav.ts 두 곳에 적어 두면 한쪽만 고쳤을 때 같은 페이지가 두 이름으로 보인다.
+// 설명형 페이지는 모두 최상위라 한 단계면 되고, 계층이 생기면 AppHeader에
+// breadcrumbs를 직접 넘기면 된다.
 //
 // intro가 ReactNode인 것은 인트로 문단에 다른 페이지로 가는 링크나 <i>, 보간값이
 // 섞이기 때문이다. 감싸는 <p>와 그 클래스는 여기서만 정한다.
 export function ExplainerPage({
-  breadcrumb,
   title,
   intro,
   children,
   hideScrollTop,
 }: {
-  breadcrumb: string;
   title: string;
   intro: React.ReactNode;
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export function ExplainerPage({
 }) {
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: breadcrumb }]} />
+      <AppHeader />
       <PageMain hideScrollTop={hideScrollTop}>
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>

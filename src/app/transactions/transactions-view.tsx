@@ -18,7 +18,6 @@ const TABS = [
 export function TransactionsView() {
   return (
     <ExplainerPage
-      breadcrumb='트랜잭션 해부'
       title='비트코인은 어떻게 돈을 보낼까?'
       intro={
         <>

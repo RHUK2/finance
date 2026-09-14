@@ -20,7 +20,6 @@ const TABS = [
 export function ValueTheoryView() {
   return (
     <ExplainerPage
-      breadcrumb='가치론'
       title='가치는 만든 쪽이 아니라 쓰는 쪽이 정한다'
       intro={
         <>

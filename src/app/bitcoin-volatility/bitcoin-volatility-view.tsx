@@ -16,7 +16,6 @@ const TABS = [
 export function BitcoinVolatilityView() {
   return (
     <ExplainerPage
-      breadcrumb='변동성'
       title='변동성 = 체제 전환 확률의 가격'
       intro={
         <>

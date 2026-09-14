@@ -18,7 +18,6 @@ const TABS = [
 export function JeonseView() {
   return (
     <ExplainerPage
-      breadcrumb='전세 구조'
       title='전세는 어떤 거래인가'
       intro={
         <>

@@ -19,7 +19,6 @@ const TABS = [
 export function ChainSplitView() {
   return (
     <ExplainerPage
-      breadcrumb='체인 분기·리플레이'
       title='체인이 갈리면 내 코인에 무슨 일이 나는가'
       intro={
         <>

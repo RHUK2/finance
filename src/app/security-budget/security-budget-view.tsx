@@ -12,7 +12,6 @@ import { IssuanceSchedule } from './issuance-schedule';
 export function SecurityBudgetView() {
   return (
     <ExplainerPage
-      breadcrumb='보안 예산'
       title='보조금이 0이 되면 무엇이 비트코인을 지키는가'
       intro={
         <>

@@ -63,7 +63,6 @@ export function WalletKeysView() {
 
   return (
     <ExplainerPage
-      breadcrumb='지갑 키 생성'
       title='지갑은 어떻게 &#39;단어&#39;에서 만들어질까'
       intro={
         <>

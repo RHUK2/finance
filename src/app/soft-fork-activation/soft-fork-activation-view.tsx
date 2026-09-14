@@ -16,7 +16,6 @@ const TABS = [
 export function SoftForkActivationView() {
   return (
     <ExplainerPage
-      breadcrumb='소프트포크 활성화'
       title='합의 규칙은 어떻게 바뀌는가'
       intro={
         <>

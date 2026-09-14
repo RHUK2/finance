@@ -18,7 +18,6 @@ const TABS = [
 export function BitcoinGameTheoryView() {
   return (
     <ExplainerPage
-      breadcrumb='게임이론'
       title='각자 합리적으로 굴면 어떤 균형에 이를까?'
       intro={
         <>

@@ -18,7 +18,6 @@ const TABS = [
 export function PrivacyView() {
   return (
     <ExplainerPage
-      breadcrumb='프라이버시'
       title='블록체인에서 누가 무엇을 볼 수 있을까'
       intro={
         <>

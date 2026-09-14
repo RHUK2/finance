@@ -14,7 +14,6 @@ const TABS = [
 export function MultisigTimelockView() {
   return (
     <ExplainerPage
-      breadcrumb='멀티시그·타임락'
       title='서명 하나로는 부족하거나, 너무 이를 때'
       intro={
         <>

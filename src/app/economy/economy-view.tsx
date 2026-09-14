@@ -98,7 +98,7 @@ export function EconomyView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '경제 차트' }]} />
+      <AppHeader />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

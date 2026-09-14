@@ -18,7 +18,6 @@ const TABS = [
 export function FuturesHedgingView() {
   return (
     <ExplainerPage
-      breadcrumb='선물·헤징'
       title='위험은 사라지지 않고 이전된다'
       intro={
         <>

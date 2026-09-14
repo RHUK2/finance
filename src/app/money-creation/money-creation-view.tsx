@@ -39,7 +39,6 @@ export function MoneyCreationView() {
 
   return (
     <ExplainerPage
-      breadcrumb='신용창조'
       title='돈은 어떻게 무에서 창조되는가'
       intro={
         <>

@@ -45,7 +45,7 @@ export function MempoolView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '비트코인 네트워크' }]} />
+      <AppHeader />
       <PageMain>
         <div className='flex flex-col gap-6'>
           {/* 멤풀 */}

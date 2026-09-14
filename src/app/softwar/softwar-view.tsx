@@ -14,7 +14,6 @@ const TABS = [
 export function SoftwarView() {
   return (
     <ExplainerPage
-      breadcrumb='소프트워'
       title='비트코인은 화폐가 아니라 권력 투사 수단이다'
       intro={
         <>

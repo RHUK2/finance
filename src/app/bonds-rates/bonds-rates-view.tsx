@@ -13,7 +13,6 @@ import { YieldCurve } from './yield-curve';
 export function BondsRatesView() {
   return (
     <ExplainerPage
-      breadcrumb='채권·금리'
       title='금리가 오르면 왜 채권값이 떨어지는가'
       intro={
         <>

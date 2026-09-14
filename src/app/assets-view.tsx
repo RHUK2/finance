@@ -13,7 +13,7 @@ export function AssetsView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '자산 현황' }]} />
+      <AppHeader />
       <PageMain>
         <AssetsTable data={market?.items ?? []} isLoading={isLoading} updatedLabel={relativeTime} />
       </PageMain>

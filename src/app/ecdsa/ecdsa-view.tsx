@@ -35,7 +35,6 @@ export function EcdsaView() {
 
   return (
     <ExplainerPage
-      breadcrumb='ECDSA·타원곡선'
       title='개인키에서 공개키는 나오는데 왜 거꾸로는 안 되나'
       intro={
         <>

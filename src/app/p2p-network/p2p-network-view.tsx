@@ -16,7 +16,6 @@ const TABS = [
 export function P2pNetworkView() {
   return (
     <ExplainerPage
-      breadcrumb='P2P 네트워크 전파'
       title='서명된 트랜잭션은 어떻게 채굴자에게 닿을까'
       intro={
         <>

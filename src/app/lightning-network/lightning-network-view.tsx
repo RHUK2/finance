@@ -16,7 +16,6 @@ const TABS = [
 export function LightningNetworkView() {
   return (
     <ExplainerPage
-      breadcrumb='라이트닝 네트워크'
       title='온체인 다음: 오프체인에서 결제하기'
       intro={
         <>

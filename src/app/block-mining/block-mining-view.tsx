@@ -20,7 +20,6 @@ const TABS = [
 export function BlockMiningView() {
   return (
     <ExplainerPage
-      breadcrumb='블록·채굴·합의'
       title='검증된 트랜잭션은 어떻게 체인에 새겨질까'
       intro={
         <>

@@ -40,7 +40,7 @@ export function BitcoinView() {
 
   return (
     <>
-      <AppHeader breadcrumbs={[{ label: '비트코인 차트' }]} />
+      <AppHeader />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

@@ -22,7 +22,6 @@ const TABS = [
 export function ScriptVerifyView() {
   return (
     <ExplainerPage
-      breadcrumb='스크립트·서명 검증'
       title='동전은 어떻게 잠기고, 서명은 어떻게 그 잠금을 풀까'
       intro={
         <>

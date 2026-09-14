@@ -18,7 +18,6 @@ const TABS = [
 export function CorporationView() {
   return (
     <ExplainerPage
-      breadcrumb='법인'
       title='법인은 어떻게 하나의 주체가 되는가'
       intro={
         <>

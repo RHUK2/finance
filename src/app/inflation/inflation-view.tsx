@@ -86,7 +86,6 @@ export function InflationView() {
 
   return (
     <ExplainerPage
-      breadcrumb='구매력 붕괴'
       title='예금은 노동의 가치를 지켜주는가'
       intro={
         <>

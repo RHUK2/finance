@@ -20,7 +20,6 @@ const TABS = [
 export function CapitalStructureView() {
   return (
     <ExplainerPage
-      breadcrumb='자본구조'
       title='회사에 들어간 돈은 누구 것인가'
       intro={
         <>
