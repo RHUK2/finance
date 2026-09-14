@@ -91,7 +91,7 @@ const TABS = [
 export function BitcoinHistoryView() {
   return (
     <ExplainerPage
-      breadcrumb='비트코인 역사'
+      breadcrumb='역사'
       title='비트코인 역사: 두 개의 타임라인'
       intro={
         <>

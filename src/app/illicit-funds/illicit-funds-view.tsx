@@ -18,7 +18,7 @@ const TABS = [
 export function IllicitFundsView() {
   return (
     <ExplainerPage
-      breadcrumb='비트코인 자금추적'
+      breadcrumb='자금추적'
       title='범죄 자금에게 비트코인은 좋은 도구일까'
       intro={
         <>

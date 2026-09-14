@@ -34,32 +34,25 @@ import {
   Zap,
 } from 'lucide-react';
 
+// 그룹의 축은 주제가 아니라 페이지 성격이다(ADR 0008). 첫 그룹은 외부 API에서 지금
+// 값을 받아오는 다섯이고, 나머지는 전부 설명형이라 주제로 가른다. CLAUDE.md
+// "페이지 두 갈래"가 껍데기 규약으로 갈라 둔 선을 사이드바도 그대로 따른다.
+//
+// 그룹 라벨이 '대시보드'가 아닌 것은 그 말이 CLAUDE.md 안에서만 통하는 내부 용어이기
+// 때문이다. 화면에는 그 다섯의 유일한 공통점을 적는다.
+//
+// '비트코인 경제·논쟁' 안에서는 항목 라벨의 '비트코인' 접두사를 뗀다. 그룹 라벨이 이미
+// 답하고 있어서다. 실시간 데이터로 옮겨간 '비트코인 차트'·'비트코인 네트워크'는 그
+// 그룹에 없으므로 접두사를 유지한다. 경로는 어느 쪽도 바꾸지 않는다.
 export const NAV_GROUPS = [
   {
-    label: '마켓',
+    label: '실시간 데이터',
     items: [
       { label: '자산 현황', href: '/', icon: BarChart3 },
       { label: '경제 차트', href: '/economy', icon: LineChart },
       { label: '원자재 차트', href: '/commodities', icon: Wheat },
-      { label: '선물·헤징', href: '/futures-hedging', icon: ArrowLeftRight },
-    ],
-  },
-  {
-    label: '비트코인 인사이트',
-    items: [
       { label: '비트코인 차트', href: '/bitcoin', icon: Bitcoin },
-      { label: '비트코인 역사', href: '/bitcoin-history', icon: History },
       { label: '비트코인 네트워크', href: '/mempool', icon: Network },
-      {
-        label: '비트코인 게임이론',
-        href: '/bitcoin-game-theory',
-        icon: Swords,
-      },
-      { label: '비트코인 소프트워', href: '/softwar', icon: Radar },
-      { label: '비트코인 변동성', href: '/bitcoin-volatility', icon: Activity },
-      { label: '비트코인 전력망', href: '/grid-battery', icon: Zap },
-      { label: '비트코인 양자컴퓨터', href: '/bitcoin-quantum', icon: Atom },
-      { label: '비트코인 자금추적', href: '/illicit-funds', icon: Fingerprint },
     ],
   },
   {
@@ -84,7 +77,19 @@ export const NAV_GROUPS = [
     ],
   },
   {
-    label: '화폐',
+    label: '비트코인 경제·논쟁',
+    items: [
+      { label: '역사', href: '/bitcoin-history', icon: History },
+      { label: '게임이론', href: '/bitcoin-game-theory', icon: Swords },
+      { label: '소프트워', href: '/softwar', icon: Radar },
+      { label: '변동성', href: '/bitcoin-volatility', icon: Activity },
+      { label: '전력망', href: '/grid-battery', icon: Zap },
+      { label: '양자컴퓨터', href: '/bitcoin-quantum', icon: Atom },
+      { label: '자금추적', href: '/illicit-funds', icon: Fingerprint },
+    ],
+  },
+  {
+    label: '화폐·거시',
     items: [
       { label: '가치론', href: '/value-theory', icon: Gem },
       { label: '신용창조', href: '/money-creation', icon: Landmark },
@@ -93,8 +98,9 @@ export const NAV_GROUPS = [
     ],
   },
   {
-    label: '기업',
+    label: '시장·기업',
     items: [
+      { label: '선물·헤징', href: '/futures-hedging', icon: ArrowLeftRight },
       { label: '법인', href: '/corporation', icon: Building2 },
       { label: '자본구조', href: '/capital-structure', icon: Layers },
     ],

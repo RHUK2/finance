@@ -56,7 +56,7 @@ export function GridBatteryView() {
 
   return (
     <ExplainerPage
-      breadcrumb='비트코인 전력망'
+      breadcrumb='전력망'
       title='비트코인은 전력망의 배터리다'
       intro={
         <>
