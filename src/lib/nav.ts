@@ -18,6 +18,7 @@ import {
   KeyRound,
   Landmark,
   Layers,
+  Percent,
   LineChart,
   Network,
   Radar,
@@ -97,6 +98,7 @@ export const NAV_GROUPS = [
       { label: '신용창조', href: '/money-creation', icon: Landmark },
       { label: '구매력 붕괴', href: '/inflation', icon: TrendingDown },
       { label: '달러 패권', href: '/dollar-hegemony', icon: Globe },
+      { label: '채권·금리', href: '/bonds-rates', icon: Percent },
     ],
   },
   {
