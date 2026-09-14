@@ -23,6 +23,7 @@ import {
   Radar,
   Radio,
   ShieldCheck,
+  ShieldHalf,
   Spline,
   Split,
   Swords,
@@ -86,6 +87,7 @@ export const NAV_GROUPS = [
       { label: '전력망', href: '/grid-battery', icon: Zap },
       { label: '양자컴퓨터', href: '/bitcoin-quantum', icon: Atom },
       { label: '자금추적', href: '/illicit-funds', icon: Fingerprint },
+      { label: '보안 예산', href: '/security-budget', icon: ShieldHalf },
     ],
   },
   {
