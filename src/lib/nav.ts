@@ -21,6 +21,7 @@ import {
   Percent,
   LineChart,
   Network,
+  PackageCheck,
   Radar,
   Radio,
   ShieldCheck,
@@ -76,6 +77,7 @@ export const NAV_GROUPS = [
       { label: '소프트포크 활성화', href: '/soft-fork-activation', icon: Vote },
       { label: '라이트닝 네트워크', href: '/lightning-network', icon: Waypoints },
       { label: '프라이버시', href: '/privacy', icon: EyeOff },
+      { label: '릴리스 검증', href: '/release-verify', icon: PackageCheck },
     ],
   },
   {

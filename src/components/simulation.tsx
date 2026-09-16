@@ -713,6 +713,7 @@ export type MarkRow = {
 const MARK_TABLE_COLS: Record<number, string> = {
   2: 'grid-cols-[1fr_3rem_3rem] sm:grid-cols-[1fr_4rem_4rem]',
   3: 'grid-cols-[1fr_2.5rem_2.5rem_2.5rem] sm:grid-cols-[1fr_4rem_4rem_4rem]',
+  4: 'grid-cols-[1fr_2.25rem_2.25rem_2.25rem_2.25rem] sm:grid-cols-[1fr_4.5rem_4.5rem_4.5rem_4.5rem]',
 };
 
 export function MarkTable({

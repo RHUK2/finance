@@ -100,6 +100,14 @@ export function WalletKeysView() {
           </>
         }
       />
+
+      <p className='text-muted-foreground text-sm/relaxed'>
+        여기까지는 지갑을 이미 손에 넣었다고 치고 시작한 이야기다. 그 지갑 프로그램 자체가 개발자가 만든 그것이 맞는지는{' '}
+        <Link href='/release-verify' className='underline underline-offset-2'>
+          릴리스 검증
+        </Link>
+        이 다룬다. 키를 아무리 잘 만들어도 그 키를 만든 프로그램이 남의 것이면 앞의 모든 단계가 무의미해진다.
+      </p>
     </ExplainerPage>
   );
 }
