@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Clock, ShieldCheck, Swords, TriangleAlert, Wallet } from 'lucide-react';
+import { Clock, ShieldCheck, TriangleAlert, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
@@ -102,12 +102,6 @@ export function AttackCost() {
         </span>
       </StatusBanner>
 
-      <ExplainCard
-        icon={<Swords className='size-4 text-rose-500' />}
-        title='여기서 장비값을 빼 둔 이유'
-        preview='장비를 사서 정직하게 채굴할 때와 견주는 계산은 게임이론 페이지가 이미 한다.'
-        body='과반 해시레이트를 실제로 갖추려면 운영비 말고도 ASIC을 사 모으는 돈이 든다. 그 장비값은 공격하든 정직하게 채굴하든 똑같이 치러야 하므로, 갈림길은 그 장비로 무엇을 하느냐가 된다. 그 비교는 비트코인 게임이론의 51% 공격 탭이 다룬다. 이 탭이 보려는 것은 다른 사슬이다. 보조금이 줄면 보안 예산이 줄고, 예산이 줄면 네트워크 해시레이트가 줄고, 해시레이트가 줄면 그것을 넘어서는 데 드는 돈도 줄어든다. 장비값까지 넣어도 이 사슬의 방향은 같고 기울기만 완만해진다.'
-      />
       <ExplainCard
         icon={<TriangleAlert className='size-4 text-amber-500' />}
         title='이 계산이 과장하는 것과 축소하는 것'

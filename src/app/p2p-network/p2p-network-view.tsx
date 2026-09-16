@@ -28,7 +28,7 @@ export function P2pNetworkView() {
     >
       <IllustrativeDisclaimer>
         세 시뮬레이션 모두 시간을 라운드 단위로 끊어 보여준다. 실제로는 전파도 동기화도 네트워크 대역폭과 지연에 따라
-        연속으로 일어난다. 각 탭이 무엇을 더 줄였는지는 탭 안에서 따로 밝힌다.
+        연속으로 일어난다.
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='gossip' />

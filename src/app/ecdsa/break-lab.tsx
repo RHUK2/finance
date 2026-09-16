@@ -2,13 +2,11 @@
 
 import { useMemo, useState } from 'react';
 
-import Link from 'next/link';
-
 import { History, Search, Unlock } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import { ControlSlider, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 
 import { MULTIPLES_OF_G, N, bruteForce, fmtPt, inv, mod, recoverFromReuse, sign } from './models';
@@ -137,29 +135,6 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
           해시에서 결정론적으로 만들어 낸다(RFC 6979). 난수의 품질에 안전을 걸지 않기로 한 것이다.
         </p>
       </Card>
-
-      <ExplainCard
-        icon={<Unlock className='size-4 text-violet-500' />}
-        title='그럼 양자컴퓨터는'
-        preview='이산로그는 쇼어 알고리즘이 푸는 문제라, 크기를 키우는 방어가 통하지 않는다.'
-        body={
-          <>
-            <p>
-              이 탭의 전수 대입은 후보를 하나씩 훑는 방식이라 곡선을 키우면 막힌다. 그런데 이산로그 자체를 훑지 않고
-              푸는 방법이 이론적으로 알려져 있다. 쇼어 알고리즘이며, 충분한 규모의 양자컴퓨터가 있어야 돌아간다. 그것이
-              나오면 공개키만으로 개인키를 얻게 되므로 곡선을 키우는 방어가 통하지 않는다.
-            </p>
-            <p className='mt-2'>
-              비트코인에서 그게 어떤 조건에서 문제가 되는지는{' '}
-              <Link href='/bitcoin-quantum' className='underline underline-offset-2'>
-                비트코인 양자컴퓨터
-              </Link>{' '}
-              페이지에서 따로 다룬다. 여기서 짚을 것은 하나다. 이 페이지가 보여 준 안전은 이산로그가 어렵다는 가정 위에
-              서 있고, 가정은 가정이다.
-            </p>
-          </>
-        }
-      />
     </div>
   );
 }

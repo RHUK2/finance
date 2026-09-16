@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import Link from 'next/link';
-
 import { ExplainerPage } from '@/components/explainer-page';
 import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 
@@ -40,17 +38,8 @@ export function EcdsaView() {
         <>
           비트코인 지갑은 개인키 하나에서 공개키를 만들어 내고, 그 공개키를 온 세상에 뿌리면서도 개인키는 안전하다고
           말한다. 한 방향으로는 계산이 되는데 되돌아오는 길만 막혀 있다는 뜻인데, 그런 계산이 어떻게 생겼는지는 좀처럼
-          설명되지 않는다.{' '}
-          <Link href='/wallet-keys' className='underline underline-offset-2'>
-            지갑 키 생성
-          </Link>
-          과{' '}
-          <Link href='/script-verify' className='underline underline-offset-2'>
-            스크립트·서명 검증
-          </Link>{' '}
-          페이지도 그 자리를 상자로 남겨 두었다. 이 페이지가 그 상자를 연다. 비트코인이 쓰는 곡선과 식이 똑같고 크기만
-          작은 곡선(점 {CURVE_POINTS.length}개)을 무대로 삼아, 키를 만들고 서명하고 검증하고 마지막에는 직접 깨뜨려
-          본다.
+          설명되지 않는다. 비트코인이 쓰는 곡선과 식이 똑같고 크기만 작은 곡선(점 {CURVE_POINTS.length}개)을 무대로
+          삼아, 키를 만들고 서명하고 검증하고 마지막에는 직접 깨뜨려 본다.
         </>
       }
     >

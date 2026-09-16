@@ -90,8 +90,8 @@ export function EntropyMnemonic({
 
         <div className='flex flex-col gap-1.5'>
           <span className='text-muted-foreground text-xs'>
-            엔트로피 · 2진수 {bd.entropy}비트(동전 {bd.entropy}번)와 hex {entropyHex.length}자리는 <b>같은 값</b>이다.
-            4비트가 hex 한 자리에 대응한다
+            엔트로피 · 2진수 {bd.entropy}비트(동전 {bd.entropy}번) = hex {entropyHex.length}자리. 4비트가 hex 한 자리에
+            대응한다
           </span>
           <NibbleHexGrid bits={hexToBits(entropyHex)} className='bg-muted rounded-md p-3' />
         </div>

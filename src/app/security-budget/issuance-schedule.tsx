@@ -44,7 +44,7 @@ export function IssuanceSchedule() {
           max={LAST_SUBSIDY_ERA + 1}
           step={1}
           format={(v) => `${v}번째 · ${eraStartYear(v)}년~`}
-          hint={era === 4 ? '지금은 2024년 반감기 이후, 5번째 시대(era 4)다.' : undefined}
+          hint={era === 4 ? '지금은 2024년 반감기 이후 시대다.' : undefined}
         />
       </Card>
 

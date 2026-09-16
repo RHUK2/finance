@@ -59,8 +59,7 @@ export function KeyOrigin() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='검증은 신뢰를 없애지 않는다. 옮길 뿐이다'>
         앞 탭이 남긴 질문은 하나다. 검증에 쓴 공개키를 나는 어디서 받았는가. 흔한 답은 파일을 받은 그 사이트다. 그러면
-        사슬이 제자리로 돌아온다. 이 페이지에는 실제 프로젝트의 지문을 적어 두지 않는다. 여기 적어 두면 이 사이트가 바로
-        그 순환의 한 칸이 되기 때문이다.
+        사슬이 제자리로 돌아온다.
       </SectionIntro>
 
       <Card className='p-4'>

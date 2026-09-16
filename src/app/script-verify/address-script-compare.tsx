@@ -1,7 +1,7 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
-import { CostBar, ExplainCard, SectionIntro } from '@/components/simulation';
+import { CostBar, SectionIntro } from '@/components/simulation';
 import { SCRIPT_ADDR_TYPES } from '@/lib/script-concept';
 
 const maxSigBytes = Math.max(...SCRIPT_ADDR_TYPES.map((t) => t.sigBytes));
@@ -46,8 +46,6 @@ export function AddressScriptCompare() {
       <SectionIntro title='세 주소 타입, 검증은 결국 뭐가 다를까'>
         앞의 두 탭에서 서명을 만들고, 그 서명이 스택 위에서 검증되는 과정을 봤다. 세 주소 타입은 검증 로직의
         &#39;틀&#39;은 같지만 서명 알고리즘과 서명이 실리는 위치, 그리고 스크립트가 얼마나 노출되는지에서 갈린다.
-        트랜잭션 해부에서 본 Nested SegWit(P2SH-P2WPKH)은 여기서 뺐다. 검증은 Native SegWit과 같고 P2SH 래퍼 한 겹이
-        더해질 뿐이라 단계만 늘고 새로 배울 게 없다.
       </SectionIntro>
 
       <Card className='flex flex-col gap-3 p-4'>
@@ -113,36 +111,6 @@ export function AddressScriptCompare() {
           </tbody>
         </table>
       </Card>
-
-      <ExplainCard
-        title="Taproot에는 '스크립트 경로'도 있다던데?"
-        preview='키 경로가 안 될 때만 조건부 스크립트를 공개한다. MAST가 그걸 트리로 숨긴다.'
-        body={
-          <>
-            이 페이지는 가장 흔한 <b>키 경로(key-path)</b> 지출만 다뤘다. Taproot 출력은 사실 &#39;정상 서명자 키&#39;
-            하나와 &#39;그 밖의 여러 조건부 스크립트(다중서명, 시간잠금 등)&#39;를 동시에 담을 수 있다. 그 여러
-            스크립트를 머클 트리로 묶은 게 <b>MAST</b>다.
-            <br />
-            <br />
-            평소엔 정상 서명자가 키 경로로 지출해 스크립트 실행 탭에서 본 것처럼 서명 하나만 보여주면 끝난다. 조건부
-            스크립트는 트리 뿌리(출력 공개키)에 녹아들어 있을 뿐 체인에 드러나지 않는다. 조건부 지출이 실제로 필요해질
-            때만 그 스크립트 하나와 트리 경로를 함께 공개하는 <b>스크립트 경로</b>를 쓴다. 그래서 같은 지갑이라도
-            &#39;한 번도 안 쓴 조건&#39;은 영원히 체인에 드러나지 않을 수 있다.
-          </>
-        }
-      />
-
-      <ExplainCard
-        title='세 페이지를 한 줄로 잇는다면'
-        preview='지갑 키 생성에서 키를 만들고 → 트랜잭션 해부에서 그 키로 잠긴 동전을 옮기고 → 여기서 서명으로 그 잠금을 푼다.'
-        body={
-          <>
-            지갑 키 생성에서 만든 개인키가, 트랜잭션 해부에서 본 UTXO의 scriptPubKey(잠금 조건)를 푸는 열쇠였다. 이
-            페이지에서 본 서명과 스택 실행이 바로 그 자물쇠를 여는 과정이다. 주소 타입(44&apos;/84&apos;/86&apos;)이
-            처음부터 이 검증 로직 전체를 결정한다.
-          </>
-        }
-      />
     </div>
   );
 }

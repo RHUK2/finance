@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
@@ -102,13 +101,9 @@ export function AttackScope() {
               </li>
             </ul>
             <br />
-            그리고{' '}
-            <Link href='/bitcoin-game-theory' className='underline underline-offset-2'>
-              비트코인 게임이론
-            </Link>{' '}
-            페이지에서 봤듯, 과반 해시레이트를 갖출 정도의 투자자는 이미 네트워크 최대 이해관계자라 공격으로 얻는
-            이득보다 신뢰 붕괴로 잃는 게 훨씬 크다. 여기서 다룬 확률은 &#39;기술적으로 가능한가&#39;일 뿐,
-            &#39;경제적으로 해볼 만한가&#39;는 별개의 질문이다.
+            그리고 과반 해시레이트를 갖출 정도의 투자자는 이미 네트워크 최대 이해관계자라 공격으로 얻는 이득보다 신뢰
+            붕괴로 잃는 게 훨씬 크다. 여기서 다룬 확률은 &#39;기술적으로 가능한가&#39;일 뿐, &#39;경제적으로 해볼
+            만한가&#39;는 별개의 질문이다.
           </>
         }
       />

@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 
 import { ExplainerPage } from '@/components/explainer-page';
 import { ExplainCard, IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
@@ -75,11 +74,7 @@ export function WalletKeysView() {
       <IllustrativeDisclaimer>
         체크섬·시드·주소는 실제 암호 연산(SHA-256, PBKDF2, secp256k1)을 단순화한 <b>그럴듯한 가짜 값</b>이다.{' '}
         <b>절대 실제 지갑이나 자금에 사용하지 말 것.</b> 반면 단어장 2048개와 엔트로피를 11비트씩 잘라 단어로 바꾸는
-        규칙은 실제 BIP-39 그대로다. 여기서 상자로 남겨 둔 secp256k1 연산 자체는{' '}
-        <Link href='/ecdsa' className='underline underline-offset-2'>
-          ECDSA·타원곡선
-        </Link>{' '}
-        페이지에서 작은 곡선 위의 진짜 계산으로 다룬다.
+        규칙은 실제 BIP-39 그대로다.
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='mnemonic' />
@@ -92,11 +87,10 @@ export function WalletKeysView() {
             세 단계에 걸쳐 해시 계열 함수가 넷 등장하는데 목적이 서로 다르다. <b>SHA-256</b>은 입력을 고정 256비트로
             줄이는 순수 해시다. 빠르고 단방향이라 엔트로피에서 단어를 만들 때의 체크섬을 비롯해 채굴·주소 생성에 두루
             쓴다. <b>SHA-512</b>는 같은 SHA-2 계열이지만 출력이 512비트로 두 배다. 시드 파생과 키 트리에 모두 쓰이는데,
-            특히 키 트리에서는 그 512비트를 정확히 반으로 갈라 앞 256비트는 키 재료, 뒤 256비트는 체인코드로 쓴다. 앞
-            절반이 곧바로 키가 되는 건 마스터 단계뿐이고, 자식 단계에서는 그 값(IL)을 부모 개인키에 더해야 자식 키가
-            된다. <b>HMAC</b>은 해시에 키를 끼워 넣어, 키를 아는 사람이 만들었음을 증명하거나(인증) 두 입력을 잘 섞는
-            믹서로 쓴다. <b>PBKDF2</b>는 그 HMAC을 수천 번 반복해 <b>일부러 느리게</b> 만든 키 유도 함수다. 그래서
-            단어에서 시드를 만들 때 PBKDF2-HMAC-SHA512가, 시드에서 키 트리를 뻗을 때 HMAC-SHA512가 차례로 나온다.
+            특히 키 트리에서는 그 512비트를 정확히 반으로 갈라 앞 256비트는 키 재료, 뒤 256비트는 체인코드로 쓴다.
+            <b>HMAC</b>은 해시에 키를 끼워 넣어, 키를 아는 사람이 만들었음을 증명하거나(인증) 두 입력을 잘 섞는 믹서로
+            쓴다. <b>PBKDF2</b>는 그 HMAC을 수천 번 반복해 <b>일부러 느리게</b> 만든 키 유도 함수다. 그래서 단어에서
+            시드를 만들 때 PBKDF2-HMAC-SHA512가, 시드에서 키 트리를 뻗을 때 HMAC-SHA512가 차례로 나온다.
           </>
         }
       />

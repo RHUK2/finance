@@ -52,7 +52,7 @@ export function SignLab({
         />
         <ControlSlider
           label='메시지 해시 z'
-          hint={`실제로는 메시지를 SHA-256으로 해시한 뒤 n = ${N}으로 나눈 나머지가 여기 들어간다. 해시 자체는 이 페이지의 주제가 아니라 값을 직접 고르게 뒀다.`}
+          hint={`실제로는 메시지를 SHA-256으로 해시한 뒤 n = ${N}으로 나눈 나머지가 여기 들어간다.`}
           value={z}
           onChange={onChangeZ}
           min={0}
@@ -63,7 +63,7 @@ export function SignLab({
         <ControlSlider
           icon={<Dices className='size-4 text-amber-500' />}
           label='일회용 비밀값 k'
-          hint='서명 한 번에만 쓰고 버린다. 바깥에서는 흔히 nonce라 부르지만 채굴의 nonce와는 다른 것이다. 채굴 nonce는 남들이 다 보는 값이고, 이 값은 새어 나가면 개인키가 함께 나간다.'
+          hint='서명 한 번에만 쓰고 버린다. 새어 나가면 개인키가 함께 나간다.'
           value={k}
           onChange={onChangeK}
           min={1}

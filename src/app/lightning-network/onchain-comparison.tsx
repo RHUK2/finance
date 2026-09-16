@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 import { useMemo, useState } from 'react';
 import { Layers, Zap } from 'lucide-react';
 
@@ -102,19 +100,9 @@ export function OnchainComparison() {
         preview='온체인은 채널을 여닫는 결제, 라이트닝은 그 사이 오가는 소액·잦은 결제를 맡는다.'
         body={
           <>
-            <Link href='/transactions' className='underline underline-offset-2'>
-              트랜잭션 해부
-            </Link>
-            ·
-            <Link href='/script-verify' className='underline underline-offset-2'>
-              스크립트·서명 검증
-            </Link>
-            ·
-            <Link href='/block-mining' className='underline underline-offset-2'>
-              블록·채굴·합의
-            </Link>
-            에서 다룬 모든 규칙은 채널을 열고 닫는 순간에도 그대로 적용된다. 라이트닝은 온체인을 대체하는 게 아니라,
-            온체인 위에 오프체인 결제 레이어를 얹어 소액·잦은 결제를 값싸고 빠르게 처리하는 역할 분담이다.
+            채널을 열고 닫는 트랜잭션에는 수수료·서명 검증·블록 확정 같은 온체인 규칙이 그대로 적용된다. 라이트닝은
+            온체인을 대체하는 게 아니라, 온체인 위에 오프체인 결제 레이어를 얹어 소액·잦은 결제를 값싸고 빠르게 처리하는
+            역할 분담이다.
           </>
         }
       />

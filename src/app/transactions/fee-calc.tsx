@@ -123,7 +123,7 @@ export function FeeCalc() {
             필드)는 바이트 그대로다.
             <br />
             <br />
-            헷갈리는 지점부터 짚자. 여기서 &lsquo;크기&rsquo;는 두 가지다.
+            여기서 &lsquo;크기&rsquo;는 두 가지다.
             <div className='bg-muted/50 my-3 overflow-x-auto rounded-md p-3'>
               <pre className='font-mono text-[11px] leading-relaxed'>{`실제 전송·저장하는 크기   서명 100바이트 = 100바이트 (그대로)
 블록 한도에 계산되는 크기  서명 100바이트 =  25바이트 (1/4)`}</pre>
@@ -140,12 +140,6 @@ export function FeeCalc() {
             같은 송금인데 Legacy 입력이 <b>148 vB</b>, Native SegWit이 <b>68 vB</b>인 이유가 이거다. 트랜잭션 구조
             탭에서 봤듯 서명을 넣는 자리만 다르다. Legacy는 서명을 일반 영역(scriptSig)에 넣어 제값을 다 내고, SegWit은
             witness로 빼서 1/4만 낸다. 다음 탭에서 타입별 차이를 직접 비교해 보자.
-            <br />
-            <br />
-            <span className='text-muted-foreground text-[11px]'>
-              참고: 계산 단위는 원래 weight(일반 1바이트 = 4, 서명 1바이트 = 1)로 세고, vByte = weight ÷ 4다. 서명이
-              1/4로 접히는 걸 정수 산수로 떨어뜨리기 위한 회계 단위일 뿐이다.
-            </span>
           </>
         }
       />

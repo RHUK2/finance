@@ -36,8 +36,7 @@ export function FiniteField() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='먼저 실수 위에서 점 덧셈을 정의한다'>
         타원곡선의 점 덧셈은 숫자를 더하는 일이 아니다. 곡선 위의 두 점을 잇는 직선을 긋고, 그 직선이 곡선과 만나는 세
-        번째 점을 찾고, 그 점을 x축에 대해 뒤집는다. 이 세 동작이 정의의 전부다. 왜 하필 이런 정의냐고 물을 수 있지만
-        지금 필요한 건 이유가 아니라 모양이다. 이 모양이 뒤에서 식으로 번역되기 때문이다.
+        번째 점을 찾고, 그 점을 x축에 대해 뒤집는다. 이 세 동작이 정의의 전부고, 이 모양이 뒤에서 식으로 번역된다.
       </SectionIntro>
 
       <Card className='flex flex-col gap-3 p-4'>

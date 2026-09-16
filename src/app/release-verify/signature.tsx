@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 
 import { CheckCircle2, KeyRound, XCircle } from 'lucide-react';
 
 import { ExplainCard, Field, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 
-import { generateSigningKey, groupHex, sha256Hex, sigPreview, signText, verifyText, type SignAlgo } from './models';
+import { generateSigningKey, groupHex, sha256Hex, sigPreview, signText, verifyText } from './models';
 
 type Scenario = 'clean' | 'tampered' | 'wrongkey' | 'attacker';
 
@@ -20,7 +19,6 @@ const OPTIONS: { value: Scenario; label: string }[] = [
 ];
 
 type Demo = {
-  algo: SignAlgo;
   devFp: string;
   atkFp: string;
   manifest: string;
@@ -69,7 +67,6 @@ export function Signature() {
       const atkSig = await signText(atk, tampered);
 
       setDemo({
-        algo: dev.algo,
         devFp: groupHex(dev.fingerprint),
         atkFp: groupHex(atk.fingerprint),
         manifest,
@@ -96,7 +93,7 @@ export function Signature() {
       <SectionIntro title='서명은 파일이 그 키에 대응한다는 것만 증명한다'>
         배포자는 체크섬 목록에 자기 개인키로 서명을 붙인다. 공격자는 그 키가 없으니 목록을 바꾼 뒤 서명을 다시 만들어 낼
         수 없다. 앞 탭에서 통과하던 공격이 여기서 걸린다. 아래 네 경우를 차례로 눌러 보면 서명이 무엇을 보증하고 무엇은
-        보증하지 않는지가 갈린다. 키쌍도 서명도 검증도 전부 이 화면에서 브라우저가 실제로 한 것이다.
+        보증하지 않는지가 갈린다.
       </SectionIntro>
 
       <Card className='gap-3 p-4'>
@@ -149,14 +146,6 @@ export function Signature() {
             <p className='mt-2'>
               서명이 증명하는 것은 이 파일이 이 키에 대응한다는 사실뿐이다. 그 키가 그 개발자의 것인지는 한 글자도
               증명하지 않는다. 그러니 질문이 옮겨 간다. 검증에 쓴 공개키를 나는 어디서 받았는가. 다음 탭이 그것이다.
-            </p>
-            <p className='mt-2'>
-              덧붙여 이 데모는 {demo?.algo ?? '브라우저가 지원하는 알고리즘'}으로 돌았다. 브라우저가 Ed25519를 못 하면
-              ECDSA P-256으로 내려오는데, 그래도 위 네 경우의 결론은 한 글자도 달라지지 않는다. 서명 자체의 수학은{' '}
-              <Link href='/ecdsa' className='underline underline-offset-2'>
-                ECDSA·타원곡선
-              </Link>
-              에서 다룬다.
             </p>
           </>
         }

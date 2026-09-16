@@ -1,10 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { CalendarCheck, Users } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
-import { ExplainCard, Legend, SectionIntro } from '@/components/simulation';
+import { Legend, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 
 const TIMELINE = [
@@ -75,27 +74,11 @@ export function Bip8Taproot() {
         </div>
         <p className='text-muted-foreground text-sm/relaxed'>
           Taproot는 Speedy Trial이라는 3개월짜리 짧은 BIP9식 시그널링으로 시작했고, 지지율이 빠르게 90%를 넘기며 채굴자
-          다수의 동의로 정상 활성화됐다. BIP9 시그널링 탭에서 본 95%와 다른 이유는 임계값이 프로토콜에 박힌 상수가
-          아니라 배포마다 정하는 파라미터이기 때문이다. Speedy Trial은 짧은 기간에 결론을 내려고 임계값을 90%(2016블록
-          중 1815개)로 낮춰 잡았다. UASF의 &#39;강제 켜기&#39;가 실제로 발동되진 않았지만, 그 가능성 자체가 채굴자들이
-          굳이 반대할 이유를 없앴다는 평가를 받는다.
+          다수의 동의로 정상 활성화됐다. 임계값은 배포마다 정하는 파라미터라, Speedy Trial은 짧은 기간에 결론을 내려고
+          90%(2016블록 중 1815개)로 잡았다. UASF의 &#39;강제 켜기&#39;가 실제로 발동되진 않았지만, 그 가능성 자체가
+          채굴자들이 굳이 반대할 이유를 없앴다는 평가를 받는다.
         </p>
       </Card>
-
-      <ExplainCard
-        title='이 규칙을 실제로 검증하는 곳은 어디였나'
-        preview='활성화된 Taproot 규칙이 스크립트·서명 검증에서 어떻게 쓰이는지 이어서 보자.'
-        body={
-          <>
-            여기서 활성화된 Taproot 규칙(Schnorr 서명, 새 스크립트 경로)이 실제로 어떻게 검증되는지는{' '}
-            <Link href='/script-verify' className='underline underline-offset-2'>
-              스크립트·서명 검증
-            </Link>{' '}
-            페이지에서 다뤘다. 소프트포크는 &#39;규칙이 어떻게 바뀌는가&#39;를, 그 페이지는 &#39;바뀐 규칙이 실제로
-            무엇을 검증하는가&#39;를 보여준다.
-          </>
-        }
-      />
     </div>
   );
 }
