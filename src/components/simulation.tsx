@@ -1,6 +1,7 @@
 'use client';
 
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, type RefObject, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import {
   Check,
@@ -789,8 +790,8 @@ function Mark({ state }: { state: MarkState }) {
   );
 }
 
-// 서사형 워크스루의 단계 컨트롤. 화면 아래에 붙어 현재 단계의 제목·해설과 이동
-// 버튼을 함께 들고 있다. RoundControls가 자동 재생·속도 조절이 달린 시뮬레이션용인
+// 서사형 워크스루의 단계 컨트롤. 현재 단계의 제목·해설과 이동 버튼을 함께 들고
+// 있다. RoundControls가 자동 재생·속도 조절이 달린 시뮬레이션용인
 // 반면 이쪽은 사용자가 직접 넘기는 정해진 수의 단계를 위한 것이다.
 // 신용창조와 달러 패권이 함께 쓴다.
 function StepControls({
@@ -836,6 +837,31 @@ function StepControls({
   );
 }
 
+/** 요소가 화면에 조금이라도 걸쳐 있는가. 처음에는 false라 서버 렌더와 어긋나지 않는다. */
+function useInView(ref: RefObject<Element | null>, of: (el: Element) => Element | null = (el) => el) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current && of(ref.current);
+    if (!el) return;
+    // 한 번에 여러 항목이 오면 뒤가 최신이다. 첫 항목만 읽으면 레이아웃이 연달아 바뀔 때 낡은 값에 멈춘다.
+    const io = new IntersectionObserver((entries) => setInView(entries[entries.length - 1].isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+    // of는 호출부마다 고정된 화살표 함수라 의존성에서 뺀다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref]);
+  return inView;
+}
+
+// 해설 패널은 본문 속 제자리에 두고 아무것도 고정하지 않는다. 대신 패널이 화면 밖으로
+// 나갔는데 워크스루 섹션(패널의 부모)은 아직 보일 때만, 이전·다음 알약을 화면 아래에 띄운다.
+//
+// 예전에는 패널 전체를 sticky로 하단에 붙였다. sticky는 부모 윗변보다 위로 못 올라가서
+// 부모가 화면 아래쪽에서 시작하면 패널이 고정선보다 밀려 내려가 모바일 하단 네비를
+// 덮었고, 펼친 해설이 본문을 계속 가렸다. 워크스루 내내 필요한 것은 해설 전체가 아니라
+// 다음 단계 버튼이라 고정하는 것을 한 줄로 줄였다.
+//
+// 알약은 오른쪽 아래 맨 위로 버튼과 겹치므로 이 패널을 쓰는 페이지는 hideScrollTop을 켠다.
 export function StepPanel({
   step,
   total,
@@ -857,30 +883,64 @@ export function StepPanel({
   onJump: (i: number) => void;
   slider?: ReactNode;
 }) {
-  const [open, setOpen] = useState(true);
+  const panel = useRef<HTMLDivElement>(null);
+  const panelInView = useInView(panel);
+  const sectionInView = useInView(panel, (el) => el.parentElement);
+  const showPill = sectionInView && !panelInView;
+
   return (
-    <div className='sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 md:bottom-4'>
-      <Card className='bg-card gap-0 overflow-hidden p-0 shadow-xl'>
-        <button
-          type='button'
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          className='hover:bg-muted/40 flex w-full items-center gap-2 px-3 py-2 text-left transition-colors'
-        >
-          <span className='bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold'>
-            <span className='translate-y-px'>{step}</span>
-          </span>
-          <span className='flex-1 truncate font-semibold'>{title}</span>
-          <ChevronDown className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')} />
-        </button>
-        {open && (
+    <>
+      <div ref={panel}>
+        <Card className='gap-0 overflow-hidden p-0'>
+          <div className='flex items-center gap-2 px-3 py-2'>
+            <span className='bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold'>
+              <span className='translate-y-px'>{step}</span>
+            </span>
+            <span className='flex-1 truncate font-semibold'>{title}</span>
+          </div>
           <div className='flex flex-col gap-3 border-t p-3'>
             <p className='text-muted-foreground text-sm/relaxed'>{narration}</p>
             {slider}
             <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
           </div>
+        </Card>
+      </div>
+      {showPill &&
+        createPortal(
+          // 하단 네비(h-12, z-30) 바로 위. 네비와 겹치지 않으므로 z는 본문 위이기만 하면 된다.
+          <div className='fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 -translate-x-1/2 md:bottom-4'>
+            <div className='bg-card flex items-center gap-1 rounded-full border p-1 shadow-xl'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='rounded-full'
+                onClick={onPrev}
+                disabled={step === 0}
+                aria-label='이전 단계'
+              >
+                <ChevronLeft className='size-4' />
+              </Button>
+              <button
+                type='button'
+                onClick={() => panel.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                className='max-w-48 truncate px-2 text-sm font-medium'
+              >
+                {step}/{total - 1} · {title}
+              </button>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='rounded-full'
+                onClick={onNext}
+                disabled={step === total - 1}
+                aria-label='다음 단계'
+              >
+                <ChevronRight className='size-4' />
+              </Button>
+            </div>
+          </div>,
+          document.body,
         )}
-      </Card>
-    </div>
+    </>
   );
 }

@@ -21,6 +21,7 @@ export function DollarHegemonyView() {
 
   return (
     <ExplainerPage
+      hideScrollTop
       title='달러는 왜 최악인데도 대체되지 않는가'
       intro={
         <>

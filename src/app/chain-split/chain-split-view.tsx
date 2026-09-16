@@ -19,6 +19,7 @@ const TABS = [
 export function ChainSplitView() {
   return (
     <ExplainerPage
+      hideScrollTop
       title='체인이 갈리면 내 코인에 무슨 일이 나는가'
       intro={
         <>
