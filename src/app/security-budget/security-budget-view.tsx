@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 import { ExplainerPage } from '@/components/explainer-page';
 import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 
@@ -37,18 +35,6 @@ export function SecurityBudgetView() {
           { value: 'attack', label: '공격 비용', node: <AttackCost /> },
         ]}
       />
-
-      <p className='text-muted-foreground text-sm/relaxed'>
-        보조금이 어떻게 지급되는지(코인베이스 트랜잭션)와 난이도가 어떻게 조정되는지는{' '}
-        <Link href='/block-mining' className='underline underline-offset-2'>
-          블록·채굴·합의
-        </Link>
-        에서, 채굴에 들어가는 전기를 두고 벌어지는 논쟁은{' '}
-        <Link href='/grid-battery' className='underline underline-offset-2'>
-          전력망
-        </Link>
-        에서 다룬다.
-      </p>
     </ExplainerPage>
   );
 }

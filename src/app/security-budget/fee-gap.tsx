@@ -35,7 +35,11 @@ export function FeeGap() {
       <SectionIntro title='보조금이 빠진 자리를 수수료가 메우려면'>
         채굴자가 한 블록에서 받는 돈은 보조금과 수수료의 합이다. 보안 예산이란 그 합에 한 해 블록 수를 곱한 것, 곧
         네트워크가 스스로를 지키는 데 해마다 쓰는 돈이다. 보조금은 정해진 대로 줄어드니 예산을 지키는 길은 둘뿐이다.
-        가격이 오르거나, 블록당 수수료가 오르거나. 어느 쪽이 얼마나 필요한지 직접 밀어 보자.
+        가격이 오르거나, 블록당 수수료가 오르거나. 어느 쪽이 얼마나 필요한지 직접 밀어 보자. 지금 실제 멤풀 수수료는{' '}
+        <Link href='/mempool' className='underline underline-offset-2'>
+          비트코인 네트워크
+        </Link>
+        에서 본다.
       </SectionIntro>
 
       <Card className='gap-4 p-4'>
@@ -136,17 +140,6 @@ export function FeeGap() {
         preview='반감기 하나를 상쇄하려면 가격이 두 배가 되어야 한다. 4년마다 영원히.'
         body='보조금은 BTC로 정해져 있으므로 달러로 환산한 보안 예산은 가격에 정비례한다. 반감기마다 보조금이 반이 되니, 예산을 유지하려면 4년마다 가격이 두 배가 되어야 한다. 지금까지는 대체로 그랬지만 그것은 영원히 계속될 수 없는 조건이다. 가격이 어느 수준에서 멈추면 그 뒤로는 반감기마다 보안 예산이 반토막 난다. 이 페이지가 묻는 것은 그때 무엇이 남느냐다.'
       />
-      <p className='text-muted-foreground text-xs/relaxed'>
-        수수료가 어떻게 매겨지는지, 왜 바이트 크기가 곧 수수료인지는{' '}
-        <Link href='/transactions' className='underline underline-offset-2'>
-          트랜잭션 해부
-        </Link>
-        에서 다룬다. 지금 실제 멤풀 수수료는{' '}
-        <Link href='/mempool' className='underline underline-offset-2'>
-          비트코인 네트워크
-        </Link>
-        에서 볼 수 있다.
-      </p>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 import { Banknote, Building2, Globe, Landmark, Users } from 'lucide-react';
 
@@ -85,22 +84,6 @@ export function WhoBuys() {
         <span className='text-sm font-semibold'>{detail.title}</span>
         <p className='text-muted-foreground text-sm/relaxed'>{detail.body}</p>
       </Card>
-
-      <p className='text-muted-foreground text-sm/relaxed'>
-        중앙은행이 국채를 살 돈이 어디서 나오는지는{' '}
-        <Link href='/money-creation' className='underline underline-offset-2'>
-          신용창조
-        </Link>
-        가, 외국 중앙은행이 왜 달러 국채를 떠안는지는{' '}
-        <Link href='/dollar-hegemony' className='underline underline-offset-2'>
-          달러 패권
-        </Link>
-        이 다룬다. 그 국채 금리가 예금의 구매력을 어떻게 갉는지는{' '}
-        <Link href='/inflation' className='underline underline-offset-2'>
-          구매력 붕괴
-        </Link>
-        로 이어진다.
-      </p>
     </div>
   );
 }

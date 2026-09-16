@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 import { Clock, ShieldCheck, Swords, TriangleAlert, Wallet } from 'lucide-react';
 
@@ -115,17 +114,6 @@ export function AttackCost() {
         preview='과반을 쥐어도 할 수 있는 일은 제한적이지만, 값이 떨어지는 것은 가격도 마찬가지다.'
         body='과장하는 쪽부터. 과반 해시레이트로도 남의 과거 거래를 바꾸거나 없는 코인을 만들어 낼 수는 없다. 뒤집을 수 있는 것은 공격자 자신이 최근에 보낸 거래뿐이라 이득에는 현실적인 천장이 있다. 축소하는 쪽. 공격이 성공하면 그 사실 자체가 코인 값을 떨어뜨려 공격자가 손에 쥔 코인도 같이 값을 잃는다. 반대로 공격자가 이득을 코인이 아니라 이미 인출한 법정통화로 본다면 그 억제는 작동하지 않는다. 이 슬라이더들은 어느 쪽 가정도 강요하지 않으니, 두 가정에서 각각 어느 예산 수준이 위험해지는지를 직접 밀어 보는 편이 낫다.'
       />
-      <p className='text-muted-foreground text-xs/relaxed'>
-        과반을 쥔 공격자가 실제로 무엇을 할 수 있고 없는지는{' '}
-        <Link href='/chain-reorg' className='underline underline-offset-2'>
-          체인 재구성·파이널리티
-        </Link>
-        가, 장비값을 넣은 공격·정직 채굴 비교는{' '}
-        <Link href='/bitcoin-game-theory' className='underline underline-offset-2'>
-          게임이론
-        </Link>
-        이 다룬다. 여기 쓴 이득÷비용 비율의 방향은 세 페이지가 함께 쓰는 약속이다.
-      </p>
     </div>
   );
 }
