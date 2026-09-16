@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 import { ExplainerPage } from '@/components/explainer-page';
 import { SimTabs } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
@@ -11,7 +9,6 @@ import { Checksum } from './checksum';
 import { KeyOrigin } from './key-origin';
 import { Reproducible } from './reproducible';
 import { Signature } from './signature';
-import { Tools } from './tools';
 
 export function ReleaseVerifyView() {
   return (
@@ -46,20 +43,6 @@ export function ReleaseVerifyView() {
           { value: 'attacker', label: '공격자의 시점', node: <Attacker /> },
         ]}
       />
-
-      <Tools />
-
-      <p className='text-muted-foreground text-sm/relaxed'>
-        서명이 수학적으로 어떻게 성립하는지는{' '}
-        <Link href='/ecdsa' className='underline underline-offset-2'>
-          ECDSA·타원곡선
-        </Link>
-        에서, 검증을 마친 지갑이 실제로 키를 어떻게 만들어 내는지는{' '}
-        <Link href='/wallet-keys' className='underline underline-offset-2'>
-          지갑 키 생성
-        </Link>
-        에서 다룬다. 여기서 쓴 릴리스 서명 키와 그 지갑 키는 원리만 같을 뿐 서로 아무 관계가 없다.
-      </p>
     </ExplainerPage>
   );
 }
