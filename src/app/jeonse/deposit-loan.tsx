@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import Link from 'next/link';
-
 import { Banknote, House, Landmark, Percent, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
@@ -146,13 +144,6 @@ export function DepositLoan() {
               셈이었다. 임차인 쪽에서도 매달 나가는 돈 없이 목돈만 맡기면 되니 저축을 이어 갈 수 있었다. 금리가 높을수록
               임대인이 보증금에서 얻는 이득이 커져 전세를 놓으려는 집이 늘었고, 전월세전환율이 금리를 웃도는 한
               임차인에게도 월세보다 싼 선택이었다.
-            </p>
-            <p className='mt-2'>
-              이 숨은 비용을 매수·전세·월세 셋과 나란히 놓고 재 보는 것은{' '}
-              <Link href='/mortgage' className='underline underline-offset-2'>
-                주택담보대출
-              </Link>{' '}
-              페이지의 마지막 탭에서 한다.
             </p>
             <p className='mt-2'>
               그래서 금리가 내려가면 전세의 경제적 근거가 약해진다. 임대인이 보증금을 굴려 얻을 이자가 줄어들면 차라리

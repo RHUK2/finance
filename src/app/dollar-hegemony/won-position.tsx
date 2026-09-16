@@ -2,8 +2,6 @@
 
 import { Anchor, Flag, ShieldAlert, TrendingDown } from 'lucide-react';
 
-import Link from 'next/link';
-
 import { useState } from 'react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
@@ -103,11 +101,6 @@ export function WonPosition() {
         />
         <p className='text-muted-foreground text-xs/relaxed'>
           가산폭 {KR_RATE.spread.value.toFixed(1)}%p는 {KR_RATE.spread.source}의 {KR_RATE.spread.asOf}에서 잡은 값이다.
-          이 금리로 매달 얼마를 갚게 되는지는{' '}
-          <Link href='/mortgage' className='underline underline-offset-2'>
-            주택담보대출
-          </Link>{' '}
-          페이지가 계산한다.
         </p>
       </Card>
 

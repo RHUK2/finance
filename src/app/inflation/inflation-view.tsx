@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 import { useMemo, useState } from 'react';
 
 import { ExplainerPage } from '@/components/explainer-page';
@@ -90,12 +88,7 @@ export function InflationView() {
       intro={
         <>
           CPI(소비재 물가)·M2(통화량)·자산가격은 서로 다른 것을 측정한다. 예금 금리가 통화 팽창에 못 미치면, 저축한 과거
-          노동의 구매력은 조용히 줄어든다. 어느 쪽이 얼마나 벌어지는지 데이터로 비교해 보자. 여기서 기준으로 쓰는 M2가
-          애초에 어떻게 불어나는지는{' '}
-          <Link href='/money-creation' className='underline underline-offset-2'>
-            신용창조
-          </Link>{' '}
-          페이지에서 다룬다.
+          노동의 구매력은 조용히 줄어든다. 어느 쪽이 얼마나 벌어지는지 데이터로 비교해 보자.
         </>
       }
     >

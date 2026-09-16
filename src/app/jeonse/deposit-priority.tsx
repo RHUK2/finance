@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import Link from 'next/link';
-
 import { FileSignature, Gavel, Landmark, ShieldCheck, ShieldOff, Stamp } from 'lucide-react';
 
 import {
@@ -225,14 +223,6 @@ export function DepositPriority() {
               우선변제권은 경매 낙찰금을 나눌 때 순서를 받는 권리로, 확정일자가 있어야 생긴다. 확정일자만 있고
               전입신고가 없으면 순위 자체가 성립하지 않고, 전입신고만 있고 확정일자가 없으면 배당에는 끼지 못한 채
               낙찰자에게 버티는 것만 가능하다. 둘을 함께, 되도록 잔금일 당일에 마쳐야 하는 이유다.
-            </p>
-            <p className='mt-2'>
-              앞에 선 사람부터 채우고 남는 것이 없으면 뒷사람이 떼인다는 구조 자체는{' '}
-              <Link href='/capital-structure' className='underline underline-offset-2'>
-                자본구조
-              </Link>{' '}
-              페이지의 청산 순위와 같다. 다만 그쪽 순위는 대부분 계약으로 만들어지는 반면, 여기서는 전입신고·확정일자
-              같은 법정 요건과 등기의 날짜가 순서를 정한다.
             </p>
             <p className='mt-2'>
               순위를 따져도 회수가 불확실하다면 보증금 반환보증에 가입하는 방법이 있다. 보증기관이 먼저 돌려주고

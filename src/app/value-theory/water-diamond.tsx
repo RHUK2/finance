@@ -99,10 +99,6 @@ export function WaterDiamond() {
           <Legend className='bg-sky-300' label={`물 ${cups}잔째 (값을 정하는 잔)`} />
           <Legend className='bg-violet-500' label='다이아몬드 1캐럿' />
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
-          다이아몬드 수량은 고정이다. 캐낼수록 흔해지는 쪽으로 만지게 두면 희소하다는 전제 자체가 무너져 역설이
-          사라진다.
-        </p>
       </Card>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>

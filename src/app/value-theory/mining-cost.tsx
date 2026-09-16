@@ -45,13 +45,6 @@ export function MiningCost() {
           사슬은 여기서 끝난다. 코인당 채굴비용이 올랐다고 해서 가격이 다시 오르지는 않는다. 이 사슬이 고리가 아니라는
           것이 이 탭의 요점이다.
         </p>
-        <p className='text-muted-foreground text-xs/relaxed'>
-          난이도 조정이 어떻게 도는지는{' '}
-          <Link href='/block-mining' className='underline underline-offset-2'>
-            블록·채굴·합의
-          </Link>{' '}
-          페이지에 있다. 여기서 볼 것은 메커니즘이 아니라 방향이다.
-        </p>
       </Card>
 
       <StatusBanner icon={<TrendingUp className='size-4' />} tone='accent'>
@@ -82,10 +75,6 @@ export function MiningCost() {
           비싼 채굴자부터 기계를 껐으며, 대형 채굴 업체 여럿이 파산 절차에 들어갔다. 해시레이트가 빠지자 난이도가 하향
           조정됐고 코인당 채굴비용도 따라 내려갔다. 바닥 역할을 한 것은 원가가 아니라, 원가를 가격에 맞춰 깎아 내리는
           난이도 조정이었다.
-        </p>
-        <p className='text-muted-foreground text-xs/relaxed'>
-          채굴 원가 추정치는 산정 기관마다 크게 갈려 여기에 특정 숫자를 적지 않았다. 논지에 필요한 것은 금액이 아니라
-          어느 쪽이 어느 쪽을 따라갔느냐다.
         </p>
       </Card>
 

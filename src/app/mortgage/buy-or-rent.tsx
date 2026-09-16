@@ -2,8 +2,6 @@
 
 import { useMemo, useState } from 'react';
 
-import Link from 'next/link';
-
 import { ArrowLeftRight, CalendarClock, House, KeyRound, Percent, Repeat, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
@@ -213,12 +211,7 @@ export function BuyOrRent() {
             </p>
             <p className='mt-2'>
               금리가 전세와 월세의 유불리를 뒤집는 것도 이 때문이다. 금리가 오르면 묶인 보증금의 기회비용이 커져 전세가
-              불리해지고, 전세대출을 썼다면 이자까지 직접 나간다.{' '}
-              <Link href='/jeonse' className='underline underline-offset-2'>
-                전세 구조
-              </Link>{' '}
-              페이지에서 본 보증금의 성격, 곧 임차인이 임대인에게 무이자로 빌려준 돈이라는 사실이 여기서 비용으로
-              드러난다.
+              불리해지고, 전세대출을 썼다면 이자까지 직접 나간다.
             </p>
           </>
         }

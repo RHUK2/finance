@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 import { ExplainerPage } from '@/components/explainer-page';
 import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
 
@@ -23,10 +21,7 @@ export function CapitalStructureView() {
       title='회사에 들어간 돈은 누구 것인가'
       intro={
         <>
-          <Link href='/corporation' className='underline underline-offset-2'>
-            법인
-          </Link>{' '}
-          페이지에서 주주는 언제나 맨 뒤에 선다고 했다. 그 줄의 앞쪽에는 누가 서 있고, 어느 자리에 돈을 넣느냐가 무엇을
+          회사가 무너지면 주주는 언제나 맨 뒤에 선다. 그 줄의 앞쪽에는 누가 서 있고, 어느 자리에 돈을 넣느냐가 무엇을
           바꾸는지 보자. 빌린 돈은 결과의 진폭을 키우고, 이자는 세금을 줄이며, 회사가 무너지면 정해진 순서대로 손실이
           배분된다. 채권과 주식 사이에 걸친 증권도 결국 이 순서에서 자기 자리를 고른 결과다.
         </>

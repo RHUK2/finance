@@ -4,8 +4,6 @@ import { useState } from 'react';
 
 import { Coins, Landmark, Percent, Scale, TrendingUp, TriangleAlert } from 'lucide-react';
 
-import Link from 'next/link';
-
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Card } from '@/components/ui/card';
 import { cn, formatEok, formatPct } from '@/lib/utils';
@@ -225,13 +223,9 @@ export function Leverage() {
         body={
           <>
             <p>
-              주주가 잃을 수 있는 최대치는 낸 돈까지다(
-              <Link href='/corporation' className='underline underline-offset-2'>
-                법인
-              </Link>{' '}
-              페이지의 유한책임 탭에서 그 벽이 어디에서 서고 어떻게 무너지는지 다룬다). 위쪽 이익에는 한도가 없다. 이
-              비대칭 때문에 부채가 많은 회사의 주주는 위험한 사업을 선호하게 된다. 잘되면 이자를 갚고 남는 전부가 자기
-              몫이고, 잘못돼도 이미 잃을 것이 정해져 있기 때문이다. 손실의 뒷부분은 채권자가 진다.
+              주주가 잃을 수 있는 최대치는 낸 돈까지다. 위쪽 이익에는 한도가 없다. 이 비대칭 때문에 부채가 많은 회사의
+              주주는 위험한 사업을 선호하게 된다. 잘되면 이자를 갚고 남는 전부가 자기 몫이고, 잘못돼도 이미 잃을 것이
+              정해져 있기 때문이다. 손실의 뒷부분은 채권자가 진다.
             </p>
             <p className='mt-2'>
               채권자도 이 사실을 알기에 계약으로 미리 막는다. 부채비율이나 이자보상배율의 하한을 정해 두고 어기면 즉시
