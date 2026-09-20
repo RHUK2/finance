@@ -104,8 +104,8 @@ export function SignLab({
         <span className='text-sm font-semibold'>격자 위의 두 점</span>
         <CurveGrid
           marks={[
-            ...(Q ? [{ ...Q, label: `Q = ${d}G (공개)`, className: 'fill-sky-500' }] : []),
-            ...(R ? [{ ...R, label: `R = ${k}G (버린다)`, className: 'fill-amber-500' }] : []),
+            ...(Q ? [{ ...Q, label: `Q = ${d}G (공개)`, color: 'sky' as const }] : []),
+            ...(R ? [{ ...R, label: `R = ${k}G (버린다)`, color: 'amber' as const }] : []),
           ]}
           caption='공개키 Q는 남고 R은 서명이 끝나면 버려진다. 남는 것은 R의 x좌표를 n으로 접은 r뿐이다. 다음 탭에서 검증자가 이 R을 개인키 없이 되살려 낸다.'
         />

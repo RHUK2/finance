@@ -25,10 +25,10 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
   const third = sum === null ? null : { x: sum.x, y: mod(-sum.y, P) };
 
   const marks: GridMark[] = [];
-  if (p1) marks.push({ ...p1, label: `P = ${i}G`, className: 'fill-sky-500' });
-  if (p2 && !samePt(p1, p2)) marks.push({ ...p2, label: `Q = ${j}G`, className: 'fill-violet-500' });
-  if (third) marks.push({ ...third, label: '세 번째 교점', className: 'fill-amber-500' });
-  if (sum) marks.push({ ...sum, label: 'P + Q', className: 'fill-emerald-500' });
+  if (p1) marks.push({ ...p1, label: `P = ${i}G`, color: 'sky' });
+  if (p2 && !samePt(p1, p2)) marks.push({ ...p2, label: `Q = ${j}G`, color: 'violet' });
+  if (third) marks.push({ ...third, label: '세 번째 교점', color: 'amber' });
+  if (sum) marks.push({ ...sum, label: 'P + Q', color: 'emerald' });
 
   const dPoint = MULTIPLES_OF_G[d];
   const steps = useMemo(() => doubleAndAddSteps(d), [d]);
@@ -75,7 +75,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           caption={
             lam === null
               ? `P와 Q의 x가 같고 y가 서로 뒤집힌 값이라 직선이 수직이다. 수직선은 곡선과 세 번째로 만나지 않으므로 합이 무한원점 O가 된다. 격자에는 O를 찍을 자리가 없다.`
-              : `흐린 점 ${P}개가 직선이 지나는 칸이다. 오른쪽 끝에 닿으면 왼쪽에서 다시 나온다. 이 점들이 P와 Q, 그리고 세 번째 교점을 지난다.`
+              : `주황 고리 ${P}개가 직선이 지나는 칸이다. 오른쪽 끝에 닿으면 왼쪽에서 다시 나온다. 그중 색점이 놓인 셋만 곡선 위의 점이고, 그게 P와 Q, 그리고 세 번째 교점이다.`
           }
         />
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -93,7 +93,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           />
         </div>
         {lam !== null && sum && (
-          <p className='text-muted-foreground text-xs/relaxed'>
+          <p className='text-xs/relaxed text-muted-foreground'>
             x = λ² − x_P − x_Q = {lam}² − {p1!.x} − {p2!.x} = {lam * lam - p1!.x - p2!.x} ≡ {sum.x} (mod {P}), y = λ(x_P
             − x) − y_P = {lam}({p1!.x} − {sum.x}) − {p1!.y} ≡ {mod(-sum.y, P)} (mod {P}). 마지막에 이 y를 뒤집어 {sum.y}
             를 얻는다.
@@ -132,7 +132,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
         <div className='flex flex-col gap-1'>
           {steps.map((s, idx) => (
             <div key={idx} className='flex items-center justify-between rounded-md border px-3 py-1.5 text-sm'>
-              <span className='text-muted-foreground text-xs'>{s.note}</span>
+              <span className='text-xs text-muted-foreground'>{s.note}</span>
               <span className='tabular-nums'>{fmtPt(s.acc)}</span>
             </div>
           ))}
@@ -155,7 +155,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
             </div>
           ))}
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           {N - 1}개 점이 빠짐없이 한 번씩 나온다. 위수 {N}이 소수라 G의 배수가 곡선 전체를 훑기 때문이다. 그리고 {N}G는
           다시 무한원점이라 여기서 한 바퀴가 닫힌다.
         </p>

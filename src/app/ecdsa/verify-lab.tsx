@@ -33,9 +33,9 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
   const u2Q = mulPt(res.u2, Q);
 
   const marks: GridMark[] = [];
-  if (u1G) marks.push({ ...u1G, label: `u₁G`, className: 'fill-sky-500' });
-  if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, className: 'fill-violet-500' });
-  if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', className: res.ok ? 'fill-emerald-500' : 'fill-rose-500' });
+  if (u1G) marks.push({ ...u1G, label: `u₁G`, color: 'sky' });
+  if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, color: 'violet' });
+  if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', color: res.ok ? 'emerald' : 'rose' });
 
   return (
     <div className='flex flex-col gap-4'>
