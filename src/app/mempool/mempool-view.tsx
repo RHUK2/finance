@@ -158,7 +158,7 @@ export function MempoolView() {
 
           <Card>
             <CardHeading title='해시레이트 추이 (1년)' relativeTime={hashrateRelTime || undefined} />
-            <CardContent className='p-0'>
+            <CardContent bleed>
               {!hashrate ? (
                 <Skeleton className='h-[288px] w-full rounded-none' />
               ) : (

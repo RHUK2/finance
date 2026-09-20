@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ArrowDown, Eye, Lock, RotateCcw, StepForward } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
@@ -253,7 +253,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         }
       />
 
-      <Card className='grid grid-cols-2 gap-4 p-4 sm:grid-cols-3'>
+      <Panel className='grid grid-cols-2 sm:grid-cols-3'>
         <Field label='purpose (주소 타입)'>
           <Select value={purpose} onValueChange={setPurpose}>
             <SelectTrigger className='w-full'>
@@ -318,9 +318,9 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             onChange={(e) => setIndex(Math.max(0, Number(e.target.value) || 0))}
           />
         </Field>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='flex items-center justify-between gap-2'>
           <span className='text-sm font-semibold'>시드에서 주소까지, 한 단계씩 파생하기</span>
           <span className='text-xs text-muted-foreground tabular-nums'>
@@ -473,19 +473,14 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
         {/* 컨트롤 */}
         <div className='flex flex-wrap items-center gap-2'>
-          <Button size='sm' variant='outline' onClick={() => setStep(0)} disabled={step === 0} className='gap-1.5'>
+          <Button size='sm' variant='outline' onClick={() => setStep(0)} disabled={step === 0}>
             <RotateCcw className='size-4' />
             처음부터
           </Button>
           <Button size='sm' variant='outline' onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}>
             이전
           </Button>
-          <Button
-            size='sm'
-            onClick={() => setStep((s) => Math.min(lastStep, s + 1))}
-            disabled={step === lastStep}
-            className='gap-1.5'
-          >
+          <Button size='sm' onClick={() => setStep((s) => Math.min(lastStep, s + 1))} disabled={step === lastStep}>
             <StepForward className='size-4' />
             다음 단계
           </Button>
@@ -493,7 +488,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             {step === lastStep ? '주소까지 완성' : '부모 키에서 다음 가지를 파생한다'}
           </span>
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='체인코드는 뭐고 왜 계속 따라다닐까?'

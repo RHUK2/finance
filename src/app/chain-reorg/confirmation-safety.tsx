@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { ShieldCheck, TriangleAlert } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 import { CONFIRMATION_PRESETS, doubleSpendProbability, formatProbability } from '@/lib/chain-concept';
@@ -27,7 +27,7 @@ export function ConfirmationSafety() {
         공격자 비중 {attackPct}% 기준)
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='공격자 해시레이트 비중'
           value={attackPct}
@@ -63,9 +63,9 @@ export function ConfirmationSafety() {
         >
           확인 {confirmations}개 뒤 이 트랜잭션이 뒤집힐 확률: {formatProbability(selectedProbability)}
         </StatusBanner>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-medium'>확인 수별 이중지불 성공 확률 (공격자 비중 {attackPct}%)</span>
         <div className='flex flex-col divide-y'>
           {presetRows.map(({ z, p }) => (
@@ -86,7 +86,7 @@ export function ConfirmationSafety() {
             </div>
           ))}
         </div>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='0확인 (미확정)' value='100%' tone='bad' sub='아직 어느 블록에도 없음' />

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { CircleCheck, CircleX, RotateCcw, StepForward } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, Field, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import {
@@ -214,7 +214,7 @@ export function ScriptStack() {
         허용된다. 주소 타입을 바꿔 가며 한 단계씩 실행해 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <Field label='주소 타입'>
           <SegmentedControl
             options={[
@@ -240,9 +240,9 @@ export function ScriptStack() {
             }}
           />
         </Field>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='flex items-center justify-between gap-2'>
           <span className='text-sm font-semibold'>
             {meta.label} · {meta.sigAlgo} · unlock은 {meta.unlockField}
@@ -308,24 +308,19 @@ export function ScriptStack() {
         )}
 
         <div className='flex flex-wrap items-center gap-2'>
-          <Button size='sm' variant='outline' onClick={() => setStep(0)} disabled={step === 0} className='gap-1.5'>
+          <Button size='sm' variant='outline' onClick={() => setStep(0)} disabled={step === 0}>
             <RotateCcw className='size-4' />
             처음부터
           </Button>
           <Button size='sm' variant='outline' onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}>
             이전
           </Button>
-          <Button
-            size='sm'
-            onClick={() => setStep((s) => Math.min(lastStep, s + 1))}
-            disabled={step === lastStep}
-            className='gap-1.5'
-          >
+          <Button size='sm' onClick={() => setStep((s) => Math.min(lastStep, s + 1))} disabled={step === lastStep}>
             <StepForward className='size-4' />
             다음 단계
           </Button>
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='Taproot 키 경로는 왜 스크립트가 이렇게 짧을까?'

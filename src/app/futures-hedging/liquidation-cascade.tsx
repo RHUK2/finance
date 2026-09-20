@@ -13,7 +13,7 @@ import {
   RoundControls,
   SectionIntro,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 
 import { CASCADE_IMPACT, ENTRY_PRICE, OPENING_SHOCK, type Position, buildPositions, cascadeTrajectory } from './models';
@@ -45,7 +45,7 @@ export function LiquidationCascade() {
         수치다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Gauge className='size-4 text-sky-500' />}
           label='평균 증거금 배수'
@@ -57,7 +57,7 @@ export function LiquidationCascade() {
           step={0.5}
           format={(v) => `${v.toFixed(1)}배`}
         />
-      </Card>
+      </Panel>
 
       {/* key로 배수 분포 변경 시 리마운트 → 궤적 재계산 + 초기화 */}
       <CascadeSim key={meanMultiple} positions={positions} speedMs={speedMs} onSpeed={setSpeedMs} />

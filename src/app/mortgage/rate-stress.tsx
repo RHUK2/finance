@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Banknote, CalendarClock, Percent, ShieldCheck, TrendingUp, TriangleAlert, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { levelPayment, REGULATION, schedule } from '@/lib/mortgage-models';
 import { formatEokFromMan, formatMan } from '@/lib/utils';
 
@@ -85,7 +85,7 @@ export function RateStress() {
         금리가 움직인다고 보고 그 폭을 조절해 보자.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Banknote className='size-4 text-sky-500' />}
           label='대출 원금'
@@ -137,7 +137,7 @@ export function RateStress() {
           step={500}
           format={formatMan}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='지금 월 상환액' value={formatMan(before)} sub={`금리 ${rate.toFixed(1)}%`} />
@@ -161,7 +161,7 @@ export function RateStress() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <CostBar
           label='변동금리, 상승 전'
           value={before}
@@ -186,7 +186,7 @@ export function RateStress() {
           format={formatMan}
           sub='처음부터 끝까지 이 금액으로 고정된다'
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={banner.tone} icon={banner.icon}>
         {banner.text}

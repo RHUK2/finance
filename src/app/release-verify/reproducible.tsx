@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Boxes, CheckCircle2, XCircle } from 'lucide-react';
 
 import { ExplainCard, Field, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn } from '@/lib/utils';
 
 import { groupHex, sha256Hex } from './models';
@@ -53,7 +53,7 @@ export function Reproducible() {
         같은 결과가 나온다면, 소스에 없는 것이 바이너리에 들어 있는지를 제3자가 잡아낼 수 있다.
       </SectionIntro>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <Field label='어디가 오염됐는가'>
           <SegmentedControl options={OPTIONS} value={c} onChange={setC} />
         </Field>
@@ -78,7 +78,7 @@ export function Reproducible() {
             );
           })}
         </div>
-      </Card>
+      </Panel>
 
       <StatusBanner
         icon={caught ? <CheckCircle2 className='size-4' /> : <XCircle className='size-4' />}

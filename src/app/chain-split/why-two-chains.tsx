@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Gauge, Layers, Radio, TimerOff } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn } from '@/lib/utils';
 
 import { FACTS, RETARGET_BLOCKS, blockIntervalMinutes, daysToRetarget, formatDuration } from './models';
@@ -33,7 +33,7 @@ export function WhyTwoChains() {
         블록을 거부하기 시작했기 때문이다. 여기서부터 두 체인이 각자의 과거를 갖는다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
           <Radio className='size-4 text-sky-600 dark:text-sky-400' />
           mandatory signaling이 하는 일
@@ -60,7 +60,7 @@ export function WhyTwoChains() {
           {FACTS.lockInThreshold.value * 100}%다. 활성화에 필요한 지지의 20분의 1도 안 되는 해시레이트가 다수 체인에서
           떨어져 나온 셈이다.
         </p>
-      </Card>
+      </Panel>
 
       <SectionIntro title='갈라진 소수 체인은 왜 두 블록에서 멈췄나'>
         분기 직후 두 체인은 난이도를 똑같이 물려받는다. 난이도는 {RETARGET_BLOCKS}블록마다 한 번씩만 조정되므로, 소수
@@ -68,7 +68,7 @@ export function WhyTwoChains() {
         가져간 해시레이트 비중을 밀어 보면, 회복 가능한 구간과 사실상 정지하는 구간이 어디서 갈리는지 보인다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Gauge className='size-4 text-amber-500' />}
           label='소수 체인이 가져간 해시레이트 비중'
@@ -80,7 +80,7 @@ export function WhyTwoChains() {
           step={0.5}
           format={(v) => `${v.toFixed(1)}%`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric

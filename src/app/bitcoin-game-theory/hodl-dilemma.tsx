@@ -13,7 +13,7 @@ import {
   RoundControls,
   SectionIntro,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 
 import { type Holder, type HolderBand, buildHolders, hodlTrajectory } from './models';
@@ -48,7 +48,7 @@ export function HodlDilemma() {
         움직일 뿐이다. 이 모델은 폭락이 어떻게 증폭되는지를 설명할 뿐 비트코인의 가치가 얼마인지는 말하지 않는다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Diamond className='size-4 text-emerald-500' />}
           label='얼마나 잘 버티나 (평균 확신도)'
@@ -60,7 +60,7 @@ export function HodlDilemma() {
           step={0.01}
           format={(v) => `${Math.round(v * 100)}%`}
         />
-      </Card>
+      </Panel>
 
       {/* key로 확신도 분포 변경 시 리마운트 → 궤적 재계산 + 초기화 */}
       <HodlSim key={meanConviction} holders={holders} speedMs={speedMs} onSpeed={setSpeedMs} />

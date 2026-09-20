@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { GitFork, Gauge } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 import { RETARGET_INTERVAL } from '@/lib/bitcoin-models';
@@ -37,7 +37,7 @@ export function DifficultyConsensus() {
         어떻게 반응하는지 보자.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Gauge className='size-4 text-amber-600 dark:text-amber-400' />}
           label='지난 2,016블록이 실제로 걸린 기간'
@@ -66,7 +66,7 @@ export function DifficultyConsensus() {
             이상 조정하지 않는다.
           </p>
         )}
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 4배로 조정 폭을 제한할까'
@@ -86,7 +86,7 @@ export function DifficultyConsensus() {
         갈아탄다. 아래에서 양쪽 체인에 블록을 추가하며 확인해 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
           <ForkBranch id='A' label='체인 A' length={lenA} winner={winner} onMine={() => setChainA((c) => c + 1)} />
           <ForkBranch id='B' label='체인 B' length={lenB} winner={winner} onMine={() => setChainB((c) => c + 1)} />
@@ -110,7 +110,7 @@ export function DifficultyConsensus() {
             리셋
           </Button>
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title="정확히는 '가장 긴' 체인이 아니라 '누적 작업량이 가장 많은' 체인"

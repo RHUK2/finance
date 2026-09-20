@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Building2, HandCoins, Scissors, Usb } from 'lucide-react';
 
 import { ExplainCard, MarkTable, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { SEPARATION_METHODS } from './models';
 
@@ -32,10 +32,10 @@ export function CoinSeparation() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-1.5 p-4'>
+      <Panel className='gap-1.5'>
         <span className='text-sm font-semibold'>{method.label}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{method.body}</p>
-      </Card>
+      </Panel>
 
       <StatusBanner tone='good' icon={<HandCoins className='size-5 shrink-0' />}>
         <div>

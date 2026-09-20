@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, KeyRound, XCircle } from 'lucide-react';
 
 import { ExplainCard, Field, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { generateSigningKey, groupHex, sha256Hex, sigPreview, signText, verifyText } from './models';
 
@@ -96,7 +96,7 @@ export function Signature() {
         보증하지 않는지가 갈린다.
       </SectionIntro>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <Field label='무엇을 검증하는가'>
           <SegmentedControl options={OPTIONS} value={scenario} onChange={setScenario} />
         </Field>
@@ -119,7 +119,7 @@ export function Signature() {
             </span>
           </div>
         </div>
-      </Card>
+      </Panel>
 
       <StatusBanner
         icon={ok ? <CheckCircle2 className='size-4' /> : <XCircle className='size-4' />}

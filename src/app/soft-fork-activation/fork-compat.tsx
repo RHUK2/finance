@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { GitCompare } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, MarkTable, SectionIntro, StatusBanner } from '@/components/simulation';
 
 type ForkKind = 'soft' | 'hard';
@@ -68,10 +68,10 @@ export function ForkCompat() {
         onSelect={(id) => setKind(id as ForkKind)}
       />
 
-      <Card className='gap-1.5 p-4'>
+      <Panel className='gap-1.5'>
         <span className='text-sm font-semibold'>{ex.label}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{ex.rule}</p>
-      </Card>
+      </Panel>
 
       <StatusBanner tone={ex.oldSeesNew ? 'good' : 'bad'}>
         <span className='leading-relaxed font-normal'>{ex.verdict}</span>

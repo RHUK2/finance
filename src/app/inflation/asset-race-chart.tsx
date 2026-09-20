@@ -84,7 +84,7 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
           {updatedLabel && <span className='shrink-0 text-xs text-muted-foreground'>{updatedLabel}</span>}
         </div>
       </CardHeader>
-      <CardContent className='p-0'>
+      <CardContent bleed>
         <ChartContainer containerRef={containerRef} onReset={resetView} />
         <p className='bg-muted/50 px-6 pt-3 pb-4 text-xs text-muted-foreground'>
           예금 곡선이 자산 곡선과 벌어지는 폭이 곧 기회비용이다. 자산 수익률은 배당·세금·거래비용을 제외한 가격

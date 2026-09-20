@@ -13,7 +13,7 @@ import {
   StatusBanner,
   StepPanel,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { SEND_AMOUNT, SPLIT_KINDS, type SplitKind, protectionAvailable, replayPossible, replayStages } from './models';
 
@@ -42,7 +42,7 @@ export function ReplayAttack() {
         바꿔 가며 다섯 단계를 따라가 보자. 잔고와 금액은 설명을 위한 가상의 값이다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <Field label='분기 유형'>
           <SegmentedControl
             value={kind}
@@ -72,7 +72,7 @@ export function ReplayAttack() {
               : '소프트포크 분기에서는 고를 수 없다. 보호란 기존 체인에서 무효인 트랜잭션을 유효로 만드는 일이라 규칙이 넓어지고, 그 순간 소프트포크가 아니게 되기 때문이다.'}
           </p>
         </Field>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3'>
         <StatCard
@@ -83,11 +83,11 @@ export function ReplayAttack() {
           sub={step >= 2 ? `${SEND_AMOUNT} BTC를 직접 보냈다` : '내가 원래 쥔 잔고'}
         />
         {forked === null ? (
-          <Card className='gap-1 p-4'>
+          <Panel className='gap-1'>
             <span className='text-xs text-muted-foreground'>분기 체인 잔고</span>
             <span className='text-xl font-semibold text-muted-foreground sm:text-2xl'>—</span>
             <span className='text-xs text-muted-foreground'>아직 분기 전이다</span>
-          </Card>
+          </Panel>
         ) : (
           <StatCard
             label='분기 체인 잔고'

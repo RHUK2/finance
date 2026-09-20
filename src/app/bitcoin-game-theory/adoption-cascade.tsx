@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { Users } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import {
   CascadeStage,
@@ -45,7 +45,7 @@ export function AdoptionCascade() {
         임계점을 넘으면 멈추기 어려운 연쇄가 시작된다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='따라 사는 기준 (평균 임계값)'
           hint='전체의 몇 %가 사야 나도 따라 사는지. 낮출수록 눈치를 덜 보고 일찍 동참해 더 잘 번진다. 개인·기업·국가의 구성비는 그대로 두고 임계값만 함께 움직인다.'
@@ -66,7 +66,7 @@ export function AdoptionCascade() {
           max={30}
           format={(v) => `${v}명`}
         />
-      </Card>
+      </Panel>
 
       {/* key로 파라미터 변경 시 리마운트 → 궤적 재계산 + 첫 프레임으로 초기화 */}
       <CascadeSim

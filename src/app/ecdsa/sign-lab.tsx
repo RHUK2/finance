@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { AlertTriangle, Dices, PenLine } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { CurveGrid } from './curve-grid';
 import { MULTIPLES_OF_G, N, P, fmtPt, inv, mod, sign } from './models';
@@ -39,7 +39,7 @@ export function SignLab({
         서명은 이 (r, s) 두 정수다. 여기서 d는 s 안에 섞여 들어가지만 k에 가려져 밖으로 나오지 않는다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='개인키 d'
           hint='서명하는 사람만 아는 값. 이 값이 서명 밖으로 새어 나가지 않는 것이 전부다.'
@@ -71,9 +71,9 @@ export function SignLab({
           step={1}
           format={(v) => `${v}`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <PenLine className='size-4 text-emerald-500' />세 단계로 끝난다
         </span>
@@ -98,9 +98,9 @@ export function SignLab({
             body={`괄호 안은 ${z} + ${r} × ${d} = ${z + r * d}, n으로 나눈 나머지가 ${inner}이다. k의 역원은 ${kInv}이고(${k} × ${kInv} = ${k * kInv} ≡ ${mod(k * kInv, N)}), 이 둘을 곱해 다시 n으로 나눈 나머지가 s다.`}
           />
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>격자 위의 두 점</span>
         <CurveGrid
           marks={[
@@ -109,7 +109,7 @@ export function SignLab({
           ]}
           caption='공개키 Q는 남고 R은 서명이 끝나면 버려진다. 남는 것은 R의 x좌표를 n으로 접은 r뿐이다. 다음 탭에서 검증자가 이 R을 개인키 없이 되살려 낸다.'
         />
-      </Card>
+      </Panel>
 
       {invalid ? (
         <StatusBanner icon={<AlertTriangle className='size-4' />} tone='bad'>

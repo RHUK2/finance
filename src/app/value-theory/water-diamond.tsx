@@ -15,7 +15,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { MAX_CUPS, SITUATIONS, type Situation, waterMarginalWon, waterTotalWon } from './models';
 
@@ -51,7 +51,7 @@ export function WaterDiamond() {
         마지막 한 단위다. 잔을 늘려 보면서 마지막 한 잔의 값어치가 어떻게 되는지 보자.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Droplets className='size-4 text-sky-500' />}
           label='이미 쥐고 있는 물'
@@ -67,9 +67,9 @@ export function WaterDiamond() {
           <SegmentedControl options={SITUATION_OPTIONS} value={situation} onChange={setSituation} />
           <p className='text-xs text-muted-foreground'>{note}</p>
         </Field>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Scale className='size-4 text-amber-500' />한 단위 더의 값어치
         </span>
@@ -99,7 +99,7 @@ export function WaterDiamond() {
           <Legend className='bg-sky-300' label={`물 ${cups}잔째 (값을 정하는 잔)`} />
           <Legend className='bg-violet-500' label='다이아몬드 1캐럿' />
         </div>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label={`물 총효용 (${cups}잔 전부)`} value={formatValue(total)} sub='첫 잔부터 지금 잔까지의 합' />

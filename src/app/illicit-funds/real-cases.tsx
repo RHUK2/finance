@@ -2,7 +2,7 @@
 
 import { Clock, Search } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 
 const CASES = [
@@ -42,7 +42,7 @@ export function RealCases() {
 
       <div className='flex flex-col gap-3'>
         {CASES.map((c) => (
-          <Card key={c.title} className='gap-3 p-4'>
+          <Panel key={c.title} className='gap-3'>
             <div className='flex flex-wrap items-baseline justify-between gap-2'>
               <span className='font-semibold'>{c.title}</span>
               <span className='text-xs text-muted-foreground tabular-nums'>{c.year}</span>
@@ -56,11 +56,11 @@ export function RealCases() {
               <Clock className='size-3.5' />
               사건에서 자금 회수·검거까지 {c.gap}
             </span>
-          </Card>
+          </Panel>
         ))}
       </div>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='font-semibold'>불법 거래는 전체에서 얼마나 되나</span>
         <div className='grid grid-cols-2 gap-2'>
           <Metric label='온체인 거래액 중 불법 주소 비중' value='1% 미만' sub='체인분석 업계 연간 추정치' />
@@ -71,7 +71,7 @@ export function RealCases() {
           불법 주소가 반영되면 과거 연도 수치가 사후에 상향 조정되고, 거래소 내부 이체처럼 체인에 남지 않는 흐름은
           애초에 집계되지 않는다. 방향성 참고용으로만 보는 게 맞다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='정리: 비트코인은 범죄에 좋은 도구인가'

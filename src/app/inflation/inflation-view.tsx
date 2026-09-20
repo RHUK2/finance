@@ -102,12 +102,16 @@ export function InflationView() {
 
       {!data ? (
         <Card>
-          <CardContent className='text-sm text-muted-foreground'>데이터를 불러오는 중…</CardContent>
+          <CardContent>
+            <p className='text-sm text-muted-foreground'>데이터를 불러오는 중…</p>
+          </CardContent>
         </Card>
       ) : data.available === false ? (
         <Card>
-          <CardContent className='text-sm text-muted-foreground'>
-            {cfg.label} 데이터는 <code className='text-foreground'>{cfg.envKey}</code> 환경변수를 설정하면 표시된다.
+          <CardContent>
+            <p className='text-sm text-muted-foreground'>
+              {cfg.label} 데이터는 <code className='text-foreground'>{cfg.envKey}</code> 환경변수를 설정하면 표시된다.
+            </p>
           </CardContent>
         </Card>
       ) : (

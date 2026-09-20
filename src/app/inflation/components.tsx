@@ -1,6 +1,6 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn, formatMan, formatWon } from '@/lib/utils';
 
 export type Currency = '$' | '₩';
@@ -44,10 +44,10 @@ export const fmtHours = (n: number) => `${n.toFixed(1)}시간`;
 /** 데이터 없음(범위 밖·키 미설정) 자리표시 카드. */
 export function EmptyCard({ label, note }: { label: string; note: string }) {
   return (
-    <Card className='gap-1 p-4'>
+    <Panel className='gap-1'>
       <span className='text-xs text-muted-foreground'>{label}</span>
       <span className='text-xl font-semibold text-muted-foreground'>-</span>
       <span className='text-xs text-muted-foreground'>{note}</span>
-    </Card>
+    </Panel>
   );
 }

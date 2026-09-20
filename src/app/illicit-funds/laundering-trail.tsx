@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Blend, Flame, Shuffle, Wallet } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ControlSlider,
   ExplainCard,
@@ -67,7 +67,7 @@ export function LaunderingTrail() {
         수사기관의 성공 확률이 아니라 소요 시간이다. 그리고 원장은 지워지지 않으므로, 시간은 수사기관 편이다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Shuffle className='size-4' />}
           label='홉 수'
@@ -146,7 +146,7 @@ export function LaunderingTrail() {
             </span>
           </StatusBanner>
         )}
-      </Card>
+      </Panel>
 
       <IllustrativeDisclaimer>
         신원 특정 가능성·소요 시간 수치는 &#39;출구가 결정적이고 홉은 시간만 늘린다&#39;는 구조를 보여주기 위한

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowDown, ArrowDownToLine, Gauge, Radar, TrendingUp, Zap } from 'lucide-react';
 
 import { ExplainCard, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 const CHAIN = [
   { label: '가격이 오른다', sub: '평가하는 쪽에서 값이 정해진다' },
@@ -25,7 +25,7 @@ export function MiningCost() {
         재화보다 선명하게 드러난다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <ArrowDownToLine className='size-4 text-amber-500' />
           인과는 이 방향으로만 흐른다
@@ -45,13 +45,13 @@ export function MiningCost() {
           사슬은 여기서 끝난다. 코인당 채굴비용이 올랐다고 해서 가격이 다시 오르지는 않는다. 이 사슬이 고리가 아니라는
           것이 이 탭의 요점이다.
         </p>
-      </Card>
+      </Panel>
 
       <StatusBanner icon={<TrendingUp className='size-4' />} tone='accent'>
         가격이 비용을 만든다. 반대로 뒤집으면 사슬이 끊긴다.
       </StatusBanner>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Zap className='size-4 text-rose-500' />
           반대로 뒤집으면 어디서 끊기나
@@ -62,9 +62,9 @@ export function MiningCost() {
           해시레이트가 빠지고, 난이도가 내려가 남은 채굴자의 코인당 비용이 다시 가격에 맞춰진다. 비용이 가격을 끌어올린
           것이 아니라 가격이 비용을 잘라 낸 것이다.
         </p>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Gauge className='size-4 text-sky-500' />
           2022년에 실제로 그렇게 됐다
@@ -76,7 +76,7 @@ export function MiningCost() {
           조정됐고 코인당 채굴비용도 따라 내려갔다. 바닥 역할을 한 것은 원가가 아니라, 원가를 가격에 맞춰 깎아 내리는
           난이도 조정이었다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Radar className='size-4 text-violet-500' />}

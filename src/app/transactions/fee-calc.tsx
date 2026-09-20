@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Pipeline } from '@/components/pipeline';
 import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { addrMeta, ADDR_TYPES, type AddrType, feeSats, formatSats, TX_OVERHEAD_VB, txVBytes } from '@/lib/tx-concept';
@@ -28,7 +28,7 @@ export function FeeCalc() {
         매겨진다. 입력이 많을수록(동전을 여러 개 쓸수록) 커지고, 그만큼 비싸진다. 입력·출력 개수와 수수료율을 바꿔 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='grid grid-cols-2 gap-4 sm:grid-cols-3'>
           <Field label='입력 개수 (쓸 동전 수)'>
             <Input
@@ -65,9 +65,9 @@ export function FeeCalc() {
         <div className='border-t pt-3'>
           <FeeRateControl value={feeRate} onChange={setFeeRate} />
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>크기가 수수료가 되기까지</span>
         <Pipeline
           items={[
@@ -92,7 +92,7 @@ export function FeeCalc() {
             },
           ]}
         />
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='수수료는 금액이 아니라 크기에 붙는다 (블록 공간 경매)'

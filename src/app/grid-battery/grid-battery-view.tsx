@@ -7,7 +7,7 @@ import { Battery, Bitcoin, TriangleAlert, Wind, Zap } from 'lucide-react';
 import { ExplainerPage } from '@/components/explainer-page';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 const fmt = (n: number) => `${Math.round(n)} GW`;
 
@@ -68,7 +68,7 @@ export function GridBatteryView() {
       }
     >
       {/* 컨트롤 */}
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Wind className='size-4 text-sky-500' />}
           label='재생에너지 발전량'
@@ -102,10 +102,10 @@ export function GridBatteryView() {
             {minersOn ? 'ON · 잉여 흡수 중' : 'OFF · 잉여 방치'}
           </Button>
         </div>
-      </Card>
+      </Panel>
 
       {/* 시각화: 발전량 분배 막대 */}
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>발전 전력의 분배</span>
           <span className='text-xs text-muted-foreground'>총 발전량 {fmt(generation)}</span>
@@ -126,7 +126,7 @@ export function GridBatteryView() {
             </span>
           </StatusBanner>
         )}
-      </Card>
+      </Panel>
 
       {/* 지표 카드 */}
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>

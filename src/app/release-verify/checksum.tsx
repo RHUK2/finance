@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { FileCheck2, TriangleAlert } from 'lucide-react';
 
 import { ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
@@ -54,7 +54,7 @@ export function Checksum() {
         드러난다.
       </SectionIntro>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-medium'>파일 대신 한 줄</span>
         <Input value={text} onChange={(e) => setText(e.target.value)} className='font-mono text-sm' />
         <div className='flex flex-col gap-1'>
@@ -67,7 +67,7 @@ export function Checksum() {
             <HexView hex={base} />
           </div>
         )}
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='바뀐 글자' value={changed ? '1자 이상' : '없음'} tone={changed ? 'accent' : undefined} />

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -114,14 +114,14 @@ export function RoundControls({
   return (
     <div className='flex flex-col gap-2'>
       <div className='flex flex-wrap items-center gap-2'>
-        <Button size='sm' onClick={onToggle} disabled={done} className='gap-1.5'>
+        <Button size='sm' onClick={onToggle} disabled={done}>
           {playing ? <Pause className='size-4' /> : <Play className='size-4' />}
           {playing ? '일시정지' : done ? '완료' : '재생'}
         </Button>
-        <Button size='sm' variant='outline' onClick={onStep} disabled={playing || done} className='gap-1.5'>
+        <Button size='sm' variant='outline' onClick={onStep} disabled={playing || done}>
           <StepForward className='size-4' />한 {unit}
         </Button>
-        <Button size='sm' variant='outline' onClick={onReset} className='gap-1.5'>
+        <Button size='sm' variant='outline' onClick={onReset}>
           <RotateCcw className='size-4' />
           리셋
         </Button>
@@ -251,20 +251,20 @@ export function Metric({
   sub?: string;
 }) {
   return (
-    <Card className='gap-1 p-4'>
+    <Panel className='gap-1'>
       <span className='text-xs text-muted-foreground'>{label}</span>
       <span
         className={cn(
           'text-xl font-semibold tabular-nums sm:text-2xl',
-          tone === 'good' && 'text-emerald-600 dark:text-emerald-400',
-          tone === 'bad' && 'text-rose-600 dark:text-rose-400',
-          tone === 'accent' && 'text-amber-600 dark:text-amber-400',
+          tone === 'good' && 'text-good',
+          tone === 'bad' && 'text-bad',
+          tone === 'accent' && 'text-warn',
         )}
       >
         {value}
       </span>
       {sub && <span className='text-xs text-muted-foreground'>{sub}</span>}
-    </Card>
+    </Panel>
   );
 }
 
@@ -282,9 +282,9 @@ export function StatusBanner({
     <div
       className={cn(
         'flex items-center gap-2 rounded-md border p-3 text-sm font-medium',
-        tone === 'good' && 'border-emerald-500/40 bg-emerald-500/5',
-        tone === 'bad' && 'border-rose-500/40 bg-rose-500/5',
-        tone === 'accent' && 'border-amber-500/40 bg-amber-500/5',
+        tone === 'good' && 'border-good-surface/40 bg-good-surface/5',
+        tone === 'bad' && 'border-bad-surface/40 bg-bad-surface/5',
+        tone === 'accent' && 'border-warn-surface/40 bg-warn-surface/5',
         !tone && 'border-transparent bg-muted',
       )}
     >
@@ -336,7 +336,7 @@ export function ExplainCard({
 }) {
   return (
     <Collapsible asChild>
-      <Card className='group/explain gap-0 p-0'>
+      <Panel bleed className='group/explain'>
         <CollapsibleTrigger className='flex w-full items-start gap-2 p-4 text-left transition-colors hover:bg-muted/50'>
           <div className='flex-1'>
             <span className='flex items-center gap-1.5 font-semibold'>
@@ -354,7 +354,7 @@ export function ExplainCard({
         <CollapsibleContent>
           <div className='p-4 text-sm/relaxed text-muted-foreground'>{body}</div>
         </CollapsibleContent>
-      </Card>
+      </Panel>
     </Collapsible>
   );
 }
@@ -378,7 +378,7 @@ export type SimTab = {
 export function SimTabs({ tabs, defaultValue }: { tabs: SimTab[]; defaultValue: string }) {
   const isOdd = tabs.length % 2 === 1;
   return (
-    <Tabs defaultValue={defaultValue} className='gap-4'>
+    <Tabs defaultValue={defaultValue}>
       <TabsList
         className={cn(
           'grid w-full grid-cols-2 group-data-horizontal/tabs:h-auto',
@@ -390,7 +390,7 @@ export function SimTabs({ tabs, defaultValue }: { tabs: SimTab[]; defaultValue: 
             key={t.value}
             value={t.value}
             className={cn(
-              'min-h-9 py-1.5 text-center leading-tight whitespace-normal',
+              'min-h-9 text-center whitespace-normal',
               isOdd && i === tabs.length - 1 && 'col-span-2 md:col-span-1',
             )}
           >
@@ -454,13 +454,13 @@ export function SegmentedControl<T extends string | boolean>({
 // "교육용 개념 시연" 경고 카드. 개념 시연 페이지들이 공통으로 쓰는 틀.
 export function IllustrativeDisclaimer({ children }: { children: React.ReactNode }) {
   return (
-    <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm/relaxed'>
-      <span className='flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400'>
+    <Panel tone='accent' className='gap-2 text-sm/relaxed'>
+      <span className='flex items-center gap-1.5 font-semibold text-warn'>
         <TriangleAlert className='size-4' />
         교육용 개념 시연
       </span>
       <p className='text-muted-foreground'>{children}</p>
-    </Card>
+    </Panel>
   );
 }
 
@@ -620,7 +620,7 @@ export function CascadeStage({
 }) {
   return (
     <>
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         {notice}
         {controls}
         <div className='flex flex-col gap-1.5'>
@@ -644,7 +644,7 @@ export function CascadeStage({
           max={curve.max}
           heightClass='h-12'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>{metrics}</div>
 
@@ -652,9 +652,9 @@ export function CascadeStage({
         <p
           className={cn(
             'rounded-md px-3 py-2 text-xs',
-            outcome.tone === 'good' && 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-            outcome.tone === 'bad' && 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-            outcome.tone === 'accent' && 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+            outcome.tone === 'good' && 'bg-good-surface/10 text-good',
+            outcome.tone === 'bad' && 'bg-bad-surface/10 text-bad',
+            outcome.tone === 'accent' && 'bg-warn-surface/10 text-warn',
             !outcome.tone && 'bg-muted text-muted-foreground',
           )}
         >
@@ -737,7 +737,7 @@ export function MarkTable({
   const grid = cn('grid items-center gap-x-2', MARK_TABLE_COLS[headers.length - 1]);
 
   return (
-    <Card className='gap-0 overflow-hidden p-0'>
+    <Panel bleed>
       <div className='flex flex-col gap-1 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           {icon}
@@ -772,7 +772,7 @@ export function MarkTable({
           ))}
         </button>
       ))}
-    </Card>
+    </Panel>
   );
 }
 
@@ -780,11 +780,11 @@ function Mark({ state }: { state: MarkState }) {
   return (
     <span className='flex justify-center'>
       {state === 'yes' ? (
-        <Check className='size-4 text-emerald-600 dark:text-emerald-400' />
+        <Check className='size-4 text-good' />
       ) : state === 'no' ? (
-        <X className='size-4 text-rose-600 dark:text-rose-400' />
+        <X className='size-4 text-bad' />
       ) : (
-        <Minus className='size-4 text-amber-600 dark:text-amber-400' />
+        <Minus className='size-4 text-warn' />
       )}
     </span>
   );
@@ -891,7 +891,7 @@ export function StepPanel({
   return (
     <>
       <div ref={panel}>
-        <Card className='gap-0 overflow-hidden p-0'>
+        <Panel bleed>
           <div className='flex items-center gap-2 px-3 py-2'>
             <span className='flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs leading-none font-semibold text-primary-foreground'>
               <span className='translate-y-px'>{step}</span>
@@ -903,7 +903,7 @@ export function StepPanel({
             {slider}
             <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
           </div>
-        </Card>
+        </Panel>
       </div>
       {showPill &&
         createPortal(
@@ -913,7 +913,7 @@ export function StepPanel({
               <Button
                 variant='ghost'
                 size='icon'
-                className='rounded-full'
+                shape='pill'
                 onClick={onPrev}
                 disabled={step === 0}
                 aria-label='이전 단계'
@@ -930,7 +930,7 @@ export function StepPanel({
               <Button
                 variant='ghost'
                 size='icon'
-                className='rounded-full'
+                shape='pill'
                 onClick={onNext}
                 disabled={step === total - 1}
                 aria-label='다음 단계'

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Shuffle } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, IllustrativeDisclaimer, Metric, SectionIntro } from '@/components/simulation';
 import { anonymityChance } from '@/lib/privacy-concept';
 import { mulberry32 } from '@/lib/utils';
@@ -32,7 +32,7 @@ export function CoinJoin() {
         어느 입력이 어느 출력으로 갔는지 외부에서는 알 수 없다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Shuffle className='size-4 text-amber-600 dark:text-amber-400' />}
           label='CoinJoin 참가자 수'
@@ -95,7 +95,7 @@ export function CoinJoin() {
           />
           <Metric label='가능한 대응 조합 수' value={`${factorial(participants).toLocaleString('ko-KR')}가지`} />
         </div>
-      </Card>
+      </Panel>
 
       <IllustrativeDisclaimer>
         실제 CoinJoin(JoinMarket, Wasabi, Whirlpool 등)은 참가자 조율, 라운드 실패 시 재시도, 출력 금액을 표준화하는

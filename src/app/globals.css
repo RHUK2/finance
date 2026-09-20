@@ -50,6 +50,18 @@
   --font-pretendard: 'Pretendard Variable', sans-serif;
 }
 
+/* 판정 색(tone). good/bad/accent 어휘는 CLAUDE.md가 정본이고, accent는 shadcn이 --color-accent를
+   호버 배경에 이미 쓰고 있어 토큰 이름만 warn으로 갈랐다. -surface는 배경·테두리용 고정 채도,
+   나머지는 본문 글자용이라 명도가 모드마다 다르다. */
+@theme inline {
+  --color-good: var(--good);
+  --color-good-surface: var(--good-surface);
+  --color-bad: var(--bad);
+  --color-bad-surface: var(--bad-surface);
+  --color-warn: var(--warn);
+  --color-warn-surface: var(--warn-surface);
+}
+
 :root {
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.148 0.004 228.8);
@@ -83,6 +95,12 @@
   --sidebar-ring: oklch(0.723 0.014 214.4);
   --background: oklch(1 0 0);
   --foreground: oklch(0.148 0.004 228.8);
+  --good: oklch(59.6% 0.145 163.225);
+  --good-surface: oklch(69.6% 0.17 162.48);
+  --bad: oklch(58.6% 0.253 17.585);
+  --bad-surface: oklch(64.5% 0.246 16.439);
+  --warn: oklch(66.6% 0.179 58.318);
+  --warn-surface: oklch(76.9% 0.188 70.08);
 }
 
 .dark {
@@ -117,6 +135,9 @@
   --sidebar-accent-foreground: oklch(0.987 0.002 197.1);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.56 0.021 213.5);
+  --good: oklch(76.5% 0.177 163.223);
+  --bad: oklch(71.2% 0.194 13.428);
+  --warn: oklch(82.8% 0.189 84.429);
 }
 
 @layer base {

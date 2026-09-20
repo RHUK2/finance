@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Bitcoin, Hourglass, Receipt, ShieldCheck, TriangleAlert } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatUsd } from '@/lib/utils';
 
 import { blockRevenue, eraStartYear, LAST_SUBSIDY_ERA, requiredFee } from './models';
@@ -42,7 +42,7 @@ export function FeeGap() {
         에서 본다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Hourglass className='size-4 text-sky-500' />}
           label='반감기 시대'
@@ -74,9 +74,9 @@ export function FeeGap() {
           format={fmtFee}
           hint={`기준점은 ${fmtFee(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배를 넘기도 하지만 평시 수준은 이 언저리다.`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>블록 보상의 구성</span>
           <span className='text-xs text-muted-foreground tabular-nums'>
@@ -94,7 +94,7 @@ export function FeeGap() {
           보조금은 프로토콜이 정하고 수수료는 블록 공간 경매가 정한다. 왼쪽 몫은 시대가 지날수록 반드시 줄고, 오른쪽
           몫이 얼마나 자랄지는 정해진 바 없다.
         </p>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric

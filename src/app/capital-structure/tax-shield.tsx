@@ -13,7 +13,7 @@ import {
   StackedBar,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn, formatEok } from '@/lib/utils';
 
 import { TAX_RATE } from './models';
@@ -75,7 +75,7 @@ export function TaxShield() {
         달라진다는 뜻이다. 세법이 부채에 얹어 준 이 보조금을 세금 방패라고 부른다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Scale className='size-4 text-rose-500' />}
           label='부채 비중'
@@ -98,15 +98,15 @@ export function TaxShield() {
           format={(v) => `${v}%`}
           hint='세율이 0이면 방패도 사라진다. 부채의 세금 혜택은 세법이 만들어 낸 것이지 부채 자체의 성질이 아니다.'
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Users className='size-4 text-sky-500' />
           영업이익 {formatEok(EBIT, 0)}은 누구에게 갔는가
         </span>
         <StackedBar segments={slices} total={EBIT} />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='채권자가 받는 이자' value={formatEok(interest, 0)} sub='실적과 무관하게 확정' />
@@ -130,7 +130,7 @@ export function TaxShield() {
           : '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 이때 자본구조는 파이를 자르는 방식일 뿐 파이의 크기를 바꾸지 못한다.'}
       </StatusBanner>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex flex-col gap-1'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
             <Building2 className='size-4 text-amber-500' />
@@ -148,7 +148,7 @@ export function TaxShield() {
           <Legend className='bg-emerald-500' label='가치가 가장 큰 지점' />
           <Legend className='bg-muted-foreground/30' label='그 밖' />
         </div>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='지금 자본구조의 기업가치' value={formatEok(current, 0)} />

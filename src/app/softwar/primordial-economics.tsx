@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { Skull, Zap } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import {
   CascadeStage,
@@ -36,7 +36,7 @@ export function PrimordialEconomics() {
         도태된다. 평화주의(미투사)는 진화적으로 살아남기 어렵다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Zap className='size-4 text-amber-500' />}
           label='평균 투사력 (개체군 평균 와트)'
@@ -59,7 +59,7 @@ export function PrimordialEconomics() {
           step={0.01}
           format={(v) => `${Math.round(v * 100)}%`}
         />
-      </Card>
+      </Panel>
 
       {/* key로 파라미터 변경 시 리마운트 → 라운드 커서가 0으로 돌아간다 */}
       <PredationSim

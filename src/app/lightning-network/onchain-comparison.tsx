@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Layers, Zap } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
 
@@ -31,7 +31,7 @@ export function OnchainComparison() {
         보인다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='채널 안에서 주고받은 결제 횟수'
           value={paymentCount}
@@ -50,9 +50,9 @@ export function OnchainComparison() {
           step={1}
           format={(v) => `${v} sat/vB`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <CostBar
           label={`온체인으로 ${paymentCount.toLocaleString('ko-KR')}번 보냈다면`}
           value={onchainFee}
@@ -67,7 +67,7 @@ export function OnchainComparison() {
           className='bg-emerald-500'
           format={formatSats}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='온체인 수수료 총합' value={formatSats(onchainFee)} tone='bad' />

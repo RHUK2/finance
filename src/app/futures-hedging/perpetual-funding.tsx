@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { CalendarClock, Scale } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, Sparkline, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { FUNDING_CAP, basisCurves, fundingCost } from './models';
 
@@ -29,7 +29,7 @@ export function PerpetualFunding() {
         계약을 무엇이 현물에 붙잡아 두는가. 펀딩비다. 요율과 기간은 구조를 보여주기 위한 예시 수치다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Scale className='size-4 text-violet-500' />}
           label='롱 쏠림'
@@ -52,7 +52,7 @@ export function PerpetualFunding() {
           step={1}
           format={(v) => `${Math.round(v)}일`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -75,7 +75,7 @@ export function PerpetualFunding() {
         />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>베이시스가 0으로 가는 두 가지 방법</span>
         <Sparkline values={dated} label='만기물' className='text-sky-500' min={0} max={3.3} heightClass='h-12' />
         <Sparkline
@@ -90,7 +90,7 @@ export function PerpetualFunding() {
           만기물은 만기라는 한 번의 사건이 베이시스를 0으로 끌고 간다. 무기한물에는 그 사건이 없어서, 8시간마다 돌아오는
           과금이 벌어진 만큼을 깎아 내고 쏠림이 다시 밀어 올리는 톱니가 반복된다. 쏠림이 셀수록 톱니의 진폭이 커진다.
         </p>
-      </Card>
+      </Panel>
 
       <StatusBanner tone={f.cumulative > 0.08 ? 'bad' : f.cumulative > 0.03 ? 'accent' : 'good'}>
         롱 {pct0(longShare)} 쏠림에서 {Math.round(days)}일을 버티면 원금의 {pct0(f.cumulative)}가 반대편으로 넘어간다.

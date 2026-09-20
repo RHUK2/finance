@@ -12,7 +12,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn } from '@/lib/utils';
 
 // 거래 규모(회사 자산 대비 비중)에 따라 어느 기관까지 올라가야 하는지가 달라진다.
@@ -107,7 +107,7 @@ export function Agency() {
         실행을 맡는다. 거래 규모를 움직여 보면 같은 계약이라도 어느 층까지 올라가야 하는지가 달라진다.
       </SectionIntro>
 
-      <Card className='p-4'>
+      <Panel>
         <ControlSlider
           icon={<Scale className='size-4 text-sky-500' />}
           label='거래 규모 (회사 총자산 대비)'
@@ -119,7 +119,7 @@ export function Agency() {
           format={(v) => `${v.toFixed(1)}%`}
           hint='사무용품을 사는 일과 공장을 통째로 넘기는 일에 같은 절차를 요구할 수는 없다. 규모가 커질수록 결정 권한은 대표 개인에게서 이사회로, 다시 소유자인 주주에게로 올라간다.'
         />
-      </Card>
+      </Panel>
 
       <div>
         {ORGANS.map((organ, i) => (
@@ -150,7 +150,7 @@ export function Agency() {
         <Metric label='대표 개인 재산' value='무관' sub='회사에 대한 손해배상책임은 별개' tone='good' />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 font-semibold'>
           <TriangleAlert className='size-4 text-amber-500' />
           대표가 절차를 건너뛰고 서명했다면
@@ -170,7 +170,7 @@ export function Agency() {
           disabled={needsMeeting}
         />
         <StatusBanner tone={skipOutcome.tone}>{skipOutcome.text}</StatusBanner>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Users className='size-4 text-sky-500' />}
@@ -198,9 +198,9 @@ export function Agency() {
 function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
   const outside = organ.outside === true;
   return (
-    <Card
+    <Panel
       className={cn(
-        'gap-1 p-4 transition-colors',
+        'gap-1 transition-colors',
         outside
           ? 'border-violet-500/50 bg-violet-500/5'
           : active
@@ -231,6 +231,6 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
         </span>
       </div>
       <p className='text-xs/relaxed text-muted-foreground'>{organ.note}</p>
-    </Card>
+    </Panel>
   );
 }

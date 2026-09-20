@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 import { doubleSpendProbability, formatProbability } from '@/lib/chain-concept';
@@ -28,7 +28,7 @@ export function AttackScope() {
         안전&#39;해지는 지점이 없고, 그저 시간문제가 된다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='공격자 해시레이트 비중'
           value={attackPct}
@@ -62,9 +62,9 @@ export function AttackScope() {
             tone={isMajority ? 'bad' : 'good'}
           />
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-medium'>해시레이트 비중별 비교</span>
         <div className='flex flex-col divide-y'>
           {COMPARE_PRESETS.map((pct) => {
@@ -82,7 +82,7 @@ export function AttackScope() {
             );
           })}
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<CircleX className='size-4 text-rose-500' />}

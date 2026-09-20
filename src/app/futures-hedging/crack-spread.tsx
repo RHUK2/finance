@@ -14,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { CRUDE_LOCK, type CrackHedge, GASOLINE_LOCK, crackResult } from './models';
 
@@ -47,7 +47,7 @@ export function CrackSpread() {
         3:2:1이다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Droplet className='size-4 text-amber-500' />}
           label='만기 원유가 (사는 쪽)'
@@ -73,7 +73,7 @@ export function CrackSpread() {
         <Field label='헤지 방식'>
           <SegmentedControl options={HEDGE_OPTIONS} value={hedge} onChange={setHedge} />
         </Field>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='지금 조건의 크랙' value={usdSigned(r.crackNow)} sub='헤지가 없을 때의 배럴당 마진' />
@@ -91,7 +91,7 @@ export function CrackSpread() {
         />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>같은 시장에서 세 가지 선택이 만드는 마진</span>
         <CostBar
           label='헤지 없음'
@@ -117,7 +117,7 @@ export function CrackSpread() {
           format={usdSigned}
           sub={`${usd(CRUDE_LOCK)}에 사서 ${usd(GASOLINE_LOCK)}에 판다. 두 슬라이더를 어디로 밀어도 안 움직인다`}
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={hedge === 'both' ? 'good' : r.margin < 5 ? 'bad' : 'accent'}>
         {hedge === 'both'

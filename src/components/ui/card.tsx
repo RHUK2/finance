@@ -33,7 +33,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='card-title'
-      className={cn('font-heading text-base leading-normal font-medium group-data-[size=sm]/card:text-sm', className)}
+      className={cn('font-heading text-sm leading-normal font-medium text-muted-foreground', className)}
       {...props}
     />
   );
@@ -53,8 +53,8 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='card-content' className={cn('px-(--card-spacing)', className)} {...props} />;
+function CardContent({ className, bleed = false, ...props }: React.ComponentProps<'div'> & { bleed?: boolean }) {
+  return <div data-slot='card-content' className={cn(bleed ? 'px-0' : 'px-(--card-spacing)', className)} {...props} />;
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {

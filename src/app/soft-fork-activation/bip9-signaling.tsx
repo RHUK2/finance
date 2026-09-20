@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Flag, Vote } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ControlSlider,
   ExplainCard,
@@ -72,7 +72,7 @@ export function Bip9Signaling() {
         활성화(ACTIVE)된다. {MAX_PERIODS}기간 안에 못 넘기면 이 시도는 실패(FAILED)한다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Vote className='size-4 text-amber-600 dark:text-amber-400' />}
           label='채굴자 지지율'
@@ -146,7 +146,7 @@ export function Bip9Signaling() {
             sub={`채굴자 지지율 ${supportPct}% 설정`}
           />
         </div>
-      </Card>
+      </Panel>
 
       <IllustrativeDisclaimer>
         실제 기간은 2016블록(약 2주)이고 타임아웃도 프로젝트마다 다르다(예: 최초 BIP9 설계는 약 1년). 여기서는 여러

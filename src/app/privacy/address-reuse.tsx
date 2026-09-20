@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Link2, ScanEye } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ExplainCard,
   IllustrativeDisclaimer,
@@ -37,7 +37,7 @@ export function AddressReuse() {
         결제마다 새 주소를 쓰면 이 연결이 끊긴다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <SegmentedControl
           options={[
             { value: 'reuse', label: '같은 주소 재사용' },
@@ -73,7 +73,7 @@ export function AddressReuse() {
             ? `주소가 ${uniqueCount}개뿐이다. 커피숍·월급·중고거래·기부가 전부 같은 사람 것이라는 게 누구에게나 드러난다.`
             : `주소가 ${uniqueCount}개, 전부 다르다. 이 4건이 같은 사람 것인지 겉보기로는 알 수 없다.`}
         </StatusBanner>
-      </Card>
+      </Panel>
 
       <IllustrativeDisclaimer>
         주소 문자열은 개념 시연용 가짜 값이다. 실제 HD 지갑은 결제마다 같은 시드에서 새 주소를 자동으로 파생해, 사용자가

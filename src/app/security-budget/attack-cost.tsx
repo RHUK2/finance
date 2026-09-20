@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Clock, ShieldCheck, TriangleAlert, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { bcra, bcraLabel, deterred } from '@/lib/bcra';
 import { formatUsd } from '@/lib/utils';
 
@@ -38,7 +38,7 @@ export function AttackCost() {
         나타난다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<ShieldCheck className='size-4 text-emerald-500' />}
           label='연간 보안 예산'
@@ -72,13 +72,13 @@ export function AttackCost() {
           format={formatUsd}
           hint='한 번의 재구성으로 되돌릴 수 있는 자기 거래의 총액이다. 거래소 입금 한도와 출금 대기 시간이 이 값의 현실적인 천장을 만든다.'
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-medium'>이득과 비용</span>
         <CostBar label='공격 비용 (운영비)' value={cost} max={max} className='bg-sky-500' />
         <CostBar label='이중지불 이득' value={gain} max={max} className='bg-rose-500' />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='공격 비용' value={formatUsd(cost)} sub={`${hours}시간치 해시레이트`} />

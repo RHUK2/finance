@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ControlSlider,
   ExplainCard,
@@ -43,7 +43,7 @@ export function TimelockLab() {
         유효해도, 조건을 만족하기 전엔 스크립트가 실패한다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <Field label='잠금 방식'>
           <SegmentedControl
             options={[
@@ -99,7 +99,7 @@ export function TimelockLab() {
             />
           </>
         )}
-      </Card>
+      </Panel>
 
       <StatusBanner tone={unlocked ? 'good' : 'bad'}>
         {type === 'cltv'
@@ -123,10 +123,10 @@ export function TimelockLab() {
         />
       </div>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-medium'>scriptPubKey (잠금)</span>
         <div className='rounded-md bg-muted p-2 font-mono text-xs break-all'>{scriptPubKey}</div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='절대 시간(CLTV) vs 상대 시간(CSV), 뭐가 다를까'

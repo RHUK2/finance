@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Banknote, Gavel, HardHat, Landmark, PieChart, Receipt, Users } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn, formatEok } from '@/lib/utils';
 
 // 단위는 억원. 장부상 자산 1,000억짜리 회사가 청산에 들어갔다고 하자.
@@ -107,7 +107,7 @@ export function Waterfall() {
         층에서 물이 끊기는지 보자.
       </SectionIntro>
 
-      <Card className='p-4'>
+      <Panel>
         <ControlSlider
           icon={<Gavel className='size-4 text-sky-500' />}
           label='자산 매각 대금'
@@ -119,9 +119,9 @@ export function Waterfall() {
           format={(v) => formatEok(v, 0)}
           hint={`장부상 자산은 ${formatEok(BOOK_ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금은 장부가 대비 ${discount > 0 ? `${discount.toFixed(0)}% 할인` : `${(-discount).toFixed(0)}% 웃돈`}이다.`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <span className='text-xs text-muted-foreground'>
           매각 대금 {formatEok(proceeds, 0)}이 위에서 아래로 흐른다. 총 청구액은 {formatEok(TOTAL_CLAIM, 0)}
         </span>
@@ -149,7 +149,7 @@ export function Waterfall() {
             </span>
           </div>
         ))}
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -183,13 +183,13 @@ export function Waterfall() {
             : `채권 단계에서 이미 물이 끊겼다. 이 상태에서 주식은 값이 0이고, 회사의 사실상 주인은 손실을 나눠 지게 된 채권자다.`}
       </StatusBanner>
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
           <PieChart className='size-4 text-violet-500' />
           {focus.label}
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{focus.note}</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Banknote className='size-4 text-fuchsia-500' />}

@@ -3,7 +3,7 @@
 import { ArrowUp, Cigarette, Grape, Sprout, Wine } from 'lucide-react';
 
 import { ExplainCard, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 // 멩거의 재화 차수. 소비에 가장 가까운 쪽이 1차재이고, 거기서 멀어질수록 차수가 올라간다.
 const CHAIN = [
@@ -45,7 +45,7 @@ export function Imputation() {
         귀속이라 부른다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>귀속: 값어치는 아래에서 위로 올라온다</span>
         <div className='flex items-stretch gap-3'>
           <div className='flex w-8 shrink-0 items-center justify-center rounded-md border border-dashed'>
@@ -68,9 +68,9 @@ export function Imputation() {
           밭에서 포도로, 포도에서 와인으로 물건이 흐르는 방향과 값어치가 정해지는 방향이 반대다. 물건은 위에서 내려오고
           값어치는 아래에서 올라온다.
         </p>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>같은 밭, 같은 노동, 다른 값</span>
         <div className='grid grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-2 text-sm sm:gap-x-6'>
           <span className='text-xs text-muted-foreground' />
@@ -87,7 +87,7 @@ export function Imputation() {
           두 해의 밭은 같은 밭이고 들어간 노동도 같다. 그런데 값이 다섯 배 갈린다. 노동이 값을 정한다면 이 표는 나올 수
           없다. 값을 정한 것은 와인을 마실 사람의 사정이고, 그 판정이 포도를 거쳐 밭까지 올라온 것이다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Cigarette className='size-4 text-amber-500' />}

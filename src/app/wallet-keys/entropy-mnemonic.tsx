@@ -2,9 +2,8 @@
 
 import { Dices, KeyRound, ShieldCheck } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import {
@@ -65,7 +64,7 @@ export function EntropyMnemonic({
         어떻게 바뀌는지 확인해 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='flex flex-wrap items-end justify-between gap-3'>
           <div className='flex flex-col gap-1.5'>
             <span className='text-sm font-medium'>엔트로피 강도</span>
@@ -82,7 +81,7 @@ export function EntropyMnemonic({
               </SelectContent>
             </Select>
           </div>
-          <Button variant='outline' onClick={onRegen} className='gap-1.5'>
+          <Button variant='outline' onClick={onRegen}>
             <Dices className='size-4 text-sky-600 dark:text-sky-400' />
             새로 뽑기
           </Button>
@@ -100,7 +99,7 @@ export function EntropyMnemonic({
           <span className='text-xs text-muted-foreground'>엔트로피 (hex)</span>
           <code className='rounded-md bg-muted p-3 font-mono text-xs break-all text-foreground'>{entropyHex}</code>
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Dices className='size-4 text-sky-600 dark:text-sky-400' />}
@@ -125,7 +124,7 @@ export function EntropyMnemonic({
         <Metric label='단어 수' value={`${bd.words}개`} sub='총 ÷ 11' tone='good' />
       </div>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <ShieldCheck className='size-4 text-emerald-600 dark:text-emerald-400' />
           체크섬은 이렇게 만들어진다 (SHA-256)
@@ -149,7 +148,7 @@ export function EntropyMnemonic({
           ]}
         />
         <p className='text-xs text-muted-foreground'>이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 하필 ENT ÷ 32일까?'
@@ -166,7 +165,7 @@ export function EntropyMnemonic({
         }
       />
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <KeyRound className='size-4 text-amber-600 dark:text-amber-400' />
           니모닉 단어
@@ -183,9 +182,7 @@ export function EntropyMnemonic({
               <span className='flex items-center justify-between'>
                 <span className='font-mono text-[10px] text-muted-foreground'>#{w.position}</span>
                 {w.isChecksum && (
-                  <Badge variant='outline' className='h-4 px-1 text-[9px]'>
-                    체크섬
-                  </Badge>
+                  <span className='rounded-sm border px-1 text-[9px] text-muted-foreground'>체크섬</span>
                 )}
               </span>
               <span className='font-mono text-sm font-medium'>{w.word}</span>
@@ -195,7 +192,7 @@ export function EntropyMnemonic({
             </div>
           ))}
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='체크섬은 왜 필요할까?'

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Eye, Lock } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { ExplainCard, Field, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { Pipeline, type PipeItem } from '@/components/pipeline';
@@ -88,7 +88,7 @@ export function SignatureLab() {
         주소 타입에 따라 <b>ECDSA</b>(Legacy·SegWit)와 <b>Schnorr</b>(Taproot) 둘로 갈린다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <Field label='서명할 메시지 (트랜잭션 요약)'>
           <Input value={message} onChange={(e) => setMessage(e.target.value)} placeholder='예: Alice → Bob : 0.5 BTC' />
         </Field>
@@ -118,12 +118,12 @@ export function SignatureLab() {
             {algo === 'ecdsa' ? pub : `${xOnlyPub} (x-only, 32바이트 · 부호 비트 없음)`}
           </code>
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>메시지에서 서명까지</span>
         <Pipeline items={items} />
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='검증자는 개인키 없이 어떻게 서명을 확인할까?'

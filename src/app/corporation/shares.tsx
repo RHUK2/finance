@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Coins, PieChart, Repeat, TrendingUp, Undo2 } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEokFromWon, formatPct, formatWon } from '@/lib/utils';
 
 // 교육용 예시 회사. 단위는 주와 원.
@@ -52,7 +52,7 @@ export function Shares() {
         보자.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Coins className='size-4 text-emerald-500' />}
           label='신주 발행 (유상증자)'
@@ -75,9 +75,9 @@ export function Shares() {
           format={fmtShares}
           hint='회사가 자기 돈으로 시장에서 주식을 사들인다. 회사가 쥔 자기 주식에는 의결권도 배당도 없어, 남은 주주의 몫이 그만큼 짙어진다.'
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <PieChart className='size-4 text-sky-500' />
           지분 구성 (발행주식 {fmtShares(issued)} 기준)
@@ -90,7 +90,7 @@ export function Shares() {
             지표는 모두 유통주식 기준이다.
           </p>
         )}
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='유통주식수' value={fmtShares(outstanding)} sub='발행주식에서 자사주를 뺀 수' />

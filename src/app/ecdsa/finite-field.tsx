@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Divide, Grid3x3, Spline } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { CurveGrid } from './curve-grid';
 import {
@@ -61,7 +61,7 @@ export function FiniteField() {
         번째 점을 찾고, 그 점을 x축에 대해 뒤집는다. 이 세 동작이 정의의 전부고, 이 모양이 뒤에서 식으로 번역된다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Spline className='size-4 text-sky-500' />
           {SECP256K1.equation} 위의 P + Q
@@ -137,7 +137,7 @@ export function FiniteField() {
           λ² − x_P − x_Q, 그리고 뒤집기)이 이 페이지 끝까지 그대로 간다. 바뀌는 건 계산이 실수가 아니라 유한체에서
           일어난다는 것뿐이다.
         </p>
-      </Card>
+      </Panel>
 
       <SectionIntro title='그 다음 무대를 유한체로 옮긴다'>
         암호에 쓰려면 값이 유한해야 하고 오차가 없어야 한다. 그래서 실수 대신 0부터 p−1까지의 정수만 남기고, 모든 연산
@@ -145,7 +145,7 @@ export function FiniteField() {
         즉 곱해서 1이 되는 짝을 곱하는 것이다. 이 곱셈 하나로 나눗셈이 대체되기 때문에 위의 λ 식이 소수점 없이 성립한다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Divide className='size-4 text-violet-500' />
           mod {P}에서 나눗셈은 역원 곱하기다
@@ -169,9 +169,9 @@ export function FiniteField() {
           />
           <Metric label={`1 ÷ ${a} mod ${P}`} value={`${aInv}`} sub='나눗셈의 결과가 곧 역원이다' />
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Grid3x3 className='size-4 text-emerald-500' />
           {SECP256K1.equation} mod {P}, 점 {CURVE_POINTS.length}개
@@ -179,7 +179,7 @@ export function FiniteField() {
         <CurveGrid
           caption={`매끄러운 선이 아니라 흩어진 점 ${CURVE_POINTS.length}개다. 실수 곡선에서 보이던 x축 대칭은 여기에도 남아 있어, 어떤 점 (x, y)가 있으면 (x, ${P}−y)도 반드시 있다. 여기에 좌표가 없는 점 하나, 무한원점 O를 더하면 위수가 ${N}이 된다.`}
         />
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Spline className='size-4 text-amber-500' />}

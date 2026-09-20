@@ -43,7 +43,8 @@ export function PageMain({ children, hideScrollTop }: Props) {
         <Button
           size='icon'
           variant='outline'
-          className='fixed right-4 bottom-(--footer-clearance) z-20 size-12 rounded-full shadow-md md:bottom-4'
+          shape='pill'
+          className='fixed right-4 bottom-(--footer-clearance) z-20 size-12 shadow-md md:bottom-4'
           onClick={() => scrollToTop()}
         >
           <ChevronUp className='size-6' />

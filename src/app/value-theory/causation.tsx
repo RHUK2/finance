@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ArrowDown, Eye, Filter, Gem, Hammer, HelpCircle, Palette, Scale, Sprout } from 'lucide-react';
 
 import { ExplainCard, MarkTable, type MarkState, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 type Row = {
   id: string;
@@ -91,7 +91,7 @@ export function Causation() {
 
       <div className='grid gap-3 sm:grid-cols-2'>
         {ARROWS.map((a) => (
-          <Card key={a.id} className='flex flex-col gap-3 p-4'>
+          <Panel key={a.id} className='gap-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
               <a.icon className={`size-4 ${a.color}`} />
               {a.title}
@@ -108,7 +108,7 @@ export function Causation() {
               ))}
             </div>
             <p className='text-xs/relaxed text-muted-foreground'>{a.note}</p>
-          </Card>
+          </Panel>
         ))}
       </div>
 
@@ -126,13 +126,13 @@ export function Causation() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
           <row.icon className='size-4' />
           {row.label}
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{row.detail}</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Filter className='size-4 text-amber-500' />}

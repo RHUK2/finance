@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { ArrowLeftRight, CalendarClock, House, KeyRound, Percent, Repeat, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   acquisitionTaxRate,
   ACQUISITION_TAX_NOTE,
@@ -81,7 +81,7 @@ export function BuyOrRent() {
         낸다. 같은 기간 동안 실제로 사라지는 돈이 얼마인지 나란히 놓고 보자.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<House className='size-4 text-sky-500' />}
           label='집값'
@@ -147,7 +147,7 @@ export function BuyOrRent() {
           format={(v) => `${v.toFixed(1)}%`}
           hint={`보증금을 월세로 바꿀 때 적용하는 비율. 보증금 ${formatEokFromMan(monthlyDeposit)}에 월세 ${formatMan(monthlyRent)}이 된다.`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         {options.map((o) => (
@@ -167,7 +167,7 @@ export function BuyOrRent() {
         ))}
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <span className='text-xs/relaxed text-muted-foreground'>
           {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다. 세금은 취득세{' '}
           {acqRate.toFixed(2)}%({ACQUISITION_TAX_NOTE}, 6억 초과 9억 이하는 가격에 따라 오른다)와 보유세 연{' '}
@@ -190,7 +190,7 @@ export function BuyOrRent() {
             }
           />
         ))}
-      </Card>
+      </Panel>
 
       <StatusBanner tone='accent' icon={<ArrowLeftRight className='size-4 shrink-0' />}>
         {breakeven === null || breakeven <= 0

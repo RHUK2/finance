@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 import { ExplainCard, MarkTable, type MarkState, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 type Row = {
   id: string;
@@ -144,7 +144,7 @@ export function LegalPerson() {
         같지 않다. 어디까지 겹치고 어디부터 갈라지는지 짚어 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Stamp className='size-4 text-rose-500' />
           법인격이 생기는 순서
@@ -158,7 +158,7 @@ export function LegalPerson() {
             </div>
           ))}
         </div>
-      </Card>
+      </Panel>
 
       <MarkTable
         icon={<Scale className='size-4 text-sky-500' />}
@@ -174,13 +174,13 @@ export function LegalPerson() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
           <row.icon className='size-4' />
           {row.label}
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{row.detail}</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Landmark className='size-4 text-amber-500' />}

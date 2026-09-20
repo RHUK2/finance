@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Hash } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Pipeline } from '@/components/pipeline';
 import { ControlSlider, ExplainCard, SectionIntro } from '@/components/simulation';
 import { blockHeaderPrefix, hashWithNonce, SAMPLE_HEADER, type BlockHeader } from '@/lib/block-concept';
@@ -27,7 +27,7 @@ export function BlockHeaderView() {
         &#39;정답을 찾았다&#39;는 증거가 될 때까지 바뀐다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Hash className='size-4 text-amber-600 dark:text-amber-400' />
           헤더 필드 → 블록 해시
@@ -95,7 +95,7 @@ export function BlockHeaderView() {
             <code className='font-mono text-xs break-all'>{shortHex(hash, 20)}</code>
           </div>
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 1만 바뀌어도 해시는 완전히 딴판일까'

@@ -7,7 +7,7 @@ import { KeyRound, Plus, Repeat2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { CurveGrid, type GridMark } from './curve-grid';
 import { MULTIPLES_OF_G, N, P, addPt, doubleAndAddSteps, fmtPt, lineCells, mod, samePt, slope } from './models';
@@ -41,7 +41,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
         Q를 지나 세 번째 곡선 점에 닿는지 눈으로 확인해 보자.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='P 고르기'
           hint='곡선 점 30개는 모두 G의 배수다. 몇 배 점인지로 고른다.'
@@ -62,9 +62,9 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           step={1}
           format={(v) => `${v}G = ${fmtPt(MULTIPLES_OF_G[v])}`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Plus className='size-4 text-emerald-500' />
           {i}G + {j}G = {mod(i + j, N) === 0 ? 'O' : `${mod(i + j, N)}G`}
@@ -99,7 +99,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
             를 얻는다.
           </p>
         )}
-      </Card>
+      </Panel>
 
       <SectionIntro title='같은 점을 반복해서 더하면 스칼라 곱이다'>
         점 덧셈이 있으면 곱셈은 공짜로 따라온다. G를 d번 더한 것을 dG라 쓴다. 그런데 30번 더할 필요가 없다. G를 두 배
@@ -107,7 +107,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
         끝나는 이유가 이것이다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='개인키 d'
           hint={`1부터 ${N - 1}까지 고를 수 있다. 이 범위가 곧 위수 n = ${N}이 정하는 열쇠 공간이다.`}
@@ -123,9 +123,9 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           <Metric label='d를 2진수로' value={mod(d, N).toString(2)} sub='이 자릿수만큼만 계산한다' />
           <Metric label='덧셈 횟수' value={`${steps.length}번`} sub={`${d}번 더하는 대신`} />
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Repeat2 className='size-4 text-sky-500' />두 배와 덧셈으로 {d}G에 닿는 길
         </span>
@@ -137,9 +137,9 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
             </div>
           ))}
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>kG 전부 ({N - 1}개)</span>
         <div className='grid grid-cols-2 gap-1.5 text-xs sm:grid-cols-3 lg:grid-cols-5'>
           {Array.from({ length: N - 1 }, (_, idx) => idx + 1).map((k) => (
@@ -159,7 +159,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           {N - 1}개 점이 빠짐없이 한 번씩 나온다. 위수 {N}이 소수라 G의 배수가 곡선 전체를 훑기 때문이다. 그리고 {N}G는
           다시 무한원점이라 여기서 한 바퀴가 닫힌다.
         </p>
-      </Card>
+      </Panel>
 
       <StatusBanner icon={<KeyRound className='size-4' />} tone='good'>
         키 생성은 이게 전부다. d를 하나 고르고 Q = dG를 공개한다.

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Fuel, Percent, Users } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { FUTURES_PRICE, PRODUCER_BARRELS, REFINER_BARRELS, SPOT_NOW, hedgeLedger } from './models';
 
@@ -31,7 +31,7 @@ export function HedgeLedger() {
         지워진 게 아니라 정유사와 투기자의 장부로 넘어가 있다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Fuel className='size-4 text-amber-500' />}
           label='만기 시점 유가'
@@ -65,7 +65,7 @@ export function HedgeLedger() {
           step={0.05}
           format={pct}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -88,7 +88,7 @@ export function HedgeLedger() {
         />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>{mb(PRODUCER_BARRELS)}에 붙은 가격 위험은 어디로 갔나</span>
         <StackedBar
           total={PRODUCER_BARRELS}
@@ -107,7 +107,7 @@ export function HedgeLedger() {
           에서 멈추는 것은 그게 정유사가 실제로 사려는 전부이기 때문이고, 그 위로 넘어가는 물량은 전부 투기자를 거쳐야
           한다.
         </p>
-      </Card>
+      </Panel>
 
       <StatusBanner tone={l.fillRate < 0.8 ? 'bad' : Math.abs(gain) > 0.5 ? 'accent' : 'good'}>
         {l.fillRate < 0.8

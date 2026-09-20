@@ -211,7 +211,8 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
             size='sm'
             variant={typeFilter === type ? 'default' : 'outline'}
             onClick={() => setTypeFilter(type)}
-            className='rounded-full whitespace-nowrap'
+            shape='pill'
+            className='whitespace-nowrap'
           >
             {TYPE_LABELS[type]}
           </Button>

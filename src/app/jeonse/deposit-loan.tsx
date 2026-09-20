@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Banknote, House, Landmark, Percent, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEok, formatMan, formatPct } from '@/lib/utils';
 
 // 금액 단위는 만원. 보증금만 억 단위 슬라이더로 받고 내부에서 만원으로 환산한다.
@@ -43,7 +43,7 @@ export function DepositLoan() {
         이자이고, 이것을 월세로 환산한 비율이 전월세전환율이다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Banknote className='size-4 text-sky-500' />}
           label='전세보증금'
@@ -76,7 +76,7 @@ export function DepositLoan() {
           format={formatMan}
           hint='비교를 단순하게 하려고 월세 보증금은 없다고 본다.'
         />
-      </Card>
+      </Panel>
 
       {/* 두 비용 카드의 tone은 어느 쪽이 싼지로 정한다. 한쪽을 늘 빨갛게 두면 아래 배너의 결론과 어긋난다. */}
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -101,7 +101,7 @@ export function DepositLoan() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <CostBar
           label='전세로 살 때 1년치 값'
           value={jeonseCost}
@@ -126,7 +126,7 @@ export function DepositLoan() {
           format={formatMan}
           sub='임차인이 포기한 이자가 그대로 임대인에게 간다'
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={banner.tone} icon={banner.icon}>
         {banner.text}

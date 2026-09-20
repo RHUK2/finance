@@ -4,7 +4,7 @@ import { Cog, Lock } from 'lucide-react';
 
 import { Pipeline } from '@/components/pipeline';
 import { ExplainCard, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 
 export function SeedDerivation({
@@ -40,7 +40,7 @@ export function SeedDerivation({
         }
       />
 
-      <Card className='flex flex-col gap-1.5 p-4'>
+      <Panel className='gap-1.5'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
           <Lock className='size-4 text-amber-600 dark:text-amber-400' />
           passphrase (선택, {extraWordPosition}번째 단어)
@@ -53,9 +53,9 @@ export function SeedDerivation({
         <p className='text-xs text-muted-foreground'>
           passphrase는 단어를 적어둔 종이를 누가 훔쳐도 자금을 지키는 추가 비밀이다. 단, 잊으면 복구가 불가능하다.
         </p>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Cog className='size-4 text-violet-600 dark:text-violet-400' />
           시드는 이렇게 만들어진다 (PBKDF2)
@@ -82,7 +82,7 @@ export function SeedDerivation({
           ]}
         />
         <p className='text-xs text-muted-foreground'>반복 횟수가 많을수록 무차별 대입이 느려진다.</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 글자 하나에 시드가 통째로 바뀔까? (눈사태 효과)'

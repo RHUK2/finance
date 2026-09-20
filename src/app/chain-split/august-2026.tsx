@@ -3,7 +3,7 @@
 import { CalendarCheck, GitBranch, ScrollText } from 'lucide-react';
 
 import { ExplainCard, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn } from '@/lib/utils';
 
 import { AS_OF, FACTS, RETARGET_BLOCKS } from './models';
@@ -46,7 +46,7 @@ export function August2026() {
         사건 모두 리플레이가 열린 채로 진행됐다는 점이 같다. 아래 수치는 {AS_OF} 기준이며 이후 상황은 달라질 수 있다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
           <CalendarCheck className='size-4 text-amber-600 dark:text-amber-400' />두 분기의 타임라인
         </span>
@@ -66,7 +66,7 @@ export function August2026() {
             </div>
           ))}
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<GitBranch className='size-4 text-rose-500' />}

@@ -14,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { curveYields, spread10y2y, TENORS, type CurveShape } from './models';
 
@@ -45,7 +45,7 @@ export function YieldCurve() {
         의 수익률 곡선 스프레드에서 본다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <SegmentedControl value={shape} onChange={setShape} options={SHAPE_LABELS} />
         <ControlSlider
           icon={<Activity className='size-4 text-sky-500' />}
@@ -58,9 +58,9 @@ export function YieldCurve() {
           format={(v) => `${v.toFixed(2)}%`}
           hint='곡선의 왼쪽 끝은 정책금리를 거의 그대로 따라간다. 오른쪽 끝은 시장이 정한다.'
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-medium'>만기별 수익률</span>
         {TENORS.map((t, i) => (
           <CostBar
@@ -72,7 +72,7 @@ export function YieldCurve() {
             format={(v) => `${v.toFixed(2)}%`}
           />
         ))}
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric

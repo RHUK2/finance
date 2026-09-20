@@ -359,7 +359,7 @@
   },
   "src/app/p2p-network/mempool-policy.tsx": {
     "shadcn/no-raw-colors": {
-      "count": 14
+      "count": 12
     }
   },
   "src/app/privacy/address-reuse.tsx": {
@@ -397,7 +397,7 @@
   },
   "src/app/release-verify/release-verify-view.tsx": {
     "shadcn/no-raw-colors": {
-      "count": 4
+      "count": 2
     }
   },
   "src/app/release-verify/reproducible.tsx": {
@@ -463,7 +463,7 @@
   },
   "src/app/softwar/abstract-vs-physical.tsx": {
     "shadcn/no-raw-colors": {
-      "count": 14
+      "count": 10
     }
   },
   "src/app/softwar/primordial-economics.tsx": {
@@ -574,9 +574,6 @@
   "src/components/simulation.tsx": {
     "shadcn/no-arbitrary-values": {
       "count": 4
-    },
-    "shadcn/no-raw-colors": {
-      "count": 31
     }
   }
 }

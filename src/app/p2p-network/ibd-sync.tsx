@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Download, FileStack } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, Metric, RoundControls, SectionIntro } from '@/components/simulation';
 import { useTrajectory } from '@/hooks/use-round-engine';
 import { cn } from '@/lib/utils';
@@ -52,7 +52,7 @@ export function IbdSync() {
         차이를 보이기 위한 예시이고, 실제 동기화 시간은 대역폭과 피어 수에 따라 달라진다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
@@ -90,7 +90,7 @@ export function IbdSync() {
             value={`약 ${Math.round(AVG_BLOCK_BYTES / HEADER_BYTES).toLocaleString('ko-KR')}배`}
           />
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<FileStack className='size-4 text-amber-600 dark:text-amber-400' />}

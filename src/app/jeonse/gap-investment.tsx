@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, Building2, Layers, Percent, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
 // 부호를 붙인 억 표기. 표기 자체는 formatEok에 맡기고 여기서는 부호만 얹는다.
@@ -45,7 +45,7 @@ export function GapInvestment() {
         대신, 시세가 어떻든 보증금은 전액 그대로 돌려줘야 한다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Building2 className='size-4 text-sky-500' />}
           label='매매가'
@@ -77,7 +77,7 @@ export function GapInvestment() {
           step={1}
           format={(v) => `${v > 0 ? '+' : ''}${v.toFixed(0)}%`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='전세보증금' value={formatEok(deposit)} sub='임차인에게 빌린 돈' />
@@ -91,7 +91,7 @@ export function GapInvestment() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <CostBar
           label='임차인이 대는 돈'
           value={deposit}
@@ -116,7 +116,7 @@ export function GapInvestment() {
           format={formatEok}
           sub={`처음 ${formatEok(price)}에서 ${signedEok(profit)}`}
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={banner.tone} icon={banner.icon}>
         {banner.text}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, Legend, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 
@@ -47,7 +47,7 @@ export function TxStructure() {
         검증 페이지의 &lsquo;검증&rsquo;은 이 안의 스크립트를 실행하는 것이다. 먼저 뼈대부터 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='flex flex-col gap-2'>
           <span className='text-sm font-semibold'>서명이 어디에 담기나</span>
           <SegmentedControl<Mode>
@@ -99,7 +99,7 @@ export function TxStructure() {
           <Legend className='bg-amber-500/60' label='잠금 (scriptPubKey)' />
           <Legend className='bg-emerald-500/60' label='해제 (scriptSig · witness)' />
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='잠금과 해제: 출력이 걸고, 입력이 푼다'

@@ -1,6 +1,6 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { CostBar, SectionIntro } from '@/components/simulation';
 import { SCRIPT_ADDR_TYPES } from '@/lib/script-concept';
 
@@ -48,7 +48,7 @@ export function AddressScriptCompare() {
         &#39;틀&#39;은 같지만 서명 알고리즘과 서명이 실리는 위치, 그리고 스크립트가 얼마나 노출되는지에서 갈린다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>서명 크기 비교 (sighash flag 등 포함 근사)</span>
         <div className='flex flex-col gap-3'>
           {SCRIPT_ADDR_TYPES.map((t) => (
@@ -67,11 +67,11 @@ export function AddressScriptCompare() {
           포장이 없다. 트랜잭션 해부 페이지의 입력 vByte 차이(legacy 148 vs taproot 57.5)도 이 서명·검증 스크립트 크기
           차이에서 나온다.
         </p>
-      </Card>
+      </Panel>
 
       <div className='flex flex-col gap-3 md:hidden'>
         {SCRIPT_ADDR_TYPES.map((t) => (
-          <Card key={t.value} className='flex flex-col gap-3 p-4'>
+          <Panel key={t.value} className='gap-3'>
             <span className='text-sm font-semibold'>{t.label}</span>
             <dl className='flex flex-col gap-2'>
               {ROWS.map((row) => (
@@ -81,11 +81,11 @@ export function AddressScriptCompare() {
                 </div>
               ))}
             </dl>
-          </Card>
+          </Panel>
         ))}
       </div>
 
-      <Card className='hidden overflow-x-auto p-4 md:block'>
+      <Panel className='hidden overflow-x-auto md:block'>
         <table className='w-full min-w-[480px] border-collapse text-sm'>
           <thead>
             <tr className='border-b text-left'>
@@ -110,7 +110,7 @@ export function AddressScriptCompare() {
             ))}
           </tbody>
         </table>
-      </Card>
+      </Panel>
     </div>
   );
 }

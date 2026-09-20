@@ -7,7 +7,7 @@ import { History, Search, Unlock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { ControlSlider, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { MULTIPLES_OF_G, N, bruteForce, fmtPt, inv, mod, recoverFromReuse, sign } from './models';
 
@@ -31,7 +31,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
         개인키 후보가 {N - 1}개뿐이라 전부 시도하면 끝나기 때문이다. 공개키만 주고 개인키를 찾아보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Search className='size-4 text-rose-500' />
           공개키 {fmtPt(Q)}에서 개인키 찾기
@@ -57,14 +57,14 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
           secp256k1에서 이 표는 약 1.158 × 10⁷⁷줄이 된다. 1초에 10억 줄씩 훑는 기계를 지구상의 모든 원자만큼 모아 우주의
           나이만큼 돌려도 끝나지 않는다. 알고리즘은 이 페이지와 한 글자도 다르지 않고 오직 이 표의 길이만 다르다.
         </p>
-      </Card>
+      </Panel>
 
       <SectionIntro title='그런데 표를 아무리 길게 해도 막지 못하는 실수가 있다'>
         일회용 비밀값 k를 두 번 쓰면 곡선의 크기와 무관하게 개인키가 나온다. 훑어보는 게 아니라 방정식을 푸는 것이라
         후보 개수가 상관없다. 아래에서 같은 k로 서로 다른 두 메시지에 서명해 보자.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='두 번째 메시지 해시 z₂'
           hint={`첫 번째는 서명 만들기 탭에서 고른 z = ${z}다. 개인키 d = ${d}와 일회용 비밀값 k = ${k}는 두 서명이 똑같이 쓴다.`}
@@ -82,7 +82,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
         <StatusBanner icon={<Search className='size-4' />} tone='accent'>
           두 서명의 r이 {sig1.r}로 같다. k를 다시 썼다는 사실이 서명만 보고도 드러난다.
         </StatusBanner>
-      </Card>
+      </Panel>
 
       {sameZ ? (
         <StatusBanner icon={<Search className='size-4' />}>
@@ -90,7 +90,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
         </StatusBanner>
       ) : (
         recovered && (
-          <Card className='flex flex-col gap-2 p-4'>
+          <Panel className='gap-2'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
               <Unlock className='size-4 text-rose-500' />두 식에서 미지수를 지운다
             </span>
@@ -112,11 +112,11 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
             <StatusBanner icon={<Unlock className='size-4' />} tone='bad'>
               개인키 {recovered.d}을 되찾았다. 곡선을 아무리 키워도 이 계산은 그대로 성립한다.
             </StatusBanner>
-          </Card>
+          </Panel>
         )
       )}
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <History className='size-4 text-amber-500' />
           실제로 두 번 일어났다
@@ -134,7 +134,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
           십 년 사이 서로 무관한 두 조직이 같은 실수를 했다. 그래서 지금 지갑들은 k를 난수로 뽑지 않고 개인키와 메시지
           해시에서 결정론적으로 만들어 낸다(RFC 6979). 난수의 품질에 안전을 걸지 않기로 한 것이다.
         </p>
-      </Card>
+      </Panel>
     </div>
   );
 }

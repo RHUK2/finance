@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { CheckCircle2, Gauge, Repeat, XCircle } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { canReplaceByFee } from '@/lib/p2p-concept';
 import { feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
@@ -33,7 +33,7 @@ export function MempoolPolicy() {
         정책을 정하면, 그 값이 두 시연(수용 판정·RBF) 모두에 똑같이 적용된다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-1.5 border-amber-500/30 bg-amber-500/3 p-4'>
+      <Panel tone='accent' className='gap-1.5'>
         <ControlSlider
           icon={<Gauge className='size-4 text-amber-600 dark:text-amber-400' />}
           label='이 노드의 최소 릴레이 수수료율 (아래 두 시연 공통)'
@@ -45,13 +45,13 @@ export function MempoolPolicy() {
           step={0.5}
           format={(v) => `${v} sat/vB`}
         />
-      </Card>
+      </Panel>
 
       <SectionIntro title='신규 트랜잭션 수용 판정'>
         방금 정한 최소 릴레이 수수료율을 기준으로, 이 트랜잭션의 수수료율이 그 문턱을 넘는지 확인한다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Gauge className='size-4 text-muted-foreground' />}
           label='이 트랜잭션의 수수료율'
@@ -82,7 +82,7 @@ export function MempoolPolicy() {
           <Metric label='이 tx 수수료' value={formatSats(fee)} tone='accent' />
           <Metric label='노드가 요구하는 최소' value={formatSats(minFee)} />
         </div>
-      </Card>
+      </Panel>
 
       <SectionIntro title='RBF: 멈춰 있는 tx를 수수료로 밀어내기'>
         낮은 수수료로 보낸 tx가 멤풀에서 오래 멈춰 있으면, <b>같은 동전을 쓰되 수수료만 올린 새 tx</b>로 원본을 대체할
@@ -90,7 +90,7 @@ export function MempoolPolicy() {
         수수료율만큼은 더 내야 한다. 그래야 다시 퍼뜨리는 대역폭 비용을 낸 셈이 된다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <p className='text-xs text-muted-foreground'>
           위에서 정한 최소 릴레이 수수료율(<span className='font-medium text-foreground'>{minRelayRate} sat/vB</span>)이
           여기서도 그대로 적용된다.
@@ -136,7 +136,7 @@ export function MempoolPolicy() {
           <Metric label='원본 수수료' value={formatSats(oldFee)} />
           <Metric label='대체 tx 수수료' value={formatSats(newFee)} tone='accent' />
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='최소 수수료가 고정값이 아닌 이유'

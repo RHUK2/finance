@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Banknote, Bitcoin, DollarSign } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { BTC_COLOR, formatUsd } from '@/lib/utils';
 
@@ -35,7 +35,7 @@ export function CashVsChain() {
         양쪽의 대가를 비교해 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<DollarSign className='size-4' />}
           label='옮길 금액'
@@ -46,7 +46,7 @@ export function CashVsChain() {
         />
 
         <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
-          <Card className='gap-3 p-4'>
+          <Panel className='gap-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
               <Banknote className='size-4 text-emerald-600 dark:text-emerald-400' />
               현금 (100달러권)
@@ -61,9 +61,9 @@ export function CashVsChain() {
               대부분의 나라에서 일정 금액(미국·EU는 1만 달러/유로 상당) 이상의 현금을 신고 없이 반출입하면 그 자체로
               범죄다. 물리적 검색에 걸릴 위험이 부피에 비례해 커진다.
             </p>
-          </Card>
+          </Panel>
 
-          <Card className='gap-3 p-4'>
+          <Panel className='gap-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
               <Bitcoin className='size-4' style={{ color: BTC_COLOR }} />
               비트코인 (온체인 이체)
@@ -78,7 +78,7 @@ export function CashVsChain() {
               금액이 100만 달러든 10억 달러든 트랜잭션 크기는 수백 바이트로 같고, 수수료도 금액이 아니라 바이트 수에
               비례한다. 여기까지만 보면 압도적으로 유리하다.
             </p>
-          </Card>
+          </Panel>
         </div>
 
         <StatusBanner tone='accent'>
@@ -88,7 +88,7 @@ export function CashVsChain() {
             시점이 아니라 <b>몇 년 뒤에도</b> 그 영수증을 처음부터 다시 읽을 수 있다.
           </span>
         </StatusBanner>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='현금은 여전히 자금세탁의 주력이다'

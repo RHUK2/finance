@@ -2,7 +2,7 @@
 
 import { ExplainerPage } from '@/components/explainer-page';
 import { SimTabs } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { Attacker } from './attacker';
 import { Checksum } from './checksum';
@@ -24,13 +24,13 @@ export function ReleaseVerifyView() {
         </>
       }
     >
-      <Card className='gap-2 border-amber-500/40 bg-amber-500/5 p-4 text-sm/relaxed'>
+      <Panel tone='accent' className='gap-2 text-sm/relaxed'>
         <span className='font-semibold text-amber-600 dark:text-amber-400'>검증 안내서가 아니다</span>
         <p className='text-muted-foreground'>
           이 페이지에는 실제 프로젝트의 공개키 지문도, 그대로 복사해 실행할 검증 명령도 없다. 지문은 여기가 아니라 서로
           독립인 여러 채널에서 대조하고, 절차는 각 프로젝트의 공식 문서를 따른다.
         </p>
-      </Card>
+      </Panel>
 
       <SimTabs
         defaultValue='checksum'

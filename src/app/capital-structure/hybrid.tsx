@@ -14,7 +14,7 @@ import {
   SectionIntro,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEok, formatWon } from '@/lib/utils';
 
 // 교육용 예시 회사. 금액 단위는 억원, 주가는 원.
@@ -118,13 +118,13 @@ export function Hybrid() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
           <Layers className='size-4 text-violet-500' />
           {instrument.label}
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{instrument.detail}</p>
-      </Card>
+      </Panel>
 
       <SectionIntro title='전환사채는 언제 주식이 되는가'>
         액면 {formatEok(CB_FACE, 0)}짜리 전환사채를 발행했다. 만기까지 들고 있으면 원금과 이자를 합쳐{' '}
@@ -132,7 +132,7 @@ export function Hybrid() {
         {CB_SHARES.toLocaleString('ko-KR')}주를 받는다. 회사가 얼마나 커졌느냐에 따라 보유자의 선택이 갈린다.
       </SectionIntro>
 
-      <Card className='p-4'>
+      <Panel>
         <ControlSlider
           icon={<TrendingUp className='size-4 text-emerald-500' />}
           label='만기 시점의 회사 가치'
@@ -144,7 +144,7 @@ export function Hybrid() {
           format={(v) => formatEok(v, 0)}
           hint={`기존 주식 ${BASE_SHARES.toLocaleString('ko-KR')}주에 전환사채 하나만 있는 회사다. 전환하면 지분의 ${(CONV_STAKE * 100).toFixed(2)}%를 가져간다.`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric
@@ -173,7 +173,7 @@ export function Hybrid() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <span className='text-xs text-muted-foreground'>
           회사 가치 {formatEok(value, 0)}이 보유자와 기존 주주에게 어떻게 갈리는가
         </span>
@@ -193,7 +193,7 @@ export function Hybrid() {
           format={(v) => formatEok(v, 0)}
           sub={converts ? '늘어난 주식 수만큼 몫이 묽어졌다' : '원리금을 내주고 나머지를 전부 가져간다'}
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={converts ? 'accent' : 'good'} icon={<ArrowLeftRight className='size-4 shrink-0' />}>
         {converts

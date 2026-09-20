@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ export function AddressCompare() {
         비교해 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='grid grid-cols-2 gap-4'>
           <Field label='입력 개수'>
             <Input
@@ -61,9 +61,9 @@ export function AddressCompare() {
         <div className='border-t pt-3'>
           <FeeRateControl value={feeRate} onChange={setFeeRate} />
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>타입별 크기·수수료 (Legacy 기준 비교)</span>
         <div className='flex flex-col gap-3'>
           {rows.map((r) => (
@@ -92,7 +92,7 @@ export function AddressCompare() {
             </div>
           ))}
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='Taproot가 항상 싼 건 아니다 (입력이 많아야 이긴다)'

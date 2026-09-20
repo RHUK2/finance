@@ -5,7 +5,7 @@ import { Anchor, Flag, ShieldAlert, TrendingDown } from 'lucide-react';
 import { useState } from 'react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { KR_RATE, krwChain } from './models';
 
@@ -25,7 +25,7 @@ export function WonPosition() {
         근사값이고 실제 금리 결정은 이보다 훨씬 많은 것을 본다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Flag className='size-4' />}
           label='미국 기준금리'
@@ -48,7 +48,7 @@ export function WonPosition() {
           format={(v) => `${v.toFixed(2)}%`}
           hint={`국내 경기만 보면 이 정도가 좋겠다는 값. 금리차가 ${KR_RATE.tolerance.toFixed(1)}%p를 넘어가면 이 값을 지킬 수 없다.`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -79,7 +79,7 @@ export function WonPosition() {
           : `한국은 원하던 ${intended.toFixed(2)}%를 지키지 못하고 ${c.forcedRate.toFixed(2)}%까지 따라 올리게 된다. 국내 경기와 무관하게 ${forcedUp.toFixed(2)}%p가 강제됐다.`}
       </StatusBanner>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
             <TrendingDown className='size-4 text-muted-foreground' />
@@ -102,7 +102,7 @@ export function WonPosition() {
         <p className='text-xs/relaxed text-muted-foreground'>
           가산폭 {KR_RATE.spread.value.toFixed(1)}%p는 {KR_RATE.spread.source}의 {KR_RATE.spread.asOf}에서 잡은 값이다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='그래서 한국은행은 무엇을 정하는가'

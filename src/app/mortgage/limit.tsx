@@ -14,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { levelPayment, maxLoanByDsr, REGULATION } from '@/lib/mortgage-models';
 import { formatEokFromMan, formatMan } from '@/lib/utils';
 
@@ -49,7 +49,7 @@ export function Limit() {
         어느 쪽이 먼저 걸리는지가 대출의 성격을 정한다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<House className='size-4 text-sky-500' />}
           label='집값'
@@ -117,7 +117,7 @@ export function Limit() {
             나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
           </p>
         </Field>
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric
@@ -145,7 +145,7 @@ export function Limit() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <CostBar
           label='LTV 한도'
           value={byLtv}
@@ -170,7 +170,7 @@ export function Limit() {
           format={(v) => formatEokFromMan(v, 1)}
           sub={`집값 ${formatEokFromMan(price, 1)} 중 대출로 안 되는 부분`}
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={binding === 'dsr' ? 'accent' : 'good'} icon={<Scale className='size-4 shrink-0' />}>
         {binding === 'dsr'

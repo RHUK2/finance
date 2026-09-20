@@ -16,7 +16,7 @@ export function CardHeading({ title, relativeTime }: { title?: string; relativeT
   return (
     <CardHeader>
       <div className='flex items-center justify-between'>
-        <CardTitle className='text-sm font-medium text-muted-foreground'>{title}</CardTitle>
+        <CardTitle>{title}</CardTitle>
         {relativeTime && <span className='text-xs text-muted-foreground'>{relativeTime}</span>}
       </div>
     </CardHeader>
@@ -115,7 +115,7 @@ export function RecentBlocksList({
   return (
     <Card>
       <CardHeading title={title} relativeTime={relativeTime} />
-      <CardContent className='p-0'>
+      <CardContent bleed>
         {!blocks ? (
           <Skeleton className='mx-6 h-[270px]' />
         ) : (

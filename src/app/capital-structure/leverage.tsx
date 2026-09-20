@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Coins, Landmark, Percent, Scale, TrendingUp, TriangleAlert } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn, formatEok, formatPct } from '@/lib/utils';
 
 import { TAX_RATE, TAX_RATE_NOTE } from './models';
@@ -83,7 +83,7 @@ export function Leverage() {
         부채 비중을 움직이면 주주가 가져가는 몫이 어떻게 증폭되는지 보인다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Scale className='size-4 text-rose-500' />}
           label='부채 비중'
@@ -117,15 +117,15 @@ export function Leverage() {
           format={(v) => formatEok(v, 0)}
           hint='이자와 세금을 빼기 전, 자산이 사업으로 벌어들인 돈이다. 자본구조와는 무관하게 결정된다.'
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Scale className='size-4 text-sky-500' />
           자산 {formatEok(ASSETS, 0)}은 어디서 왔는가
         </span>
         <StackedBar segments={segments} total={ASSETS} />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='ROA (자산 수익률)' value={formatPct(roa)} sub='세후 기준, 자본구조와 무관' />
@@ -153,7 +153,7 @@ export function Leverage() {
         {banner.text}
       </StatusBanner>
 
-      <Card className='gap-0 overflow-hidden p-0'>
+      <Panel bleed>
         <div className='flex flex-col gap-1 p-4'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
             <TrendingUp className='size-4 text-amber-500' />
@@ -193,7 +193,7 @@ export function Leverage() {
             </div>
           );
         })}
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<TrendingUp className='size-4 text-amber-500' />}

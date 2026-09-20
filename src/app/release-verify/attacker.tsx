@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ShieldAlert, Swords } from 'lucide-react';
 
 import { MarkTable, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { ATTACK_DETAIL, ATTACK_HEADERS, ATTACK_ROWS } from './models';
 
@@ -31,10 +31,10 @@ export function Attacker() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-semibold'>{detail.title}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{detail.body}</p>
-      </Card>
+      </Panel>
 
       {unreachable && (
         <StatusBanner icon={<ShieldAlert className='size-4' />} tone='bad'>

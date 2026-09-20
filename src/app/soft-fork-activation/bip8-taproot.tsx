@@ -2,7 +2,7 @@
 
 import { CalendarCheck, Users } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Legend, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +23,7 @@ export function Bip8Taproot() {
         <b>UASF(User-Activated Soft Fork)</b>라고 부른다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
           <Users className='size-4 text-sky-600 dark:text-sky-400' />
           BIP9 vs BIP8: 지지율이 끝까지 부족하면?
@@ -44,9 +44,9 @@ export function Bip8Taproot() {
             </p>
           </div>
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
           <CalendarCheck className='size-4 text-amber-600 dark:text-amber-400' />
           실제 사례: Taproot 활성화 타임라인
@@ -78,7 +78,7 @@ export function Bip8Taproot() {
           90%(2016블록 중 1815개)로 잡았다. UASF의 &#39;강제 켜기&#39;가 실제로 발동되진 않았지만, 그 가능성 자체가
           채굴자들이 굳이 반대할 이유를 없앴다는 평가를 받는다.
         </p>
-      </Card>
+      </Panel>
     </div>
   );
 }

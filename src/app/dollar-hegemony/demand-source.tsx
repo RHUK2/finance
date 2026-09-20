@@ -5,7 +5,7 @@ import { Landmark, Link2Off, ShieldQuestion } from 'lucide-react';
 import { useState } from 'react';
 
 import { ExplainCard, Metric, SectionIntro, StatusBanner, StepPanel } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { DEMAND_STAGES } from './models';
 
@@ -35,13 +35,13 @@ export function DemandSource() {
         {stage.claimNote}
       </StatusBanner>
 
-      <Card className='gap-1.5 p-4'>
+      <Panel className='gap-1.5'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <ShieldQuestion className='size-4 text-muted-foreground' />
           무엇이 이 단계를 끝냈나
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{stage.broke}</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 석유를 담보라고 부르면 안 되는가'

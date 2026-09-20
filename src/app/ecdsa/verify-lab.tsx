@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { CheckCircle2, Eye, XCircle } from 'lucide-react';
 
 import { Field, Metric, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { CurveGrid, type GridMark } from './curve-grid';
 import { MULTIPLES_OF_G, N, fmtPt, mod, mulPt, sign, verify } from './models';
@@ -46,7 +46,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
         개인키를 모르는 사람도 이 식을 계산할 수 있다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Eye className='size-4 text-sky-500' />
           검증자가 아는 값
@@ -64,9 +64,9 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
             달라진다.
           </p>
         </Field>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-semibold'>네 단계</span>
         <Line
           label='w = s⁻¹ mod n'
@@ -84,9 +84,9 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
               : `x좌표 ${res.X.x}를 n으로 나눈 나머지는 ${res.xModN}, 서명의 r은 ${sig.r}`
           }
         />
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>격자에서 두 점을 더해 X를 얻는다</span>
         <CurveGrid
           marks={marks}
@@ -96,7 +96,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
               : '복원된 X가 엉뚱한 자리에 떨어졌다. 재료 하나만 어긋나도 전혀 다른 점이 나온다.'
           }
         />
-      </Card>
+      </Panel>
 
       {res.ok ? (
         <StatusBanner icon={<CheckCircle2 className='size-4' />} tone='good'>

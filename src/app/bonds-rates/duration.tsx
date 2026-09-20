@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Percent, Ruler, TrendingDown, TriangleAlert } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { modifiedDuration, rateShock, type Bond } from './models';
 
@@ -43,7 +43,7 @@ export function Duration() {
         기준으로 둔다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Ruler className='size-4 text-sky-500' />}
           label='잔존 만기'
@@ -75,7 +75,7 @@ export function Duration() {
           step={0.0025}
           format={(v) => `${v >= 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(2)}%p`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='수정 듀레이션' value={`${md.toFixed(2)}년`} sub='금리 1%p당 가격 민감도' />
@@ -105,7 +105,7 @@ export function Duration() {
         </span>
       </StatusBanner>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>만기만 다른 세 채권</span>
           <span className='text-xs text-muted-foreground'>
@@ -127,7 +127,7 @@ export function Duration() {
           표면금리가 같아도 만기가 길면 같은 금리 충격에 몇 배로 흔들린다. 2022년에 채권이 안전자산이 아니었다는 말이
           나온 것은 이 때문이다. 부도가 난 것이 아니라 금리가 빠르게 오르는 동안 장기물 가격이 주식만큼 빠졌다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Ruler className='size-4 text-sky-500' />}

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { AlertTriangle, Crown, Flag, TrendingUp, UserMinus } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { cn } from '@/lib/utils';
 
 import { ControlSlider, ExplainCard, SectionIntro } from '@/components/simulation';
@@ -73,7 +73,7 @@ export function PayoffMatrix() {
         수렴한다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<TrendingUp className='size-4 text-emerald-500' />}
           label='상승 기대 (u)'
@@ -102,9 +102,9 @@ export function PayoffMatrix() {
           step={0.5}
           format={(v) => v.toFixed(1)}
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <PayoffGrid
           cells={cells}
           best={best}
@@ -113,9 +113,9 @@ export function PayoffMatrix() {
           rowHeaders={[{ icon: <Flag className='size-4' />, label: '우리: 채택' }, { label: '우리: 관망' }]}
           colHeaders={[{ icon: <Flag className='size-4' />, label: '경쟁국: 채택' }, { label: '경쟁국: 관망' }]}
         />
-      </Card>
+      </Panel>
 
-      <Card className='flex-row items-center gap-3 p-4'>
+      <Panel className='flex-row items-center gap-3'>
         <Crown
           className={cn('size-5 shrink-0', dominantStrategy === 'A' ? 'text-amber-500' : 'text-muted-foreground')}
         />
@@ -141,9 +141,9 @@ export function PayoffMatrix() {
             {margin > 0 ? '> 0 → 채택 우월' : margin < 0 ? '< 0 → 관망 우월' : '= 0 → 경계'}
           </p>
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <SectionIntro title='비교: 죄수의 딜레마'>
           같은 &#39;우월전략&#39; 구조라도 보상이 다르면 결과가 정반대가 된다. 죄수의 딜레마에선 배신이 우월전략이라 둘
           다 배신(1/1)으로 수렴하지만, 이는 둘 다 협력(3/3)보다 <b>모두에게 더 나쁜</b> 결과다.
@@ -155,7 +155,7 @@ export function PayoffMatrix() {
           rowHeaders={[{ label: '우리: 협력' }, { label: '우리: 배신' }]}
           colHeaders={[{ label: '상대: 협력' }, { label: '상대: 배신' }]}
         />
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 죄수의 딜레마와 결과가 정반대일까?'

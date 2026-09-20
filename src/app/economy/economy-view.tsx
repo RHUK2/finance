@@ -16,8 +16,10 @@ function FredGate({ available, title, children }: { available: boolean; title: s
   if (available) return children;
   return (
     <Card>
-      <CardContent className='text-sm text-muted-foreground'>
-        {title} · <code className='text-foreground'>FRED_API_KEY</code> 환경변수를 설정하면 표시됩니다.
+      <CardContent>
+        <p className='text-sm text-muted-foreground'>
+          {title} · <code className='text-foreground'>FRED_API_KEY</code> 환경변수를 설정하면 표시됩니다.
+        </p>
       </CardContent>
     </Card>
   );

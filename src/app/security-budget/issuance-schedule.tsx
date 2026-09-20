@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Coins, Hourglass } from 'lucide-react';
 
 import { ExplainCard, ControlSlider, Metric, SectionIntro, Sparkline, StackedBar } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA, subsidyAt, BLOCKS_PER_YEAR } from './models';
 
@@ -34,7 +34,7 @@ export function IssuanceSchedule() {
         지나면 보조금은 1사토시 미만이 되어 정수 계산에서 0이 된다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Hourglass className='size-4 text-sky-500' />}
           label='반감기 시대'
@@ -46,7 +46,7 @@ export function IssuanceSchedule() {
           format={(v) => `${v}번째 · ${eraStartYear(v)}년~`}
           hint={era === 4 ? '지금은 2024년 반감기 이후 시대다.' : undefined}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -63,7 +63,7 @@ export function IssuanceSchedule() {
         />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>2,100만 개 중 지금까지</span>
           <span className='text-xs text-muted-foreground'>{eraStartYear(era)}년 기준</span>
@@ -75,9 +75,9 @@ export function IssuanceSchedule() {
           ]}
           total={MAX_SUPPLY}
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-medium'>시대별 궤적</span>
         <Sparkline values={subsidies} label='보조금' className='text-amber-500' cursor={era} min={0} />
         <Sparkline values={supplies} label='누적 공급' className='text-sky-500' cursor={era} min={0} max={MAX_SUPPLY} />
@@ -85,7 +85,7 @@ export function IssuanceSchedule() {
           두 곡선은 같은 사실의 앞뒤다. 보조금이 절반씩 잘리므로 누적 공급은 상한에 점점 느리게 다가간다. 2032년이면
           이미 상한의 98%가 발행돼 있고, 남은 2%를 100여 년에 걸쳐 나눠 준다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Coins className='size-4 text-amber-500' />}

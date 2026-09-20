@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { Activity, TrendingUp } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro, Sparkline } from '@/components/simulation';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatUsd, mulberry32 } from '@/lib/utils';
@@ -36,7 +36,7 @@ export function VolatilityEngine() {
         성공 확률이 올라갈수록 변동성이 저절로 줄어드는 걸 볼 수 있다. 수치는 개념 이해용 예시다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Activity className='size-4 text-amber-500' />}
           label='하루치 뉴스 충격 (σ)'
@@ -59,7 +59,7 @@ export function VolatilityEngine() {
           step={0.001}
           format={(v) => (v >= 0 ? `+${v.toFixed(3)}` : v.toFixed(3))}
         />
-      </Card>
+      </Panel>
 
       <VolSim key={`${sigma}|${drift}`} sigma={sigma} drift={drift} speedMs={speedMs} onSpeed={setSpeedMs} />
 
@@ -103,7 +103,7 @@ function VolSim({
 
   return (
     <>
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
@@ -128,7 +128,7 @@ function VolSim({
           max={1}
           heightClass='h-12'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='성공 확률 p' value={`${Math.round(p * 100)}%`} tone='accent' />

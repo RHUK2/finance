@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { KeyRound, Link2 } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, IllustrativeDisclaimer, RoundControls, SectionIntro } from '@/components/simulation';
 import { useTrajectory } from '@/hooks/use-round-engine';
 import { cn, shortHex } from '@/lib/utils';
@@ -39,7 +39,7 @@ export function HtlcRouting() {
         풀 수 있게 걸어서, Carol이 배신할 수 없게 만든다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='grid grid-cols-1 gap-2 text-sm sm:grid-cols-2'>
           <div className='rounded-md border p-3'>
             <span className='text-xs text-muted-foreground'>Bob만 아는 비밀 (preimage R)</span>
@@ -75,7 +75,7 @@ export function HtlcRouting() {
         </div>
 
         <div className='rounded-md border-transparent bg-muted p-3 text-sm/relaxed'>{STEP_LABEL[step]}</div>
-      </Card>
+      </Panel>
 
       <IllustrativeDisclaimer>
         해시 H는 실제 SHA-256이 아니라 결정적 가짜 값(개념 시연용)이다. HTLC의 해시 잠금·타임락 구조와 결제가 역방향으로

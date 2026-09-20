@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { CircleCheck, CircleX } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Field, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import { illustrativePubKey } from '@/lib/script-concept';
@@ -50,7 +50,7 @@ export function MultisigLab() {
         이 조건을 <b>P2SH·P2WSH</b>로 한 겹 감싸 해시만 출력에 넣고, 지출할 때 원본 스크립트를 함께 공개한다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='전체 키 개수 (N)'
           value={n}
@@ -87,7 +87,7 @@ export function MultisigLab() {
             ))}
           </div>
         </Field>
-      </Card>
+      </Panel>
 
       <StatusBanner tone={unlocked ? 'good' : 'bad'}>
         {unlocked
@@ -100,7 +100,7 @@ export function MultisigLab() {
         <Metric label='정족수' value={`${m}-of-${n}`} tone='accent' />
       </div>
 
-      <Card className='flex flex-col gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-medium'>스크립트</span>
         <div className='flex flex-col gap-1.5 font-mono text-xs'>
           <div className='rounded-md bg-muted p-2'>
@@ -112,7 +112,7 @@ export function MultisigLab() {
             <div className='mt-1 break-all'>{scriptSig || '(서명 없음)'}</div>
           </div>
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='scriptSig 맨 앞의 OP_0은 왜 있을까'

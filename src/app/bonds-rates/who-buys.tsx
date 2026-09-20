@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Banknote, Building2, Globe, Landmark, Users } from 'lucide-react';
 
 import { MarkTable, type MarkRow, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 // 세 잣대로 같은 질문을 던진다. 국채를 사는 이유가 수익률이 아닌 주체가 섞여 있다는
 // 것이 이 표의 논지라, 첫 열이 갈리는 자리다.
@@ -80,10 +80,10 @@ export function WhoBuys() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-semibold'>{detail.title}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{detail.body}</p>
-      </Card>
+      </Panel>
     </div>
   );
 }

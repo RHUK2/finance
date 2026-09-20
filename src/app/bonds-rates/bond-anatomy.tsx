@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, CalendarClock, Coins, Equal, Percent } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { bondPrice, type Bond } from './models';
 
@@ -40,7 +40,7 @@ export function BondAnatomy() {
         보인다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Percent className='size-4 text-emerald-500' />}
           label='표면금리 (약속된 이자)'
@@ -73,7 +73,7 @@ export function BondAnatomy() {
           format={fmtPct}
           hint='시장이 이 정도 위험에 요구하는 수익률이다. 이것만이 날마다 움직인다.'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -111,7 +111,7 @@ export function BondAnatomy() {
         </span>
       </StatusBanner>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>가격은 무엇의 합인가</span>
           <span className='text-xs text-muted-foreground tabular-nums'>{fmtWon(price)}</span>
@@ -127,7 +127,7 @@ export function BondAnatomy() {
           만기가 멀수록 원금은 더 깊이 할인돼 오른쪽 몫이 줄고, 그 자리를 해마다 받는 이자가 메운다. 다음 탭의
           듀레이션은 바로 이 두 몫의 무게중심이 언제냐를 재는 값이다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Coins className='size-4 text-amber-500' />}

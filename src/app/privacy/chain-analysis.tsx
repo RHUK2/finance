@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { CircleCheck, CircleX, Users } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ExplainCard, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import { walletAddress } from '@/lib/privacy-concept';
@@ -30,7 +30,7 @@ export function ChainAnalysis() {
         덕분에, 분석가는 상당히 높은 확률로 어느 쪽이 잔돈인지 추측한다. 아래 트랜잭션에서 직접 맞혀보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div>
           <span className='text-xs text-muted-foreground'>입력 (모두 같은 지갑이 서명해야 쓸 수 있다)</span>
           <div className='mt-1 flex flex-col gap-1.5'>
@@ -94,7 +94,7 @@ export function ChainAnalysis() {
             </span>
           </StatusBanner>
         )}
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='이 휴리스틱들이 100% 정확하지는 않다'

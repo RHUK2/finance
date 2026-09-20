@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Repeat, Route } from 'lucide-react';
 
 import { ExplainCard, MarkTable, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { CHANNEL_DETAIL, CHANNEL_HEADERS, CHANNEL_ROWS } from './models';
 
@@ -62,9 +62,9 @@ export function KeyOrigin() {
         사슬이 제자리로 돌아온다.
       </SectionIntro>
 
-      <Card className='p-4'>
+      <Panel>
         <CircularLogic />
-      </Card>
+      </Panel>
 
       <MarkTable
         title='공개키를 어디서 받는가'
@@ -75,10 +75,10 @@ export function KeyOrigin() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='text-sm font-semibold'>{detail.title}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{detail.body}</p>
-      </Card>
+      </Panel>
 
       <StatusBanner icon={<Repeat className='size-4' />} tone='accent'>
         어느 채널도 혼자서는 충분하지 않다. 값하는 것은 동시에 장악하기 어려운 조합이다

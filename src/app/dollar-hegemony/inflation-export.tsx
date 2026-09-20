@@ -5,7 +5,7 @@ import { Banknote, Layers, Plane } from 'lucide-react';
 import { useState } from 'react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StackedBar } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 import { exportLedger } from './models';
 
@@ -27,7 +27,7 @@ export function InflationExport() {
         보여주기 위한 예시 수치다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Banknote className='size-4' />}
           label='발행 규모'
@@ -48,7 +48,7 @@ export function InflationExport() {
           format={(v) => `${v}%`}
           hint='발행액 중 무역 결제와 준비자산 축적으로 미국 밖에 남는 비율. 0으로 내리면 발행국이 전부 떠안는다.'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='발행국 물가 압력' value={pct(r.homePressure)} sub={`국내에 남은 ${r.home.toFixed(1)}조 달러`} />
@@ -65,7 +65,7 @@ export function InflationExport() {
         />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Layers className='size-4 text-muted-foreground' />
           발행된 달러가 어디에 가서 앉는가
@@ -81,9 +81,9 @@ export function InflationExport() {
             })),
           ]}
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>같은 발행이 계층마다 다르게 도착한다</span>
         <CostBar
           label='발행국 (달러)'
@@ -108,7 +108,7 @@ export function InflationExport() {
           원화는 신흥국 칸에 있다. 발행국보다 크게 맞지만 취약 통화만큼은 아니다. 이 자리가 실제로 무엇을 뜻하는지는
           다음 탭에서 금리로 따라간다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='캉티용 효과와 무엇이 다른가'

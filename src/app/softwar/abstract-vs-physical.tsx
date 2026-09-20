@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { Bomb, Crown, HeartPulse, ShieldAlert, ShieldCheck, Zap } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { bcraLabel } from '@/lib/bcra';
 import { cn, formatUsd } from '@/lib/utils';
@@ -30,7 +30,7 @@ export function AbstractVsPhysical() {
         <b>BCRA</b>(공격 이득 ÷ 공격 비용)라 부르고, 1 미만이면 공격이 비합리가 되어 방어에 성공한 것으로 본다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           label='자원 가치'
           hint='약탈자가 탈취해 얻는 이득. 클수록 매력적인 표적이 된다.'
@@ -63,7 +63,7 @@ export function AbstractVsPhysical() {
           scale='log'
           format={formatUsd}
         />
-      </Card>
+      </Panel>
 
       <div className='grid gap-3 sm:grid-cols-2'>
         <RegimeCard
@@ -84,12 +84,7 @@ export function AbstractVsPhysical() {
         />
       </div>
 
-      <Card
-        className={cn(
-          'flex-row items-start gap-3 p-4',
-          r.physical.captured ? 'border-rose-500/40 bg-rose-500/5' : 'border-emerald-500/40 bg-emerald-500/5',
-        )}
-      >
+      <Panel tone={r.physical.captured ? 'bad' : 'good'} className='flex-row items-start gap-3'>
         <ShieldCheck className={cn('size-5 shrink-0', r.physical.captured ? 'text-rose-500' : 'text-emerald-500')} />
         <p className='text-sm/relaxed'>
           추상 권력의 탈취 비용은 자산 가치가 아무리 커져도 함께 오르지 않는다. 그래서 고가치 자산일수록 BCRA가 치솟아{' '}
@@ -106,9 +101,9 @@ export function AbstractVsPhysical() {
             </>
           )}
         </p>
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <SectionIntro title='같은 벽, 다른 대가'>
           탈취 비용의 벽을 세우는 매개체는 역사적으로 군대(영토) → 핵무기(상호확증파괴) → 작업증명(전기)으로 바뀌어
           왔다. 로워리는 앞의 둘을 유혈 권력 투사(하드워), 마지막을 유혈 없는 권력 투사(소프트워)라 부르며 후자가 같은
@@ -140,7 +135,7 @@ export function AbstractVsPhysical() {
           이 대비는 로워리의 주장이며 학계에서 널리 받아들여진 결론은 아니다. 작업증명이 국가 간 무력 억지를 실제로
           대체할 수 있는지는 논쟁 중이다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 비트코인은 물리 권력인가'
@@ -168,7 +163,7 @@ function RegimeCard({
 }) {
   const max = Math.max(value, cost);
   return (
-    <Card className='gap-3 p-4'>
+    <Panel className='gap-3'>
       <span className='flex items-center gap-1.5 text-sm font-semibold'>
         {icon}
         {title}
@@ -187,6 +182,6 @@ function RegimeCard({
       >
         {captured ? '탈취됨' : '방어됨'}
       </StatusBanner>
-    </Card>
+    </Panel>
   );
 }

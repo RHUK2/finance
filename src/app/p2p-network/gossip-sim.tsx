@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Radio } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ExplainCard,
   IllustrativeDisclaimer,
@@ -48,7 +48,7 @@ export function GossipSim() {
         볼 수 있다.
       </IllustrativeDisclaimer>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
@@ -111,7 +111,7 @@ export function GossipSim() {
           <Metric label='도달률' value={`${pct.toFixed(0)}%`} tone={done ? 'good' : undefined} />
           <Metric label='최대 홉 수' value={`${maxRound}홉`} />
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Radio className='size-4 text-sky-600 dark:text-sky-400' />}

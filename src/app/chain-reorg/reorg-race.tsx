@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { GitFork, ShieldOff } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ControlSlider,
   ExplainCard,
@@ -69,7 +69,7 @@ export function ReorgRace() {
         함께 무효가 된다. 재생을 눌러 두 체인이 경주하는 걸 보자.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<GitFork className='size-4 text-amber-600 dark:text-amber-400' />}
           label='공격자 해시레이트 비중'
@@ -97,9 +97,9 @@ export function ReorgRace() {
           step={1}
           format={(v) => `확인 ${v}개`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <RoundControls
           playing={engine.playing}
           onToggle={engine.toggle}
@@ -139,7 +139,7 @@ export function ReorgRace() {
             sub='정직한 체인 − 공격자 체인'
           />
         </div>
-      </Card>
+      </Panel>
 
       <IllustrativeDisclaimer>
         여기서는 매 라운드 &#39;누가 다음 블록을 찾는가&#39;를 공격자 해시레이트 비중으로 동전 던지듯 결정한다. 실제로는

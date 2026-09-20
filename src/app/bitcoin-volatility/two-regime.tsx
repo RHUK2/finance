@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Coins, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { useMarket } from '@/hooks/use-market';
 import { cn, formatUsd } from '@/lib/utils';
 
@@ -37,7 +37,7 @@ export function TwoRegime() {
         정체가 드러난다. 아래 슬라이더로 성공 확률을 직접 움직여 보자. 수치는 개념 이해용 예시다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<TrendingUp className='size-4 text-amber-500' />}
           label='체제 전환 성공 확률 (p)'
@@ -62,7 +62,7 @@ export function TwoRegime() {
           max={50}
           format={(v) => `$${v}T`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -91,7 +91,7 @@ export function TwoRegime() {
 function Sensitivity({ p }: { p: number }) {
   const current = pricePerPointOfP(p);
   return (
-    <Card className='gap-3 p-4'>
+    <Panel className='gap-3'>
       <div className='flex items-baseline justify-between'>
         <span className='text-sm font-medium'>확률 1%포인트가 만드는 가격 변화</span>
         <span className='text-xl font-semibold text-amber-600 tabular-nums dark:text-amber-400'>
@@ -119,6 +119,6 @@ function Sensitivity({ p }: { p: number }) {
         성패가 불투명할수록 같은 크기의 뉴스가 가격을 훨씬 크게 흔든다. 확률이 100%에 가까워지면 이 값은 1%에 수렴하고,
         비트코인은 평범한 자산처럼 움직이게 된다.
       </p>
-    </Card>
+    </Panel>
   );
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Pickaxe, Target } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
 import { cn, shortHex } from '@/lib/utils';
@@ -33,7 +33,7 @@ export function MiningSim() {
         찍어보는 수밖에 없다. 난이도를 정하고 재생을 눌러 직접 &#39;채굴&#39;해 보자.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Target className='size-4 text-amber-600 dark:text-amber-400' />}
           label='목표 난이도 (해시 앞자리 0 개수)'
@@ -45,7 +45,7 @@ export function MiningSim() {
           step={1}
           format={(v) => `0 × ${v}자리`}
         />
-      </Card>
+      </Panel>
 
       <MiningEngine key={difficulty} difficulty={difficulty} />
 
@@ -101,7 +101,7 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
   const engine = useRoundEngine(step, speedMs);
 
   return (
-    <Card className='flex flex-col gap-3 p-4'>
+    <Panel className='gap-3'>
       <RoundControls
         playing={engine.playing}
         onToggle={engine.toggle}
@@ -140,6 +140,6 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
         <Metric label='평균 예상 시도' value={expectedTries(difficulty).toLocaleString('ko-KR')} />
         <Metric label='상태' value={found ? '성공' : '탐색 중'} tone={found ? 'good' : undefined} />
       </div>
-    </Card>
+    </Panel>
   );
 }

@@ -14,7 +14,7 @@ import {
   StackedBar,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ratioLabel } from '@/lib/bcra';
 
 import { COST_FLOOR, EXIT_COUNTRIES, type Grade, exitLedger } from './models';
@@ -54,7 +54,7 @@ export function ExitCalculus() {
         있다는 뜻이다. 등급과 가중치는 구조를 보여주기 위한 예시이지 어느 기관의 추정치가 아니다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Network className='size-4' />}
           label='대체망 성숙도'
@@ -71,7 +71,7 @@ export function ExitCalculus() {
           format={(v) => `${v}%`}
           hint='결제망 배제와 자산 동결을 실제로 행사하는 정도. 이탈 비용과 이탈 이득을 동시에 밀어 올린다.'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
@@ -93,7 +93,7 @@ export function ExitCalculus() {
           : `지금 조건에서 ${country.label}의 이탈은 비합리다. 나가는 값이 남는 값보다 비싸다. 네 나라 중 ${leaving}곳이 기준선을 넘었다.`}
       </StatusBanner>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
           <Scale className='size-4 text-muted-foreground' />
           {country.label}의 이탈 비용은 무엇으로 이뤄져 있나
@@ -107,7 +107,7 @@ export function ExitCalculus() {
             { label: '기본 마찰', value: COST_FLOOR, className: 'bg-muted-foreground/40' },
           ]}
         />
-      </Card>
+      </Panel>
 
       <MarkTable
         title='같은 잣대로 잰 네 나라'
@@ -118,10 +118,10 @@ export function ExitCalculus() {
         onSelect={setSelected}
       />
 
-      <Card className='gap-1.5 p-4'>
+      <Panel className='gap-1.5'>
         <span className='text-sm font-semibold'>{country.label}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{country.note}</p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Bitcoin className='size-4' />}

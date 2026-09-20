@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
 import { ExplainCard, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LineSeries, useChart } from '@/hooks/use-chart';
 import { useBitcoinHistorical } from '@/hooks/use-crypto';
@@ -43,7 +43,7 @@ export function MaturationCurve() {
         한 단계씩 낮아진다.
       </SectionIntro>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>실현 변동성 (90일 기준, 연 환산)</span>
           {current != null && (
@@ -57,7 +57,7 @@ export function MaturationCurve() {
         ) : (
           <ChartContainer containerRef={containerRef} onReset={resetView} />
         )}
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='이야기와 데이터가 만나는 지점'

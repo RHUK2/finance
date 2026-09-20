@@ -85,7 +85,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className='p-4'>
+      <SidebarHeader>
         <span className='text-base font-bold tracking-tight'>Finance</span>
       </SidebarHeader>
       <SidebarContent>

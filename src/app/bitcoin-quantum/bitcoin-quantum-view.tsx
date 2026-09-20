@@ -14,7 +14,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { ExplainerPage } from '@/components/explainer-page';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 
 const fmt = (n: number) => `${Math.round(n)}%`;
 
@@ -59,7 +59,7 @@ export function BitcoinQuantumView() {
       </IllustrativeDisclaimer>
 
       {/* 컨트롤 */}
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Atom className='size-4 text-violet-500' />}
           label='양자컴퓨터 논리 큐비트 확보율'
@@ -84,7 +84,7 @@ export function BitcoinQuantumView() {
             ]}
           />
         </div>
-      </Card>
+      </Panel>
 
       {/* 상태 배너 */}
       <StatusBanner tone={sim.risk.tone} icon={<sim.risk.icon className='size-5 shrink-0' />}>

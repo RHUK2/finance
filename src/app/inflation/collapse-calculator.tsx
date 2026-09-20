@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { ControlSlider, Metric, SectionIntro } from '@/components/simulation';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, valueAt, type Point } from '@/lib/inflation-models';
 
@@ -81,7 +81,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
         같은 돈을 자산에 넣었을 경우와 비교한다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-5 p-4'>
+      <Panel className='gap-5'>
         <div className='flex items-center gap-2'>
           <span className='text-sm font-medium'>기준</span>
           {(['M2', 'CPI'] as const).map((b) => (
@@ -159,7 +159,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
             )}
           </div>
         </div>
-      </Card>
+      </Panel>
     </>
   );
 }

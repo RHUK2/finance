@@ -6,7 +6,7 @@ import { Bitcoin, Cpu, ShieldCheck, Zap } from 'lucide-react';
 
 import Link from 'next/link';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { bcra, bcraLabel, deterred } from '@/lib/bcra';
 import { formatUsd } from '@/lib/utils';
@@ -55,7 +55,7 @@ export function AttackGame() {
         페이지에서 따로 다룬다.
       </SectionIntro>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Bitcoin className='size-4 text-amber-500' />}
           label='BTC 가격'
@@ -102,9 +102,9 @@ export function AttackGame() {
           step={0.005}
           format={(v) => `$${v.toFixed(3)}/kWh`}
         />
-      </Card>
+      </Panel>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-medium'>비용 vs 이득</span>
         <CostBar
           label='공격 비용 (장비 + 전기)'
@@ -114,7 +114,7 @@ export function AttackGame() {
           sub={`장비 ${formatUsd(r.hardwareCost)} · 전기 ${formatUsd(r.energyCost)}`}
         />
         <CostBar label='이중지불 이득 (최대 추정)' value={r.doubleSpendGain} max={max} className='bg-amber-500' />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         {/* 공격 비용 자체에는 좋고 나쁨이 없다. 이득과 견준 결과는 바로 옆 BCRA 카드가 말한다. */}

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ArrowLeftRight, Lock, Unlock } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import {
   ControlSlider,
   ExplainCard,
@@ -44,7 +44,7 @@ export function PaymentChannel() {
         있다. 마지막에 채널을 닫을 때만 최종 잔액으로 온체인 트랜잭션이 한 번 더 나간다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <div className='flex items-center justify-between text-sm'>
           <span className='font-medium'>채널 잔액 (총 {formatSats(FUNDING_SATS)})</span>
           <span className='text-muted-foreground'>업데이트 {state.updateCount}회</span>
@@ -82,7 +82,7 @@ export function PaymentChannel() {
             onChange={setDirection}
             disabled={closed}
           />
-          <Button onClick={pay} className='gap-1.5' disabled={closed}>
+          <Button onClick={pay} disabled={closed}>
             <ArrowLeftRight className='size-4' />
             오프체인 송금
           </Button>
@@ -101,12 +101,12 @@ export function PaymentChannel() {
 
         <div className='flex gap-2 border-t pt-3'>
           {!closed ? (
-            <Button variant='outline' onClick={() => setClosed(true)} className='gap-1.5'>
+            <Button variant='outline' onClick={() => setClosed(true)}>
               <Unlock className='size-4' />
               채널 닫기 (온체인 정산)
             </Button>
           ) : (
-            <Button variant='outline' onClick={reset} className='gap-1.5'>
+            <Button variant='outline' onClick={reset}>
               <Lock className='size-4' />새 채널 열기
             </Button>
           )}
@@ -128,7 +128,7 @@ export function PaymentChannel() {
           />
           <Metric label='채널 상태' value={closed ? '닫힘' : '열림'} tone={closed ? undefined : 'good'} />
         </div>
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='최신 잔액만 유효하다고 어떻게 보장할까'

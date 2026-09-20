@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { ControlSlider, Metric, SectionIntro } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, minWageAt, valueAt, type Point } from '@/lib/inflation-models';
 
@@ -70,7 +70,7 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
         {r.currentWage != null ? money(r.currentWage) : '-'} 기준)
       </SectionIntro>
 
-      <Card className='flex flex-col gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           label='시작 연도'
           min={minYear}
@@ -122,7 +122,7 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           1시간 미만이면 같은 노동의 구매력이 그만큼 줄어든 것이다. 예금이 최저임금 인상 속도를 따라가지 못하면 1시간
           아래로 내려간다.
         </p>
-      </Card>
+      </Panel>
     </>
   );
 }

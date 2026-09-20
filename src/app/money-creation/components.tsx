@@ -3,7 +3,7 @@
 import { ArrowLeftRight, Minus, Sparkles } from 'lucide-react';
 
 import { ExplainCard } from '@/components/simulation';
-import { Card, CardContent } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { useCountUp } from '@/hooks/use-count-up';
 import { cn, formatSigned } from '@/lib/utils';
 
@@ -43,9 +43,10 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
   const hasFlow = [...sheet.asset, ...sheet.liability].some((l) => l.flowChanged);
 
   return (
-    <Card
+    <Panel
+      bleed
       className={cn(
-        'gap-0 overflow-hidden p-0 transition-shadow',
+        'transition-shadow',
         hasCreated && 'shadow-lg ring-2 ring-amber-500/50',
         !hasCreated && hasFlow && 'shadow-lg ring-2 ring-sky-500/50',
       )}
@@ -55,7 +56,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
         <span className='text-xs text-muted-foreground'>{sub}</span>
       </div>
 
-      <CardContent className='flex flex-1 flex-col p-3'>
+      <div className='flex flex-1 flex-col p-3'>
         {hasCreated ? (
           <div className='mb-2 flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400'>
             <Sparkles className='size-3.5' />
@@ -105,8 +106,8 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
           </span>
           <span className='tabular-nums'>부채·자본 {formatSigned(liabTotal)}</span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Panel>
   );
 }
 
@@ -133,7 +134,7 @@ const ASSET_GROUPS = [
 
 export function AssetEquationCard() {
   return (
-    <Card className='gap-3 p-4'>
+    <Panel className='gap-3'>
       <div className='flex flex-wrap items-baseline gap-2'>
         <span className='font-semibold'>자산 = 부채 + 자본</span>
         <span className='text-xs text-muted-foreground'>
@@ -157,7 +158,7 @@ export function AssetEquationCard() {
           </div>
         ))}
       </div>
-    </Card>
+    </Panel>
   );
 }
 

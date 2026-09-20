@@ -14,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEok } from '@/lib/utils';
 
 // 단위는 억원. 교육용 예시 수치.
@@ -86,7 +86,7 @@ export function LimitedLiability() {
         돈을 모을 수 있다. 다만 벽을 스스로 허무는 경우도 있다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
           <Field label='사업 형태'>
             <SegmentedControl
@@ -144,7 +144,7 @@ export function LimitedLiability() {
           format={(v) => formatEok(v, 0)}
           hint={`${V.capital} 총액 ${formatEok(CAPITAL, 0)}, ${V.person} 개인 재산 ${formatEok(PERSONAL, 0)}을 전제로 계산한다.`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='채권자 미회수액' value={formatEok(creditorLoss, 0)} tone={creditorLoss > 0 ? 'bad' : 'good'} />
@@ -166,7 +166,7 @@ export function LimitedLiability() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <CostBar
           label='채권자가 돌려받는 돈'
           value={creditorRecovered}
@@ -199,13 +199,13 @@ export function LimitedLiability() {
           format={(v) => formatEok(v, 0)}
           sub={`보유 재산 ${formatEok(PERSONAL, 0)}`}
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={banner.tone} icon={banner.icon}>
         {banner.text}
       </StatusBanner>
 
-      <Card className='gap-2 p-4'>
+      <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
           <ShieldOff className='size-4 text-rose-500' />
           벽이 무너지는 전형적인 경우
@@ -219,7 +219,7 @@ export function LimitedLiability() {
           법인격을 인정하는 것이 오히려 정의에 반할 때, 법원은 그 사안에 한해 두 인격을 같은 것으로 본다. 회사를 없애는
           게 아니라 이번 건에서만 없는 셈 치는 것이다.
         </p>
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Users className='size-4 text-sky-500' />}

@@ -14,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEok } from '@/lib/utils';
 
 export function DepositPriority() {
@@ -72,7 +72,7 @@ export function DepositPriority() {
         생긴다. 둘 다 근저당보다 하루라도 빨라야 앞선다. 집이 경매로 넘어간 상황에서 이 조건들을 하나씩 켜고 꺼 보자.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
           <Field label='전입신고 + 점유'>
             <SegmentedControl
@@ -151,7 +151,7 @@ export function DepositPriority() {
           format={formatEok}
           hint='경매는 시세보다 낮게 낙찰되는 경우가 많다. 나눌 수 있는 돈은 시세가 아니라 이 금액이다.'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='배당으로 받는 돈' value={formatEok(distributed)} tone={distributed > 0 ? 'good' : 'bad'} />
@@ -165,7 +165,7 @@ export function DepositPriority() {
         <Metric label='못 받는 돈' value={formatEok(lost)} tone={lost > 0 ? 'bad' : 'good'} />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <span className='text-xs text-muted-foreground'>
           낙찰가 {formatEok(salePrice)}이 {tenantFirst ? '임차인 → 은행' : '은행 → 임차인'} 순서로 배분된다
         </span>
@@ -201,7 +201,7 @@ export function DepositPriority() {
           format={formatEok}
           sub='집주인에게 남은 재산이 없다면 회수가 어렵다'
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={banner.tone} icon={banner.icon}>
         {banner.text}

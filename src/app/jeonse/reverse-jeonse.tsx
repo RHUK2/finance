@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Building2, CircleAlert, Percent, ShieldAlert, TrendingDown } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
 export function ReverseJeonse() {
@@ -52,7 +52,7 @@ export function ReverseJeonse() {
         집값 자체를 넘어서면 깡통전세가 된다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <ControlSlider
           icon={<Building2 className='size-4 text-sky-500' />}
           label='계약 당시 매매가'
@@ -95,7 +95,7 @@ export function ReverseJeonse() {
           format={formatPct}
           hint='지금 새 임차인을 구하면 받을 수 있는 보증금이 그만큼 줄어든다.'
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='돌려줘야 할 보증금' value={formatEok(deposit)} sub='계약서에 적힌 금액' />
@@ -123,7 +123,7 @@ export function ReverseJeonse() {
         />
       </div>
 
-      <Card className='gap-4 p-4'>
+      <Panel>
         <CostBar
           label='돌려줘야 할 보증금'
           value={deposit}
@@ -148,7 +148,7 @@ export function ReverseJeonse() {
           format={formatEok}
           sub={refundGap > 0 ? `${formatEok(refundGap)} 부족` : '기존 보증금을 덮는다'}
         />
-      </Card>
+      </Panel>
 
       <StatusBanner tone={banner.tone} icon={banner.icon}>
         {banner.text}

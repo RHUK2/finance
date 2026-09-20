@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { CircleCheck, CircleX, Coins, Send } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { Pipeline } from '@/components/pipeline';
 import { ControlSlider, ExplainCard, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
@@ -63,7 +63,7 @@ export function UtxoModel() {
         타입별 수수료 탭에서 본다.
       </SectionIntro>
 
-      <Card className='flex flex-col gap-4 p-4'>
+      <Panel>
         <ControlSlider
           icon={<Send className='size-4 text-emerald-600 dark:text-emerald-400' />}
           label='보낼 금액'
@@ -121,9 +121,9 @@ export function UtxoModel() {
                 : `입력 합계가 송금액 + 수수료보다 ${formatSats(shortfall)} 부족하다. 동전을 더 고르거나 금액을 줄여 보자.`}
           </p>
         </div>
-      </Card>
+      </Panel>
 
-      <Card className='flex flex-col gap-3 p-4'>
+      <Panel className='gap-3'>
         <span className='text-sm font-semibold'>고른 동전이 새 동전으로</span>
         <Pipeline
           items={[
@@ -155,7 +155,7 @@ export function UtxoModel() {
             { kind: 'box', label: '수수료', value: formatSats(fee) },
           ]}
         />
-      </Card>
+      </Panel>
 
       <ExplainCard
         title='왜 항상 잔돈이 생길까?'

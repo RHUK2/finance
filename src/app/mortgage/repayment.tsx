@@ -14,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { Card } from '@/components/ui/card';
+import { Panel } from '@/components/panel';
 import { byYear, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage-models';
 import { cn, formatEokFromMan, formatMan } from '@/lib/utils';
 
@@ -57,7 +57,7 @@ export function Repayment() {
         붙으므로, 원금을 빨리 줄일수록 총이자가 작아진다. 결국 지금의 부담과 나중의 이자를 맞바꾸는 선택이다.
       </SectionIntro>
 
-      <Card className='gap-5 p-4'>
+      <Panel className='gap-5'>
         <Field label='상환 방식'>
           <SegmentedControl
             options={REPAY_METHODS.map((m) => ({ value: m, label: REPAY_LABEL[m] }))}
@@ -95,7 +95,7 @@ export function Repayment() {
           step={5}
           format={(v) => `${v}년`}
         />
-      </Card>
+      </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric
@@ -121,7 +121,7 @@ export function Repayment() {
         />
       </div>
 
-      <Card className='gap-3 p-4'>
+      <Panel className='gap-3'>
         <div className='flex flex-col gap-1'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
             <Coins className='size-4 text-emerald-500' />
@@ -156,7 +156,7 @@ export function Repayment() {
           <Legend className='bg-emerald-500' label='원금' />
           <span className='tabular-nums'>1년차부터 {years}년차까지</span>
         </div>
-      </Card>
+      </Panel>
 
       <StatusBanner tone='accent' icon={<Scale className='size-4 shrink-0' />}>
         {method === 'equal-payment'
@@ -166,7 +166,7 @@ export function Repayment() {
             : '만기까지 이자만 낸다. 매달 부담은 가장 가볍지만 원금이 한 푼도 줄지 않아 총이자가 가장 크고, 만기에 원금 전액을 마련해야 한다.'}
       </StatusBanner>
 
-      <Card className='gap-0 overflow-hidden p-0'>
+      <Panel bleed>
         <div className='p-4 text-sm font-semibold'>세 방식의 총이자</div>
         <div className='grid grid-cols-[1fr_6rem_5rem] gap-x-2 border-y px-4 py-2 text-xs text-muted-foreground'>
           <span>상환 방식</span>
@@ -198,7 +198,7 @@ export function Repayment() {
             </div>
           );
         })}
-      </Card>
+      </Panel>
 
       <ExplainCard
         icon={<Coins className='size-4 text-amber-500' />}
