@@ -177,18 +177,24 @@ export function realCurveY(x: number): number {
   return Math.sqrt(Math.max(0, x * x * x + B));
 }
 
-// 실수 곡선 위의 점 덧셈 예시. P=(−1, √6), Q=(2, √15)에서 직선을 그어 얻은 값이며
-// 화면에 적는 숫자와 그림이 어긋나지 않도록 여기서 한 번에 계산한다.
-export const REAL_EXAMPLE = (() => {
-  const px = -1;
-  const qx = 2;
+// 실수 곡선 위의 점 덧셈. P와 Q의 x좌표만 받아 위쪽 가지에서 y를 얻고, 직선을 그어
+// 세 번째 교점과 그 대칭점까지 한 번에 낸다. 화면에 적는 숫자와 그림이 어긋나지
+// 않도록 둘 다 이 값에서 나온다.
+//
+// 고를 수 있는 x의 범위는 REAL_PX_RANGE·REAL_QX_RANGE로 좁혀 둔다. 두 점이 붙으면
+// 직선이 접선에 가까워져 기울기가 발산하고 세 번째 교점이 화면 밖 멀리로 달아난다.
+// 범위를 이렇게 잡으면 세 점이 언제나 그림 안에 남는다.
+export const REAL_PX_RANGE = { min: -1.8, max: 0.5 };
+export const REAL_QX_RANGE = { min: 0.8, max: 2.4 };
+
+export function realExample(px: number, qx: number) {
   const py = realCurveY(px);
   const qy = realCurveY(qx);
   const l = (qy - py) / (qx - px);
   const rx = l * l - px - qx;
   const thirdY = l * (rx - px) + py;
   return { px, py, qx, qy, l, rx, thirdY, sumY: -thirdY };
-})();
+}
 
 // 실제 secp256k1의 규모. 유한체 위의 곡선 탭에서 크기 비교로만 쓴다.
 export const SECP256K1 = {

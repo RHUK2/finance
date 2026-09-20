@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Divide, Grid3x3, Spline } from 'lucide-react';
 
@@ -8,7 +8,19 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/s
 import { Card } from '@/components/ui/card';
 
 import { CurveGrid } from './curve-grid';
-import { CURVE_POINTS, N, P, REAL_CURVE_MIN_X, REAL_EXAMPLE, SECP256K1, inv, mod, realCurveY } from './models';
+import {
+  CURVE_POINTS,
+  N,
+  P,
+  REAL_CURVE_MIN_X,
+  REAL_PX_RANGE,
+  REAL_QX_RANGE,
+  SECP256K1,
+  inv,
+  mod,
+  realCurveY,
+  realExample,
+} from './models';
 
 // 실수 곡선을 그리는 경로. 두 가지는 x = REAL_CURVE_MIN_X에서 y = 0으로 만나므로,
 // 아래 가지를 오른쪽 끝에서 그 지점까지 그린 뒤 위 가지로 되돌아 나오면 한 붓에 이어진다.
@@ -17,7 +29,8 @@ import { CURVE_POINTS, N, P, REAL_CURVE_MIN_X, REAL_EXAMPLE, SECP256K1, inv, mod
 // x를 SX배 늘려 그린다. 이 곡선은 y가 x보다 훨씬 빨리 자라서 실제 비율로 그리면
 // 그림이 세로로 길쭉해져 카드 하나를 통째로 먹는다. 가로로 늘려도 점 덧셈의 기하
 // (직선·세 번째 교점·x축 대칭)는 그대로 보인다.
-const REAL_MAX_X = 2.4;
+// Q를 오른쪽 끝까지 밀어도 점이 곡선 밖으로 나가지 않도록 Q의 상한까지 그린다.
+const REAL_MAX_X = REAL_QX_RANGE.max;
 const SX = 2.2;
 const REAL_PATH = (() => {
   const xs = Array.from({ length: 120 }, (_, i) => REAL_CURVE_MIN_X + ((REAL_MAX_X - REAL_CURVE_MIN_X) * i) / 119);
@@ -26,11 +39,20 @@ const REAL_PATH = (() => {
   return `M ${below.join(' L ')} L ${above.join(' L ')}`;
 })();
 
-const { px, py, qx, qy, l, rx, thirdY, sumY } = REAL_EXAMPLE;
-
 export function FiniteField() {
   const [a, setA] = useState(7);
   const aInv = inv(a, P);
+
+  const [pxInput, setPxInput] = useState(-1);
+  const [qxInput, setQxInput] = useState(2);
+  const { px, py, qx, qy, l, rx, thirdY, sumY } = useMemo(() => realExample(pxInput, qxInput), [pxInput, qxInput]);
+
+  // 직선은 세 점을 모두 품는 구간에 긋는다. 세 번째 교점이 Q보다 오른쪽에 놓이는
+  // 조합이 있어서 P와 Q만 보고 양 끝을 잡으면 직선이 교점 앞에서 끊긴다.
+  const lineFrom = Math.min(px, qx, rx) - 0.4;
+  const lineTo = Math.max(px, qx, rx) + 0.4;
+  // 세 번째 교점이 x축에 가까우면 그 점과 대칭점의 라벨이 겹친다. 그때만 P + Q 라벨을 아래로 내린다.
+  const tight = Math.abs(thirdY - sumY) < 1.3;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -44,6 +66,26 @@ export function FiniteField() {
           <Spline className='size-4 text-sky-500' />
           {SECP256K1.equation} 위의 P + Q
         </span>
+        <ControlSlider
+          label='P의 x좌표'
+          hint='x를 정하면 y는 곡선이 정한다. 위쪽 가지의 점을 잡는다.'
+          value={pxInput}
+          onChange={setPxInput}
+          min={REAL_PX_RANGE.min}
+          max={REAL_PX_RANGE.max}
+          step={0.1}
+          format={(v) => `(${v.toFixed(2)}, ${realCurveY(v).toFixed(2)})`}
+        />
+        <ControlSlider
+          label='Q의 x좌표'
+          hint='P와 Q가 붙을수록 직선은 접선에 가까워진다. 두 범위를 떨어뜨려 둔 것이 그래서다.'
+          value={qxInput}
+          onChange={setQxInput}
+          min={REAL_QX_RANGE.min}
+          max={REAL_QX_RANGE.max}
+          step={0.1}
+          format={(v) => `(${v.toFixed(2)}, ${realCurveY(v).toFixed(2)})`}
+        />
         <svg
           viewBox='-5.1 -5.4 11.2 10.8'
           className='mx-auto w-full max-w-lg'
@@ -56,10 +98,10 @@ export function FiniteField() {
 
           {/* P와 Q를 잇는 직선. 세 번째 교점 너머까지 늘려 긋는다 */}
           <line
-            x1={(px - 0.6) * SX}
-            y1={-(py + l * -0.6)}
-            x2={(qx + 0.5) * SX}
-            y2={-(py + l * (qx + 0.5 - px))}
+            x1={lineFrom * SX}
+            y1={-(py + l * (lineFrom - px))}
+            x2={lineTo * SX}
+            y2={-(py + l * (lineTo - px))}
             className='stroke-amber-500'
             strokeDasharray='0.18 0.14'
             strokeWidth={0.07}
@@ -78,7 +120,7 @@ export function FiniteField() {
           <RealDot x={px * SX} y={py} label='P' dx={-0.75} dy={0.75} className='fill-sky-500' />
           <RealDot x={qx * SX} y={qy} label='Q' className='fill-sky-500' />
           <RealDot x={rx * SX} y={thirdY} label='세 번째 교점' dy={-0.55} className='fill-amber-500' />
-          <RealDot x={rx * SX} y={sumY} label='P + Q' dy={-0.9} className='fill-emerald-500' />
+          <RealDot x={rx * SX} y={sumY} label='P + Q' dy={tight ? 0.95 : -0.9} className='fill-emerald-500' />
         </svg>
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='기울기 λ' value={l.toFixed(3)} sub='(y_Q − y_P) ÷ (x_Q − x_P)' />
@@ -90,9 +132,10 @@ export function FiniteField() {
             sub='세 번째 교점을 뒤집은 것'
           />
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
-          여기 쓰인 식 셋(λ, λ² − x_P − x_Q, 그리고 뒤집기)이 이 페이지 끝까지 그대로 간다. 바뀌는 건 계산이 실수가
-          아니라 유한체에서 일어난다는 것뿐이다.
+        <p className='text-xs/relaxed text-muted-foreground'>
+          P와 Q를 어디로 옮겨도 직선을 긋고, 세 번째 교점을 찾고, x축에 대해 뒤집는 세 동작은 같다. 여기 쓰인 식 셋(λ,
+          λ² − x_P − x_Q, 그리고 뒤집기)이 이 페이지 끝까지 그대로 간다. 바뀌는 건 계산이 실수가 아니라 유한체에서
+          일어난다는 것뿐이다.
         </p>
       </Card>
 
