@@ -35,5 +35,9 @@ pnpm-debug.log*
 *.pem
 .scratch
 
+# 워크트리별 포트 슬롯 장부 (기준 체크아웃에만 생긴다)
+.worktree-ports.json
+.worktree-ports.json.lock/
+
 # Ai Files
 .claude/*

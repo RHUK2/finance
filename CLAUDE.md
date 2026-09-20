@@ -3,15 +3,54 @@
 ## 명령어
 
 ```bash
-pnpm dev          # 개발 서버
+pnpm dev          # 개발 서버 (워크트리 슬롯 포트로 뜬다)
+pnpm ports        # 이 워크트리가 쓰는 포트 확인
+pnpm env:pull     # Vercel Development 환경변수를 로컬 환경 파일로 내려받기
 pnpm type         # TypeScript 타입 체크
 pnpm lint         # ESLint (max-warnings 10)
-pnpm inspect      # type + lint 한 번에
+pnpm test:scripts # scripts/ 의 node:test 스위트
+pnpm inspect      # type + lint + test:scripts 한 번에
 pnpm build        # 프로덕션 빌드 (type·lint를 선행하지 않는다. inspect를 먼저 돌릴 것)
 pnpm format       # Prettier 포맷
 pnpm clean:caches # .next 삭제
 vercel --prod     # Vercel 프로덕션 배포
 ```
+
+## 워크트리와 로컬 설정
+
+한 레포를 여러 체크아웃으로 동시에 굴리는 것을 전제로 한다. 추적되지 않는 로컬 파일은 워크트리마다 복제되면 조용히 갈라지고, 포트는 그대로 두면 충돌한다. 둘을 반대 방향으로 푼다: 파일은 하나로 묶고, 포트는 갈라 준다.
+
+| 대상                  | 정본                         | 규칙                                                               |
+| --------------------- | ---------------------------- | ------------------------------------------------------------------ |
+| 로컬 파일 (환경·설정) | `link-worktree-files.sh`     | 기준 체크아웃의 실체 하나를 심볼릭 링크로 공유한다                 |
+| dev 서버 포트         | `scripts/worktree-ports.mjs` | `3000 + 슬롯`. 기준 체크아웃이 0번, 워크트리는 이름 해시로 1번부터 |
+
+새 워크트리를 만들면 그 안에서 한 번 실행한다. 링크 대상은 `link-worktree-files.sh`의 `ITEMS`가 정본이다.
+
+```bash
+git worktree add ../finance-<주제> -b <브랜치>
+cd ../finance-<주제>
+pnpm install
+bash link-worktree-files.sh
+```
+
+사본이 기준과 내용이 다르면 건드리지 않고 경고만 한다. 합친 뒤 `--force`로 다시 실행한다. 브랜치마다 값이 달라야 하는 항목이 생기면 그 링크만 풀고 실제 파일로 되돌린다.
+
+슬롯 장부는 기준 체크아웃의 `.worktree-ports.json`에 있다(gitignore). 사라진 워크트리의 항목은 읽을 때마다 회수된다. 한 번만 다른 포트로 띄우려면 `FINANCE_PORT_SLOT=<0~9>`.
+
+## 환경변수
+
+Vercel 프로젝트(`rhuk2s-projects/finance`)가 단일 출처다. 로컬 환경 파일을 손으로 고치지 않고 `pnpm env:pull`로 내려받는다. `.vercel` 링크 정보도 워크트리끼리 공유하므로(위 `ITEMS`) 워크트리마다 다시 `vercel link`를 하지 않는다.
+
+읽는 값은 넷이다. Upstash는 Vercel 통합이 심어 주는 `KV_*` 이름으로 오고, `Redis.fromEnv()`가 `UPSTASH_REDIS_REST_URL` 다음 순위로 `KV_REST_API_URL`을 보기 때문에 그대로 동작한다(`src/lib/cache.ts`).
+
+| 이름                                  | 없으면                                       |
+| ------------------------------------- | -------------------------------------------- |
+| `KV_REST_API_URL`·`KV_REST_API_TOKEN` | 캐시 계층이 죽는다. 라우트 전체가 실패한다   |
+| `FRED_API_KEY`                        | `fred`·`inflation-data`가 `available: false` |
+| `ECOS_API_KEY`                        | `inflation-data-kr`가 `available: false`     |
+
+새 변수는 로컬 파일이 아니라 Vercel에 먼저 넣는다(`vercel env add <NAME> development preview production`). Sensitive(Secret)로 넣으면 값을 다시 내려받을 수 없어 `pnpm env:pull`이 자리표시자를 쓴다. 로컬에서 읽어야 하는 값은 sensitive로 만들지 않는다.
 
 ## 아키텍처
 
