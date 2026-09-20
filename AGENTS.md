@@ -13,6 +13,7 @@
 | 명령어                        | `package.json`의 `scripts`         |
 | 워크트리 포트                 | `scripts/worktree-ports.mjs`       |
 | 워크트리가 공유하는 로컬 파일 | `link-worktree-files.sh`의 `ITEMS` |
+| 동결된 lint 빚                | `eslint-suppressions.json`         |
 
 커밋 전에 `pnpm inspect`를 돌린다. CI가 없어 이것이 유일한 게이트다.
 

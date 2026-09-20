@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "type": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 10 --cache --cache-strategy content",
+    "lint": "eslint . --cache --cache-strategy content",
     "test:scripts": "node --test scripts/*.test.mjs",
     "inspect": "pnpm type && pnpm lint && pnpm test:scripts",
     "clean:caches": "rm -rf .next",
@@ -44,6 +44,7 @@
     "yahoo-finance2": "^3.15.3"
   },
   "devDependencies": {
+    "@shadcn/lint": "^0.1.1",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/d3-force": "^3.0.10",
     "@types/node": "^25.9.3",
@@ -53,7 +54,6 @@
     "eslint-config-next": "16.2.9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-better-tailwindcss": "^4.7.0",
-    "eslint-plugin-only-warn": "^1.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
     "prettier": "^3.8.4",

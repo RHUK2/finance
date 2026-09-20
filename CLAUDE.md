@@ -6,7 +6,7 @@
 pnpm dev          # 개발 서버 (워크트리 슬롯 포트로 뜬다)
 pnpm ports        # 이 워크트리가 쓰는 포트 확인
 pnpm type         # TypeScript 타입 체크
-pnpm lint         # ESLint (max-warnings 10)
+pnpm lint         # ESLint (에러 0이 통과 조건)
 pnpm test:scripts # scripts/ 의 node:test 스위트
 pnpm inspect      # type + lint + test:scripts 한 번에
 pnpm build        # 프로덕션 빌드 (type·lint를 선행하지 않는다. inspect를 먼저 돌릴 것)

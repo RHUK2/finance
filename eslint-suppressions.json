@@ -1,0 +1,582 @@
+{
+  "src/app/bitcoin-game-theory/adoption-cascade.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/bitcoin-game-theory/attack-game.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 9
+    }
+  },
+  "src/app/bitcoin-game-theory/hodl-dilemma.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/bitcoin-game-theory/payoff-matrix.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 2
+    },
+    "shadcn/no-raw-colors": {
+      "count": 18
+    }
+  },
+  "src/app/bitcoin-history/bitcoin-history-view.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    }
+  },
+  "src/app/bitcoin-quantum/bitcoin-quantum-view.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/bitcoin-volatility/maturation-curve.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/bitcoin-volatility/two-regime.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/bitcoin-volatility/volatility-engine.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/block-mining/block-header.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 3
+    }
+  },
+  "src/app/block-mining/difficulty-consensus.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/block-mining/mining-sim.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/bonds-rates/bond-anatomy.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/bonds-rates/duration.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 7
+    }
+  },
+  "src/app/bonds-rates/who-buys.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/bonds-rates/yield-curve.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/capital-structure/hybrid.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 7
+    }
+  },
+  "src/app/capital-structure/leverage.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 2
+    },
+    "shadcn/no-raw-colors": {
+      "count": 11
+    }
+  },
+  "src/app/capital-structure/tax-shield.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 2
+    },
+    "shadcn/no-raw-colors": {
+      "count": 9
+    }
+  },
+  "src/app/capital-structure/waterfall.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/chain-reorg/attack-scope.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 9
+    }
+  },
+  "src/app/chain-reorg/confirmation-safety.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 7
+    }
+  },
+  "src/app/chain-reorg/reorg-race.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/chain-split/august-2026.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/chain-split/coin-separation.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/chain-split/replay-attack.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/chain-split/why-two-chains.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 12
+    }
+  },
+  "src/app/corporation/agency.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 17
+    }
+  },
+  "src/app/corporation/legal-person.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/corporation/limited-liability.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/corporation/shares.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/dollar-hegemony/inflation-export.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/ecdsa/break-lab.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/ecdsa/curve-grid.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 3
+    }
+  },
+  "src/app/ecdsa/finite-field.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 12
+    }
+  },
+  "src/app/ecdsa/point-add.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/ecdsa/sign-lab.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 3
+    }
+  },
+  "src/app/ecdsa/verify-lab.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/futures-hedging/crack-spread.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/futures-hedging/hedge-ledger.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 3
+    }
+  },
+  "src/app/futures-hedging/liquidation-cascade.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/futures-hedging/perpetual-funding.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/grid-battery/grid-battery-view.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/illicit-funds/cash-vs-chain.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/illicit-funds/laundering-trail.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 10
+    }
+  },
+  "src/app/illicit-funds/real-cases.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/inflation/components.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/jeonse/deposit-loan.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 7
+    }
+  },
+  "src/app/jeonse/deposit-priority.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/jeonse/gap-investment.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/jeonse/reverse-jeonse.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 9
+    }
+  },
+  "src/app/lightning-network/htlc-routing.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/lightning-network/onchain-comparison.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/lightning-network/payment-channel.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/mempool/components.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 8
+    },
+    "shadcn/no-raw-colors": {
+      "count": 16
+    }
+  },
+  "src/app/mempool/mempool-view.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 3
+    },
+    "shadcn/no-raw-colors": {
+      "count": 12
+    }
+  },
+  "src/app/money-creation/components.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 23
+    }
+  },
+  "src/app/money-creation/money-creation-view.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/mortgage/buy-or-rent.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/mortgage/limit.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 9
+    }
+  },
+  "src/app/mortgage/rate-stress.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 9
+    }
+  },
+  "src/app/mortgage/repayment.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 3
+    },
+    "shadcn/no-raw-colors": {
+      "count": 13
+    }
+  },
+  "src/app/multisig-timelock/multisig-lab.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/p2p-network/gossip-sim.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 7
+    }
+  },
+  "src/app/p2p-network/ibd-sync.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/p2p-network/mempool-policy.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 14
+    }
+  },
+  "src/app/privacy/address-reuse.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/privacy/chain-analysis.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 10
+    }
+  },
+  "src/app/privacy/coinjoin.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 3
+    }
+  },
+  "src/app/release-verify/attacker.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/release-verify/checksum.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 3
+    }
+  },
+  "src/app/release-verify/key-origin.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/release-verify/release-verify-view.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/release-verify/reproducible.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/release-verify/signature.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 3
+    },
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/script-verify/address-script-compare.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    }
+  },
+  "src/app/script-verify/script-stack.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 12
+    }
+  },
+  "src/app/script-verify/signature-lab.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/security-budget/attack-cost.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/security-budget/fee-gap.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/security-budget/issuance-schedule.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 5
+    }
+  },
+  "src/app/soft-fork-activation/bip8-taproot.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 10
+    }
+  },
+  "src/app/soft-fork-activation/bip9-signaling.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 10
+    }
+  },
+  "src/app/soft-fork-activation/fork-compat.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/softwar/abstract-vs-physical.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 14
+    }
+  },
+  "src/app/softwar/primordial-economics.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 7
+    }
+  },
+  "src/app/transactions/fee-calc.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    }
+  },
+  "src/app/transactions/fee-rate-control.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/transactions/tx-structure.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/transactions/utxo-model.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/value-theory/causation.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/app/value-theory/imputation.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 1
+    }
+  },
+  "src/app/value-theory/mining-cost.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/app/value-theory/water-diamond.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 8
+    }
+  },
+  "src/app/wallet-keys/entropy-mnemonic.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 3
+    },
+    "shadcn/no-raw-colors": {
+      "count": 13
+    }
+  },
+  "src/app/wallet-keys/key-tree.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 7
+    },
+    "shadcn/no-raw-colors": {
+      "count": 6
+    }
+  },
+  "src/app/wallet-keys/seed-derivation.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/components/assets-table.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    },
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/components/chart-container.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 1
+    }
+  },
+  "src/components/macro-chart.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 4
+    }
+  },
+  "src/components/mobile-nav-drawer.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 2
+    }
+  },
+  "src/components/page-main.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 2
+    }
+  },
+  "src/components/pipeline.tsx": {
+    "shadcn/no-raw-colors": {
+      "count": 2
+    }
+  },
+  "src/components/simulation.tsx": {
+    "shadcn/no-arbitrary-values": {
+      "count": 4
+    },
+    "shadcn/no-raw-colors": {
+      "count": 31
+    }
+  }
+}
