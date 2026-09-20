@@ -51,7 +51,7 @@ export function AddressReuse() {
           {PAYMENTS.map((p, i) => (
             <div key={p.from} className='flex items-center justify-between gap-3 rounded-md border p-3 text-sm'>
               <span className='w-20 shrink-0 text-sm font-medium'>{p.from}</span>
-              <span className='text-muted-foreground flex-1 truncate font-mono text-xs'>
+              <span className='flex-1 truncate font-mono text-xs text-muted-foreground'>
                 {shortHex(addresses[i], 20)}
               </span>
               <span className='w-24 shrink-0 text-right tabular-nums'>{p.sats} sat</span>

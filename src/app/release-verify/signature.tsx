@@ -100,20 +100,20 @@ export function Signature() {
         <Field label='무엇을 검증하는가'>
           <SegmentedControl options={OPTIONS} value={scenario} onChange={setScenario} />
         </Field>
-        <p className='text-muted-foreground text-sm/relaxed'>{n.note}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{n.note}</p>
 
         <div className='flex flex-col gap-1'>
-          <span className='text-muted-foreground text-xs'>{n.subject}</span>
-          <pre className='bg-muted overflow-x-auto rounded-md p-2 font-mono text-[11px] leading-relaxed'>{body}</pre>
+          <span className='text-xs text-muted-foreground'>{n.subject}</span>
+          <pre className='overflow-x-auto rounded-md bg-muted p-2 font-mono text-[11px] leading-relaxed'>{body}</pre>
         </div>
 
         <div className='grid gap-3 sm:grid-cols-2'>
           <div className='flex flex-col gap-1'>
-            <span className='text-muted-foreground text-xs'>검증에 쓴 {n.key}의 지문</span>
+            <span className='text-xs text-muted-foreground'>검증에 쓴 {n.key}의 지문</span>
             <span className='font-mono text-[11px] break-all'>{usesAttackerKey ? demo?.atkFp : demo?.devFp}</span>
           </div>
           <div className='flex flex-col gap-1'>
-            <span className='text-muted-foreground text-xs'>서명 앞머리</span>
+            <span className='text-xs text-muted-foreground'>서명 앞머리</span>
             <span className='font-mono text-[11px] break-all'>
               {scenario === 'attacker' ? demo?.atkSig : demo?.devSig}
             </span>

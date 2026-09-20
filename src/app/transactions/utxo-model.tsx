@@ -89,7 +89,7 @@ export function UtxoModel() {
                 aria-pressed={on}
                 className={cn(
                   'flex items-center justify-between rounded-md border px-3 py-2 text-left transition-colors',
-                  on ? 'border-amber-500/50 bg-amber-500/10' : 'bg-muted hover:border-border border-transparent',
+                  on ? 'border-amber-500/50 bg-amber-500/10' : 'border-transparent bg-muted hover:border-border',
                 )}
               >
                 <span className='flex items-center gap-1.5'>
@@ -99,7 +99,7 @@ export function UtxoModel() {
                       on ? 'border-amber-500 bg-amber-500' : 'border-muted-foreground/40',
                     )}
                   />
-                  <span className='text-muted-foreground text-xs'>동전 #{u.id}</span>
+                  <span className='text-xs text-muted-foreground'>동전 #{u.id}</span>
                 </span>
                 <span className='text-sm tabular-nums'>{formatSats(u.sats)}</span>
               </button>

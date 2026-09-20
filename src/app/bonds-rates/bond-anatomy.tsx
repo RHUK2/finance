@@ -114,7 +114,7 @@ export function BondAnatomy() {
       <Card className='gap-3 p-4'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>가격은 무엇의 합인가</span>
-          <span className='text-muted-foreground text-xs tabular-nums'>{fmtWon(price)}</span>
+          <span className='text-xs text-muted-foreground tabular-nums'>{fmtWon(price)}</span>
         </div>
         <StackedBar
           segments={[
@@ -123,7 +123,7 @@ export function BondAnatomy() {
           ]}
           total={price}
         />
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           만기가 멀수록 원금은 더 깊이 할인돼 오른쪽 몫이 줄고, 그 자리를 해마다 받는 이자가 메운다. 다음 탭의
           듀레이션은 바로 이 두 몫의 무게중심이 언제냐를 재는 값이다.
         </p>

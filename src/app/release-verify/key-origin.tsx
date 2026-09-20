@@ -18,7 +18,7 @@ function CircularLogic() {
     { x: 364, label: '검증 통과' },
   ];
   return (
-    <svg viewBox='0 0 520 150' className='text-foreground h-auto w-full' role='img' aria-label='순환 논리 도식'>
+    <svg viewBox='0 0 520 150' className='h-auto w-full text-foreground' role='img' aria-label='순환 논리 도식'>
       {boxes.map((b) => (
         <g key={b.label}>
           <rect x={b.x} y={18} width={152} height={44} rx={6} className='fill-muted stroke-border' strokeWidth={1} />
@@ -77,7 +77,7 @@ export function KeyOrigin() {
 
       <Card className='gap-2 p-4'>
         <span className='text-sm font-semibold'>{detail.title}</span>
-        <p className='text-muted-foreground text-sm/relaxed'>{detail.body}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{detail.body}</p>
       </Card>
 
       <StatusBanner icon={<Repeat className='size-4' />} tone='accent'>

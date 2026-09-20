@@ -102,11 +102,11 @@ export function InflationView() {
 
       {!data ? (
         <Card>
-          <CardContent className='text-muted-foreground text-sm'>데이터를 불러오는 중…</CardContent>
+          <CardContent className='text-sm text-muted-foreground'>데이터를 불러오는 중…</CardContent>
         </Card>
       ) : data.available === false ? (
         <Card>
-          <CardContent className='text-muted-foreground text-sm'>
+          <CardContent className='text-sm text-muted-foreground'>
             {cfg.label} 데이터는 <code className='text-foreground'>{cfg.envKey}</code> 환경변수를 설정하면 표시된다.
           </CardContent>
         </Card>
@@ -114,7 +114,7 @@ export function InflationView() {
         <Devices country={country} cfg={cfg} data={data} btc={btc} />
       )}
 
-      <p className='text-muted-foreground border-t pt-4 text-xs/relaxed'>
+      <p className='border-t pt-4 text-xs/relaxed text-muted-foreground'>
         CPI는 통계청/BLS 정의에 따른 측정치이며, 통화 팽창·자산가격은 별개 지표다. 이 페이지는 특정 측정의 오류를
         단정하지 않고, 예금 금리와 통화·자산 지표 간의 격차를 보여준다. M2는 2021년 정의가 변경되었고, 예금 금리는 단기
         안전금리(미국: 3개월 국채) 근사이며, 자산 수익률은 배당·세금·거래비용을 제외한 가격 기준이다.

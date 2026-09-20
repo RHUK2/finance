@@ -72,7 +72,7 @@ export function ConfirmationSafety() {
             <div key={z} className='flex items-center justify-between py-2 text-sm'>
               <span className='text-muted-foreground'>확인 {z}개</span>
               <div className='flex flex-1 items-center gap-2 px-3'>
-                <div className='bg-muted h-2 w-full overflow-hidden rounded-full'>
+                <div className='h-2 w-full overflow-hidden rounded-full bg-muted'>
                   <div
                     className={cn(
                       'h-full rounded-full',

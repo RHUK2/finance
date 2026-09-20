@@ -81,12 +81,12 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
             {baseYear}년에 같은 금액을 각각 넣었다면, 시간에 따라 평가액이 어떻게 갈라지는지 보여준다. (로그 스케일,
             시작=100)
           </SectionIntro>
-          {updatedLabel && <span className='text-muted-foreground shrink-0 text-xs'>{updatedLabel}</span>}
+          {updatedLabel && <span className='shrink-0 text-xs text-muted-foreground'>{updatedLabel}</span>}
         </div>
       </CardHeader>
       <CardContent className='p-0'>
         <ChartContainer containerRef={containerRef} onReset={resetView} />
-        <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+        <p className='bg-muted/50 px-6 pt-3 pb-4 text-xs text-muted-foreground'>
           예금 곡선이 자산 곡선과 벌어지는 폭이 곧 기회비용이다. 자산 수익률은 배당·세금·거래비용을 제외한 가격
           기준이며, 과거 성과가 미래를 보장하지 않는다.
           {/* 지수 곡선이라 통화 단위는 결과에 영향이 없다. 늦게 합류한 자산의 기준점만 설명한다. */}

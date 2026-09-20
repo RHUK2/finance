@@ -61,7 +61,7 @@ export function DifficultyConsensus() {
         </div>
 
         {(clampedHigh || clampedLow) && (
-          <p className='text-muted-foreground text-xs'>
+          <p className='text-xs text-muted-foreground'>
             배율이 {clampedHigh ? '상한 4배' : '하한 0.25배'}에 걸렸다. 실제 변동이 이보다 커도 프로토콜은 한 번에 이
             이상 조정하지 않는다.
           </p>
@@ -93,7 +93,7 @@ export function DifficultyConsensus() {
         </div>
 
         <div className='flex items-center justify-between border-t pt-3'>
-          <span className='text-muted-foreground flex items-center gap-1.5 text-sm'>
+          <span className='flex items-center gap-1.5 text-sm text-muted-foreground'>
             <GitFork className='size-4' />
             {winner
               ? `노드는 ${winner === 'A' ? '체인 A' : '체인 B'}를 따른다. 나머지 체인의 블록은 고아 블록이 된다.`
@@ -148,12 +148,12 @@ function ForkBranch({
         'flex flex-col gap-2 rounded-md border p-3',
         isWinner && 'border-emerald-500/40 bg-emerald-500/5',
         isOrphan && 'border-transparent opacity-50',
-        !isWinner && !isOrphan && 'bg-muted border-transparent',
+        !isWinner && !isOrphan && 'border-transparent bg-muted',
       )}
     >
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium'>{label}</span>
-        <span className='text-muted-foreground text-xs tabular-nums'>블록 {length}개</span>
+        <span className='text-xs text-muted-foreground tabular-nums'>블록 {length}개</span>
       </div>
       <div className='flex flex-wrap gap-1'>
         {Array.from({ length }).map((_, i) => (

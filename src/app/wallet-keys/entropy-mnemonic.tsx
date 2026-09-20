@@ -27,13 +27,13 @@ function NibbleHexGrid({ bits, className }: { bits: string; className?: string }
     <span className={cn('flex flex-wrap gap-x-2 gap-y-2.5 font-mono text-xs', className)}>
       {groups.map((g, i) => (
         <span key={i} className='flex flex-col items-center gap-1'>
-          <span className='text-muted-foreground tracking-widest'>{g}</span>
+          <span className='tracking-widest text-muted-foreground'>{g}</span>
           {g.length === 4 ? (
             <span className='w-full rounded-sm bg-amber-500/15 text-center font-semibold text-amber-600 dark:text-amber-400'>
               {parseInt(g, 2).toString(16)}
             </span>
           ) : (
-            <span className='text-muted-foreground/50 text-center'>·</span>
+            <span className='text-center text-muted-foreground/50'>·</span>
           )}
         </span>
       ))}
@@ -89,16 +89,16 @@ export function EntropyMnemonic({
         </div>
 
         <div className='flex flex-col gap-1.5'>
-          <span className='text-muted-foreground text-xs'>
+          <span className='text-xs text-muted-foreground'>
             엔트로피 · 2진수 {bd.entropy}비트(동전 {bd.entropy}번) = hex {entropyHex.length}자리. 4비트가 hex 한 자리에
             대응한다
           </span>
-          <NibbleHexGrid bits={hexToBits(entropyHex)} className='bg-muted rounded-md p-3' />
+          <NibbleHexGrid bits={hexToBits(entropyHex)} className='rounded-md bg-muted p-3' />
         </div>
 
         <div className='flex flex-col gap-1.5'>
-          <span className='text-muted-foreground text-xs'>엔트로피 (hex)</span>
-          <code className='bg-muted text-foreground rounded-md p-3 font-mono text-xs break-all'>{entropyHex}</code>
+          <span className='text-xs text-muted-foreground'>엔트로피 (hex)</span>
+          <code className='rounded-md bg-muted p-3 font-mono text-xs break-all text-foreground'>{entropyHex}</code>
         </div>
       </Card>
 
@@ -148,7 +148,7 @@ export function EntropyMnemonic({
             },
           ]}
         />
-        <p className='text-muted-foreground text-xs'>이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.</p>
+        <p className='text-xs text-muted-foreground'>이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.</p>
       </Card>
 
       <ExplainCard
@@ -181,7 +181,7 @@ export function EntropyMnemonic({
               )}
             >
               <span className='flex items-center justify-between'>
-                <span className='text-muted-foreground font-mono text-[10px]'>#{w.position}</span>
+                <span className='font-mono text-[10px] text-muted-foreground'>#{w.position}</span>
                 {w.isChecksum && (
                   <Badge variant='outline' className='h-4 px-1 text-[9px]'>
                     체크섬
@@ -189,7 +189,7 @@ export function EntropyMnemonic({
                 )}
               </span>
               <span className='font-mono text-sm font-medium'>{w.word}</span>
-              <span className='text-muted-foreground font-mono text-[10px] tabular-nums'>
+              <span className='font-mono text-[10px] text-muted-foreground tabular-nums'>
                 {w.bits} = {w.index}
               </span>
             </div>

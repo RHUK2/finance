@@ -124,7 +124,7 @@ export function FeeCalc() {
             <br />
             <br />
             여기서 &lsquo;크기&rsquo;는 두 가지다.
-            <div className='bg-muted/50 my-3 overflow-x-auto rounded-md p-3'>
+            <div className='my-3 overflow-x-auto rounded-md bg-muted/50 p-3'>
               <pre className='font-mono text-[11px] leading-relaxed'>{`실제 전송·저장하는 크기   서명 100바이트 = 100바이트 (그대로)
 블록 한도에 계산되는 크기  서명 100바이트 =  25바이트 (1/4)`}</pre>
             </div>

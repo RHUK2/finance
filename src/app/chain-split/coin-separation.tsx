@@ -34,13 +34,13 @@ export function CoinSeparation() {
 
       <Card className='gap-1.5 p-4'>
         <span className='text-sm font-semibold'>{method.label}</span>
-        <p className='text-muted-foreground text-sm/relaxed'>{method.body}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{method.body}</p>
       </Card>
 
       <StatusBanner tone='good' icon={<HandCoins className='size-5 shrink-0' />}>
         <div>
           <p className='font-semibold'>개인에게 현실적인 최선은 아무것도 하지 않는 것이다</p>
-          <p className='text-muted-foreground mt-0.5 text-xs font-normal'>
+          <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
             리플레이는 트랜잭션을 브로드캐스트해야 시작된다. 분기 전후로 송금하지 않으면 노출될 트랜잭션 자체가 없다.
             분기 코인이 값이 붙을지는 나중에 확인해도 늦지 않고, 값이 붙지 않으면 서둘러 분리할 이유도 없다. 위 세
             방법은 분리를 해야만 하는 사정이 있을 때 무엇이 가능한지를 아는 용도다. 실제 실행은 자신이 쓰는 지갑과

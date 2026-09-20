@@ -62,7 +62,7 @@ export function AddressScriptCompare() {
             />
           ))}
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           ECDSA는 r·s 두 값을 DER로 감싸고 sighash flag 1바이트가 붙어 71~72 바이트, Schnorr는 R‖s 64바이트 고정이라 DER
           포장이 없다. 트랜잭션 해부 페이지의 입력 vByte 차이(legacy 148 vs taproot 57.5)도 이 서명·검증 스크립트 크기
           차이에서 나온다.
@@ -76,7 +76,7 @@ export function AddressScriptCompare() {
             <dl className='flex flex-col gap-2'>
               {ROWS.map((row) => (
                 <div key={row.label} className='flex flex-col gap-0.5'>
-                  <dt className='text-muted-foreground text-xs'>{row.label}</dt>
+                  <dt className='text-xs text-muted-foreground'>{row.label}</dt>
                   <dd className='text-xs/relaxed'>{row.cells[t.value]}</dd>
                 </div>
               ))}
@@ -89,9 +89,9 @@ export function AddressScriptCompare() {
         <table className='w-full min-w-[480px] border-collapse text-sm'>
           <thead>
             <tr className='border-b text-left'>
-              <th className='text-muted-foreground w-40 pb-2 font-medium'>항목</th>
+              <th className='w-40 pb-2 font-medium text-muted-foreground'>항목</th>
               {SCRIPT_ADDR_TYPES.map((t) => (
-                <th key={t.value} className='text-muted-foreground pb-2 pl-3 font-medium'>
+                <th key={t.value} className='pb-2 pl-3 font-medium text-muted-foreground'>
                   {t.label}
                 </th>
               ))}
@@ -100,7 +100,7 @@ export function AddressScriptCompare() {
           <tbody>
             {ROWS.map((row) => (
               <tr key={row.label} className='border-b last:border-0'>
-                <td className='text-muted-foreground py-2 pr-2 align-top text-xs'>{row.label}</td>
+                <td className='py-2 pr-2 align-top text-xs text-muted-foreground'>{row.label}</td>
                 {SCRIPT_ADDR_TYPES.map((t) => (
                   <td key={t.value} className='py-2 pl-3 align-top text-xs/relaxed'>
                     {row.cells[t.value]}

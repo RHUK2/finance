@@ -65,7 +65,7 @@ export function WaterDiamond() {
         />
         <Field label='어디에 있는가'>
           <SegmentedControl options={SITUATION_OPTIONS} value={situation} onChange={setSituation} />
-          <p className='text-muted-foreground text-xs'>{note}</p>
+          <p className='text-xs text-muted-foreground'>{note}</p>
         </Field>
       </Card>
 
@@ -94,7 +94,7 @@ export function WaterDiamond() {
             />
           </div>
         </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
+        <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
           <Legend className='bg-sky-500' label='물 앞선 잔들 (왼쪽부터 1잔째)' />
           <Legend className='bg-sky-300' label={`물 ${cups}잔째 (값을 정하는 잔)`} />
           <Legend className='bg-violet-500' label='다이아몬드 1캐럿' />
@@ -122,7 +122,7 @@ export function WaterDiamond() {
           : `물 총효용은 다이아몬드의 ${(total / diamondWon).toFixed(0)}배인데, 값을 정하는 ${cups}잔째는 다이아몬드보다 싸다.`}
       </StatusBanner>
 
-      <p className='text-muted-foreground text-sm/relaxed'>
+      <p className='text-sm/relaxed text-muted-foreground'>
         역설은 두 숫자를 섞어 본 데서 생긴다. 스미스가 물이 다이아몬드보다 쓸모 있다고 할 때 가리킨 것은 총효용이고,
         시장에서 값이 매겨지는 것은 한계효용이다. 이름이 닮았을 뿐 다른 값이다. 그리고 그 한계효용은 물이나 다이아몬드
         안에 들어 있는 것이 아니다. 사막으로 자리를 옮기면 물건은 그대로인데 두 값이 자리를 바꾼다. 값어치는 물건이

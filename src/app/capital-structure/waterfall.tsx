@@ -122,14 +122,14 @@ export function Waterfall() {
       </Card>
 
       <Card className='gap-4 p-4'>
-        <span className='text-muted-foreground text-xs'>
+        <span className='text-xs text-muted-foreground'>
           매각 대금 {formatEok(proceeds, 0)}이 위에서 아래로 흐른다. 총 청구액은 {formatEok(TOTAL_CLAIM, 0)}
         </span>
         {rows.map((r) => (
           <div key={r.id} className='flex flex-col gap-1'>
             <div className='flex items-baseline justify-between gap-2 text-sm'>
               <span className='flex items-center gap-1.5 font-medium'>
-                <r.icon className='text-muted-foreground size-4 shrink-0' />
+                <r.icon className='size-4 shrink-0 text-muted-foreground' />
                 {r.label}
               </span>
               <span className='shrink-0 tabular-nums'>
@@ -137,13 +137,13 @@ export function Waterfall() {
                 <span className='text-muted-foreground'> / {formatEok(r.claim, 0)}</span>
               </span>
             </div>
-            <div className='bg-muted h-5 w-full overflow-hidden rounded-md'>
+            <div className='h-5 w-full overflow-hidden rounded-md bg-muted'>
               <div
                 className={cn('h-full rounded-md transition-all', r.className)}
                 style={{ width: `${Math.max(r.paid > 0 ? 1 : 0, r.rate)}%` }}
               />
             </div>
-            <span className='text-muted-foreground text-xs'>
+            <span className='text-xs text-muted-foreground'>
               회수율 {r.rate.toFixed(0)}%
               {r.rate === 100 ? ', 전액 회수' : r.rate === 0 ? ', 물이 닿지 않았다' : ', 여기서 물이 끊긴다'}
             </span>
@@ -188,7 +188,7 @@ export function Waterfall() {
           <PieChart className='size-4 text-violet-500' />
           {focus.label}
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>{focus.note}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{focus.note}</p>
       </Card>
 
       <ExplainCard

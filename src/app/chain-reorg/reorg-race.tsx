@@ -84,7 +84,7 @@ export function ReorgRace() {
           format={(v) => `${v}%`}
         />
         <ControlSlider
-          icon={<ShieldOff className='text-muted-foreground size-4' />}
+          icon={<ShieldOff className='size-4 text-muted-foreground' />}
           label='가맹점이 기다린 확인 수'
           hint='공격자는 이 수만큼 뒤처진 상태에서 비밀 체인을 시작한다.'
           value={confirmations}
@@ -183,7 +183,7 @@ function ChainRow({
   return (
     <div
       className={cn(
-        'bg-muted flex flex-col gap-2 rounded-md border border-transparent p-3',
+        'flex flex-col gap-2 rounded-md border border-transparent bg-muted p-3',
         // 테두리를 칠하는 건 승부가 났을 때뿐이다. 여기서 결판나는 결과는 재구성 하나라 rose만 쓴다.
         tone === 'bad' && 'border-rose-500/40 bg-rose-500/5',
         faded && 'bg-transparent opacity-50',
@@ -191,7 +191,7 @@ function ChainRow({
     >
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium'>{label}</span>
-        <span className='text-muted-foreground text-xs tabular-nums'>블록 {total}개</span>
+        <span className='text-xs text-muted-foreground tabular-nums'>블록 {total}개</span>
       </div>
       <div className='flex flex-wrap gap-1'>
         {Array.from({ length: total }).map((_, i) => (

@@ -53,7 +53,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
         <StatusBanner icon={<Unlock className='size-4' />} tone='bad'>
           {found}번째 후보에서 걸렸다. 개인키는 {found}이다.
         </StatusBanner>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           secp256k1에서 이 표는 약 1.158 × 10⁷⁷줄이 된다. 1초에 10억 줄씩 훑는 기계를 지구상의 모든 원자만큼 모아 우주의
           나이만큼 돌려도 끝나지 않는다. 알고리즘은 이 페이지와 한 글자도 다르지 않고 오직 이 표의 길이만 다르다.
         </p>
@@ -121,16 +121,16 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
           <History className='size-4 text-amber-500' />
           실제로 두 번 일어났다
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           2010년, 소니 플레이스테이션 3의 펌웨어 서명에서 k가 상수로 박혀 있는 것이 발견됐다. 서명 두 개만 모으면 위의
           계산으로 서명키가 나왔고, 누구나 정품으로 인식되는 소프트웨어를 만들 수 있게 됐다.
         </p>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           2013년에는 안드로이드의 난수 생성기 결함으로 여러 비트코인 지갑이 서로 다른 트랜잭션에 같은 k를 썼다. 공개
           원장에서 r이 같은 서명 쌍을 찾기만 하면 됐고, 그 주소의 코인이 털렸다. 원장이 공개라는 성질이 여기서는 공격자
           편에 섰다.
         </p>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           십 년 사이 서로 무관한 두 조직이 같은 실수를 했다. 그래서 지금 지갑들은 k를 난수로 뽑지 않고 개인키와 메시지
           해시에서 결정론적으로 만들어 낸다(RFC 6979). 난수의 품질에 안전을 걸지 않기로 한 것이다.
         </p>
@@ -146,7 +146,7 @@ function Line({ label, value, note }: { label: string; value: string; note: stri
         <span className='text-sm font-medium'>{label}</span>
         <span className='text-sm tabular-nums'>{value}</span>
       </div>
-      <span className='text-muted-foreground text-xs'>{note}</span>
+      <span className='text-xs text-muted-foreground'>{note}</span>
     </div>
   );
 }

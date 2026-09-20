@@ -101,13 +101,13 @@ export function Causation() {
                 <div key={s} className='flex flex-col gap-1'>
                   <div className='flex items-center justify-between rounded-md border px-3 py-1.5 text-sm'>
                     {s}
-                    {i === 0 && <span className='text-muted-foreground text-xs'>출발점</span>}
+                    {i === 0 && <span className='text-xs text-muted-foreground'>출발점</span>}
                   </div>
-                  {i < a.steps.length - 1 && <ArrowDown className='text-muted-foreground mx-auto size-3' />}
+                  {i < a.steps.length - 1 && <ArrowDown className='mx-auto size-3 text-muted-foreground' />}
                 </div>
               ))}
             </div>
-            <p className='text-muted-foreground text-xs/relaxed'>{a.note}</p>
+            <p className='text-xs/relaxed text-muted-foreground'>{a.note}</p>
           </Card>
         ))}
       </div>
@@ -131,7 +131,7 @@ export function Causation() {
           <row.icon className='size-4' />
           {row.label}
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>{row.detail}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{row.detail}</p>
       </Card>
 
       <ExplainCard

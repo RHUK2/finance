@@ -20,13 +20,13 @@ const TAG_STYLE: Record<EventTag, string> = {
 
 function Timeline({ events }: { events: TimelineEvent[] }) {
   return (
-    <ol className='border-border/60 relative flex flex-col gap-5 border-l-2 pl-6'>
+    <ol className='relative flex flex-col gap-5 border-l-2 border-border/60 pl-6'>
       {events.map((e, i) => (
         <li key={i} className='relative'>
           <span
             className={cn(
               // 라인 중심(pl-6 + border 절반)에 dot 중심을 맞춤: left로 라인까지 이동 후 -translate-x-1/2로 dot 폭 절반 보정
-              'ring-background absolute top-1 left-[calc(-1.5rem-1px)] size-3 -translate-x-1/2 rounded-full ring-4',
+              'absolute top-1 left-[calc(-1.5rem-1px)] size-3 -translate-x-1/2 rounded-full ring-4 ring-background',
               e.ongoing ? 'animate-pulse' : 'bg-muted-foreground',
             )}
             style={e.ongoing ? { backgroundColor: BTC_COLOR } : undefined}

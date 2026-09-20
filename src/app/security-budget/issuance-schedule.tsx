@@ -66,7 +66,7 @@ export function IssuanceSchedule() {
       <Card className='gap-3 p-4'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>2,100만 개 중 지금까지</span>
-          <span className='text-muted-foreground text-xs'>{eraStartYear(era)}년 기준</span>
+          <span className='text-xs text-muted-foreground'>{eraStartYear(era)}년 기준</span>
         </div>
         <StackedBar
           segments={[
@@ -81,7 +81,7 @@ export function IssuanceSchedule() {
         <span className='text-sm font-medium'>시대별 궤적</span>
         <Sparkline values={subsidies} label='보조금' className='text-amber-500' cursor={era} min={0} />
         <Sparkline values={supplies} label='누적 공급' className='text-sky-500' cursor={era} min={0} max={MAX_SUPPLY} />
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           두 곡선은 같은 사실의 앞뒤다. 보조금이 절반씩 잘리므로 누적 공급은 상한에 점점 느리게 다가간다. 2032년이면
           이미 상한의 98%가 발행돼 있고, 남은 2%를 100여 년에 걸쳐 나눠 준다.
         </p>

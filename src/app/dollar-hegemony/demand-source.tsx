@@ -37,10 +37,10 @@ export function DemandSource() {
 
       <Card className='gap-1.5 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <ShieldQuestion className='text-muted-foreground size-4' />
+          <ShieldQuestion className='size-4 text-muted-foreground' />
           무엇이 이 단계를 끝냈나
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>{stage.broke}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{stage.broke}</p>
       </Card>
 
       <ExplainCard

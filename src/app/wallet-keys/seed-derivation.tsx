@@ -50,7 +50,7 @@ export function SeedDerivation({
           onChange={(e) => onPassphrase(e.target.value)}
           placeholder='비워 두어도 됨 · 한 글자 바꿔 보자'
         />
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           passphrase는 단어를 적어둔 종이를 누가 훔쳐도 자금을 지키는 추가 비밀이다. 단, 잊으면 복구가 불가능하다.
         </p>
       </Card>
@@ -81,7 +81,7 @@ export function SeedDerivation({
             },
           ]}
         />
-        <p className='text-muted-foreground text-xs'>반복 횟수가 많을수록 무차별 대입이 느려진다.</p>
+        <p className='text-xs text-muted-foreground'>반복 횟수가 많을수록 무차별 대입이 느려진다.</p>
       </Card>
 
       <ExplainCard

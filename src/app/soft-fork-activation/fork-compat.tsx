@@ -70,7 +70,7 @@ export function ForkCompat() {
 
       <Card className='gap-1.5 p-4'>
         <span className='text-sm font-semibold'>{ex.label}</span>
-        <p className='text-muted-foreground text-sm/relaxed'>{ex.rule}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{ex.rule}</p>
       </Card>
 
       <StatusBanner tone={ex.oldSeesNew ? 'good' : 'bad'}>

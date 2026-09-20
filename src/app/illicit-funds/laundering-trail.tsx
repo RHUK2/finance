@@ -96,7 +96,7 @@ export function LaunderingTrail() {
         </div>
 
         <div>
-          <span className='text-muted-foreground text-xs'>
+          <span className='text-xs text-muted-foreground'>
             자금 경로. 빨간 표시는 체인분석 업체가 붙인 오염 라벨이다.
           </span>
           <div className='mt-2 flex items-center gap-1.5 overflow-x-auto pb-1'>
@@ -188,7 +188,7 @@ export function LaunderingTrail() {
 function TrailStep({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <ArrowRight className='text-muted-foreground size-3.5 shrink-0' />
+      <ArrowRight className='size-3.5 shrink-0 text-muted-foreground' />
       {children}
     </>
   );

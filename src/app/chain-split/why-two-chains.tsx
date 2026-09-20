@@ -41,20 +41,20 @@ export function WhyTwoChains() {
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
           <div className='rounded-md border p-3'>
             <p className='text-sm font-medium'>일반적인 소프트포크</p>
-            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
+            <p className='mt-1 text-sm/relaxed text-muted-foreground'>
               신규칙 노드는 신규칙을 어긴 <b>트랜잭션</b>만 거부한다. 신호하지 않는 블록이라도 담긴 트랜잭션이 규칙을
               지키면 받아들인다. 그래서 다수 체인을 계속 따라간다.
             </p>
           </div>
           <div className={cn('rounded-md border p-3', 'border-rose-500/40 bg-rose-500/5')}>
             <p className='text-sm font-medium'>mandatory signaling 구간</p>
-            <p className='text-muted-foreground mt-1 text-sm/relaxed'>
+            <p className='mt-1 text-sm/relaxed text-muted-foreground'>
               신규칙 노드가 신호하지 않는 <b>블록 자체</b>를 거부한다. 다수 채굴자가 신호하지 않으면 그 블록들이 통째로
               버려지고, 신규칙 노드는 자기들끼리의 체인을 따로 잇는다.
             </p>
           </div>
         </div>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           BIP-110은 {FACTS.signalingHeight.value.toLocaleString()}블록부터 이 구간에 들어갔다. 직전 {RETARGET_BLOCKS}
           블록 중 신호한 블록은 51개, {SIGNAL_PCT.toFixed(2)}%였다. 조기 활성화 임계값은{' '}
           {FACTS.lockInThreshold.value * 100}%다. 활성화에 필요한 지지의 20분의 1도 안 되는 해시레이트가 다수 체인에서
@@ -103,7 +103,7 @@ export function WhyTwoChains() {
           <p className='font-semibold'>
             {stuck ? '난이도가 내려오기 전에 채굴자가 먼저 떠난다' : '느리지만 난이도 조정까지 버틸 만하다'}
           </p>
-          <p className='text-muted-foreground mt-0.5 text-xs font-normal'>
+          <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
             {stuck
               ? `블록 하나에 ${formatDuration(interval)}이 걸리고 조정까지 ${retargetLabel}이 남는다. 그동안 채굴자는 보상을 거의 못 받는데 전기는 계속 쓴다. 남을 이유가 없어서 해시레이트가 더 빠지고, 빠질수록 간격이 더 벌어진다. BIP-110 소수 체인이 두 블록에서 멈춘 것이 이 구간이다.`
               : `블록 하나에 ${formatDuration(interval)}이 걸린다. 정상보다 느리지만 채굴자가 보상을 받으며 버틸 수 있는 간격이라, 조정 시점까지 도달해 체인이 자립할 여지가 있다.`}
@@ -126,12 +126,12 @@ export function WhyTwoChains() {
               <div className='flex-1 rounded-md border p-3'>
                 <p className='text-sm font-medium'>소프트포크 분기 (BIP-110)</p>
                 <div className='my-3 rounded border border-dashed p-3'>
-                  <span className='text-muted-foreground text-xs'>기존 규칙에서 유효한 트랜잭션</span>
+                  <span className='text-xs text-muted-foreground'>기존 규칙에서 유효한 트랜잭션</span>
                   <div className='mt-2 rounded border border-rose-500/50 bg-rose-500/5 p-2'>
                     <span className='text-xs'>BIP-110 규칙에서도 유효</span>
                   </div>
                 </div>
-                <p className='text-muted-foreground text-sm/relaxed'>
+                <p className='text-sm/relaxed text-muted-foreground'>
                   좁은 쪽이 넓은 쪽에 통째로 들어간다. 평범한 송금은 두 원 안에 함께 있으므로 양쪽에서 유효하다.
                 </p>
               </div>
@@ -145,7 +145,7 @@ export function WhyTwoChains() {
                     <span className='text-xs'>eCash 규칙</span>
                   </div>
                 </div>
-                <p className='text-muted-foreground text-sm/relaxed'>
+                <p className='text-sm/relaxed text-muted-foreground'>
                   어느 쪽도 상대를 포함하지 않는다. 그래도 과거와 서명 방식을 물려받으면 겹치는 부분이 넓어서, 평범한
                   송금은 역시 양쪽에서 유효하다.
                 </p>

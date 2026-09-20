@@ -125,7 +125,7 @@ export function TimelockLab() {
 
       <Card className='flex flex-col gap-2 p-4'>
         <span className='text-sm font-medium'>scriptPubKey (잠금)</span>
-        <div className='bg-muted rounded-md p-2 font-mono text-xs break-all'>{scriptPubKey}</div>
+        <div className='rounded-md bg-muted p-2 font-mono text-xs break-all'>{scriptPubKey}</div>
       </Card>
 
       <ExplainCard

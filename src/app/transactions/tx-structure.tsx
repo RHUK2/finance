@@ -21,7 +21,7 @@ function FieldBox({ name, desc, role = 'plain' }: { name: string; desc: string; 
   return (
     <div className={cn('flex flex-col gap-0.5 rounded-md p-2.5', ROLE_CLASS[role])}>
       <code className='font-mono text-xs font-semibold'>{name}</code>
-      <span className='text-muted-foreground text-[11px] leading-snug'>{desc}</span>
+      <span className='text-[11px] leading-snug text-muted-foreground'>{desc}</span>
     </div>
   );
 }
@@ -29,7 +29,7 @@ function FieldBox({ name, desc, role = 'plain' }: { name: string; desc: string; 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className='rounded-md border border-dashed p-2.5'>
-      <span className='text-muted-foreground mb-2 block text-xs font-medium'>{title}</span>
+      <span className='mb-2 block text-xs font-medium text-muted-foreground'>{title}</span>
       <div className='flex flex-col gap-1.5'>{children}</div>
     </div>
   );
@@ -95,7 +95,7 @@ export function TxStructure() {
           <FieldBox name='locktime' desc='이 시점 전엔 확정 불가 (4바이트)' />
         </div>
 
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
+        <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
           <Legend className='bg-amber-500/60' label='잠금 (scriptPubKey)' />
           <Legend className='bg-emerald-500/60' label='해제 (scriptSig · witness)' />
         </div>

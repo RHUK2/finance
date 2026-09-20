@@ -103,12 +103,12 @@ export function MultisigLab() {
       <Card className='flex flex-col gap-2 p-4'>
         <span className='text-sm font-medium'>스크립트</span>
         <div className='flex flex-col gap-1.5 font-mono text-xs'>
-          <div className='bg-muted rounded-md p-2'>
-            <span className='text-muted-foreground mr-2'>scriptPubKey (잠금)</span>
+          <div className='rounded-md bg-muted p-2'>
+            <span className='mr-2 text-muted-foreground'>scriptPubKey (잠금)</span>
             <div className='mt-1 break-all'>{scriptPubKey}</div>
           </div>
-          <div className='bg-muted rounded-md p-2'>
-            <span className='text-muted-foreground mr-2'>scriptSig (풀이)</span>
+          <div className='rounded-md bg-muted p-2'>
+            <span className='mr-2 text-muted-foreground'>scriptSig (풀이)</span>
             <div className='mt-1 break-all'>{scriptSig || '(서명 없음)'}</div>
           </div>
         </div>

@@ -12,12 +12,12 @@ function BoxCell({ label, value, tone }: Box) {
   return (
     <div
       className={cn(
-        'bg-muted flex flex-col gap-1 rounded-md p-3',
+        'flex flex-col gap-1 rounded-md bg-muted p-3',
         tone === 'accent' && 'border border-amber-500/40',
         tone === 'good' && 'border border-emerald-500/40',
       )}
     >
-      <span className='text-muted-foreground text-xs'>{label}</span>
+      <span className='text-xs text-muted-foreground'>{label}</span>
       <code className='font-mono text-xs break-all'>{value}</code>
     </div>
   );
@@ -28,7 +28,7 @@ export function Pipeline({ items }: { items: PipeItem[] }) {
     <div className='flex flex-col items-stretch gap-1.5'>
       {items.map((it, i) =>
         it.kind === 'op' ? (
-          <div key={i} className='text-muted-foreground flex items-center justify-center gap-1.5 text-center text-xs'>
+          <div key={i} className='flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground'>
             <ArrowDown className='size-3.5 shrink-0' />
             {it.label}
           </div>

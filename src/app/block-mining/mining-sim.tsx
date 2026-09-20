@@ -123,7 +123,7 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
       <div
         className={cn(
           'flex flex-col gap-1 rounded-md border p-3',
-          found ? 'border-emerald-500/40 bg-emerald-500/5' : 'bg-muted border-transparent',
+          found ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-transparent bg-muted',
         )}
       >
         <span className='flex items-center gap-1.5 text-sm font-medium'>

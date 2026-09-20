@@ -45,14 +45,14 @@ export function RealCases() {
           <Card key={c.title} className='gap-3 p-4'>
             <div className='flex flex-wrap items-baseline justify-between gap-2'>
               <span className='font-semibold'>{c.title}</span>
-              <span className='text-muted-foreground text-xs tabular-nums'>{c.year}</span>
+              <span className='text-xs text-muted-foreground tabular-nums'>{c.year}</span>
             </div>
-            <p className='text-muted-foreground text-sm/relaxed'>{c.body}</p>
-            <div className='bg-muted flex items-start gap-2 rounded-md p-3 text-sm/relaxed'>
+            <p className='text-sm/relaxed text-muted-foreground'>{c.body}</p>
+            <div className='flex items-start gap-2 rounded-md bg-muted p-3 text-sm/relaxed'>
               <Search className='mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
               <span>{c.lesson}</span>
             </div>
-            <span className='text-muted-foreground flex items-center gap-1.5 text-xs'>
+            <span className='flex items-center gap-1.5 text-xs text-muted-foreground'>
               <Clock className='size-3.5' />
               사건에서 자금 회수·검거까지 {c.gap}
             </span>
@@ -66,7 +66,7 @@ export function RealCases() {
           <Metric label='온체인 거래액 중 불법 주소 비중' value='1% 미만' sub='체인분석 업계 연간 추정치' />
           <Metric label='세계 자금세탁 규모' value='GDP의 2~5%' sub='UNODC 추정, 대부분 법정화폐' tone='accent' />
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           체인분석 업체들이 매년 내는 추정치는 대체로 1%를 밑돈다. 다만 이 숫자는 그대로 믿을 게 아니다. 새로 식별된
           불법 주소가 반영되면 과거 연도 수치가 사후에 상향 조정되고, 거래소 내부 이체처럼 체인에 남지 않는 흐름은
           애초에 집계되지 않는다. 방향성 참고용으로만 보는 게 맞다.

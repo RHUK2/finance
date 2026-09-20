@@ -106,8 +106,8 @@ export function Bip9Signaling() {
             const passed = reached && ratio >= SIGNAL_THRESHOLD;
             return (
               <div key={i} className='flex items-center gap-2 text-xs'>
-                <span className='text-muted-foreground w-14 shrink-0'>{i + 1}기간</span>
-                <div className='bg-muted h-3 w-full overflow-hidden rounded-full'>
+                <span className='w-14 shrink-0 text-muted-foreground'>{i + 1}기간</span>
+                <div className='h-3 w-full overflow-hidden rounded-full bg-muted'>
                   {reached && (
                     <div
                       className={cn('h-full rounded-full', passed ? 'bg-emerald-500' : 'bg-amber-500')}

@@ -108,7 +108,7 @@ export function Duration() {
       <Card className='gap-3 p-4'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>만기만 다른 세 채권</span>
-          <span className='text-muted-foreground text-xs'>
+          <span className='text-xs text-muted-foreground'>
             금리 {delta >= 0 ? '+' : '−'}
             {Math.abs(delta * 100).toFixed(2)}%p일 때 가격 변동폭
           </span>
@@ -123,7 +123,7 @@ export function Duration() {
             format={(v) => `${v.toFixed(1)}%`}
           />
         ))}
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           표면금리가 같아도 만기가 길면 같은 금리 충격에 몇 배로 흔들린다. 2022년에 채권이 안전자산이 아니었다는 말이
           나온 것은 이 때문이다. 부도가 난 것이 아니라 금리가 빠르게 오르는 동안 장기물 가격이 주식만큼 빠졌다.
         </p>

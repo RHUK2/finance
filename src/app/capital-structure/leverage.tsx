@@ -159,11 +159,11 @@ export function Leverage() {
             <TrendingUp className='size-4 text-amber-500' />
             업황이 바뀌면 격차가 드러난다
           </span>
-          <span className='text-muted-foreground text-xs'>
+          <span className='text-xs text-muted-foreground'>
             부채 비중 {debtRatio}%인 지금 회사와, 빚이 한 푼도 없는 같은 회사의 ROE를 나란히 놓았다
           </span>
         </div>
-        <div className='text-muted-foreground grid grid-cols-[1fr_5rem_5rem] gap-x-2 border-y px-4 py-2 text-xs'>
+        <div className='grid grid-cols-[1fr_5rem_5rem] gap-x-2 border-y px-4 py-2 text-xs text-muted-foreground'>
           <span>영업이익</span>
           <span className='text-right'>무차입</span>
           <span className='text-right'>부채 {debtRatio}%</span>
@@ -178,9 +178,9 @@ export function Leverage() {
             >
               <span>
                 {s.label}
-                <span className='text-muted-foreground ml-1.5 text-xs tabular-nums'>{formatEok(s.ebit, 0)}</span>
+                <span className='ml-1.5 text-xs text-muted-foreground tabular-nums'>{formatEok(s.ebit, 0)}</span>
               </span>
-              <span className='text-muted-foreground text-right tabular-nums'>{formatPct(unlevered)}</span>
+              <span className='text-right text-muted-foreground tabular-nums'>{formatPct(unlevered)}</span>
               <span
                 className={cn(
                   'text-right font-medium tabular-nums',

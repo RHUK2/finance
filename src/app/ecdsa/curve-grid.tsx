@@ -55,7 +55,7 @@ export function CurveGrid({
           );
         })}
       </svg>
-      {caption && <p className='text-muted-foreground text-xs/relaxed'>{caption}</p>}
+      {caption && <p className='text-xs/relaxed text-muted-foreground'>{caption}</p>}
     </div>
   );
 }

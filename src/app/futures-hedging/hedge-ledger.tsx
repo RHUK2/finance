@@ -102,7 +102,7 @@ export function HedgeLedger() {
             { label: `투기자가 받음 ${mb(l.toSpeculators)}`, value: l.toSpeculators, className: 'bg-violet-500' },
           ]}
         />
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           헤지 비율을 올리면 노란 몫이 줄고 파란·보라 몫이 늘어난다. 총량은 그대로다. 정유사 몫이 {mb(REFINER_BARRELS)}
           에서 멈추는 것은 그게 정유사가 실제로 사려는 전부이기 때문이고, 그 위로 넘어가는 물량은 전부 투기자를 거쳐야
           한다.

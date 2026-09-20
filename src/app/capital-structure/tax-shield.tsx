@@ -136,14 +136,14 @@ export function TaxShield() {
             <Building2 className='size-4 text-amber-500' />
             그렇다면 빚을 최대한 내야 하는가
           </span>
-          <span className='text-muted-foreground text-xs/relaxed'>
+          <span className='text-xs/relaxed text-muted-foreground'>
             방패의 현재가치에서 재무곤경 기대비용을 뺀 기업가치. 막대 하나가 부채 비중 5%p다. 위 지표가 올해 한 해분인
             것과 달리 여기서는 절감이 매년 이어진다고 보고 합쳤다. 이자율로 할인하면 이자율이 약분돼 부채 × 세율만
             남으므로, 이 곡선은 이자율을 움직여도 달라지지 않는다
           </span>
         </div>
         <ValueCurve curve={curve} current={debtRatio} best={best.d} />
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
+        <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
           <Legend className='bg-sky-500' label='현재 선택' />
           <Legend className='bg-emerald-500' label='가치가 가장 큰 지점' />
           <Legend className='bg-muted-foreground/30' label='그 밖' />
@@ -212,7 +212,7 @@ function ValueCurve({ curve, current, best }: { curve: { d: number; v: number }[
           />
         ))}
       </div>
-      <div className='text-muted-foreground flex gap-0.5 text-[10px] tabular-nums'>
+      <div className='flex gap-0.5 text-[10px] text-muted-foreground tabular-nums'>
         {curve.map((p) => (
           <span key={p.d} className='flex-1 text-center'>
             {p.d % 20 === 0 ? `${p.d}%` : ''}

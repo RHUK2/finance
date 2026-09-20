@@ -70,12 +70,12 @@ export function AddressCompare() {
             <div key={r.value} className='flex flex-col gap-1'>
               <div className='flex items-baseline justify-between text-sm'>
                 <span className='font-medium'>
-                  <span className='text-muted-foreground font-mono text-xs'>{r.purpose} </span>
+                  <span className='font-mono text-xs text-muted-foreground'>{r.purpose} </span>
                   {r.label}
                 </span>
-                <span className='text-muted-foreground text-xs tabular-nums'>{r.vb} vB</span>
+                <span className='text-xs text-muted-foreground tabular-nums'>{r.vb} vB</span>
               </div>
-              <div className='bg-muted h-7 w-full overflow-hidden rounded-md'>
+              <div className='h-7 w-full overflow-hidden rounded-md bg-muted'>
                 <div
                   className={cn(
                     'flex h-full items-center justify-end rounded-md px-2 transition-all',
@@ -83,10 +83,10 @@ export function AddressCompare() {
                   )}
                   style={{ width: `${r.width}%` }}
                 >
-                  <span className='text-primary-foreground text-xs tabular-nums'>{formatSats(r.fee)}</span>
+                  <span className='text-xs text-primary-foreground tabular-nums'>{formatSats(r.fee)}</span>
                 </div>
               </div>
-              <span className='text-muted-foreground text-xs'>
+              <span className='text-xs text-muted-foreground'>
                 {r.value === 'legacy' ? '기준 (가장 큼)' : `Legacy 대비 ${(r.saving * 100).toFixed(0)}% 절감`}
               </span>
             </div>

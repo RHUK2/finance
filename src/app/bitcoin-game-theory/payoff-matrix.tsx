@@ -135,9 +135,9 @@ export function PayoffMatrix() {
               <>두 전략의 보수가 같은 경계 상태다. 슬라이더를 조금 움직여 보자.</>
             )}
           </p>
-          <p className='text-muted-foreground mt-1.5 font-mono text-xs'>
+          <p className='mt-1.5 font-mono text-xs text-muted-foreground'>
             상승기대 − 비용 + 낙오페널티 = <Num color={C.u}>{u}</Num>−<Num color={C.r}>{r}</Num>+
-            <Num color={C.f}>{f}</Num> = <span className='text-foreground font-semibold'>{sign(margin)}</span>{' '}
+            <Num color={C.f}>{f}</Num> = <span className='font-semibold text-foreground'>{sign(margin)}</span>{' '}
             {margin > 0 ? '> 0 → 채택 우월' : margin < 0 ? '< 0 → 관망 우월' : '= 0 → 경계'}
           </p>
         </div>
@@ -171,7 +171,7 @@ export function PayoffMatrix() {
 // 아래쪽 죄수의 딜레마 행렬에서 밑줄·링의 뜻을 알 길이 없다.
 function MatrixLegend() {
   return (
-    <div className='text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs'>
+    <div className='flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground'>
       <span className='flex items-center gap-1.5'>
         <span className='font-semibold text-sky-600 underline decoration-sky-500 decoration-2 underline-offset-2 dark:text-sky-400'>
           밑줄
@@ -230,7 +230,7 @@ function PayoffGrid({
 
 function ColHeader({ icon, label }: Header) {
   return (
-    <div className='text-muted-foreground bg-muted/50 flex items-center justify-center gap-1 rounded-md px-2 py-1.5 text-center text-xs font-medium'>
+    <div className='flex items-center justify-center gap-1 rounded-md bg-muted/50 px-2 py-1.5 text-center text-xs font-medium text-muted-foreground'>
       {icon}
       {label}
     </div>
@@ -254,7 +254,7 @@ function RowGroup({
 }) {
   return (
     <>
-      <div className='text-muted-foreground bg-muted/50 flex items-center justify-center gap-1 rounded-md px-2 text-center text-xs font-medium'>
+      <div className='flex items-center justify-center gap-1 rounded-md bg-muted/50 px-2 text-center text-xs font-medium text-muted-foreground'>
         {header.icon}
         {header.label}
       </div>
@@ -299,7 +299,7 @@ function PayoffCell({
         <span className='text-muted-foreground'> / </span>
         <span className={cn(them < 0 && 'text-rose-500', themBest && mark)}>{sign(them)}</span>
       </span>
-      {formula && <span className='text-muted-foreground mt-0.5 font-mono text-[11px]'>({formula})</span>}
+      {formula && <span className='mt-0.5 font-mono text-[11px] text-muted-foreground'>({formula})</span>}
       {isNash && <span className='mt-1 text-xs font-medium text-amber-600 dark:text-amber-400'>내쉬 균형</span>}
     </div>
   );

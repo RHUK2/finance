@@ -38,7 +38,7 @@ export function ChartContainer({ containerRef, onReset }: Props) {
     <Button
       variant='ghost'
       size='icon'
-      className='bg-background/60 hover:bg-background/80 absolute top-2 left-2 z-10 size-6 backdrop-blur-sm'
+      className='absolute top-2 left-2 z-10 size-6 bg-background/60 backdrop-blur-sm hover:bg-background/80'
       onClick={onReset}
     >
       <RotateCcw className='size-3' />

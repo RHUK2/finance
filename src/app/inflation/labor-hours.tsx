@@ -81,7 +81,7 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           format={(v) => `${v}년 · 시급 ${r.wage != null ? money(r.wage) : '-'}`}
         />
 
-        <p className='bg-muted/40 rounded-lg border p-4 text-sm/relaxed'>
+        <p className='rounded-lg border bg-muted/40 p-4 text-sm/relaxed'>
           {ready ? (
             <>
               {startYear}년 최저임금 {hi('1시간', 'strong')}어치(시급 {money(r.wage!)})를 예금에 넣었다면 오늘{' '}
@@ -118,7 +118,7 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
             ),
           )}
         </div>
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           1시간 미만이면 같은 노동의 구매력이 그만큼 줄어든 것이다. 예금이 최저임금 인상 속도를 따라가지 못하면 1시간
           아래로 내려간다.
         </p>

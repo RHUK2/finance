@@ -115,7 +115,7 @@ function Sensitivity({ p }: { p: number }) {
           );
         })}
       </div>
-      <p className='text-muted-foreground text-xs/relaxed'>
+      <p className='text-xs/relaxed text-muted-foreground'>
         성패가 불투명할수록 같은 크기의 뉴스가 가격을 훨씬 크게 흔든다. 확률이 100%에 가까워지면 이 값은 1%에 수렴하고,
         비트코인은 평범한 자산처럼 움직이게 된다.
       </p>

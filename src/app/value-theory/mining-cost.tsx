@@ -35,13 +35,13 @@ export function MiningCost() {
             <div key={s.label} className='flex flex-col gap-1'>
               <div className='flex flex-col rounded-md border px-3 py-2'>
                 <span className='text-sm font-medium'>{s.label}</span>
-                <span className='text-muted-foreground text-xs/snug'>{s.sub}</span>
+                <span className='text-xs/snug text-muted-foreground'>{s.sub}</span>
               </div>
-              {i < CHAIN.length - 1 && <ArrowDown className='text-muted-foreground mx-auto size-3' />}
+              {i < CHAIN.length - 1 && <ArrowDown className='mx-auto size-3 text-muted-foreground' />}
             </div>
           ))}
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           사슬은 여기서 끝난다. 코인당 채굴비용이 올랐다고 해서 가격이 다시 오르지는 않는다. 이 사슬이 고리가 아니라는
           것이 이 탭의 요점이다.
         </p>
@@ -56,7 +56,7 @@ export function MiningCost() {
           <Zap className='size-4 text-rose-500' />
           반대로 뒤집으면 어디서 끊기나
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           전기요금이 올라 채굴비용이 뛰었다고 하자. 코인 발행량은 프로토콜이 정해 둔 그대로다. 비싸게 만들었으니 비싸게
           팔겠다고 해도 사 줄 사람이 늘지 않는다. 남는 길은 하나다. 요금을 감당하지 못하는 채굴자부터 기계를 끄고,
           해시레이트가 빠지고, 난이도가 내려가 남은 채굴자의 코인당 비용이 다시 가격에 맞춰진다. 비용이 가격을 끌어올린
@@ -69,7 +69,7 @@ export function MiningCost() {
           <Gauge className='size-4 text-sky-500' />
           2022년에 실제로 그렇게 됐다
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           2022년 하락장에서 비트코인 가격은 여러 기관이 추정하던 채굴 원가 아래로 내려갔다. 원가가 바닥이라면 가격이
           거기서 멈추거나 되돌아왔어야 한다. 벌어진 일은 반대였다. 가격은 원가를 아랑곳하지 않고 더 내려갔고, 전기요금이
           비싼 채굴자부터 기계를 껐으며, 대형 채굴 업체 여럿이 파산 절차에 들어갔다. 해시레이트가 빠지자 난이도가 하향

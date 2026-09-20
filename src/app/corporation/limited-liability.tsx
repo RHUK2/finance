@@ -101,7 +101,7 @@ export function LimitedLiability() {
                 if (v) setPierced(false);
               }}
             />
-            <p className='text-muted-foreground text-xs'>
+            <p className='text-xs text-muted-foreground'>
               개인사업자에게는 인격이 자연인 하나뿐이다. 사업의 빚이 곧 내 빚이다.
             </p>
           </Field>
@@ -115,7 +115,7 @@ export function LimitedLiability() {
               onChange={setPierced}
               disabled={!isCorp}
             />
-            <p className='text-muted-foreground text-xs'>
+            <p className='text-xs text-muted-foreground'>
               {isCorp
                 ? '회사와 개인을 구분 없이 운영했다면 법원이 법인격을 무시하고 개인에게 책임을 물을 수 있다.'
                 : '개인사업자는 애초에 무너뜨릴 벽이 없다.'}
@@ -210,12 +210,12 @@ export function LimitedLiability() {
           <ShieldOff className='size-4 text-rose-500' />
           벽이 무너지는 전형적인 경우
         </span>
-        <ul className='text-muted-foreground flex list-disc flex-col gap-1 pl-5 text-sm/relaxed'>
+        <ul className='flex list-disc flex-col gap-1 pl-5 text-sm/relaxed text-muted-foreground'>
           {PIERCE_CASES.map((c) => (
             <li key={c}>{c}</li>
           ))}
         </ul>
-        <p className='text-muted-foreground mt-1 text-xs/relaxed'>
+        <p className='mt-1 text-xs/relaxed text-muted-foreground'>
           법인격을 인정하는 것이 오히려 정의에 반할 때, 법원은 그 사안에 한해 두 인격을 같은 것으로 본다. 회사를 없애는
           게 아니라 이번 건에서만 없는 셈 치는 것이다.
         </p>

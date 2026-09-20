@@ -59,7 +59,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
         </div>
         <Field label='검증할 것을 바꿔 본다'>
           <SegmentedControl options={TAMPER_OPTIONS} value={tamper} onChange={setTamper} />
-          <p className='text-muted-foreground text-xs'>
+          <p className='text-xs text-muted-foreground'>
             서명은 그대로 두고 메시지만 1 바꾸거나, 메시지는 그대로 두고 서명을 1 바꾼다. 어느 쪽이든 복원되는 점이
             달라진다.
           </p>
@@ -111,7 +111,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
         </StatusBanner>
       )}
 
-      <p className='text-muted-foreground text-sm/relaxed'>
+      <p className='text-sm/relaxed text-muted-foreground'>
         여기까지가 ECDSA 전부다. 곡선 위의 덧셈 하나로 키를 만들고, 일회용 비밀값으로 점 하나를 만들어 서명하고, 그 점을
         개인키 없이 되살려 검증한다. 남은 질문은 하나다. 이걸 왜 깨뜨릴 수 없는가, 그리고 언제 깨지는가.
       </p>
@@ -126,7 +126,7 @@ function Line({ label, value, note }: { label: string; value: string; note: stri
         <span className='text-sm font-medium'>{label}</span>
         <span className='text-sm tabular-nums'>{value}</span>
       </div>
-      <span className='text-muted-foreground text-xs'>{note}</span>
+      <span className='text-xs text-muted-foreground'>{note}</span>
     </div>
   );
 }

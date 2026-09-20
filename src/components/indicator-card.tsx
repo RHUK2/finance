@@ -43,15 +43,15 @@ export function IndicatorCard({
     <Card>
       <CardHeader>
         <div className='flex items-center justify-between'>
-          <CardTitle className='text-muted-foreground text-sm font-medium'>{title}</CardTitle>
-          {updatedLabel && <span className='text-muted-foreground text-xs'>{updatedLabel}</span>}
+          <CardTitle className='text-sm font-medium text-muted-foreground'>{title}</CardTitle>
+          {updatedLabel && <span className='text-xs text-muted-foreground'>{updatedLabel}</span>}
         </div>
         {ready ? headline : <Skeleton className={headlineSkeletonClass} />}
       </CardHeader>
       <CardContent className='p-0'>
         {ready ? chart : <Skeleton className={`w-full rounded-none ${SKELETON_HEIGHT[height]}`} />}
         {description ? (
-          <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>{description}</p>
+          <p className='bg-muted/50 px-6 pt-3 pb-4 text-xs text-muted-foreground'>{description}</p>
         ) : (
           <div className='h-4' />
         )}

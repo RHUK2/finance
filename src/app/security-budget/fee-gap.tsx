@@ -79,7 +79,7 @@ export function FeeGap() {
       <Card className='gap-3 p-4'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>블록 보상의 구성</span>
-          <span className='text-muted-foreground text-xs tabular-nums'>
+          <span className='text-xs text-muted-foreground tabular-nums'>
             {fmtFee(r.totalBtc)} · {formatUsd(r.perBlockUsd)}
           </span>
         </div>
@@ -90,7 +90,7 @@ export function FeeGap() {
           ]}
           total={r.totalBtc}
         />
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           보조금은 프로토콜이 정하고 수수료는 블록 공간 경매가 정한다. 왼쪽 몫은 시대가 지날수록 반드시 줄고, 오른쪽
           몫이 얼마나 자랄지는 정해진 바 없다.
         </p>

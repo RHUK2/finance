@@ -159,7 +159,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
               <span className={cn('size-2 shrink-0 rounded-full', TYPE_DOT_COLORS[type] ?? 'bg-muted')} />
               <div>
                 <span className='font-medium'>{info.getValue()}</span>
-                <span className='text-muted-foreground ml-2 text-xs'>{info.row.original.ticker}</span>
+                <span className='ml-2 text-xs text-muted-foreground'>{info.row.original.ticker}</span>
               </div>
             </div>
           );
@@ -225,14 +225,14 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
       {isLoading ? (
         <Skeleton className='h-4 w-16' />
       ) : updatedLabel ? (
-        <p className='text-muted-foreground text-xs'>{updatedLabel}</p>
+        <p className='text-xs text-muted-foreground'>{updatedLabel}</p>
       ) : null}
     </div>
   );
 
   const searchInput = (
     <>
-      <Search className='text-muted-foreground absolute top-1/2 left-2.5 size-4 -translate-y-1/2' />
+      <Search className='absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground' />
       <Input
         placeholder='자산 검색...'
         value={globalFilter}
@@ -274,20 +274,20 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
         <div className='space-y-2'>
           {isLoading ? (
             Array.from({ length: SKELETON_ROWS }).map((_, i) => (
-              <div key={i} className='bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm'>
+              <div key={i} className='flex items-center justify-between rounded-xl border bg-card px-4 py-3 shadow-sm'>
                 <Skeleton className='h-10 w-2/5' />
                 <Skeleton className='h-10 w-2/5' />
               </div>
             ))
           ) : mobileSorted.length === 0 ? (
-            <div className='text-muted-foreground py-10 text-center text-sm'>검색 결과가 없습니다.</div>
+            <div className='py-10 text-center text-sm text-muted-foreground'>검색 결과가 없습니다.</div>
           ) : (
             mobileSorted.map((item) => (
               <div
                 key={item.symbol}
                 className={cn(
-                  'bg-card flex items-center justify-between rounded-xl border px-4 py-3 shadow-sm',
-                  item.gfUrl && 'hover:bg-muted/30 cursor-pointer transition-colors',
+                  'flex items-center justify-between rounded-xl border bg-card px-4 py-3 shadow-sm',
+                  item.gfUrl && 'cursor-pointer transition-colors hover:bg-muted/30',
                 )}
                 onClick={() => item.gfUrl && window.open(item.gfUrl, '_blank', 'noopener,noreferrer')}
               >
@@ -295,7 +295,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                   <span className={cn('size-2 shrink-0 rounded-full', TYPE_DOT_COLORS[item.type] ?? 'bg-muted')} />
                   <div>
                     <div className='font-medium'>{item.label}</div>
-                    <div className='text-muted-foreground text-xs'>{item.ticker}</div>
+                    <div className='text-xs text-muted-foreground'>{item.ticker}</div>
                   </div>
                 </div>
                 <div className='text-right'>
@@ -314,12 +314,12 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
     <div className='space-y-4'>
       {controls}
       {updatedRow}
-      <div className='bg-card overflow-hidden rounded-xl border shadow-sm'>
+      <div className='overflow-hidden rounded-xl border bg-card shadow-sm'>
         <div className='overflow-x-auto'>
           <table className='w-full min-w-[400px] text-sm'>
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className='bg-muted/40 border-b'>
+                <tr key={headerGroup.id} className='border-b bg-muted/40'>
                   {headerGroup.headers.map((header) => {
                     const sorted = header.column.getIsSorted();
                     const canSort = header.column.getCanSort();
@@ -328,8 +328,8 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
                         className={cn(
-                          'text-muted-foreground px-4 py-3 text-left text-xs font-medium last:text-right',
-                          canSort && 'hover:text-foreground cursor-pointer select-none',
+                          'px-4 py-3 text-left text-xs font-medium text-muted-foreground last:text-right',
+                          canSort && 'cursor-pointer select-none hover:text-foreground',
                         )}
                       >
                         <div className={cn('flex items-center gap-1', header.index > 0 && 'justify-end')}>
@@ -360,7 +360,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                 ))
               ) : table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className='text-muted-foreground px-4 py-10 text-center'>
+                  <td colSpan={3} className='px-4 py-10 text-center text-muted-foreground'>
                     검색 결과가 없습니다.
                   </td>
                 </tr>
@@ -370,7 +370,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
                   return (
                     <tr
                       key={row.id}
-                      className={cn('hover:bg-muted/30 transition-colors', gfUrl && 'cursor-pointer')}
+                      className={cn('transition-colors hover:bg-muted/30', gfUrl && 'cursor-pointer')}
                       onClick={() => gfUrl && window.open(gfUrl, '_blank', 'noopener,noreferrer')}
                     >
                       {row.getVisibleCells().map((cell, i) => (

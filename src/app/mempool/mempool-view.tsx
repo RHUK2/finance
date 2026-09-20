@@ -59,7 +59,7 @@ export function MempoolView() {
                   <Stat label='멤풀 크기' value={`${mempool.mempoolSizeMB} MB`} />
                 </div>
               )}
-              <p className='bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs'>
+              <p className='mt-4 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>
                 대기 중인 미확인 트랜잭션 현황은 네트워크 혼잡도 지표로 활용됩니다. 미확인 거래·멤풀 크기가 클수록 처리
                 대기가 길고 수수료가 오릅니다.
               </p>
@@ -79,7 +79,7 @@ export function MempoolView() {
                   <Stat label='빠름 (~10분)' value={`${mempool.fastFee} sat/vB`} valueClassName='text-orange-400' />
                 </div>
               )}
-              <p className='bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs'>
+              <p className='mt-4 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>
                 구간별 권장 수수료는 네트워크 혼잡도·처리 우선순위 지표로 활용됩니다. 혼잡할수록 같은 시간 내 처리에
                 필요한 sat/vB가 올라갑니다.
               </p>
@@ -138,17 +138,17 @@ export function MempoolView() {
                       <span className='text-muted-foreground'>난이도 조정 진행</span>
                       <span className='font-medium'>{difficultyProgress.toFixed(1)}%</span>
                     </div>
-                    <div className='bg-muted h-2 w-full overflow-hidden rounded-full'>
+                    <div className='h-2 w-full overflow-hidden rounded-full bg-muted'>
                       <div
                         className='h-full rounded-full bg-blue-500 transition-all'
                         style={{ width: `${difficultyProgress}%` }}
                       />
                     </div>
-                    <p className='text-muted-foreground mt-1.5 text-xs'>예상 조정일: {mining.estimatedRetargetDate}</p>
+                    <p className='mt-1.5 text-xs text-muted-foreground'>예상 조정일: {mining.estimatedRetargetDate}</p>
                   </div>
                 </div>
               )}
-              <p className='bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs'>
+              <p className='mt-6 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>
                 해시레이트와 2016블록마다 조정되는 난이도는 네트워크 보안 강도와 채굴 경쟁 강도 지표로 활용됩니다.
                 해시레이트가 높을수록 공격 비용이 커져 보안이 강합니다.
               </p>
@@ -163,14 +163,14 @@ export function MempoolView() {
                 <Skeleton className='h-[288px] w-full rounded-none' />
               ) : (
                 <>
-                  <div className='text-muted-foreground flex justify-end gap-4 px-4 py-3 text-xs'>
+                  <div className='flex justify-end gap-4 px-4 py-3 text-xs text-muted-foreground'>
                     <span>현재 {hashrate.currentHashrateEHs} EH/s</span>
                     <span>난이도 {hashrate.currentDifficultyT}T</span>
                   </div>
                   <HashrateChart data={hashrate} />
                 </>
               )}
-              <p className='bg-muted/50 text-muted-foreground px-6 pt-3 pb-4 text-xs'>
+              <p className='bg-muted/50 px-6 pt-3 pb-4 text-xs text-muted-foreground'>
                 해시레이트 1년 추이는 채굴자 신뢰와 네트워크 보안 추세 지표로 활용됩니다. 꾸준한 상승은 보안 강화를,
                 급격한 하락은 대규모 채굴자 이탈 신호로 읽힙니다.
               </p>
@@ -215,7 +215,7 @@ export function MempoolView() {
                   </div>
                 </div>
               )}
-              <p className='bg-muted/50 text-muted-foreground mt-6 rounded-md px-3 py-2.5 text-xs'>
+              <p className='mt-6 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>
                 반감기까지의 진행도는 신규 공급 감소 속도와 희소성 지표로 활용됩니다. 약 4년마다 보상이 절반으로 줄어
                 신규 발행량이 감소합니다. 반감기 뒤 강세장이 이어졌다는 관찰은 표본이 네 번뿐이고 다른 요인과 분리되지
                 않아 인과로 보기 어렵습니다.

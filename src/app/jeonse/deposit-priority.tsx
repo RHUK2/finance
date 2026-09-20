@@ -83,7 +83,7 @@ export function DepositPriority() {
               value={moveIn}
               onChange={setMoveIn}
             />
-            <p className='text-muted-foreground text-xs'>대항력의 조건. 다음 날 0시부터 효력이 생긴다.</p>
+            <p className='text-xs text-muted-foreground'>대항력의 조건. 다음 날 0시부터 효력이 생긴다.</p>
           </Field>
           <Field label='확정일자'>
             <SegmentedControl
@@ -95,7 +95,7 @@ export function DepositPriority() {
               onChange={setFixedDate}
               disabled={!moveIn}
             />
-            <p className='text-muted-foreground text-xs'>
+            <p className='text-xs text-muted-foreground'>
               {moveIn
                 ? '배당에 참여할 자격. 없으면 낙찰금 분배에 끼지 못한다.'
                 : '전입신고와 점유가 없으면 확정일자만으로는 순위가 서지 않는다.'}
@@ -111,7 +111,7 @@ export function DepositPriority() {
               onChange={setSenior}
               disabled={!moveIn}
             />
-            <p className='text-muted-foreground text-xs'>
+            <p className='text-xs text-muted-foreground'>
               {moveIn
                 ? '같은 날이라도 하루 차이로 순위가 갈린다.'
                 : '겨룰 순위 자체가 없어 근저당과의 선후를 따질 일이 없다.'}
@@ -166,7 +166,7 @@ export function DepositPriority() {
       </div>
 
       <Card className='gap-4 p-4'>
-        <span className='text-muted-foreground text-xs'>
+        <span className='text-xs text-muted-foreground'>
           낙찰가 {formatEok(salePrice)}이 {tenantFirst ? '임차인 → 은행' : '은행 → 임차인'} 순서로 배분된다
         </span>
         <CostBar

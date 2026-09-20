@@ -58,12 +58,12 @@ export function Checksum() {
         <span className='text-sm font-medium'>파일 대신 한 줄</span>
         <Input value={text} onChange={(e) => setText(e.target.value)} className='font-mono text-sm' />
         <div className='flex flex-col gap-1'>
-          <span className='text-muted-foreground text-xs'>SHA-256</span>
+          <span className='text-xs text-muted-foreground'>SHA-256</span>
           <HexView hex={now} diff={diff} />
         </div>
         {changed && (
           <div className='flex flex-col gap-1'>
-            <span className='text-muted-foreground text-xs'>원본 &#39;{ORIGINAL}&#39;의 SHA-256</span>
+            <span className='text-xs text-muted-foreground'>원본 &#39;{ORIGINAL}&#39;의 SHA-256</span>
             <HexView hex={base} />
           </div>
         )}

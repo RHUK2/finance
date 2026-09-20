@@ -45,9 +45,9 @@ export const fmtHours = (n: number) => `${n.toFixed(1)}시간`;
 export function EmptyCard({ label, note }: { label: string; note: string }) {
   return (
     <Card className='gap-1 p-4'>
-      <span className='text-muted-foreground text-xs'>{label}</span>
-      <span className='text-muted-foreground text-xl font-semibold'>-</span>
-      <span className='text-muted-foreground text-xs'>{note}</span>
+      <span className='text-xs text-muted-foreground'>{label}</span>
+      <span className='text-xl font-semibold text-muted-foreground'>-</span>
+      <span className='text-xs text-muted-foreground'>{note}</span>
     </Card>
   );
 }

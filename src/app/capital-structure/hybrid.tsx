@@ -123,7 +123,7 @@ export function Hybrid() {
           <Layers className='size-4 text-violet-500' />
           {instrument.label}
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>{instrument.detail}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{instrument.detail}</p>
       </Card>
 
       <SectionIntro title='전환사채는 언제 주식이 되는가'>
@@ -174,7 +174,7 @@ export function Hybrid() {
       </div>
 
       <Card className='gap-4 p-4'>
-        <span className='text-muted-foreground text-xs'>
+        <span className='text-xs text-muted-foreground'>
           회사 가치 {formatEok(value, 0)}이 보유자와 기존 주주에게 어떻게 갈리는가
         </span>
         <CostBar

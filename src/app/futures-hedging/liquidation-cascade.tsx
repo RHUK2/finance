@@ -96,7 +96,7 @@ function CascadeSim({
   return (
     <CascadeStage
       notice={
-        <div className='text-muted-foreground flex items-center gap-1.5 text-xs'>
+        <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
           <Zap className='size-3.5 text-rose-500' />첫 박자에 외생 충격{' '}
           <span className='font-medium text-rose-600 dark:text-rose-400'>−{Math.round(OPENING_SHOCK * 100)}%</span> 자동
           적용

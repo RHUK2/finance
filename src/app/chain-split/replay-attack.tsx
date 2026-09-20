@@ -66,7 +66,7 @@ export function ReplayAttack() {
             ]}
             disabled={!canProtect}
           />
-          <p className='text-muted-foreground text-xs'>
+          <p className='text-xs text-muted-foreground'>
             {canProtect
               ? 'eCash처럼 하드포크로 갈라지는 체인은 규칙에 보호를 넣을 수 있다. 넣을지 말지는 분기를 만드는 쪽이 정한다.'
               : '소프트포크 분기에서는 고를 수 없다. 보호란 기존 체인에서 무효인 트랜잭션을 유효로 만드는 일이라 규칙이 넓어지고, 그 순간 소프트포크가 아니게 되기 때문이다.'}
@@ -84,9 +84,9 @@ export function ReplayAttack() {
         />
         {forked === null ? (
           <Card className='gap-1 p-4'>
-            <span className='text-muted-foreground text-xs'>분기 체인 잔고</span>
-            <span className='text-muted-foreground text-xl font-semibold sm:text-2xl'>—</span>
-            <span className='text-muted-foreground text-xs'>아직 분기 전이다</span>
+            <span className='text-xs text-muted-foreground'>분기 체인 잔고</span>
+            <span className='text-xl font-semibold text-muted-foreground sm:text-2xl'>—</span>
+            <span className='text-xs text-muted-foreground'>아직 분기 전이다</span>
           </Card>
         ) : (
           <StatCard
@@ -116,7 +116,7 @@ export function ReplayAttack() {
                 ? `한 번 서명했는데 합쳐서 ${(SEND_AMOUNT * 2).toFixed(1)} BTC가 나갔다`
                 : `보낸 쪽에서만 ${SEND_AMOUNT} BTC가 나갔다`}
             </p>
-            <p className='text-muted-foreground mt-0.5 text-xs font-normal'>
+            <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
               {replayed
                 ? '지갑도 노드도 정상 동작했고 개인키도 안전하다. 두 체인이 같은 트랜잭션을 똑같이 유효하다고 판단했을 뿐이다.'
                 : '보유자가 분기를 몰랐어도 결과가 같다. 그래서 리플레이 보호는 보유자의 주의가 아니라 분기 설계자의 책임이다.'}

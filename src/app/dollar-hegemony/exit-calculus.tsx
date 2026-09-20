@@ -95,7 +95,7 @@ export function ExitCalculus() {
 
       <Card className='gap-3 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Scale className='text-muted-foreground size-4' />
+          <Scale className='size-4 text-muted-foreground' />
           {country.label}의 이탈 비용은 무엇으로 이뤄져 있나
         </span>
         <StackedBar
@@ -111,7 +111,7 @@ export function ExitCalculus() {
 
       <MarkTable
         title='같은 잣대로 잰 네 나라'
-        icon={<Scale className='text-muted-foreground size-4' />}
+        icon={<Scale className='size-4 text-muted-foreground' />}
         headers={['국가', '무역', '안보', '자산']}
         rows={rows}
         selected={selected}
@@ -120,7 +120,7 @@ export function ExitCalculus() {
 
       <Card className='gap-1.5 p-4'>
         <span className='text-sm font-semibold'>{country.label}</span>
-        <p className='text-muted-foreground text-sm/relaxed'>{country.note}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{country.note}</p>
       </Card>
 
       <ExplainCard

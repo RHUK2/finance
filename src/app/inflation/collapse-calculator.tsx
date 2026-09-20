@@ -101,7 +101,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
           format={(v) => `${v}년`}
         />
 
-        <p className='bg-muted/40 rounded-lg border p-4 text-sm/relaxed'>
+        <p className='rounded-lg border bg-muted/40 p-4 text-sm/relaxed'>
           {ready ? (
             <>
               {startYear}년에 {hi(money(amount), 'strong')}을 예금에 넣었다면 오늘 통장엔{' '}
@@ -142,7 +142,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
         </div>
 
         <div>
-          <div className='text-muted-foreground mb-2 text-xs font-medium'>같은 원금을 자산에 넣었다면</div>
+          <div className='mb-2 text-xs font-medium text-muted-foreground'>같은 원금을 자산에 넣었다면</div>
           <div className='grid gap-3 sm:grid-cols-3'>
             {r.assets.map((a) =>
               a.value == null ? (

@@ -33,7 +33,7 @@ export function ExplainerPage({
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>{title}</h1>
-            <p className='text-muted-foreground mt-1 text-sm/relaxed'>{intro}</p>
+            <p className='mt-1 text-sm/relaxed text-muted-foreground'>{intro}</p>
           </div>
           {children}
         </div>

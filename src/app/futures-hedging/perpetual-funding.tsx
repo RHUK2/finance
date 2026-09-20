@@ -86,7 +86,7 @@ export function PerpetualFunding() {
           max={3.3}
           heightClass='h-12'
         />
-        <p className='text-muted-foreground text-xs'>
+        <p className='text-xs text-muted-foreground'>
           만기물은 만기라는 한 번의 사건이 베이시스를 0으로 끌고 간다. 무기한물에는 그 사건이 없어서, 8시간마다 돌아오는
           과금이 벌어진 만큼을 깎아 내고 쏠림이 다시 밀어 올리는 톱니가 반복된다. 쏠림이 셀수록 톱니의 진폭이 커진다.
         </p>

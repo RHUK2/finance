@@ -57,7 +57,7 @@ export function Reproducible() {
         <Field label='어디가 오염됐는가'>
           <SegmentedControl options={OPTIONS} value={c} onChange={setC} />
         </Field>
-        <p className='text-muted-foreground text-sm/relaxed'>{NOTE[c]}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{NOTE[c]}</p>
 
         <div className='flex flex-col gap-2'>
           {BUILDERS.map((name, i) => {

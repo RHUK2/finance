@@ -112,7 +112,7 @@ export function Limit() {
             value={stress}
             onChange={setStress}
           />
-          <p className='text-muted-foreground text-xs/relaxed'>
+          <p className='text-xs/relaxed text-muted-foreground'>
             한도를 계산할 때만 약정 금리에 {STRESS_ADD.toFixed(1)}%p를 얹어 본다({STRESS_NOTE}. 비수도권은 더 낮다).
             나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
           </p>

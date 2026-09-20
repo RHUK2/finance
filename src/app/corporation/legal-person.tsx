@@ -152,9 +152,9 @@ export function LegalPerson() {
         <div className='grid grid-cols-2 gap-2 sm:grid-cols-4'>
           {BIRTH_STEPS.map((s, i) => (
             <div key={s.label} className='flex flex-col gap-1 rounded-md border p-3'>
-              <span className='text-muted-foreground text-xs tabular-nums'>{i + 1}단계</span>
+              <span className='text-xs text-muted-foreground tabular-nums'>{i + 1}단계</span>
               <span className='text-sm font-medium'>{s.label}</span>
-              <span className='text-muted-foreground text-xs/snug'>{s.sub}</span>
+              <span className='text-xs/snug text-muted-foreground'>{s.sub}</span>
             </div>
           ))}
         </div>
@@ -179,7 +179,7 @@ export function LegalPerson() {
           <row.icon className='size-4' />
           {row.label}
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>{row.detail}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{row.detail}</p>
       </Card>
 
       <ExplainCard

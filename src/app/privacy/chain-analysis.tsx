@@ -32,7 +32,7 @@ export function ChainAnalysis() {
 
       <Card className='flex flex-col gap-4 p-4'>
         <div>
-          <span className='text-muted-foreground text-xs'>입력 (모두 같은 지갑이 서명해야 쓸 수 있다)</span>
+          <span className='text-xs text-muted-foreground'>입력 (모두 같은 지갑이 서명해야 쓸 수 있다)</span>
           <div className='mt-1 flex flex-col gap-1.5'>
             {[INPUT_A, INPUT_B].map((addr, i) => (
               <div key={addr} className='flex items-center justify-between rounded-md border p-2 text-xs'>
@@ -52,7 +52,7 @@ export function ChainAnalysis() {
         </div>
 
         <div>
-          <span className='text-muted-foreground text-xs'>출력. 어느 쪽이 &#39;잔돈&#39;일까? 클릭해서 맞혀보자.</span>
+          <span className='text-xs text-muted-foreground'>출력. 어느 쪽이 &#39;잔돈&#39;일까? 클릭해서 맞혀보자.</span>
           <div className='mt-1 grid grid-cols-1 gap-2 sm:grid-cols-2'>
             {OUTPUTS.map((o) => {
               const isSelected = guess === o.id;
@@ -66,7 +66,7 @@ export function ChainAnalysis() {
                   disabled={revealed}
                   className={cn(
                     'flex flex-col gap-1 rounded-md border p-3 text-left text-sm transition-colors',
-                    !revealed && 'hover:bg-muted cursor-pointer',
+                    !revealed && 'cursor-pointer hover:bg-muted',
                     showCorrect && 'border-emerald-500/40 bg-emerald-500/5',
                     showWrong && 'border-rose-500/40 bg-rose-500/5',
                   )}
@@ -77,7 +77,7 @@ export function ChainAnalysis() {
                     {showWrong && <CircleX className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />}
                   </span>
                   <span className='tabular-nums'>{o.sats.toLocaleString('ko-KR')} sat</span>
-                  <span className='text-muted-foreground text-xs'>{o.type}</span>
+                  <span className='text-xs text-muted-foreground'>{o.type}</span>
                 </button>
               );
             })}

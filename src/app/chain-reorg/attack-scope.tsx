@@ -74,7 +74,7 @@ export function AttackScope() {
             return (
               <div key={pct} className='flex items-center justify-between gap-3 py-2 text-sm'>
                 <span className={cn('w-14 font-medium', pct >= 51 && 'text-rose-600 dark:text-rose-400')}>{pct}%</span>
-                <span className='text-muted-foreground flex-1'>6확인: {formatProbability(six)}</span>
+                <span className='flex-1 text-muted-foreground'>6확인: {formatProbability(six)}</span>
                 <span className={cn('w-32 text-right tabular-nums', pq >= 0.5 ? 'text-rose-500' : 'text-emerald-500')}>
                   결국: {formatProbability(ev)}
                 </span>

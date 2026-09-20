@@ -57,7 +57,7 @@ export function MoneyCreationView() {
         <StatCard label='통화승수' value={metrics.multiplier} format={(n) => `${n.toFixed(1)}배`} />
       </div>
 
-      <div className='text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs'>
+      <div className='flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
         <span className='flex items-center gap-1.5'>
           <span className='size-3 rounded-sm border border-amber-500/70 bg-amber-500/15 ring-1 ring-amber-500/60' />
           무(無)에서 새로 창조

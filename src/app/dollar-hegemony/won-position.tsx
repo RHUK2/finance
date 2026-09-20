@@ -82,7 +82,7 @@ export function WonPosition() {
       <Card className='gap-3 p-4'>
         <div className='flex items-baseline justify-between'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <TrendingDown className='text-muted-foreground size-4' />
+            <TrendingDown className='size-4 text-muted-foreground' />
             국내 대출금리는 무엇으로 이뤄지는가
           </span>
           <span className='text-lg font-semibold tabular-nums'>{c.loanRate.toFixed(2)}%</span>
@@ -99,7 +99,7 @@ export function WonPosition() {
             },
           ]}
         />
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           가산폭 {KR_RATE.spread.value.toFixed(1)}%p는 {KR_RATE.spread.source}의 {KR_RATE.spread.asOf}에서 잡은 값이다.
         </p>
       </Card>

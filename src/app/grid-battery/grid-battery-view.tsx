@@ -108,7 +108,7 @@ export function GridBatteryView() {
       <Card className='gap-3 p-4'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>발전 전력의 분배</span>
-          <span className='text-muted-foreground text-xs'>총 발전량 {fmt(generation)}</span>
+          <span className='text-xs text-muted-foreground'>총 발전량 {fmt(generation)}</span>
         </div>
         <StackedBar
           segments={SEGMENTS.map((s) => ({

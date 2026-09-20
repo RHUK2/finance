@@ -90,7 +90,7 @@ export function BitcoinQuantumView() {
       <StatusBanner tone={sim.risk.tone} icon={<sim.risk.icon className='size-5 shrink-0' />}>
         <div>
           <p className='font-semibold'>이 잔고는 지금 &apos;{sim.risk.level}&apos; 상태다</p>
-          <p className='text-muted-foreground mt-0.5 text-xs font-normal'>
+          <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
             {sim.exposed
               ? '공개키가 이미 노출되어 있어, 큐비트 발전 정도가 그대로 위험도에 반영된다.'
               : '공개키가 해시 뒤에 숨어 있어, 큐비트가 아무리 발전해도 이 잔고를 직접 노릴 수 없다.'}

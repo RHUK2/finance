@@ -32,7 +32,7 @@ export function BlockHeaderView() {
           <Hash className='size-4 text-amber-600 dark:text-amber-400' />
           헤더 필드 → 블록 해시
         </span>
-        <p className='text-muted-foreground text-xs'>4 + 32 + 32 + 4 + 4 + 4 = 80바이트. 이 여섯 필드가 전부다.</p>
+        <p className='text-xs text-muted-foreground'>4 + 32 + 32 + 4 + 4 + 4 = 80바이트. 이 여섯 필드가 전부다.</p>
         <Pipeline
           items={[
             {
@@ -86,12 +86,12 @@ export function BlockHeaderView() {
         </div>
 
         <div className='grid grid-cols-1 gap-1.5 sm:grid-cols-2'>
-          <div className='bg-muted flex flex-col gap-1 rounded-md p-3'>
-            <span className='text-muted-foreground text-xs'>nonce {nonce - 1} → 해시</span>
+          <div className='flex flex-col gap-1 rounded-md bg-muted p-3'>
+            <span className='text-xs text-muted-foreground'>nonce {nonce - 1} → 해시</span>
             <code className='font-mono text-xs break-all'>{shortHex(prevHash, 20)}</code>
           </div>
-          <div className='bg-muted flex flex-col gap-1 rounded-md border border-amber-500/40 p-3'>
-            <span className='text-muted-foreground text-xs'>nonce {nonce} → 해시</span>
+          <div className='flex flex-col gap-1 rounded-md border border-amber-500/40 bg-muted p-3'>
+            <span className='text-xs text-muted-foreground'>nonce {nonce} → 해시</span>
             <code className='font-mono text-xs break-all'>{shortHex(hash, 20)}</code>
           </div>
         </div>

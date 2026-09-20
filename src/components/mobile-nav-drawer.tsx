@@ -19,7 +19,7 @@ export function MobileNavDrawer({ currentLabel }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <footer className='bg-sidebar dark:bg-background fixed inset-x-0 bottom-0 z-30 flex h-12 shrink-0 items-center gap-2 border-t px-4 pb-[env(safe-area-inset-bottom)]'>
+    <footer className='fixed inset-x-0 bottom-0 z-30 flex h-12 shrink-0 items-center gap-2 border-t bg-sidebar px-4 pb-[env(safe-area-inset-bottom)] dark:bg-background'>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger className='flex cursor-pointer items-center gap-1 text-sm font-medium outline-none'>
           {currentLabel}
@@ -32,7 +32,7 @@ export function MobileNavDrawer({ currentLabel }: Props) {
           <div className='overflow-y-auto px-4 pb-4'>
             {NAV_GROUPS.map((group) => (
               <div key={group.label} className='mb-4'>
-                <p className='text-muted-foreground mb-1 text-xs'>{group.label}</p>
+                <p className='mb-1 text-xs text-muted-foreground'>{group.label}</p>
                 <SidebarMenu>
                   {group.items.map(({ label, href, icon: Icon }) => (
                     <SidebarMenuItem key={href}>

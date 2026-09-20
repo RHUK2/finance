@@ -164,7 +164,7 @@ function StackBox({ item, top }: { item: StackItem; top: boolean }) {
         top && !item.tone && 'border-primary/40',
       )}
     >
-      <span className='text-muted-foreground shrink-0'>{item.label}</span>
+      <span className='shrink-0 text-muted-foreground'>{item.label}</span>
       <code className='font-mono break-all'>{item.value}</code>
     </div>
   );
@@ -247,7 +247,7 @@ export function ScriptStack() {
           <span className='text-sm font-semibold'>
             {meta.label} · {meta.sigAlgo} · unlock은 {meta.unlockField}
           </span>
-          <span className='text-muted-foreground text-xs tabular-nums'>
+          <span className='text-xs text-muted-foreground tabular-nums'>
             {step + 1} / {steps.length} 단계
           </span>
         </div>
@@ -266,12 +266,12 @@ export function ScriptStack() {
                   !reached && 'opacity-40',
                 )}
               >
-                <span className='text-muted-foreground w-24 shrink-0 font-mono whitespace-nowrap'>{s.source}</span>
+                <span className='w-24 shrink-0 font-mono whitespace-nowrap text-muted-foreground'>{s.source}</span>
                 <div className='flex flex-col gap-0.5'>
                   <span className='font-mono font-medium'>
                     {s.label}
                     {dead && reached && (
-                      <span className='text-muted-foreground ml-1.5 font-sans'>(실행 안 됨 · 스크립트 이미 종료)</span>
+                      <span className='ml-1.5 font-sans text-muted-foreground'>(실행 안 됨 · 스크립트 이미 종료)</span>
                     )}
                   </span>
                   {reached && !dead && <span className='text-muted-foreground'>{s.detail}</span>}
@@ -282,11 +282,11 @@ export function ScriptStack() {
         </ol>
 
         {/* 현재 스택 */}
-        <div className='bg-muted/30 flex flex-col gap-2 rounded-lg border p-3'>
-          <span className='text-muted-foreground text-xs font-semibold'>현재 스택 (위가 TOP)</span>
+        <div className='flex flex-col gap-2 rounded-lg border bg-muted/30 p-3'>
+          <span className='text-xs font-semibold text-muted-foreground'>현재 스택 (위가 TOP)</span>
           <div className='flex flex-col-reverse gap-1.5'>
             {cur.stack.length === 0 ? (
-              <span className='text-muted-foreground text-xs'>비어 있음</span>
+              <span className='text-xs text-muted-foreground'>비어 있음</span>
             ) : (
               cur.stack.map((it, i) => <StackBox key={i} item={it} top={i === cur.stack.length - 1} />)
             )}

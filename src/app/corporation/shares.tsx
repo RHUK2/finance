@@ -84,7 +84,7 @@ export function Shares() {
         </span>
         <StackedBar segments={segments} total={issued} />
         {buyback > 0 && (
-          <p className='text-muted-foreground text-xs/relaxed'>
+          <p className='text-xs/relaxed text-muted-foreground'>
             자사주 {fmtShares(buyback)}에는 의결권도 배당도 없다. 이를 뺀 유통주식 {fmtShares(outstanding)}를 분모로
             하면 내 몫은 {formatPct(myPct, 2)}가 되어, 위 막대에 적힌 {formatPct((ME / issued) * 100, 2)}보다 크다. 아래
             지표는 모두 유통주식 기준이다.

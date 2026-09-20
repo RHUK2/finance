@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <QueryProvider>
             <SidebarProvider>
               <AppSidebar />
-              <SidebarInset className='bg-sidebar dark:bg-background min-w-0'>{children}</SidebarInset>
+              <SidebarInset className='min-w-0 bg-sidebar dark:bg-background'>{children}</SidebarInset>
             </SidebarProvider>
           </QueryProvider>
           <Toaster position='top-center' richColors />

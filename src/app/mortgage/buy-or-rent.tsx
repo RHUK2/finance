@@ -168,7 +168,7 @@ export function BuyOrRent() {
       </div>
 
       <Card className='gap-4 p-4'>
-        <span className='text-muted-foreground text-xs/relaxed'>
+        <span className='text-xs/relaxed text-muted-foreground'>
           {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다. 세금은 취득세{' '}
           {acqRate.toFixed(2)}%({ACQUISITION_TAX_NOTE}, 6억 초과 9억 이하는 가격에 따라 오른다)와 보유세 연{' '}
           {HOLDING_TAX_RATE}%로 잡았다. 보유세율은 {HOLDING_TAX_NOTE}이다

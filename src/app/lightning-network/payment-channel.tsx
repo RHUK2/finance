@@ -50,7 +50,7 @@ export function PaymentChannel() {
           <span className='text-muted-foreground'>업데이트 {state.updateCount}회</span>
         </div>
 
-        <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
+        <div className='flex h-8 w-full overflow-hidden rounded-md bg-muted'>
           <div
             className='flex items-center justify-end bg-amber-500 pr-2 text-xs font-medium text-white transition-all duration-300'
             style={{ width: `${alicePct}%` }}
@@ -58,7 +58,7 @@ export function PaymentChannel() {
             {alicePct > 15 && 'Alice'}
           </div>
           {/* Bob 구간은 배경이 bg-muted라 흰 글자를 쓰면 라이트 모드에서 안 보인다. */}
-          <div className='text-foreground flex flex-1 items-center pl-2 text-xs font-medium transition-all duration-300'>
+          <div className='flex flex-1 items-center pl-2 text-xs font-medium text-foreground transition-all duration-300'>
             {100 - alicePct > 15 && 'Bob'}
           </div>
         </div>

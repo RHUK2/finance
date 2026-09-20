@@ -57,7 +57,7 @@ export function CashVsChain() {
               <Metric label='부피' value={`${fmtNum(liters)} L`} />
               <Metric label={`캐리어 (${SUITCASE_KG}kg 기준)`} value={`${fmtNum(suitcases)}개`} tone='bad' />
             </div>
-            <p className='text-muted-foreground text-xs/relaxed'>
+            <p className='text-xs/relaxed text-muted-foreground'>
               대부분의 나라에서 일정 금액(미국·EU는 1만 달러/유로 상당) 이상의 현금을 신고 없이 반출입하면 그 자체로
               범죄다. 물리적 검색에 걸릴 위험이 부피에 비례해 커진다.
             </p>
@@ -74,7 +74,7 @@ export function CashVsChain() {
               <Metric label='이체 시간' value='~10분' sub='금액과 무관' />
               <Metric label='국경 통제' value='없음' tone='good' />
             </div>
-            <p className='text-muted-foreground text-xs/relaxed'>
+            <p className='text-xs/relaxed text-muted-foreground'>
               금액이 100만 달러든 10억 달러든 트랜잭션 크기는 수백 바이트로 같고, 수수료도 금액이 아니라 바이트 수에
               비례한다. 여기까지만 보면 압도적으로 유리하다.
             </p>

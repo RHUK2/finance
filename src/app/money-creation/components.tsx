@@ -52,7 +52,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
     >
       <div className='flex items-baseline justify-between border-b px-3 py-2'>
         <span className='font-semibold'>{name}</span>
-        <span className='text-muted-foreground text-xs'>{sub}</span>
+        <span className='text-xs text-muted-foreground'>{sub}</span>
       </div>
 
       <CardContent className='flex flex-1 flex-col p-3'>
@@ -67,7 +67,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
             기존의 돈이 이동·변환됨
           </div>
         ) : (
-          <div className='text-muted-foreground/70 mb-2 flex items-center gap-1 text-xs font-medium'>
+          <div className='mb-2 flex items-center gap-1 text-xs font-medium text-muted-foreground/70'>
             <Minus className='size-3.5' />이 단계에서 변동 없음
           </div>
         )}
@@ -89,7 +89,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
             )}
             {capital.length > 0 && (
               <>
-                <div className='text-muted-foreground text-xs font-medium'>자본(순자산)</div>
+                <div className='text-xs font-medium text-muted-foreground'>자본(순자산)</div>
                 {capital.map((l) => (
                   <AmountRow key={l.item} line={l} side='liability' />
                 ))}
@@ -98,7 +98,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
           </div>
         </div>
 
-        <div className='text-muted-foreground mt-auto flex items-center justify-between border-t pt-2 text-xs'>
+        <div className='mt-auto flex items-center justify-between border-t pt-2 text-xs text-muted-foreground'>
           <span className='tabular-nums'>자산 {formatSigned(assetTotal)}</span>
           <span className={cn(assetTotal === liabTotal ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600')}>
             {assetTotal === liabTotal ? '균형 ✓' : '불균형'}
@@ -136,7 +136,7 @@ export function AssetEquationCard() {
     <Card className='gap-3 p-4'>
       <div className='flex flex-wrap items-baseline gap-2'>
         <span className='font-semibold'>자산 = 부채 + 자본</span>
-        <span className='text-muted-foreground text-xs'>
+        <span className='text-xs text-muted-foreground'>
           모든 대차대조표가 항상 &#39;균형 ✓&#39;인 이유다. 자산은 누군가의 빚(부채)이나 내 몫(자본)으로 정확히
           채워진다.
         </span>
@@ -145,8 +145,8 @@ export function AssetEquationCard() {
         {ASSET_GROUPS.map((g) => (
           <div key={g.title} className='rounded-md border p-3'>
             <div className={cn('text-sm font-medium', g.color)}>{g.title}</div>
-            <p className='text-muted-foreground mt-0.5 text-xs'>{g.desc}</p>
-            <ul className='text-muted-foreground mt-2 space-y-1 text-xs'>
+            <p className='mt-0.5 text-xs text-muted-foreground'>{g.desc}</p>
+            <ul className='mt-2 space-y-1 text-xs text-muted-foreground'>
               {g.items.map((it) => (
                 <li key={it} className='flex gap-1.5'>
                   <span className='text-muted-foreground/50'>·</span>

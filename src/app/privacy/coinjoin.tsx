@@ -46,9 +46,9 @@ export function CoinJoin() {
 
         <div className='flex items-stretch justify-between gap-4'>
           <div className='flex flex-1 flex-col gap-1.5'>
-            <span className='text-muted-foreground text-center text-xs'>입력</span>
+            <span className='text-center text-xs text-muted-foreground'>입력</span>
             {Array.from({ length: participants }).map((_, i) => (
-              <div key={i} className='bg-muted flex h-8 items-center justify-center rounded-md text-xs font-medium'>
+              <div key={i} className='flex h-8 items-center justify-center rounded-md bg-muted text-xs font-medium'>
                 참가자 {i + 1}
               </div>
             ))}
@@ -74,9 +74,9 @@ export function CoinJoin() {
           </svg>
 
           <div className='flex flex-1 flex-col gap-1.5'>
-            <span className='text-muted-foreground text-center text-xs'>동일 금액 출력</span>
+            <span className='text-center text-xs text-muted-foreground'>동일 금액 출력</span>
             {Array.from({ length: participants }).map((_, i) => (
-              <div key={i} className='bg-muted flex h-8 items-center justify-center rounded-md font-mono text-xs'>
+              <div key={i} className='flex h-8 items-center justify-center rounded-md bg-muted font-mono text-xs'>
                 0.01 BTC
               </div>
             ))}

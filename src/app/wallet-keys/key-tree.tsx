@@ -37,19 +37,19 @@ function NodeRow({
       onClick={onClick}
       className={cn(
         'flex items-center gap-3 rounded-md border px-3 py-2 text-left transition-colors',
-        current ? 'border-primary bg-primary/5' : 'hover:bg-muted/50 border-transparent',
+        current ? 'border-primary bg-primary/5' : 'border-transparent hover:bg-muted/50',
         !revealed && 'opacity-40',
       )}
     >
       <span
         className={cn(
           'size-3 shrink-0 rounded-full',
-          current ? 'bg-primary' : revealed ? 'bg-muted-foreground' : 'border-muted-foreground/40 border',
+          current ? 'bg-primary' : revealed ? 'bg-muted-foreground' : 'border border-muted-foreground/40',
         )}
       />
       <span className='w-14 font-mono text-sm font-semibold'>{val}</span>
-      <span className='text-muted-foreground w-16 text-xs'>{name}</span>
-      <span className='text-muted-foreground truncate text-xs'>{hint}</span>
+      <span className='w-16 text-xs text-muted-foreground'>{name}</span>
+      <span className='truncate text-xs text-muted-foreground'>{hint}</span>
     </button>
   );
 }
@@ -323,11 +323,11 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
       <Card className='flex flex-col gap-4 p-4'>
         <div className='flex items-center justify-between gap-2'>
           <span className='text-sm font-semibold'>시드에서 주소까지, 한 단계씩 파생하기</span>
-          <span className='text-muted-foreground text-xs tabular-nums'>
+          <span className='text-xs text-muted-foreground tabular-nums'>
             {step + 1} / {nodes.length} 단계
           </span>
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           경로는 한 번에 나오지 않는다. 부모 키에서 가지 하나를 파생하면 나온 자식 키가 다시 다음 가지의 부모가 된다. 각
           노드는 확장 개인키(xprv)와 확장 공개키(xpub)를 갖는데, 하드닝(&apos;)된 가지는 부모 개인키가 있어야만
           파생된다. 노드를 눌러 단계를 오갈 수 있다.
@@ -410,10 +410,10 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         </ol>
 
         {/* 현재 단계 상세 */}
-        <div className='bg-muted/30 flex flex-col gap-3 rounded-lg border p-3'>
+        <div className='flex flex-col gap-3 rounded-lg border bg-muted/30 p-3'>
           <div className='flex flex-wrap items-center gap-2'>
             <span className='font-mono text-sm font-semibold'>{node.val}</span>
-            <span className='text-muted-foreground text-xs'>
+            <span className='text-xs text-muted-foreground'>
               {node.name} · {node.hint}
             </span>
             {step > 0 && (
@@ -432,10 +432,10 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
           <Pipeline items={detailItems} />
 
           <div className='flex flex-col gap-1.5'>
-            <span className='text-muted-foreground text-xs/relaxed'>
+            <span className='text-xs/relaxed text-muted-foreground'>
               방금 나온 개인키와 체인코드를 한 덩어리로 묶은 게 이 노드의 확장키다. 다음 가지는 여기서 뻗는다.
             </span>
-            <div className='bg-muted flex flex-col gap-0.5 rounded-md p-2.5'>
+            <div className='flex flex-col gap-0.5 rounded-md bg-muted p-2.5'>
               <span className='flex items-center gap-1 text-xs font-semibold'>
                 <Lock className={cn('size-3 shrink-0', LOCK_COLOR)} />
                 확장 개인키 (xprv)
@@ -443,14 +443,14 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               <code className='font-mono text-[11px] break-all'>
                 {short(cur.priv)} ∥ {short(cur.cc)}
               </code>
-              <span className='text-muted-foreground text-[10px]'>개인키 + 체인코드 · 비밀</span>
+              <span className='text-[10px] text-muted-foreground'>개인키 + 체인코드 · 비밀</span>
             </div>
             {/* 축은 xprv/xpub 카드 안 아이콘의 중심(x=16px: p-2.5 10 + 아이콘 12/2). */}
-            <div className='text-muted-foreground flex items-center gap-1.5 pl-[9px] text-[10px]'>
+            <div className='flex items-center gap-1.5 pl-[9px] text-[10px] text-muted-foreground'>
               <ArrowDown className='size-3.5 shrink-0' />
               개인키에만 secp256k1 적용 → 공개키, 체인코드는 그대로 복사
             </div>
-            <div className='bg-muted flex flex-col gap-0.5 rounded-md p-2.5'>
+            <div className='flex flex-col gap-0.5 rounded-md bg-muted p-2.5'>
               <span className='flex items-center gap-1 text-xs font-semibold'>
                 <Eye className={cn('size-3 shrink-0', OPEN_COLOR)} />
                 확장 공개키 (xpub)
@@ -458,11 +458,11 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               <code className='font-mono text-[11px] break-all'>
                 {short(cur.pub)} ∥ {short(cur.cc)}
               </code>
-              <span className='text-muted-foreground text-[10px]'>공개키 + 체인코드 · 공유 가능</span>
+              <span className='text-[10px] text-muted-foreground'>공개키 + 체인코드 · 공유 가능</span>
             </div>
           </div>
 
-          <p className='text-muted-foreground text-xs/relaxed'>
+          <p className='text-xs/relaxed text-muted-foreground'>
             {step === 0
               ? '시드에서 나온 뿌리 키. 지갑의 모든 가지가 결국 이 한 노드에서 갈라져 나온다.'
               : node.hardened
@@ -489,7 +489,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             <StepForward className='size-4' />
             다음 단계
           </Button>
-          <span className='text-muted-foreground ml-auto text-xs'>
+          <span className='ml-auto text-xs text-muted-foreground'>
             {step === lastStep ? '주소까지 완성' : '부모 키에서 다음 가지를 파생한다'}
           </span>
         </div>

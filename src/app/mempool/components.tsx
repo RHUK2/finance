@@ -16,8 +16,8 @@ export function CardHeading({ title, relativeTime }: { title?: string; relativeT
   return (
     <CardHeader>
       <div className='flex items-center justify-between'>
-        <CardTitle className='text-muted-foreground text-sm font-medium'>{title}</CardTitle>
-        {relativeTime && <span className='text-muted-foreground text-xs'>{relativeTime}</span>}
+        <CardTitle className='text-sm font-medium text-muted-foreground'>{title}</CardTitle>
+        {relativeTime && <span className='text-xs text-muted-foreground'>{relativeTime}</span>}
       </div>
     </CardHeader>
   );
@@ -82,7 +82,7 @@ export function PoolShareChart({
                     />
                     <span className='truncate'>{p.name}</span>
                   </span>
-                  <span className='text-muted-foreground shrink-0 tabular-nums'>
+                  <span className='shrink-0 text-muted-foreground tabular-nums'>
                     {p.sharePct}% · {p.blockCount}
                   </span>
                 </li>
@@ -91,7 +91,7 @@ export function PoolShareChart({
           </div>
         )}
         {description && (
-          <p className='bg-muted/50 text-muted-foreground mt-4 rounded-md px-3 py-2.5 text-xs'>{description}</p>
+          <p className='mt-4 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>{description}</p>
         )}
       </CardContent>
     </Card>
@@ -125,19 +125,19 @@ export function RecentBlocksList({
                 <div className='flex items-start justify-between gap-3'>
                   <div className='min-w-0'>
                     <p className='font-bold'>#{b.height.toLocaleString()}</p>
-                    <p className='text-muted-foreground mt-0.5 truncate text-xs'>
+                    <p className='mt-0.5 truncate text-xs text-muted-foreground'>
                       {b.poolName} · {blockTimeAgo(b.timestamp)}
                     </p>
                   </div>
                   <div className='shrink-0 text-right'>
                     <p className='font-semibold text-amber-400 tabular-nums'>{b.rewardBTC} BTC</p>
-                    <p className='text-muted-foreground mt-0.5 text-xs tabular-nums'>
+                    <p className='mt-0.5 text-xs text-muted-foreground tabular-nums'>
                       {b.txCount.toLocaleString()} tx · ~{b.medianFee} sat/vB
                     </p>
                   </div>
                 </div>
                 <div className='mt-2 flex items-center gap-2'>
-                  <div className='bg-muted h-1 flex-1 overflow-hidden rounded-full'>
+                  <div className='h-1 flex-1 overflow-hidden rounded-full bg-muted'>
                     <div
                       className='h-full rounded-full bg-blue-500/60'
                       style={{
@@ -145,7 +145,7 @@ export function RecentBlocksList({
                       }}
                     />
                   </div>
-                  <span className='text-muted-foreground w-12 text-right text-[10px] tabular-nums'>{b.sizeMB} MB</span>
+                  <span className='w-12 text-right text-[10px] text-muted-foreground tabular-nums'>{b.sizeMB} MB</span>
                 </div>
               </li>
             ))}
@@ -153,7 +153,7 @@ export function RecentBlocksList({
         )}
         {description && (
           <div className='px-4 pt-3 pb-4'>
-            <p className='bg-muted/50 text-muted-foreground rounded-md px-3 py-2.5 text-xs'>{description}</p>
+            <p className='rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>{description}</p>
           </div>
         )}
       </CardContent>
@@ -181,7 +181,7 @@ export function MempoolBlocksViz({
         {!blocks ? (
           <Skeleton className='h-[88px] w-full' />
         ) : blocks.length === 0 ? (
-          <p className='text-muted-foreground text-sm'>대기 중인 블록 없음</p>
+          <p className='text-sm text-muted-foreground'>대기 중인 블록 없음</p>
         ) : (
           <div
             ref={ref}
@@ -229,7 +229,7 @@ export function MempoolBlocksViz({
           </div>
         )}
         {description && (
-          <p className='bg-muted/50 text-muted-foreground mt-3 rounded-md px-3 py-2.5 text-xs'>{description}</p>
+          <p className='mt-3 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>{description}</p>
         )}
       </CardContent>
     </Card>
@@ -249,7 +249,7 @@ export function Stat({
 }) {
   return (
     <div className='text-center'>
-      <p className='text-muted-foreground text-xs'>{label}</p>
+      <p className='text-xs text-muted-foreground'>{label}</p>
       <p className={cn('mt-0.5 font-bold', valueClassName)}>{value}</p>
       {change !== undefined && (
         <p className={cn('mt-0.5 text-xs', change >= 0 ? 'text-green-400' : 'text-red-400')}>
@@ -300,7 +300,7 @@ export function DonutRing({
         <span className='text-lg leading-none font-bold' style={{ color: centerColor }}>
           {center}
         </span>
-        {centerSub && <span className='text-muted-foreground text-xs'>{centerSub}</span>}
+        {centerSub && <span className='text-xs text-muted-foreground'>{centerSub}</span>}
       </div>
     </div>
   );

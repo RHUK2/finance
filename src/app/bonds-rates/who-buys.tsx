@@ -82,7 +82,7 @@ export function WhoBuys() {
 
       <Card className='gap-2 p-4'>
         <span className='text-sm font-semibold'>{detail.title}</span>
-        <p className='text-muted-foreground text-sm/relaxed'>{detail.body}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{detail.body}</p>
       </Card>
     </div>
   );

@@ -42,11 +42,11 @@ export function HtlcRouting() {
       <Card className='flex flex-col gap-4 p-4'>
         <div className='grid grid-cols-1 gap-2 text-sm sm:grid-cols-2'>
           <div className='rounded-md border p-3'>
-            <span className='text-muted-foreground text-xs'>Bob만 아는 비밀 (preimage R)</span>
+            <span className='text-xs text-muted-foreground'>Bob만 아는 비밀 (preimage R)</span>
             <p className='mt-1 font-mono text-sm'>{shortHex(preimage, 16)}</p>
           </div>
           <div className='rounded-md border p-3'>
-            <span className='text-muted-foreground text-xs'>결제 해시 H = hash(R) (모두에게 공개)</span>
+            <span className='text-xs text-muted-foreground'>결제 해시 H = hash(R) (모두에게 공개)</span>
             <p className='mt-1 font-mono text-sm'>{shortHex(hash, 16)}</p>
           </div>
         </div>
@@ -74,7 +74,7 @@ export function HtlcRouting() {
           })}
         </div>
 
-        <div className='bg-muted rounded-md border-transparent p-3 text-sm/relaxed'>{STEP_LABEL[step]}</div>
+        <div className='rounded-md border-transparent bg-muted p-3 text-sm/relaxed'>{STEP_LABEL[step]}</div>
       </Card>
 
       <IllustrativeDisclaimer>
@@ -111,10 +111,10 @@ function HopNode({
   return (
     <div className='flex flex-1 items-center'>
       <div className='flex flex-col items-center gap-1'>
-        <div className='bg-muted flex size-10 items-center justify-center rounded-full border text-xs font-medium'>
+        <div className='flex size-10 items-center justify-center rounded-full border bg-muted text-xs font-medium'>
           {label.slice(0, 1)}
         </div>
-        <span className='text-muted-foreground text-[11px]'>{label}</span>
+        <span className='text-[11px] text-muted-foreground'>{label}</span>
       </div>
       {!isLast && (
         <div className='mx-2 flex-1'>

@@ -149,10 +149,10 @@ export function SignLab({
 function Step({ n, title, body }: { n: number; title: string; body: string }) {
   return (
     <div className='flex gap-3 rounded-md border p-3'>
-      <span className='text-muted-foreground shrink-0 text-xs tabular-nums'>{n}단계</span>
+      <span className='shrink-0 text-xs text-muted-foreground tabular-nums'>{n}단계</span>
       <div className='flex flex-col gap-1'>
         <span className='text-sm font-medium tabular-nums'>{title}</span>
-        <span className='text-muted-foreground text-xs/relaxed'>{body}</span>
+        <span className='text-xs/relaxed text-muted-foreground'>{body}</span>
       </div>
     </div>
   );

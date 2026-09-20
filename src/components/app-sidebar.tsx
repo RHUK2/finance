@@ -98,7 +98,7 @@ export function AppSidebar() {
           >
             <SidebarGroup>
               <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className='hover:text-sidebar-foreground w-full cursor-pointer gap-1'>
+                <CollapsibleTrigger className='w-full cursor-pointer gap-1 hover:text-sidebar-foreground'>
                   {group.label}
                   <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/nav:rotate-90' />
                 </CollapsibleTrigger>

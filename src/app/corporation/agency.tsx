@@ -137,7 +137,7 @@ export function Agency() {
                         : 'text-muted-foreground/40',
                   )}
                 />
-                {ORGANS[i + 1].outside && <span className='text-muted-foreground text-xs'>여기서부터 회사 바깥</span>}
+                {ORGANS[i + 1].outside && <span className='text-xs text-muted-foreground'>여기서부터 회사 바깥</span>}
               </div>
             )}
           </div>
@@ -155,7 +155,7 @@ export function Agency() {
           <TriangleAlert className='size-4 text-amber-500' />
           대표가 절차를 건너뛰고 서명했다면
         </span>
-        <p className='text-muted-foreground text-sm/relaxed'>
+        <p className='text-sm/relaxed text-muted-foreground'>
           {needsMeeting
             ? '이사회 결의를 빠뜨린 경우라면 상대방이 그 흠을 알았는지에 따라 계약의 운명이 갈린다. 하지만 주주총회 특별결의가 필요한 규모에서는 그 구분이 통하지 않는다.'
             : '안쪽 절차의 흠은 회사 내부 문제다. 바깥의 상대방이 그 흠을 알았는지에 따라 계약의 운명이 갈린다.'}
@@ -216,7 +216,7 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
           )}
         />
         <span className='font-semibold'>{organ.name}</span>
-        <span className='text-muted-foreground text-xs'>{organ.role}</span>
+        <span className='text-xs text-muted-foreground'>{organ.role}</span>
         <span
           className={cn(
             'ml-auto shrink-0 rounded-full px-2 py-0.5 text-xs',
@@ -230,7 +230,7 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
           {outside ? '회사 바깥' : active ? '거쳐야 함' : '불필요'}
         </span>
       </div>
-      <p className='text-muted-foreground text-xs/relaxed'>{organ.note}</p>
+      <p className='text-xs/relaxed text-muted-foreground'>{organ.note}</p>
     </Card>
   );
 }

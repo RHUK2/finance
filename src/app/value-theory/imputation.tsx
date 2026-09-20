@@ -49,22 +49,22 @@ export function Imputation() {
         <span className='text-sm font-semibold'>귀속: 값어치는 아래에서 위로 올라온다</span>
         <div className='flex items-stretch gap-3'>
           <div className='flex w-8 shrink-0 items-center justify-center rounded-md border border-dashed'>
-            <ArrowUp className='text-muted-foreground size-4' />
+            <ArrowUp className='size-4 text-muted-foreground' />
           </div>
           <div className='flex flex-1 flex-col-reverse gap-2'>
             {CHAIN.map((c) => (
               <div key={c.label} className='flex items-start gap-3 rounded-md border p-3'>
                 <c.icon className={`mt-0.5 size-4 shrink-0 ${c.color}`} />
                 <div className='flex flex-col'>
-                  <span className='text-muted-foreground text-xs tabular-nums'>{c.order}</span>
+                  <span className='text-xs text-muted-foreground tabular-nums'>{c.order}</span>
                   <span className='text-sm font-medium'>{c.label}</span>
-                  <span className='text-muted-foreground text-xs/snug'>{c.note}</span>
+                  <span className='text-xs/snug text-muted-foreground'>{c.note}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           밭에서 포도로, 포도에서 와인으로 물건이 흐르는 방향과 값어치가 정해지는 방향이 반대다. 물건은 위에서 내려오고
           값어치는 아래에서 올라온다.
         </p>
@@ -73,9 +73,9 @@ export function Imputation() {
       <Card className='flex flex-col gap-3 p-4'>
         <span className='text-sm font-semibold'>같은 밭, 같은 노동, 다른 값</span>
         <div className='grid grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-2 text-sm sm:gap-x-6'>
-          <span className='text-muted-foreground text-xs' />
+          <span className='text-xs text-muted-foreground' />
           {YEARS.map((y) => (
-            <span key={y.key} className='text-muted-foreground text-right text-xs'>
+            <span key={y.key} className='text-right text-xs text-muted-foreground'>
               {y.label}
             </span>
           ))}
@@ -83,7 +83,7 @@ export function Imputation() {
             <ChainRow key={row} label={CHAIN[i].label} values={YEARS.map((y) => y[row])} />
           ))}
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           두 해의 밭은 같은 밭이고 들어간 노동도 같다. 그런데 값이 다섯 배 갈린다. 노동이 값을 정한다면 이 표는 나올 수
           없다. 값을 정한 것은 와인을 마실 사람의 사정이고, 그 판정이 포도를 거쳐 밭까지 올라온 것이다.
         </p>

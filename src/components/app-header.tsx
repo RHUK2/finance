@@ -41,7 +41,7 @@ export function AppHeader({ breadcrumbs }: Props) {
   }
 
   return (
-    <header className='bg-sidebar dark:bg-background sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b px-4'>
+    <header className='sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b bg-sidebar px-4 dark:bg-background'>
       <SidebarTrigger className='-ml-1' />
       <Separator orientation='vertical' />
       <Breadcrumb>

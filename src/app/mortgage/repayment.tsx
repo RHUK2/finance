@@ -127,7 +127,7 @@ export function Repayment() {
             <Coins className='size-4 text-emerald-500' />
             해마다 내는 돈은 어떻게 구성되는가
           </span>
-          <span className='text-muted-foreground text-xs/relaxed'>
+          <span className='text-xs/relaxed text-muted-foreground'>
             막대 하나가 1년이고, 높이는 그해에 낸 돈의 합이다. 가장 높은 막대가{' '}
             {peak >= 10000 ? formatEokFromMan(peak) : formatMan(peak)}
             {method === 'bullet'
@@ -151,7 +151,7 @@ export function Repayment() {
             );
           })}
         </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
+        <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
           <Legend className='bg-rose-500' label='이자' />
           <Legend className='bg-emerald-500' label='원금' />
           <span className='tabular-nums'>1년차부터 {years}년차까지</span>
@@ -168,7 +168,7 @@ export function Repayment() {
 
       <Card className='gap-0 overflow-hidden p-0'>
         <div className='p-4 text-sm font-semibold'>세 방식의 총이자</div>
-        <div className='text-muted-foreground grid grid-cols-[1fr_6rem_5rem] gap-x-2 border-y px-4 py-2 text-xs'>
+        <div className='grid grid-cols-[1fr_6rem_5rem] gap-x-2 border-y px-4 py-2 text-xs text-muted-foreground'>
           <span>상환 방식</span>
           <span className='text-right'>총이자</span>
           <span className='text-right'>원리금균등 대비</span>

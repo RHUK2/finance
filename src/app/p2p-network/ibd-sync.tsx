@@ -131,7 +131,7 @@ function SyncBar({
         </span>
         <span className='text-muted-foreground tabular-nums'>{detail}</span>
       </div>
-      <div className='bg-muted h-2.5 w-full overflow-hidden rounded-full'>
+      <div className='h-2.5 w-full overflow-hidden rounded-full bg-muted'>
         <div
           className={cn('h-full rounded-full transition-all', tone === 'accent' ? 'bg-amber-500' : 'bg-emerald-500')}
           style={{ width: `${Math.max(pct > 0 ? 1 : 0, pct)}%` }}

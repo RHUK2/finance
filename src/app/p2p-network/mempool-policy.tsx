@@ -53,7 +53,7 @@ export function MempoolPolicy() {
 
       <Card className='flex flex-col gap-4 p-4'>
         <ControlSlider
-          icon={<Gauge className='text-muted-foreground size-4' />}
+          icon={<Gauge className='size-4 text-muted-foreground' />}
           label='이 트랜잭션의 수수료율'
           value={feeRate}
           onChange={setFeeRate}
@@ -91,13 +91,13 @@ export function MempoolPolicy() {
       </SectionIntro>
 
       <Card className='flex flex-col gap-4 p-4'>
-        <p className='text-muted-foreground text-xs'>
-          위에서 정한 최소 릴레이 수수료율(<span className='text-foreground font-medium'>{minRelayRate} sat/vB</span>)이
+        <p className='text-xs text-muted-foreground'>
+          위에서 정한 최소 릴레이 수수료율(<span className='font-medium text-foreground'>{minRelayRate} sat/vB</span>)이
           여기서도 그대로 적용된다.
         </p>
 
         <ControlSlider
-          icon={<Repeat className='text-muted-foreground size-4' />}
+          icon={<Repeat className='size-4 text-muted-foreground' />}
           label='원본 tx 수수료율 (멤풀에 멈춰 있음)'
           value={oldFeeRate}
           onChange={setOldFeeRate}

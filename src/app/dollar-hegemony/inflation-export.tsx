@@ -67,7 +67,7 @@ export function InflationExport() {
 
       <Card className='gap-3 p-4'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Layers className='text-muted-foreground size-4' />
+          <Layers className='size-4 text-muted-foreground' />
           발행된 달러가 어디에 가서 앉는가
         </span>
         <StackedBar
@@ -104,7 +104,7 @@ export function InflationExport() {
             sub={`유입 ${x.inflow.toFixed(2)}조 달러 · 전가 계수 ${x.tier.passthrough.toFixed(1)}`}
           />
         ))}
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           원화는 신흥국 칸에 있다. 발행국보다 크게 맞지만 취약 통화만큼은 아니다. 이 자리가 실제로 무엇을 뜻하는지는
           다음 탭에서 금리로 따라간다.
         </p>

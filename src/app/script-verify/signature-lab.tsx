@@ -104,13 +104,13 @@ export function SignatureLab() {
           />
         </Field>
 
-        <div className='bg-muted/30 flex flex-col gap-1 rounded-md border p-3 text-xs'>
-          <span className='text-muted-foreground flex items-center gap-1.5'>
+        <div className='flex flex-col gap-1 rounded-md border bg-muted/30 p-3 text-xs'>
+          <span className='flex items-center gap-1.5 text-muted-foreground'>
             <Lock className='size-3.5 shrink-0 text-amber-600 dark:text-amber-400' />
             개인키 (비밀, 서명에만 쓰임)
           </span>
           <code className='font-mono break-all'>{priv}</code>
-          <span className='text-muted-foreground mt-1.5 flex items-center gap-1.5'>
+          <span className='mt-1.5 flex items-center gap-1.5 text-muted-foreground'>
             <Eye className='size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400' />
             공개키 (검증자에게 공개)
           </span>

@@ -63,7 +63,7 @@ export function AgentGrid({
           className={cn(
             'aspect-square rounded-[3px] transition-colors duration-300',
             c,
-            highlight?.[i] && 'ring-foreground ring-1 sm:ring-2',
+            highlight?.[i] && 'ring-1 ring-foreground sm:ring-2',
           )}
         />
       ))}
@@ -126,7 +126,7 @@ export function RoundControls({
           리셋
         </Button>
         <div className='ml-auto flex items-center gap-2'>
-          <span className='text-muted-foreground text-sm tabular-nums'>
+          <span className='text-sm text-muted-foreground tabular-nums'>
             {unit} {round}
             {seekable && ` / ${total}`}
           </span>
@@ -233,7 +233,7 @@ export function ControlSlider({
           disabled={disabled}
         />
       )}
-      {hint && <p className={cn('text-muted-foreground text-xs', disabled && 'opacity-60')}>{hint}</p>}
+      {hint && <p className={cn('text-xs text-muted-foreground', disabled && 'opacity-60')}>{hint}</p>}
     </div>
   );
 }
@@ -252,7 +252,7 @@ export function Metric({
 }) {
   return (
     <Card className='gap-1 p-4'>
-      <span className='text-muted-foreground text-xs'>{label}</span>
+      <span className='text-xs text-muted-foreground'>{label}</span>
       <span
         className={cn(
           'text-xl font-semibold tabular-nums sm:text-2xl',
@@ -263,7 +263,7 @@ export function Metric({
       >
         {value}
       </span>
-      {sub && <span className='text-muted-foreground text-xs'>{sub}</span>}
+      {sub && <span className='text-xs text-muted-foreground'>{sub}</span>}
     </Card>
   );
 }
@@ -285,7 +285,7 @@ export function StatusBanner({
         tone === 'good' && 'border-emerald-500/40 bg-emerald-500/5',
         tone === 'bad' && 'border-rose-500/40 bg-rose-500/5',
         tone === 'accent' && 'border-amber-500/40 bg-amber-500/5',
-        !tone && 'bg-muted border-transparent',
+        !tone && 'border-transparent bg-muted',
       )}
     >
       {icon}
@@ -337,22 +337,22 @@ export function ExplainCard({
   return (
     <Collapsible asChild>
       <Card className='group/explain gap-0 p-0'>
-        <CollapsibleTrigger className='hover:bg-muted/50 flex w-full items-start gap-2 p-4 text-left transition-colors'>
+        <CollapsibleTrigger className='flex w-full items-start gap-2 p-4 text-left transition-colors hover:bg-muted/50'>
           <div className='flex-1'>
             <span className='flex items-center gap-1.5 font-semibold'>
               {icon}
               {title}
             </span>
             {preview && (
-              <span className='text-muted-foreground mt-1 line-clamp-1 block text-sm group-data-[state=open]/explain:hidden'>
+              <span className='mt-1 line-clamp-1 block text-sm text-muted-foreground group-data-[state=open]/explain:hidden'>
                 {preview}
               </span>
             )}
           </div>
-          <ChevronDown className='text-muted-foreground mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]/explain:rotate-180' />
+          <ChevronDown className='mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]/explain:rotate-180' />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className='text-muted-foreground p-4 text-sm/relaxed'>{body}</div>
+          <div className='p-4 text-sm/relaxed text-muted-foreground'>{body}</div>
         </CollapsibleContent>
       </Card>
     </Collapsible>
@@ -502,7 +502,7 @@ export function Sparkline({
   const at = cursor === undefined ? undefined : xy[clamp(cursor, 0, xy.length - 1)];
   return (
     <div className='flex items-center gap-2'>
-      <span className='text-muted-foreground w-16 shrink-0 text-xs'>{label}</span>
+      <span className='w-16 shrink-0 text-xs text-muted-foreground'>{label}</span>
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio='none' className={cn('w-full', heightClass)}>
         {at && (
           <polyline
@@ -562,10 +562,10 @@ export function CostBar({
         <span className='text-muted-foreground'>{label}</span>
         <span className='tabular-nums'>{format(value)}</span>
       </div>
-      <div className='bg-muted h-5 w-full overflow-hidden rounded-md'>
+      <div className='h-5 w-full overflow-hidden rounded-md bg-muted'>
         <div className={cn('h-full rounded-md transition-all', className)} style={{ width: `${Math.max(1, pct)}%` }} />
       </div>
-      {sub && <span className='text-muted-foreground text-xs'>{sub}</span>}
+      {sub && <span className='text-xs text-muted-foreground'>{sub}</span>}
     </div>
   );
 }
@@ -575,7 +575,7 @@ export function SectionIntro({ title, children }: { title: string; children: Rea
   return (
     <div>
       <h2 className='text-lg font-semibold'>{title}</h2>
-      <p className='text-muted-foreground mt-1 text-sm/relaxed'>{children}</p>
+      <p className='mt-1 text-sm/relaxed text-muted-foreground'>{children}</p>
     </div>
   );
 }
@@ -624,14 +624,14 @@ export function CascadeStage({
         {notice}
         {controls}
         <div className='flex flex-col gap-1.5'>
-          <div className='text-muted-foreground flex items-center justify-between text-xs'>
+          <div className='flex items-center justify-between text-xs text-muted-foreground'>
             <span>{axisLabels[0]}</span>
             <span>{axisLabels[1]}</span>
           </div>
           <AgentGrid states={states} orientation='column' highlight={highlight} />
-          <p className='text-muted-foreground text-xs'>{reading}</p>
+          <p className='text-xs text-muted-foreground'>{reading}</p>
         </div>
-        <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs'>
+        <div className='flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground'>
           {legend}
           {legendNote && <span className='ml-auto'>{legendNote}</span>}
         </div>
@@ -679,7 +679,7 @@ export function StackedBar({
   const shown = total > 0 ? segments.filter((s) => s.value > 0) : [];
   return (
     <>
-      <div className='bg-muted flex h-8 w-full overflow-hidden rounded-md'>
+      <div className='flex h-8 w-full overflow-hidden rounded-md bg-muted'>
         {shown.map((s) => (
           <div
             key={s.label}
@@ -689,7 +689,7 @@ export function StackedBar({
           />
         ))}
       </div>
-      <div className='text-muted-foreground flex flex-wrap gap-x-4 gap-y-1.5 text-xs'>
+      <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
         {shown.map((s) => (
           <Legend key={s.label} className={s.className} label={s.label} />
         ))}
@@ -743,9 +743,9 @@ export function MarkTable({
           {icon}
           {title}
         </span>
-        <span className='text-muted-foreground text-xs'>항목을 누르면 표 아래에 설명이 열린다</span>
+        <span className='text-xs text-muted-foreground'>항목을 누르면 표 아래에 설명이 열린다</span>
       </div>
-      <div className={cn(grid, 'text-muted-foreground border-y px-4 py-2 text-xs')}>
+      <div className={cn(grid, 'border-y px-4 py-2 text-xs text-muted-foreground')}>
         {headers.map((h, i) => (
           <span key={h} className={i === 0 ? undefined : 'text-center'}>
             {h}
@@ -763,9 +763,9 @@ export function MarkTable({
           )}
         >
           <span className={cn('flex', r.icon ? 'items-center gap-2' : 'flex-col')}>
-            {r.icon && <r.icon className='text-muted-foreground size-4 shrink-0' />}
+            {r.icon && <r.icon className='size-4 shrink-0 text-muted-foreground' />}
             {r.label}
-            {r.sub && <span className='text-muted-foreground text-xs'>{r.sub}</span>}
+            {r.sub && <span className='text-xs text-muted-foreground'>{r.sub}</span>}
           </span>
           {r.marks.map((m, i) => (
             <Mark key={i} state={m} />
@@ -893,13 +893,13 @@ export function StepPanel({
       <div ref={panel}>
         <Card className='gap-0 overflow-hidden p-0'>
           <div className='flex items-center gap-2 px-3 py-2'>
-            <span className='bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs leading-none font-semibold'>
+            <span className='flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs leading-none font-semibold text-primary-foreground'>
               <span className='translate-y-px'>{step}</span>
             </span>
             <span className='flex-1 truncate font-semibold'>{title}</span>
           </div>
           <div className='flex flex-col gap-3 border-t p-3'>
-            <p className='text-muted-foreground text-sm/relaxed'>{narration}</p>
+            <p className='text-sm/relaxed text-muted-foreground'>{narration}</p>
             {slider}
             <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
           </div>
@@ -909,7 +909,7 @@ export function StepPanel({
         createPortal(
           // 하단 네비(h-12, z-30) 바로 위. 네비와 겹치지 않으므로 z는 본문 위이기만 하면 된다.
           <div className='fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 -translate-x-1/2 md:bottom-4'>
-            <div className='bg-card flex items-center gap-1 rounded-full border p-1 shadow-xl'>
+            <div className='flex items-center gap-1 rounded-full border bg-card p-1 shadow-xl'>
               <Button
                 variant='ghost'
                 size='icon'

@@ -33,7 +33,7 @@ export function Attacker() {
 
       <Card className='gap-2 p-4'>
         <span className='text-sm font-semibold'>{detail.title}</span>
-        <p className='text-muted-foreground text-sm/relaxed'>{detail.body}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>{detail.body}</p>
       </Card>
 
       {unreachable && (
@@ -42,7 +42,7 @@ export function Attacker() {
         </StatusBanner>
       )}
 
-      <p className='text-muted-foreground text-sm/relaxed'>
+      <p className='text-sm/relaxed text-muted-foreground'>
         표를 위에서 아래로 읽으면 방어선이 한 칸씩 물러난다. 체크섬은 첫 줄에서 끝나고, 서명은 셋째 줄에서 끝나고, 채널
         대조도 같은 자리에서 끝나며, 재현 기록은 다섯째 줄에서 끝난다. 마지막 두 줄에는 아무것도 남지 않는다. 그러니
         모든 절차를 통과했다는 말의 정확한 뜻은 이것이다. 위 네 줄에 해당하는 공격은 받지 않았다. 아래 두 줄에 대해서는

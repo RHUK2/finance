@@ -120,7 +120,7 @@ export function AbstractVsPhysical() {
               <Bomb className='size-4 text-rose-500' />
               하드워
             </span>
-            <p className='text-muted-foreground text-xs/relaxed'>
+            <p className='text-xs/relaxed text-muted-foreground'>
               벽을 높이려면 무력을 키워야 하고, 억지가 실패하면 인명과 자산이 실제로 파괴된다. 벽의 크기와 부수 피해가
               함께 커진다.
             </p>
@@ -130,13 +130,13 @@ export function AbstractVsPhysical() {
               <HeartPulse className='size-4 text-emerald-500' />
               소프트워
             </span>
-            <p className='text-muted-foreground text-xs/relaxed'>
+            <p className='text-xs/relaxed text-muted-foreground'>
               벽을 높이려면 전기를 더 태우면 된다. 억지가 실패해도 파괴되는 건 공격자가 쏟은 에너지뿐이다. 대신 벽을
               유지하는 동안 전력을 계속 소비한다.
             </p>
           </div>
         </div>
-        <p className='text-muted-foreground text-xs/relaxed'>
+        <p className='text-xs/relaxed text-muted-foreground'>
           이 대비는 로워리의 주장이며 학계에서 널리 받아들여진 결론은 아니다. 작업증명이 국가 간 무력 억지를 실제로
           대체할 수 있는지는 논쟁 중이다.
         </p>

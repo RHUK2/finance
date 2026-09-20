@@ -53,7 +53,7 @@ export function August2026() {
         <div className='flex flex-col gap-2'>
           {TIMELINE.map((t) => (
             <div key={t.date} className='flex items-start gap-3 text-sm'>
-              <span className='text-muted-foreground w-24 shrink-0 tabular-nums'>{t.date}</span>
+              <span className='w-24 shrink-0 text-muted-foreground tabular-nums'>{t.date}</span>
               <span
                 className={cn(
                   'mt-1.5 size-2 shrink-0 rounded-full',
