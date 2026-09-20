@@ -11,7 +11,6 @@
     "lint": "eslint . --max-warnings 10 --cache --cache-strategy content",
     "test:scripts": "node --test scripts/*.test.mjs",
     "inspect": "pnpm type && pnpm lint && pnpm test:scripts",
-    "env:pull": "vercel env pull",
     "clean:caches": "rm -rf .next",
     "clean:modules": "rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",

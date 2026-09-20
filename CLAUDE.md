@@ -5,7 +5,6 @@
 ```bash
 pnpm dev          # 개발 서버 (워크트리 슬롯 포트로 뜬다)
 pnpm ports        # 이 워크트리가 쓰는 포트 확인
-pnpm env:pull     # Vercel Development 환경변수를 로컬 환경 파일로 내려받기
 pnpm type         # TypeScript 타입 체크
 pnpm lint         # ESLint (max-warnings 10)
 pnpm test:scripts # scripts/ 의 node:test 스위트
@@ -40,7 +39,7 @@ bash link-worktree-files.sh
 
 ## 환경변수
 
-Vercel 프로젝트(`rhuk2s-projects/finance`)가 단일 출처다. 로컬 환경 파일을 손으로 고치지 않고 `pnpm env:pull`로 내려받는다. `.vercel` 링크 정보도 워크트리끼리 공유하므로(위 `ITEMS`) 워크트리마다 다시 `vercel link`를 하지 않는다.
+배포 환경의 값은 Vercel 프로젝트(`rhuk2s-projects/finance`)가 갖고, 로컬 값은 로컬 환경 파일이 갖는다. 둘을 자동으로 맞추지 않는다. Vercel의 값이 전부 Sensitive라 되읽을 수 없어서 `vercel env pull`이 자리표시자만 내려주기 때문이다. `.vercel` 링크 정보는 워크트리끼리 공유하므로(위 `ITEMS`) 워크트리마다 다시 `vercel link`를 하지 않는다.
 
 읽는 값은 넷이다. Upstash는 Vercel 통합이 심어 주는 `KV_*` 이름으로 오고, `Redis.fromEnv()`가 `UPSTASH_REDIS_REST_URL` 다음 순위로 `KV_REST_API_URL`을 보기 때문에 그대로 동작한다(`src/lib/cache.ts`).
 
@@ -50,7 +49,9 @@ Vercel 프로젝트(`rhuk2s-projects/finance`)가 단일 출처다. 로컬 환�
 | `FRED_API_KEY`                        | `fred`·`inflation-data`가 `available: false` |
 | `ECOS_API_KEY`                        | `inflation-data-kr`가 `available: false`     |
 
-새 변수는 로컬 파일이 아니라 Vercel에 먼저 넣는다(`vercel env add <NAME> development preview production`). Sensitive(Secret)로 넣으면 값을 다시 내려받을 수 없어 `pnpm env:pull`이 자리표시자를 쓴다. 로컬에서 읽어야 하는 값은 sensitive로 만들지 않는다.
+새 변수를 넣을 때는 양쪽에 다 넣는다. 배포 쪽은 `vercel env add <NAME> production`, 로컬 쪽은 로컬 환경 파일에 직접 적는다.
+
+로컬이 프로덕션 캐시를 건드리지 않게 Upstash 데이터베이스는 로컬용을 따로 판다. 캐시 키가 `cache:<key>`·`lock:<key>`라 환경 구분이 없어서(`src/lib/cache.ts`), 한 데이터베이스를 나눠 쓰면 로컬에서 바꾼 응답 형태가 그대로 프로덕션이 내보내는 값이 된다.
 
 ## 아키텍처
 
