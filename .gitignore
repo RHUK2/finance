@@ -41,3 +41,4 @@ pnpm-debug.log*
 
 # Ai Files
 .claude/*
+!.claude/settings.json

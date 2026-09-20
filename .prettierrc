@@ -5,5 +5,7 @@
   "jsxSingleQuote": true,
   "trailingComma": "all",
   "arrowParens": "always",
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindStylesheet": "./src/app/globals.css",
+  "tailwindFunctions": ["cn", "cva", "clsx", "twMerge"]
 }

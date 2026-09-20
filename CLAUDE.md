@@ -196,8 +196,4 @@ Vercel 프로젝트(`rhuk2s-projects/finance`)가 단일 출처다. 로컬 환�
 - **통화·비율 표기**: `src/lib/utils.ts`의 `formatMan`·`formatWon`·`formatEok`·`formatEokFromMan`·`formatEokFromWon`·`formatPct`를 쓴다. 로컬에 `fmtEok` 같은 걸 다시 만들지 않는다. 억으로 찍는 함수가 셋인 것은 입력 단위가 페이지마다 다르기 때문이고, 이름 뒤 `From`이 입력 단위다. 자릿수만 다르면 인자로 넘긴다
 - **커밋 메시지**: `{type}: {한국어 설명}` 형식 (`feat` / `fix` / `refactor` / `chore` 등)
 
-## Agent skills
-
-- **이슈 트래커**: 이슈·스펙은 `.scratch/<feature>/` 아래 마크다운 파일로 관리한다(gitignore되어 로컬에만 남는다). 규약은 `docs/agents/issue-tracker.md`
-- **Triage 라벨**: `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix` 다섯을 그대로 쓴다. 이슈 파일 상단 `Status:` 줄에 적는다
-- **도메인 문서**: 단일 컨텍스트 구조로 루트 `CONTEXT.md` + `docs/adr/`. 규약은 `docs/agents/domain.md`
+규약·용어·이슈 문서가 각각 어디에 있는지는 `AGENTS.md`가 정한다.

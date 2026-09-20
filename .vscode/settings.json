@@ -1,0 +1,9 @@
+{
+  "tailwindCSS.experimental.configFile": "src/app/globals.css",
+  "tailwindCSS.classFunctions": ["cva", "cn", "clsx", "twMerge"],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ]
+}
