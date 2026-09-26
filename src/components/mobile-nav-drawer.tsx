@@ -36,11 +36,13 @@ export function MobileNavDrawer({ currentLabel }: Props) {
                 <SidebarMenu>
                   {group.items.map(({ label, href, icon: Icon }) => (
                     <SidebarMenuItem key={href}>
-                      <SidebarMenuButton asChild isActive={pathname === href} onClick={() => setOpen(false)}>
-                        <Link href={href}>
-                          <Icon />
-                          <span>{label}</span>
-                        </Link>
+                      <SidebarMenuButton
+                        render={<Link href={href} />}
+                        isActive={pathname === href}
+                        onClick={() => setOpen(false)}
+                      >
+                        <Icon />
+                        <span>{label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}

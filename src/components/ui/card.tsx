@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { cn } from '@/lib/utils';
 
 function Card({ className, size = 'default', ...props }: React.ComponentProps<'div'> & { size?: 'default' | 'sm' }) {
@@ -33,7 +32,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='card-title'
-      className={cn('font-heading text-sm leading-normal font-medium text-muted-foreground', className)}
+      className={cn('text-sm leading-normal font-medium text-muted-foreground', className)}
       {...props}
     />
   );
@@ -54,7 +53,13 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function CardContent({ className, bleed = false, ...props }: React.ComponentProps<'div'> & { bleed?: boolean }) {
-  return <div data-slot='card-content' className={cn(bleed ? 'px-0' : 'px-(--card-spacing)', className)} {...props} />;
+  return (
+    <div
+      data-slot='card-content'
+      className={cn('flex flex-col gap-3', bleed ? 'px-0' : 'px-(--card-spacing)', className)}
+      {...props}
+    />
+  );
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {

@@ -246,7 +246,7 @@ export function AssetsTable({ data, isLoading, updatedLabel }: Props) {
   const controls = isMobile ? (
     <div className='flex flex-col gap-3'>
       <div className='relative w-full'>{searchInput}</div>
-      <Select value={mobileSortKey} onValueChange={setMobileSortKey}>
+      <Select value={mobileSortKey} onValueChange={(v) => v && setMobileSortKey(v)}>
         <SelectTrigger className='w-full'>
           <SelectValue />
         </SelectTrigger>

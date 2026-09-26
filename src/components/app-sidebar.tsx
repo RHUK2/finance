@@ -97,22 +97,24 @@ export function AppSidebar() {
             className='group/nav'
           >
             <SidebarGroup>
-              <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className='w-full cursor-pointer gap-1 hover:text-sidebar-foreground'>
-                  {group.label}
-                  <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/nav:rotate-90' />
-                </CollapsibleTrigger>
+              <SidebarGroupLabel
+                render={<CollapsibleTrigger className='w-full cursor-pointer gap-1 hover:text-sidebar-foreground' />}
+              >
+                {group.label}
+                <ChevronRight className='ml-auto transition-transform duration-200 group-data-open/nav:rotate-90' />
               </SidebarGroupLabel>
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {group.items.map(({ label, href, icon: Icon }) => (
                       <SidebarMenuItem key={href}>
-                        <SidebarMenuButton asChild isActive={pathname === href} onClick={() => setOpenMobile(false)}>
-                          <Link href={href}>
-                            <Icon />
-                            <span>{label}</span>
-                          </Link>
+                        <SidebarMenuButton
+                          render={<Link href={href} />}
+                          isActive={pathname === href}
+                          onClick={() => setOpenMobile(false)}
+                        >
+                          <Icon />
+                          <span>{label}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}

@@ -34,6 +34,11 @@ import { clamp, cn, formatUsd } from '@/lib/utils';
 // 정렬돼 있고 상태 전이가 항상 앞에서부터 일어나는 시뮬레이션(임계값 캐스케이드 등)에서
 // 경계가 수직선으로 전진해 보인다. 기본값 'row'는 기존 동작(행 우선, 반응형 열 수)이다.
 // highlight[i]가 true면 그 칸에 링을 둘러 이번 라운드에 바뀐 칸을 짚어 준다.
+// Base UI Slider는 썸이 하나면 number, 범위면 배열을 준다. 이 파일의 슬라이더는 모두 단일 썸이다.
+function sliderValue(v: number | readonly number[]) {
+  return typeof v === 'number' ? v : v[0];
+}
+
 export function AgentGrid({
   states,
   orientation = 'row',
@@ -148,8 +153,8 @@ export function RoundControls({
       </div>
       {seekable && (
         <Slider
-          value={[round]}
-          onValueChange={([v]) => onSeek(v)}
+          value={round}
+          onValueChange={(v) => onSeek(sliderValue(v))}
           min={0}
           max={total}
           step={1}
@@ -219,8 +224,8 @@ export function ControlSlider({
           min={0}
           max={LOG_TICKS}
           step={1}
-          value={[toTick(value)]}
-          onValueChange={([t]) => onChange(fromTick(t))}
+          value={toTick(value)}
+          onValueChange={(v) => onChange(fromTick(sliderValue(v)))}
           disabled={disabled}
         />
       ) : (
@@ -228,8 +233,8 @@ export function ControlSlider({
           min={min}
           max={max}
           step={step}
-          value={[value]}
-          onValueChange={([v]) => onChange(v)}
+          value={value}
+          onValueChange={(v) => onChange(sliderValue(v))}
           disabled={disabled}
         />
       )}
@@ -335,26 +340,24 @@ export function ExplainCard({
   preview?: string;
 }) {
   return (
-    <Collapsible asChild>
-      <Panel bleed className='group/explain'>
-        <CollapsibleTrigger className='flex w-full items-start gap-2 p-4 text-left transition-colors hover:bg-muted/50'>
-          <div className='flex-1'>
-            <span className='flex items-center gap-1.5 font-semibold'>
-              {icon}
-              {title}
+    <Collapsible render={<Panel bleed className='group/explain' />}>
+      <CollapsibleTrigger className='flex w-full items-start gap-2 p-4 text-left transition-colors hover:bg-muted/50'>
+        <div className='flex-1'>
+          <span className='flex items-center gap-1.5 font-semibold'>
+            {icon}
+            {title}
+          </span>
+          {preview && (
+            <span className='mt-1 line-clamp-1 block text-sm text-muted-foreground group-data-open/explain:hidden'>
+              {preview}
             </span>
-            {preview && (
-              <span className='mt-1 line-clamp-1 block text-sm text-muted-foreground group-data-[state=open]/explain:hidden'>
-                {preview}
-              </span>
-            )}
-          </div>
-          <ChevronDown className='mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]/explain:rotate-180' />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className='p-4 text-sm/relaxed text-muted-foreground'>{body}</div>
-        </CollapsibleContent>
-      </Panel>
+          )}
+        </div>
+        <ChevronDown className='mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-data-open/explain:rotate-180' />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className='p-4 text-sm/relaxed text-muted-foreground'>{body}</div>
+      </CollapsibleContent>
     </Collapsible>
   );
 }

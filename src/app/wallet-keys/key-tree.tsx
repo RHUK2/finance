@@ -255,7 +255,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
       <Panel className='grid grid-cols-2 sm:grid-cols-3'>
         <Field label='purpose (주소 타입)'>
-          <Select value={purpose} onValueChange={setPurpose}>
+          <Select value={purpose} onValueChange={(v) => v && setPurpose(v)}>
             <SelectTrigger className='w-full'>
               <SelectValue />
             </SelectTrigger>
@@ -270,7 +270,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         </Field>
 
         <Field label='coin type'>
-          <Select value={coin} onValueChange={setCoin}>
+          <Select value={coin} onValueChange={(v) => v && setCoin(v)}>
             <SelectTrigger className='w-full'>
               <SelectValue />
             </SelectTrigger>
