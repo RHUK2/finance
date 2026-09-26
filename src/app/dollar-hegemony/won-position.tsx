@@ -90,8 +90,8 @@ export function WonPosition() {
         <StackedBar
           total={c.loanRate}
           segments={[
-            { label: `한국이 원하던 기준금리 ${intended.toFixed(2)}%`, value: intended, className: 'bg-sky-500' },
-            { label: `달러가 강제한 인상분 ${forcedUp.toFixed(2)}%p`, value: forcedUp, className: 'bg-rose-500' },
+            { label: `한국이 원하던 기준금리 ${intended.toFixed(2)}%`, value: intended, className: 'bg-series-1' },
+            { label: `달러가 강제한 인상분 ${forcedUp.toFixed(2)}%p`, value: forcedUp, className: 'bg-bad-surface' },
             {
               label: `은행 가산폭 ${KR_RATE.spread.value.toFixed(2)}%p`,
               value: KR_RATE.spread.value,

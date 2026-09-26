@@ -29,9 +29,9 @@ export const hi = (text: string, tone: HiTone) => (
     className={cn(
       'font-semibold',
       tone === 'strong' && 'text-foreground',
-      tone === 'bad' && 'text-rose-600 dark:text-rose-400',
-      tone === 'good' && 'text-emerald-600 dark:text-emerald-400',
-      tone === 'amber' && 'text-amber-600 dark:text-amber-400',
+      tone === 'bad' && 'text-bad',
+      tone === 'good' && 'text-good',
+      tone === 'amber' && 'text-warn',
     )}
   >
     {text}

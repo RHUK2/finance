@@ -207,9 +207,9 @@ function TrailNode({
     <div
       className={cn(
         'flex shrink-0 items-center gap-1 rounded-md border px-2 py-1.5 text-xs whitespace-nowrap',
-        tone === 'origin' && 'border-rose-500/60 bg-rose-500/10 text-rose-600 dark:text-rose-400',
-        tone === 'tainted' && 'border-rose-500/30 bg-rose-500/5',
-        tone === 'mixer' && 'border-amber-500/40 bg-amber-500/5 text-amber-600 dark:text-amber-400',
+        tone === 'origin' && 'border-bad-surface/60 bg-bad-surface/10 text-bad',
+        tone === 'tainted' && 'border-bad-surface/30 bg-bad-surface/5',
+        tone === 'mixer' && 'border-warn-surface/40 bg-warn-surface/5 text-warn',
         tone === 'exit' && 'bg-muted',
       )}
     >

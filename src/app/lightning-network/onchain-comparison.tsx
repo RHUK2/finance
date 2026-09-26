@@ -57,14 +57,14 @@ export function OnchainComparison() {
           label={`온체인으로 ${paymentCount.toLocaleString('ko-KR')}번 보냈다면`}
           value={onchainFee}
           max={max}
-          className='bg-rose-500'
+          className='bg-bad-surface'
           format={formatSats}
         />
         <CostBar
           label='라이트닝 채널 (열기 1건 + 닫기 1건)'
           value={lightningFee}
           max={max}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={formatSats}
         />
       </Panel>
@@ -77,7 +77,7 @@ export function OnchainComparison() {
       </div>
 
       <ExplainCard
-        icon={<Layers className='size-4 text-sky-600 dark:text-sky-400' />}
+        icon={<Layers className='size-4 text-series-1' />}
         title='공짜는 아니다: 라이트닝의 한계'
         preview='채널 용량, 상대의 협조, 라우팅 경로 확보 같은 새로운 제약이 대신 생긴다.'
         body={
@@ -95,7 +95,7 @@ export function OnchainComparison() {
       />
 
       <ExplainCard
-        icon={<Zap className='size-4 text-amber-500' />}
+        icon={<Zap className='size-4 text-warn' />}
         title='온체인은 사라지지 않는다, 역할이 나뉠 뿐'
         preview='온체인은 채널을 여닫는 결제, 라이트닝은 그 사이 오가는 소액·잦은 결제를 맡는다.'
         body={

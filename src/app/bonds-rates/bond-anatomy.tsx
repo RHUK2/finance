@@ -42,7 +42,7 @@ export function BondAnatomy() {
 
       <Panel>
         <ControlSlider
-          icon={<Percent className='size-4 text-emerald-500' />}
+          icon={<Percent className='size-4 text-good' />}
           label='표면금리 (약속된 이자)'
           value={couponRate}
           onChange={setCouponRate}
@@ -53,7 +53,7 @@ export function BondAnatomy() {
           hint={`해마다 ${fmtWon(coupon)}을 받는다. 발행 뒤에는 바뀌지 않는다.`}
         />
         <ControlSlider
-          icon={<CalendarClock className='size-4 text-sky-500' />}
+          icon={<CalendarClock className='size-4 text-series-1' />}
           label='잔존 만기'
           value={years}
           onChange={setYears}
@@ -63,7 +63,7 @@ export function BondAnatomy() {
           format={(v) => `${v}년`}
         />
         <ControlSlider
-          icon={<Coins className='size-4 text-amber-500' />}
+          icon={<Coins className='size-4 text-warn' />}
           label='시장 요구수익률 (만기수익률)'
           value={ytm}
           onChange={setYtm}
@@ -118,8 +118,8 @@ export function BondAnatomy() {
         </div>
         <StackedBar
           segments={[
-            { label: `이자의 현재가치 ${fmtWon(couponPv)}`, value: couponPv, className: 'bg-emerald-500' },
-            { label: `원금의 현재가치 ${fmtWon(principalPv)}`, value: principalPv, className: 'bg-sky-500' },
+            { label: `이자의 현재가치 ${fmtWon(couponPv)}`, value: couponPv, className: 'bg-good-surface' },
+            { label: `원금의 현재가치 ${fmtWon(principalPv)}`, value: principalPv, className: 'bg-series-1' },
           ]}
           total={price}
         />
@@ -130,13 +130,13 @@ export function BondAnatomy() {
       </Panel>
 
       <ExplainCard
-        icon={<Coins className='size-4 text-amber-500' />}
+        icon={<Coins className='size-4 text-warn' />}
         title='왜 금리가 오르면 가격이 떨어지나'
         preview='내 채권의 이자는 고정인데, 새로 나온 채권이 더 준다면 내 것은 깎여야 팔린다.'
         body='표면금리 3%짜리를 들고 있는데 시장금리가 5%로 올랐다고 하자. 지금 새로 발행되는 채권은 5%를 준다. 아무도 3%짜리를 액면가에 사 주지 않는다. 팔리려면 값이 깎여야 하고, 깎인 값으로 사서 만기에 액면을 돌려받는 차익까지 더했을 때 수익률이 5%에 맞아떨어지는 지점이 곧 지금의 가격이다. 금리와 가격이 반대로 움직이는 것은 시장의 심리가 아니라 이 산수의 결과다.'
       />
       <ExplainCard
-        icon={<Percent className='size-4 text-emerald-500' />}
+        icon={<Percent className='size-4 text-good' />}
         title='표면금리와 만기수익률은 다른 숫자다'
         preview='앞은 발행 때 못 박힌 약속, 뒤는 오늘 이 값에 사면 만기까지 얼마를 버는가.'
         body='표면금리(쿠폰)는 액면 대비 해마다 주는 이자의 비율로, 발행 때 정해지고 끝까지 바뀌지 않는다. 만기수익률(YTM)은 오늘의 시장가격에 사서 만기까지 들고 갔을 때의 연평균 수익률이라, 가격이 움직일 때마다 함께 움직인다. 뉴스에서 "국채 금리가 올랐다"고 할 때의 금리는 언제나 뒤쪽이다. 액면가에 거래될 때만 둘이 같아진다.'

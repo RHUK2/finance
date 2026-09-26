@@ -146,7 +146,7 @@ export function LegalPerson() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Stamp className='size-4 text-rose-500' />
+          <Stamp className='size-4 text-bad' />
           법인격이 생기는 순서
         </span>
         <div className='grid grid-cols-2 gap-2 sm:grid-cols-4'>
@@ -161,7 +161,7 @@ export function LegalPerson() {
       </Panel>
 
       <MarkTable
-        icon={<Scale className='size-4 text-sky-500' />}
+        icon={<Scale className='size-4 text-series-1' />}
         title='자연인과 법인, 어디까지 같은가'
         headers={['할 수 있는가', '자연인', '법인']}
         rows={ROWS.map((r) => ({
@@ -183,7 +183,7 @@ export function LegalPerson() {
       </Panel>
 
       <ExplainCard
-        icon={<Landmark className='size-4 text-amber-500' />}
+        icon={<Landmark className='size-4 text-warn' />}
         title='왜 인격을 하나 더 만들었을까'
         preview='자연인의 인격 하나로는 사업의 실패와 출자자의 파산을 떼어 놓을 수 없었다.'
         body={
@@ -205,7 +205,7 @@ export function LegalPerson() {
       />
 
       <ExplainCard
-        icon={<HeartHandshake className='size-4 text-sky-500' />}
+        icon={<HeartHandshake className='size-4 text-series-1' />}
         title='회사는 누구의 것인가'
         preview='주주는 회사 재산이 아니라 회사에 대한 지분을 가진다.'
         body={

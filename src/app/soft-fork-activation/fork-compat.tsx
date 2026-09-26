@@ -61,7 +61,7 @@ export function ForkCompat() {
 
       <MarkTable
         title='두 종류를 같은 잣대 둘로 재면'
-        icon={<GitCompare className='size-4 text-sky-600 dark:text-sky-400' />}
+        icon={<GitCompare className='size-4 text-series-1' />}
         headers={['포크 종류', '구버전이 새 블록을 봄', '신버전이 구 블록을 봄']}
         rows={ROWS}
         selected={kind}

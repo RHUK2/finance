@@ -104,17 +104,17 @@ export function Signature() {
 
         <div className='flex flex-col gap-1'>
           <span className='text-xs text-muted-foreground'>{n.subject}</span>
-          <pre className='overflow-x-auto rounded-md bg-muted p-2 font-mono text-[11px] leading-relaxed'>{body}</pre>
+          <pre className='overflow-x-auto rounded-md bg-muted p-2 font-mono text-2xs/relaxed'>{body}</pre>
         </div>
 
         <div className='grid gap-3 sm:grid-cols-2'>
           <div className='flex flex-col gap-1'>
             <span className='text-xs text-muted-foreground'>검증에 쓴 {n.key}의 지문</span>
-            <span className='font-mono text-[11px] break-all'>{usesAttackerKey ? demo?.atkFp : demo?.devFp}</span>
+            <span className='font-mono text-2xs break-all'>{usesAttackerKey ? demo?.atkFp : demo?.devFp}</span>
           </div>
           <div className='flex flex-col gap-1'>
             <span className='text-xs text-muted-foreground'>서명 앞머리</span>
-            <span className='font-mono text-[11px] break-all'>
+            <span className='font-mono text-2xs break-all'>
               {scenario === 'attacker' ? demo?.atkSig : demo?.devSig}
             </span>
           </div>
@@ -133,7 +133,7 @@ export function Signature() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-amber-500' />}
+        icon={<KeyRound className='size-4 text-warn' />}
         title='마지막 경우가 이 페이지의 경첩이다'
         preview='공격자도 서명할 수 있다. 자기 키로'
         body={

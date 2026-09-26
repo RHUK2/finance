@@ -35,7 +35,7 @@ export function MempoolPolicy() {
 
       <Panel tone='accent' className='gap-1.5'>
         <ControlSlider
-          icon={<Gauge className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<Gauge className='size-4 text-warn' />}
           label='이 노드의 최소 릴레이 수수료율 (아래 두 시연 공통)'
           hint='기본값 1 sat/vB. 멤풀이 꽉 차면 노드가 이 값을 스스로 더 올리기도 한다.'
           value={minRelayRate}
@@ -67,9 +67,9 @@ export function MempoolPolicy() {
           tone={accepted ? 'good' : 'bad'}
           icon={
             accepted ? (
-              <CheckCircle2 className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+              <CheckCircle2 className='size-4 shrink-0 text-good' />
             ) : (
-              <XCircle className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />
+              <XCircle className='size-4 shrink-0 text-bad' />
             )
           }
         >
@@ -107,7 +107,7 @@ export function MempoolPolicy() {
           format={(v) => `${v} sat/vB`}
         />
         <ControlSlider
-          icon={<Repeat className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<Repeat className='size-4 text-warn' />}
           label='대체 tx 수수료율'
           value={newFeeRate}
           onChange={setNewFeeRate}
@@ -121,9 +121,9 @@ export function MempoolPolicy() {
           tone={rbf.accepted ? 'good' : 'bad'}
           icon={
             rbf.accepted ? (
-              <CheckCircle2 className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+              <CheckCircle2 className='size-4 shrink-0 text-good' />
             ) : (
-              <XCircle className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />
+              <XCircle className='size-4 shrink-0 text-bad' />
             )
           }
         >

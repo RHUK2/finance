@@ -48,7 +48,7 @@ export function August2026() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <CalendarCheck className='size-4 text-amber-600 dark:text-amber-400' />두 분기의 타임라인
+          <CalendarCheck className='size-4 text-warn' />두 분기의 타임라인
         </span>
         <div className='flex flex-col gap-2'>
           {TIMELINE.map((t) => (
@@ -57,8 +57,8 @@ export function August2026() {
               <span
                 className={cn(
                   'mt-1.5 size-2 shrink-0 rounded-full',
-                  t.tone === 'bad' && 'bg-rose-500',
-                  t.tone === 'accent' && 'bg-amber-500',
+                  t.tone === 'bad' && 'bg-bad-surface',
+                  t.tone === 'accent' && 'bg-warn-surface',
                   t.tone === 'muted' && 'bg-muted-foreground/40',
                 )}
               />
@@ -69,7 +69,7 @@ export function August2026() {
       </Panel>
 
       <ExplainCard
-        icon={<GitBranch className='size-4 text-rose-500' />}
+        icon={<GitBranch className='size-4 text-bad' />}
         title='BIP-110: 활성화에 실패하고도 체인은 갈렸다'
         preview={`${SIGNAL_PCT}의 신호로는 활성화도 못 하고, 갈라져 나온 체인도 못 굴린다`}
         body={
@@ -97,7 +97,7 @@ export function August2026() {
       />
 
       <ExplainCard
-        icon={<ScrollText className='size-4 text-amber-500' />}
+        icon={<ScrollText className='size-4 text-warn' />}
         title='eCash: 1:1 크레딧과 리플레이 보호 없이 열린 분기'
         preview='공짜로 받는 것처럼 보이는 쪽이 실제로는 더 위험했다'
         body={

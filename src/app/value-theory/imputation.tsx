@@ -11,21 +11,21 @@ const CHAIN = [
     order: '1차재',
     label: '와인 한 병',
     icon: Wine,
-    color: 'text-rose-500',
+    color: 'text-bad',
     note: '사람이 직접 마신다. 값어치가 여기서 생긴다.',
   },
   {
     order: '2차재',
     label: '포도 1kg',
     icon: Grape,
-    color: 'text-violet-500',
+    color: 'text-series-2',
     note: '마실 수 없다. 와인이 되기 때문에만 값이 있다.',
   },
   {
     order: '3차재',
     label: '포도밭 1,000평',
     icon: Sprout,
-    color: 'text-emerald-500',
+    color: 'text-good',
     note: '마실 수도 먹을 수도 없다. 포도를 통해서만 와인에 닿는다.',
   },
 ];
@@ -90,7 +90,7 @@ export function Imputation() {
       </Panel>
 
       <ExplainCard
-        icon={<Cigarette className='size-4 text-amber-500' />}
+        icon={<Cigarette className='size-4 text-warn' />}
         title='멩거가 든 예는 담배였다'
         preview='담배를 아무도 원하지 않게 되면 담배밭과 건조장과 기계가 함께 값을 잃는다.'
         body={

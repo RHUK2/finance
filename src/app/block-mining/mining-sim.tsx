@@ -35,7 +35,7 @@ export function MiningSim() {
 
       <Panel>
         <ControlSlider
-          icon={<Target className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<Target className='size-4 text-warn' />}
           label='목표 난이도 (해시 앞자리 0 개수)'
           hint={`평균 ${expectedTries(difficulty).toLocaleString('ko-KR')}번 시도해야 한 번 나오는 목표. 목표 패턴: ${'0'.repeat(difficulty)}…`}
           value={difficulty}
@@ -123,13 +123,11 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
       <div
         className={cn(
           'flex flex-col gap-1 rounded-md border p-3',
-          found ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-transparent bg-muted',
+          found ? 'border-good-surface/40 bg-good-surface/5' : 'border-transparent bg-muted',
         )}
       >
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <Pickaxe
-            className={cn('size-4', found ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground')}
-          />
+          <Pickaxe className={cn('size-4', found ? 'text-good' : 'text-muted-foreground')} />
           {found ? `nonce ${nonce}에서 목표를 찾았다!` : `nonce ${nonce} 시도 중…`}
         </span>
         <code className='font-mono text-xs break-all'>{shortHex(hash, 24)}</code>

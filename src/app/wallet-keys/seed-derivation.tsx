@@ -42,7 +42,7 @@ export function SeedDerivation({
 
       <Panel className='gap-1.5'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <Lock className='size-4 text-amber-600 dark:text-amber-400' />
+          <Lock className='size-4 text-warn' />
           passphrase (선택, {extraWordPosition}번째 단어)
         </span>
         <Input
@@ -57,7 +57,7 @@ export function SeedDerivation({
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Cog className='size-4 text-violet-600 dark:text-violet-400' />
+          <Cog className='size-4 text-series-2' />
           시드는 이렇게 만들어진다 (PBKDF2)
         </span>
         <Pipeline

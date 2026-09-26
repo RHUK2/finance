@@ -59,11 +59,11 @@ export function MoneyCreationView() {
 
       <div className='flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
         <span className='flex items-center gap-1.5'>
-          <span className='size-3 rounded-sm border border-amber-500/70 bg-amber-500/15 ring-1 ring-amber-500/60' />
+          <span className='size-3 rounded-sm border border-warn-surface/70 bg-warn-surface/15 ring-1 ring-warn-surface/60' />
           무(無)에서 새로 창조
         </span>
         <span className='flex items-center gap-1.5'>
-          <span className='size-3 rounded-sm border border-sky-500/70 bg-sky-500/15 ring-1 ring-sky-500/60' />
+          <span className='size-3 rounded-sm border border-series-1/70 bg-series-1/15 ring-1 ring-series-1/60' />
           기존 돈이 이동·변환
         </span>
       </div>

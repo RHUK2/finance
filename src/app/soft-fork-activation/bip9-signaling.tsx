@@ -74,7 +74,7 @@ export function Bip9Signaling() {
 
       <Panel>
         <ControlSlider
-          icon={<Vote className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<Vote className='size-4 text-warn' />}
           label='채굴자 지지율'
           value={supportPct}
           onChange={(v) => {
@@ -110,7 +110,7 @@ export function Bip9Signaling() {
                 <div className='h-3 w-full overflow-hidden rounded-full bg-muted'>
                   {reached && (
                     <div
-                      className={cn('h-full rounded-full', passed ? 'bg-emerald-500' : 'bg-amber-500')}
+                      className={cn('h-full rounded-full', passed ? 'bg-good-surface' : 'bg-warn-surface')}
                       style={{ width: `${Math.max(1, ratio * 100)}%` }}
                     />
                   )}
@@ -127,9 +127,9 @@ export function Bip9Signaling() {
             <Flag
               className={cn(
                 'size-4 shrink-0',
-                state === 'ACTIVE' && 'text-emerald-600 dark:text-emerald-400',
-                state === 'FAILED' && 'text-rose-600 dark:text-rose-400',
-                state === 'LOCKED_IN' && 'text-amber-600 dark:text-amber-400',
+                state === 'ACTIVE' && 'text-good',
+                state === 'FAILED' && 'text-bad',
+                state === 'LOCKED_IN' && 'text-warn',
                 state === 'STARTED' && 'text-muted-foreground',
               )}
             />

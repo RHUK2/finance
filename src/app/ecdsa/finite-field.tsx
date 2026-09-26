@@ -63,7 +63,7 @@ export function FiniteField() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Spline className='size-4 text-sky-500' />
+          <Spline className='size-4 text-series-1' />
           {SECP256K1.equation} 위의 P + Q
         </span>
         <ControlSlider
@@ -94,7 +94,7 @@ export function FiniteField() {
         >
           <line x1={-5.1} y1={0} x2={6.1} y2={0} className='stroke-muted' strokeWidth={0.04} />
           <line x1={0} y1={-5.4} x2={0} y2={5.4} className='stroke-muted' strokeWidth={0.04} />
-          <path d={REAL_PATH} className='fill-none stroke-sky-500' strokeWidth={0.09} />
+          <path d={REAL_PATH} className='fill-none stroke-series-1' strokeWidth={0.09} />
 
           {/* P와 Q를 잇는 직선. 세 번째 교점 너머까지 늘려 긋는다 */}
           <line
@@ -102,7 +102,7 @@ export function FiniteField() {
             y1={-(py + l * (lineFrom - px))}
             x2={lineTo * SX}
             y2={-(py + l * (lineTo - px))}
-            className='stroke-amber-500'
+            className='stroke-warn-surface'
             strokeDasharray='0.18 0.14'
             strokeWidth={0.07}
           />
@@ -112,15 +112,15 @@ export function FiniteField() {
             y1={-thirdY}
             x2={rx * SX}
             y2={-sumY}
-            className='stroke-emerald-500'
+            className='stroke-good-surface'
             strokeDasharray='0.18 0.14'
             strokeWidth={0.07}
           />
 
-          <RealDot x={px * SX} y={py} label='P' dx={-0.75} dy={0.75} className='fill-sky-500' />
-          <RealDot x={qx * SX} y={qy} label='Q' className='fill-sky-500' />
-          <RealDot x={rx * SX} y={thirdY} label='세 번째 교점' dy={-0.55} className='fill-amber-500' />
-          <RealDot x={rx * SX} y={sumY} label='P + Q' dy={tight ? 0.95 : -0.9} className='fill-emerald-500' />
+          <RealDot x={px * SX} y={py} label='P' dx={-0.75} dy={0.75} className='fill-series-1' />
+          <RealDot x={qx * SX} y={qy} label='Q' className='fill-series-1' />
+          <RealDot x={rx * SX} y={thirdY} label='세 번째 교점' dy={-0.55} className='fill-warn-surface' />
+          <RealDot x={rx * SX} y={sumY} label='P + Q' dy={tight ? 0.95 : -0.9} className='fill-good-surface' />
         </svg>
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='기울기 λ' value={l.toFixed(3)} sub='(y_Q − y_P) ÷ (x_Q − x_P)' />
@@ -147,7 +147,7 @@ export function FiniteField() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Divide className='size-4 text-violet-500' />
+          <Divide className='size-4 text-series-2' />
           mod {P}에서 나눗셈은 역원 곱하기다
         </span>
         <ControlSlider
@@ -173,7 +173,7 @@ export function FiniteField() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Grid3x3 className='size-4 text-emerald-500' />
+          <Grid3x3 className='size-4 text-good' />
           {SECP256K1.equation} mod {P}, 점 {CURVE_POINTS.length}개
         </span>
         <CurveGrid
@@ -182,7 +182,7 @@ export function FiniteField() {
       </Panel>
 
       <ExplainCard
-        icon={<Spline className='size-4 text-amber-500' />}
+        icon={<Spline className='size-4 text-warn' />}
         title='실제 secp256k1은 얼마나 큰가'
         preview={`같은 식을 p = ${SECP256K1.p} 위에서 돌린다. 위수 n이 약 1.158 × 10⁷⁷이다.`}
         body={

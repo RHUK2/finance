@@ -28,7 +28,7 @@ function NibbleHexGrid({ bits, className }: { bits: string; className?: string }
         <span key={i} className='flex flex-col items-center gap-1'>
           <span className='tracking-widest text-muted-foreground'>{g}</span>
           {g.length === 4 ? (
-            <span className='w-full rounded-sm bg-amber-500/15 text-center font-semibold text-amber-600 dark:text-amber-400'>
+            <span className='w-full rounded-sm bg-warn-surface/15 text-center font-semibold text-warn'>
               {parseInt(g, 2).toString(16)}
             </span>
           ) : (
@@ -91,7 +91,7 @@ export function EntropyMnemonic({
             </Select>
           </div>
           <Button variant='outline' onClick={onRegen}>
-            <Dices className='size-4 text-sky-600 dark:text-sky-400' />
+            <Dices className='size-4 text-series-1' />
             새로 뽑기
           </Button>
         </div>
@@ -111,7 +111,7 @@ export function EntropyMnemonic({
       </Panel>
 
       <ExplainCard
-        icon={<Dices className='size-4 text-sky-600 dark:text-sky-400' />}
+        icon={<Dices className='size-4 text-series-1' />}
         title='가장 안전한 엔트로피는 오프라인에서 나온다 (동전·주사위)'
         preview='동전·주사위로 직접 만든 무작위성이 어떤 소프트웨어보다 믿을 만하다.'
         body={
@@ -135,7 +135,7 @@ export function EntropyMnemonic({
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <ShieldCheck className='size-4 text-emerald-600 dark:text-emerald-400' />
+          <ShieldCheck className='size-4 text-good' />
           체크섬은 이렇게 만들어진다 (SHA-256)
         </span>
         <Pipeline
@@ -176,7 +176,7 @@ export function EntropyMnemonic({
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <KeyRound className='size-4 text-amber-600 dark:text-amber-400' />
+          <KeyRound className='size-4 text-warn' />
           니모닉 단어
         </span>
         <div className='grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4'>
@@ -185,17 +185,15 @@ export function EntropyMnemonic({
               key={w.position}
               className={cn(
                 'flex flex-col gap-0.5 rounded-md border p-2',
-                w.isChecksum && 'border-amber-500/50 bg-amber-500/5',
+                w.isChecksum && 'border-warn-surface/50 bg-warn-surface/5',
               )}
             >
               <span className='flex items-center justify-between'>
-                <span className='font-mono text-[10px] text-muted-foreground'>#{w.position}</span>
-                {w.isChecksum && (
-                  <span className='rounded-sm border px-1 text-[9px] text-muted-foreground'>체크섬</span>
-                )}
+                <span className='font-mono text-3xs text-muted-foreground'>#{w.position}</span>
+                {w.isChecksum && <span className='rounded-sm border px-1 text-3xs text-muted-foreground'>체크섬</span>}
               </span>
               <span className='font-mono text-sm font-medium'>{w.word}</span>
-              <span className='font-mono text-[10px] text-muted-foreground tabular-nums'>
+              <span className='font-mono text-3xs text-muted-foreground tabular-nums'>
                 {w.bits} = {w.index}
               </span>
             </div>

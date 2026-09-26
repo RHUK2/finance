@@ -61,12 +61,12 @@ export function AgentGrid({
   return (
     // 열 우선 격자는 열 수가 고정(=칸 수/rows)이라 좁은 화면에서 칸이 크게 줄어든다.
     // 모바일에서는 간격을 좁혀 칸에 폭을 더 주고, 강조 링도 칸을 삼키지 않게 얇게 쓴다.
-    <div className={cn('grid', orientation === 'column' ? 'gap-[2px] sm:gap-1' : 'gap-1')} style={style}>
+    <div className={cn('grid', orientation === 'column' ? 'gap-0.5 sm:gap-1' : 'gap-1')} style={style}>
       {states.map((c, i) => (
         <div
           key={i}
           className={cn(
-            'aspect-square rounded-[3px] transition-colors duration-300',
+            'aspect-square rounded-xs transition-colors duration-300',
             c,
             highlight?.[i] && 'ring-1 ring-foreground sm:ring-2',
           )}
@@ -321,7 +321,7 @@ export function StatCard({
 export function Legend({ className, label }: { className: string; label: string }) {
   return (
     <span className='flex items-center gap-1.5'>
-      <span className={cn('size-3 rounded-[3px]', className)} />
+      <span className={cn('size-3 rounded-xs', className)} />
       {label}
     </span>
   );

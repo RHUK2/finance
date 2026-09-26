@@ -50,9 +50,34 @@
   --font-pretendard: 'Pretendard Variable', sans-serif;
 }
 
+/* text-xs(12px) 아래 눈금. 표 안의 보조 수치·배지처럼 본문보다 한두 칸 작아야 하는 자리가 있는데
+   Tailwind 기본 스케일이 xs에서 끝나서 매번 임의값을 쓰고 있었다. 비율은 xs와 같게 맞춘다. */
+/* 기기의 안전 영역. env()는 스케일 위의 값이 아니라 런타임에 기기가 알려주는 값이라
+   임의값으로 흩어 쓰지 말고 이름을 준다. */
+@theme inline {
+  --spacing-safe-bottom: env(safe-area-inset-bottom);
+}
+
+@theme inline {
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: calc(1 / 0.6875);
+  --text-3xs: 0.625rem;
+  --text-3xs--line-height: calc(1 / 0.625);
+}
+
 /* 판정 색(tone). good/bad/accent 어휘는 CLAUDE.md가 정본이고, accent는 shadcn이 --color-accent를
    호버 배경에 이미 쓰고 있어 토큰 이름만 warn으로 갈랐다. -surface는 배경·테두리용 고정 채도,
    나머지는 본문 글자용이라 명도가 모드마다 다르다. */
+/* 계열색(series). 여럿을 구분하려고 쓰는 색이라 판정(tone)과 축이 다르다. 스파크라인·비용막대·
+   누적막대·SVG 점과 선, 그리고 주제를 나타내는 아이콘이 여기서 색을 고른다. 좋고 나쁨의 뜻이
+   없으므로 번호로 부른다. 명도는 모드와 무관하게 고정한다(면에도 글자에도 같은 값을 쓴다). */
+@theme inline {
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+}
+
 @theme inline {
   --color-good: var(--good);
   --color-good-surface: var(--good-surface);
@@ -101,6 +126,10 @@
   --bad-surface: oklch(64.5% 0.246 16.439);
   --warn: oklch(66.6% 0.179 58.318);
   --warn-surface: oklch(76.9% 0.188 70.08);
+  --series-1: oklch(68.5% 0.169 237.323);
+  --series-2: oklch(60.6% 0.25 292.717);
+  --series-3: oklch(66.7% 0.295 322.15);
+  --series-4: oklch(62.3% 0.214 259.815);
 }
 
 .dark {

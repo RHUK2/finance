@@ -36,7 +36,7 @@ export function IssuanceSchedule() {
 
       <Panel>
         <ControlSlider
-          icon={<Hourglass className='size-4 text-sky-500' />}
+          icon={<Hourglass className='size-4 text-series-1' />}
           label='반감기 시대'
           value={era}
           onChange={setEra}
@@ -70,7 +70,7 @@ export function IssuanceSchedule() {
         </div>
         <StackedBar
           segments={[
-            { label: `발행됨 ${fmtSupply(issued)}`, value: issued, className: 'bg-amber-500' },
+            { label: `발행됨 ${fmtSupply(issued)}`, value: issued, className: 'bg-warn-surface' },
             { label: `남음 ${fmtSupply(remaining)}`, value: remaining, className: 'bg-muted-foreground/30' },
           ]}
           total={MAX_SUPPLY}
@@ -79,8 +79,15 @@ export function IssuanceSchedule() {
 
       <Panel className='gap-3'>
         <span className='text-sm font-medium'>시대별 궤적</span>
-        <Sparkline values={subsidies} label='보조금' className='text-amber-500' cursor={era} min={0} />
-        <Sparkline values={supplies} label='누적 공급' className='text-sky-500' cursor={era} min={0} max={MAX_SUPPLY} />
+        <Sparkline values={subsidies} label='보조금' className='text-warn' cursor={era} min={0} />
+        <Sparkline
+          values={supplies}
+          label='누적 공급'
+          className='text-series-1'
+          cursor={era}
+          min={0}
+          max={MAX_SUPPLY}
+        />
         <p className='text-xs text-muted-foreground'>
           두 곡선은 같은 사실의 앞뒤다. 보조금이 절반씩 잘리므로 누적 공급은 상한에 점점 느리게 다가간다. 2032년이면
           이미 상한의 98%가 발행돼 있고, 남은 2%를 100여 년에 걸쳐 나눠 준다.
@@ -88,13 +95,13 @@ export function IssuanceSchedule() {
       </Panel>
 
       <ExplainCard
-        icon={<Coins className='size-4 text-amber-500' />}
+        icon={<Coins className='size-4 text-warn' />}
         title='2,100만이라는 숫자는 어디서 나오나'
         preview='목표로 정한 수가 아니라 50 BTC로 시작하는 등비수열의 합이다.'
         body='상한을 먼저 정하고 발행량을 거기 맞춘 것이 아니다. 블록당 50 BTC로 시작해 210,000블록마다 반으로 자르는 규칙을 정하면, 그 무한등비급수의 합이 50 × 210,000 × 2 = 21,000,000이 된다. 2,100만은 규칙이 낳은 결과지 입력값이 아니다. 실제로는 사토시 단위 정수 나눗셈에서 버림이 생겨 상한보다 아주 조금 모자라게 끝나고, 초기 블록의 실수와 영영 잠긴 코인까지 세면 실제 유통량은 그보다 더 적다.'
       />
       <ExplainCard
-        icon={<Hourglass className='size-4 text-sky-500' />}
+        icon={<Hourglass className='size-4 text-series-1' />}
         title='2140년이 왜 분기점으로 불리나'
         preview='그 무렵 보조금이 0이 되어, 채굴자 수입이 수수료 하나만 남는다.'
         body='32번째 반감기를 지나면 보조금은 1사토시 미만이 되어 더 나눌 수 없고, 그 뒤 블록은 보조금 없이 발행된다. 시점은 대략 2140년이지만 정확한 해는 중요하지 않다. 진짜 분기점은 보조금이 0이 되는 순간이 아니라, 보조금이 채굴자 수입에서 차지하는 몫이 무의미해지는 시점이다. 반감기마다 절반씩 줄므로 그 시점은 2140년보다 수십 년 앞서 온다. 다음 탭에서 그 몫을 직접 본다.'

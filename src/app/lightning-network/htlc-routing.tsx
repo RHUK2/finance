@@ -83,7 +83,7 @@ export function HtlcRouting() {
       </IllustrativeDisclaimer>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-amber-600 dark:text-amber-400' />}
+        icon={<KeyRound className='size-4 text-warn' />}
         title='타임락은 왜 필요할까'
         preview='Bob이 끝내 R을 공개하지 않으면, 정해진 시간 뒤 각 홉은 걸어둔 돈을 자동으로 돌려받는다.'
         body={
@@ -114,24 +114,20 @@ function HopNode({
         <div className='flex size-10 items-center justify-center rounded-full border bg-muted text-xs font-medium'>
           {label.slice(0, 1)}
         </div>
-        <span className='text-[11px] text-muted-foreground'>{label}</span>
+        <span className='text-2xs text-muted-foreground'>{label}</span>
       </div>
       {!isLast && (
         <div className='mx-2 flex-1'>
           <Link2
             className={cn(
               'mx-auto size-4',
-              linkState === 'settled'
-                ? 'text-emerald-500'
-                : linkState === 'locked'
-                  ? 'text-amber-500'
-                  : 'text-muted-foreground/30',
+              linkState === 'settled' ? 'text-good' : linkState === 'locked' ? 'text-warn' : 'text-muted-foreground/30',
             )}
           />
           <div
             className={cn(
               'mt-1 h-1 rounded-full',
-              linkState === 'settled' ? 'bg-emerald-500' : linkState === 'locked' ? 'bg-amber-500' : 'bg-muted',
+              linkState === 'settled' ? 'bg-good-surface' : linkState === 'locked' ? 'bg-warn-surface' : 'bg-muted',
             )}
           />
         </div>

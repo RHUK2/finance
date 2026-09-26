@@ -126,7 +126,7 @@ export function ReplayAttack() {
       )}
 
       <ExplainCard
-        icon={<Copy className='size-4 text-rose-500' />}
+        icon={<Copy className='size-4 text-bad' />}
         title='왜 복사한 트랜잭션이 그대로 통하는가'
         preview='서명은 트랜잭션 내용에 대한 것이지, 어느 체인에 실릴지에 대한 것이 아니다'
         body={

@@ -27,7 +27,7 @@ export function MiningCost() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <ArrowDownToLine className='size-4 text-amber-500' />
+          <ArrowDownToLine className='size-4 text-warn' />
           인과는 이 방향으로만 흐른다
         </span>
         <div className='flex flex-col gap-1'>
@@ -53,7 +53,7 @@ export function MiningCost() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Zap className='size-4 text-rose-500' />
+          <Zap className='size-4 text-bad' />
           반대로 뒤집으면 어디서 끊기나
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>
@@ -66,7 +66,7 @@ export function MiningCost() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Gauge className='size-4 text-sky-500' />
+          <Gauge className='size-4 text-series-1' />
           2022년에 실제로 그렇게 됐다
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>
@@ -79,7 +79,7 @@ export function MiningCost() {
       </Panel>
 
       <ExplainCard
-        icon={<Radar className='size-4 text-violet-500' />}
+        icon={<Radar className='size-4 text-series-2' />}
         title='그럼 소프트워는 틀린 이야기인가'
         preview='작업증명이 만드는 것은 값어치가 아니라 탈취 비용이라는 속성이다.'
         body={

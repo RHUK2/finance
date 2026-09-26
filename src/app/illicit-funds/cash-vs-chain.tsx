@@ -48,7 +48,7 @@ export function CashVsChain() {
         <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
           <Panel className='gap-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <Banknote className='size-4 text-emerald-600 dark:text-emerald-400' />
+              <Banknote className='size-4 text-good' />
               현금 (100달러권)
             </span>
             <div className='grid grid-cols-2 gap-2'>

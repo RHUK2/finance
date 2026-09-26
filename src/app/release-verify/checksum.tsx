@@ -16,13 +16,9 @@ const ORIGINAL = '설치 파일 v1.0.0';
 /** 16진수를 네 글자씩 끊어 보이면서, 기준값과 다른 자리만 칠한다. */
 function HexView({ hex, diff }: { hex: string; diff?: boolean[] }) {
   return (
-    <span className='font-mono text-[11px] leading-relaxed break-all sm:text-xs' aria-label={hex}>
+    <span className='font-mono text-2xs/relaxed break-all sm:text-xs' aria-label={hex}>
       {Array.from(hex, (ch, i) => (
-        <span
-          key={i}
-          aria-hidden
-          className={cn(diff?.[i] && 'text-rose-600 dark:text-rose-400', i % 4 === 0 && i > 0 && 'ml-1')}
-        >
+        <span key={i} aria-hidden className={cn(diff?.[i] && 'text-bad', i % 4 === 0 && i > 0 && 'ml-1')}>
           {ch}
         </span>
       ))}
@@ -90,7 +86,7 @@ export function Checksum() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<FileCheck2 className='size-4 text-amber-500' />}
+        icon={<FileCheck2 className='size-4 text-warn' />}
         title='공격자는 파일과 체크섬을 같이 바꾼다'
         preview='체크섬 목록은 대개 바이너리 바로 옆에 놓여 있다'
         body={

@@ -14,8 +14,8 @@ import { buildPath, COINS, illustrativeAddress, illustrativeHex, PURPOSES } from
 import { Pipeline, type PipeItem } from '@/components/pipeline';
 
 // 페이지 전반(하드닝 배지·파이프라인 tone)과 같은 규칙: 잠김·비밀 = amber, 열림·공유 가능 = emerald.
-const LOCK_COLOR = 'text-amber-600 dark:text-amber-400';
-const OPEN_COLOR = 'text-emerald-600 dark:text-emerald-400';
+const LOCK_COLOR = 'text-warn';
+const OPEN_COLOR = 'text-good';
 
 function NodeRow({
   val,
@@ -367,7 +367,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
                   // 줄기 선(2px)도 중심이 축(19px)에 오도록 18px에서 시작한다.
                   <div
                     className={cn(
-                      'ml-[18px] flex flex-col gap-0.5 border-l-2 pl-3',
+                      'ml-4.5 flex flex-col gap-0.5 border-l-2 pl-3',
                       revealed ? 'border-muted-foreground/30' : 'border-muted-foreground/10',
                     )}
                   >
@@ -420,7 +420,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               <span
                 className={cn(
                   'ml-auto flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium',
-                  node.hardened ? `bg-amber-500/10 ${LOCK_COLOR}` : `bg-emerald-500/10 ${OPEN_COLOR}`,
+                  node.hardened ? `bg-warn-surface/10 ${LOCK_COLOR}` : `bg-good-surface/10 ${OPEN_COLOR}`,
                 )}
               >
                 {node.hardened ? <Lock className='size-3 shrink-0' /> : <Eye className='size-3 shrink-0' />}
@@ -440,13 +440,13 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
                 <Lock className={cn('size-3 shrink-0', LOCK_COLOR)} />
                 확장 개인키 (xprv)
               </span>
-              <code className='font-mono text-[11px] break-all'>
+              <code className='font-mono text-2xs break-all'>
                 {short(cur.priv)} ∥ {short(cur.cc)}
               </code>
-              <span className='text-[10px] text-muted-foreground'>개인키 + 체인코드 · 비밀</span>
+              <span className='text-3xs text-muted-foreground'>개인키 + 체인코드 · 비밀</span>
             </div>
             {/* 축은 xprv/xpub 카드 안 아이콘의 중심(x=16px: p-2.5 10 + 아이콘 12/2). */}
-            <div className='flex items-center gap-1.5 pl-[9px] text-[10px] text-muted-foreground'>
+            <div className='flex items-center gap-1.5 pl-2.25 text-3xs text-muted-foreground'>
               <ArrowDown className='size-3.5 shrink-0' />
               개인키에만 secp256k1 적용 → 공개키, 체인코드는 그대로 복사
             </div>
@@ -455,10 +455,10 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
                 <Eye className={cn('size-3 shrink-0', OPEN_COLOR)} />
                 확장 공개키 (xpub)
               </span>
-              <code className='font-mono text-[11px] break-all'>
+              <code className='font-mono text-2xs break-all'>
                 {short(cur.pub)} ∥ {short(cur.cc)}
               </code>
-              <span className='text-[10px] text-muted-foreground'>공개키 + 체인코드 · 공유 가능</span>
+              <span className='text-3xs text-muted-foreground'>공개키 + 체인코드 · 공유 가능</span>
             </div>
           </div>
 

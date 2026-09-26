@@ -8,14 +8,14 @@ import { BTC_COLOR, cn } from '@/lib/utils';
 import { GOVERNANCE_EVENTS, MARKET_EVENTS, type EventTag, type TimelineEvent } from './events';
 
 const TAG_STYLE: Record<EventTag, string> = {
-  논쟁: 'text-rose-600 dark:text-rose-400 border-rose-500/30',
-  분열: 'text-amber-600 dark:text-amber-400 border-amber-500/30',
-  업그레이드: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
+  논쟁: 'text-bad border-bad-surface/30',
+  분열: 'text-warn border-warn-surface/30',
+  업그레이드: 'text-good border-good-surface/30',
   사건: 'text-muted-foreground border-border',
-  이정표: 'text-amber-600 dark:text-amber-400 border-amber-500/30',
-  채택: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
-  붕괴: 'text-rose-600 dark:text-rose-400 border-rose-500/30',
-  제도: 'text-sky-600 dark:text-sky-400 border-sky-500/30',
+  이정표: 'text-warn border-warn-surface/30',
+  채택: 'text-good border-good-surface/30',
+  붕괴: 'text-bad border-bad-surface/30',
+  제도: 'text-series-1 border-series-1/30',
 };
 
 function Timeline({ events }: { events: TimelineEvent[] }) {

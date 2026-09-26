@@ -120,7 +120,7 @@ export function DepositPriority() {
         </div>
 
         <ControlSlider
-          icon={<FileSignature className='size-4 text-sky-500' />}
+          icon={<FileSignature className='size-4 text-series-1' />}
           label='내 보증금'
           value={deposit}
           onChange={setDeposit}
@@ -130,7 +130,7 @@ export function DepositPriority() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Landmark className='size-4 text-rose-500' />}
+          icon={<Landmark className='size-4 text-bad' />}
           label='선순위 근저당 채권액'
           value={mortgage}
           onChange={setMortgage}
@@ -141,7 +141,7 @@ export function DepositPriority() {
           hint='등기부등본 을구에서 확인한다. 실제 대출 잔액이 아니라 채권최고액이 적혀 있다.'
         />
         <ControlSlider
-          icon={<Gavel className='size-4 text-amber-500' />}
+          icon={<Gavel className='size-4 text-warn' />}
           label='경매 낙찰가'
           value={salePrice}
           onChange={setSalePrice}
@@ -173,7 +173,7 @@ export function DepositPriority() {
           label='임차인 배당'
           value={distributed}
           max={barMax}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={formatEok}
           sub={canClaim ? (tenantFirst ? '1순위' : '근저당 다음 순위') : '확정일자가 없어 배당에 못 낀다'}
         />
@@ -181,7 +181,7 @@ export function DepositPriority() {
           label='근저당권자 배당'
           value={bankPaid}
           max={barMax}
-          className='bg-rose-500'
+          className='bg-bad-surface'
           format={formatEok}
           sub={`채권액 ${formatEok(mortgage)}`}
         />
@@ -189,7 +189,7 @@ export function DepositPriority() {
           label='낙찰자 인수'
           value={assumed}
           max={barMax}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={formatEok}
           sub={hasOpposing ? '낙찰자가 대신 갚아야 하는 금액' : '대항력이 없으면 인수되지 않는다'}
         />
@@ -197,7 +197,7 @@ export function DepositPriority() {
           label='끝내 못 받는 돈'
           value={lost}
           max={barMax}
-          className='bg-fuchsia-500'
+          className='bg-series-3'
           format={formatEok}
           sub='집주인에게 남은 재산이 없다면 회수가 어렵다'
         />
@@ -208,7 +208,7 @@ export function DepositPriority() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Stamp className='size-4 text-sky-500' />}
+        icon={<Stamp className='size-4 text-series-1' />}
         title='대항력과 우선변제권은 하는 일이 다르다'
         preview='하나는 나가지 않을 권리, 다른 하나는 돈을 먼저 받을 권리다.'
         body={

@@ -125,7 +125,7 @@ export function FeeCalc() {
             <br />
             여기서 &lsquo;크기&rsquo;는 두 가지다.
             <div className='my-3 overflow-x-auto rounded-md bg-muted/50 p-3'>
-              <pre className='font-mono text-[11px] leading-relaxed'>{`실제 전송·저장하는 크기   서명 100바이트 = 100바이트 (그대로)
+              <pre className='font-mono text-2xs/relaxed'>{`실제 전송·저장하는 크기   서명 100바이트 = 100바이트 (그대로)
 블록 한도에 계산되는 크기  서명 100바이트 =  25바이트 (1/4)`}</pre>
             </div>
             서명은 네트워크로 100바이트를 그대로 보낸다. 줄어드는 건 물리적 크기가 아니라, 한 블록(약 1MvB)의 자리를

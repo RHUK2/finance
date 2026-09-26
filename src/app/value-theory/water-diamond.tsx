@@ -53,7 +53,7 @@ export function WaterDiamond() {
 
       <Panel>
         <ControlSlider
-          icon={<Droplets className='size-4 text-sky-500' />}
+          icon={<Droplets className='size-4 text-series-1' />}
           label='이미 쥐고 있는 물'
           hint='첫 잔은 마시지 못하면 죽으므로 목숨값이다. 잔이 늘수록 한 잔 더의 값어치가 떨어진다.'
           value={cups}
@@ -71,7 +71,7 @@ export function WaterDiamond() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Scale className='size-4 text-amber-500' />한 단위 더의 값어치
+          <Scale className='size-4 text-warn' />한 단위 더의 값어치
         </span>
         <div className='flex items-end gap-4'>
           <div className='flex h-32 flex-1 items-end gap-0.5'>
@@ -81,7 +81,7 @@ export function WaterDiamond() {
                 title={`${i + 1}잔째 ${formatValue(v)}`}
                 // 값을 정하는 것은 마지막 한 잔이다. 그 막대가 어느 것인지 보이지 않으면
                 // 옆의 다이아몬드와 무엇을 견주는 그림인지 알 수 없다.
-                className={cn('min-h-px flex-1 rounded-t-sm', i === cups - 1 ? 'bg-sky-300' : 'bg-sky-500')}
+                className={cn('min-h-px flex-1 rounded-t-sm', i === cups - 1 ? 'bg-series-1/50' : 'bg-series-1')}
                 style={{ height: `${Math.max(1, (v / scale) * 100)}%` }}
               />
             ))}
@@ -89,15 +89,15 @@ export function WaterDiamond() {
           <div className='flex h-32 w-12 items-end border-l pl-4'>
             <div
               title={`다이아몬드 ${formatValue(diamondWon)}`}
-              className='w-full rounded-t-sm bg-violet-500'
+              className='w-full rounded-t-sm bg-series-2'
               style={{ height: `${Math.max(1, (diamondWon / scale) * 100)}%` }}
             />
           </div>
         </div>
         <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-          <Legend className='bg-sky-500' label='물 앞선 잔들 (왼쪽부터 1잔째)' />
-          <Legend className='bg-sky-300' label={`물 ${cups}잔째 (값을 정하는 잔)`} />
-          <Legend className='bg-violet-500' label='다이아몬드 1캐럿' />
+          <Legend className='bg-series-1' label='물 앞선 잔들 (왼쪽부터 1잔째)' />
+          <Legend className='bg-series-1/50' label={`물 ${cups}잔째 (값을 정하는 잔)`} />
+          <Legend className='bg-series-2' label='다이아몬드 1캐럿' />
         </div>
       </Panel>
 

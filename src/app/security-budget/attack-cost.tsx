@@ -40,7 +40,7 @@ export function AttackCost() {
 
       <Panel>
         <ControlSlider
-          icon={<ShieldCheck className='size-4 text-emerald-500' />}
+          icon={<ShieldCheck className='size-4 text-good' />}
           label='연간 보안 예산'
           value={annual}
           onChange={setAnnual}
@@ -51,7 +51,7 @@ export function AttackCost() {
           hint={`기준점 ${formatUsd(BASE_ANNUAL)}의 ${shrink >= 1 ? `${shrink.toFixed(1)}배` : `${(shrink * 100).toFixed(0)}%`}. 앞 탭이 계산하는 값이 이것이다.`}
         />
         <ControlSlider
-          icon={<Clock className='size-4 text-sky-500' />}
+          icon={<Clock className='size-4 text-series-1' />}
           label='공격 지속 시간'
           value={hours}
           onChange={setHours}
@@ -62,7 +62,7 @@ export function AttackCost() {
           hint='되돌리려는 거래의 확인 수만큼은 버텨야 한다. 6확인이면 약 1시간이다.'
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-amber-500' />}
+          icon={<Wallet className='size-4 text-warn' />}
           label='노리는 이중지불 규모'
           value={gain}
           onChange={setGain}
@@ -76,8 +76,8 @@ export function AttackCost() {
 
       <Panel className='gap-3'>
         <span className='text-sm font-medium'>이득과 비용</span>
-        <CostBar label='공격 비용 (운영비)' value={cost} max={max} className='bg-sky-500' />
-        <CostBar label='이중지불 이득' value={gain} max={max} className='bg-rose-500' />
+        <CostBar label='공격 비용 (운영비)' value={cost} max={max} className='bg-series-1' />
+        <CostBar label='이중지불 이득' value={gain} max={max} className='bg-bad-surface' />
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -103,7 +103,7 @@ export function AttackCost() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<TriangleAlert className='size-4 text-amber-500' />}
+        icon={<TriangleAlert className='size-4 text-warn' />}
         title='이 계산이 과장하는 것과 축소하는 것'
         preview='과반을 쥐어도 할 수 있는 일은 제한적이지만, 값이 떨어지는 것은 가격도 마찬가지다.'
         body='과장하는 쪽부터. 과반 해시레이트로도 남의 과거 거래를 바꾸거나 없는 코인을 만들어 낼 수는 없다. 뒤집을 수 있는 것은 공격자 자신이 최근에 보낸 거래뿐이라 이득에는 현실적인 천장이 있다. 축소하는 쪽. 공격이 성공하면 그 사실 자체가 코인 값을 떨어뜨려 공격자가 손에 쥔 코인도 같이 값을 잃는다. 반대로 공격자가 이득을 코인이 아니라 이미 인출한 법정통화로 본다면 그 억제는 작동하지 않는다. 이 슬라이더들은 어느 쪽 가정도 강요하지 않으니, 두 가정에서 각각 어느 예산 수준이 위험해지는지를 직접 밀어 보는 편이 낫다.'

@@ -13,15 +13,15 @@ type Role = 'plain' | 'lock' | 'unlock';
 
 const ROLE_CLASS: Record<Role, string> = {
   plain: 'bg-muted',
-  lock: 'border border-amber-500/40 bg-amber-500/5',
-  unlock: 'border border-emerald-500/40 bg-emerald-500/5',
+  lock: 'border border-warn-surface/40 bg-warn-surface/5',
+  unlock: 'border border-good-surface/40 bg-good-surface/5',
 };
 
 function FieldBox({ name, desc, role = 'plain' }: { name: string; desc: string; role?: Role }) {
   return (
     <div className={cn('flex flex-col gap-0.5 rounded-md p-2.5', ROLE_CLASS[role])}>
       <code className='font-mono text-xs font-semibold'>{name}</code>
-      <span className='text-[11px] leading-snug text-muted-foreground'>{desc}</span>
+      <span className='text-2xs/snug text-muted-foreground'>{desc}</span>
     </div>
   );
 }
@@ -96,8 +96,8 @@ export function TxStructure() {
         </div>
 
         <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-          <Legend className='bg-amber-500/60' label='잠금 (scriptPubKey)' />
-          <Legend className='bg-emerald-500/60' label='해제 (scriptSig · witness)' />
+          <Legend className='bg-warn-surface/60' label='잠금 (scriptPubKey)' />
+          <Legend className='bg-good-surface/60' label='해제 (scriptSig · witness)' />
         </div>
       </Panel>
 

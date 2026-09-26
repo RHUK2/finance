@@ -48,7 +48,7 @@ export function YieldCurve() {
       <Panel>
         <SegmentedControl value={shape} onChange={setShape} options={SHAPE_LABELS} />
         <ControlSlider
-          icon={<Activity className='size-4 text-sky-500' />}
+          icon={<Activity className='size-4 text-series-1' />}
           label='단기금리 (중앙은행이 정하는 쪽)'
           value={shortRate}
           onChange={setShortRate}
@@ -68,7 +68,7 @@ export function YieldCurve() {
             label={t.label}
             value={ys[i]}
             max={max}
-            className={inverted ? 'bg-rose-500' : 'bg-sky-500'}
+            className={inverted ? 'bg-bad-surface' : 'bg-series-1'}
             format={(v) => `${v.toFixed(2)}%`}
           />
         ))}
@@ -97,13 +97,13 @@ export function YieldCurve() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<LineChart className='size-4 text-rose-500' />}
+        icon={<LineChart className='size-4 text-bad' />}
         title='역전이 왜 경기침체 신호로 불리나'
         preview='장기금리가 낮다는 것은 곧 금리를 내려야 할 일이 온다는 시장의 예상이다.'
         body='10년물 금리는 대략 앞으로 10년치 단기금리의 평균에 대한 예상이다. 그 평균이 지금의 단기금리보다 낮다는 것은, 머지않아 중앙은행이 금리를 내릴 수밖에 없는 상황이 온다고 시장이 보고 있다는 뜻이다. 금리를 내리는 상황이란 대개 경기가 식는 상황이다. 미국에서는 지난 반세기 동안 침체에 앞서 거의 예외 없이 역전이 나타났다. 다만 역전에서 침체까지의 시차가 짧게는 반년, 길게는 2년으로 들쭉날쭉해 시점을 맞히는 지표는 아니고, 역전이 있었지만 침체가 오지 않은 사례도 있다.'
       />
       <ExplainCard
-        icon={<Activity className='size-4 text-sky-500' />}
+        icon={<Activity className='size-4 text-series-1' />}
         title='곡선의 양쪽 끝은 다른 사람이 정한다'
         preview='왼쪽은 중앙은행, 오른쪽은 시장이다. 둘이 어긋난 모습이 곧 곡선의 모양이다.'
         body='단기 쪽은 정책금리를 거의 그대로 따라가므로 중앙은행이 정한다고 봐도 된다. 장기 쪽은 앞으로의 성장률·물가·재정 상황에 대한 시장의 판단이 값을 만든다. 그래서 곡선의 모양은 두 주체의 견해차를 그린 그림이다. 중앙은행이 물가를 잡겠다고 단기금리를 빠르게 올리는데 시장은 그 긴축이 오래 못 갈 것으로 보면 왼쪽만 솟아 역전이 된다. 반대로 재정적자가 커져 장기 국채 공급이 몰리면 오른쪽이 밀려 올라가 곡선이 가팔라진다.'

@@ -105,7 +105,7 @@ export function Hybrid() {
       </SectionIntro>
 
       <MarkTable
-        icon={<Layers className='size-4 text-violet-500' />}
+        icon={<Layers className='size-4 text-series-2' />}
         title='네 가지 증권은 무엇을 주고 무엇을 받는가'
         headers={['증권', '원금', '의결권', '상방']}
         rows={INSTRUMENTS.map((i) => ({
@@ -120,7 +120,7 @@ export function Hybrid() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
-          <Layers className='size-4 text-violet-500' />
+          <Layers className='size-4 text-series-2' />
           {instrument.label}
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{instrument.detail}</p>
@@ -134,7 +134,7 @@ export function Hybrid() {
 
       <Panel>
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-emerald-500' />}
+          icon={<TrendingUp className='size-4 text-good' />}
           label='만기 시점의 회사 가치'
           value={value}
           onChange={setValue}
@@ -181,7 +181,7 @@ export function Hybrid() {
           label='전환사채 보유자'
           value={holder}
           max={barMax}
-          className='bg-violet-500'
+          className='bg-series-2'
           format={(v) => formatEok(v, 0)}
           sub={converts ? '주식으로 바꿔 지분만큼 가져간다' : '약속된 원리금까지만 가져간다'}
         />
@@ -189,7 +189,7 @@ export function Hybrid() {
           label='기존 주주'
           value={existing}
           max={barMax}
-          className='bg-sky-500'
+          className='bg-series-1'
           format={(v) => formatEok(v, 0)}
           sub={converts ? '늘어난 주식 수만큼 몫이 묽어졌다' : '원리금을 내주고 나머지를 전부 가져간다'}
         />
@@ -202,7 +202,7 @@ export function Hybrid() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Repeat className='size-4 text-violet-500' />}
+        icon={<Repeat className='size-4 text-series-2' />}
         title='왜 낮은 금리에 돈을 빌려주는가'
         preview='전환권은 덤이 아니라 값이 매겨진 상품이다. 회사는 그 값을 이자 대신 받는다.'
         body={
@@ -223,7 +223,7 @@ export function Hybrid() {
       />
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-rose-500' />}
+        icon={<TrendingUp className='size-4 text-bad' />}
         title='전환가가 내려가면 이야기가 달라진다'
         preview='주가가 빠질 때 전환가를 함께 낮추는 조항이 붙으면 희석의 한도가 사라진다.'
         body={

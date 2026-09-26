@@ -35,7 +35,7 @@ export function WhyTwoChains() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <Radio className='size-4 text-sky-600 dark:text-sky-400' />
+          <Radio className='size-4 text-series-1' />
           mandatory signaling이 하는 일
         </span>
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
@@ -46,7 +46,7 @@ export function WhyTwoChains() {
               지키면 받아들인다. 그래서 다수 체인을 계속 따라간다.
             </p>
           </div>
-          <div className={cn('rounded-md border p-3', 'border-rose-500/40 bg-rose-500/5')}>
+          <div className={cn('rounded-md border p-3', 'border-bad-surface/40 bg-bad-surface/5')}>
             <p className='text-sm font-medium'>mandatory signaling 구간</p>
             <p className='mt-1 text-sm/relaxed text-muted-foreground'>
               신규칙 노드가 신호하지 않는 <b>블록 자체</b>를 거부한다. 다수 채굴자가 신호하지 않으면 그 블록들이 통째로
@@ -70,7 +70,7 @@ export function WhyTwoChains() {
 
       <Panel>
         <ControlSlider
-          icon={<Gauge className='size-4 text-amber-500' />}
+          icon={<Gauge className='size-4 text-warn' />}
           label='소수 체인이 가져간 해시레이트 비중'
           hint={`BIP-110 실제 신호 비율은 ${SIGNAL_PCT.toFixed(2)}%였다`}
           value={hashPct}
@@ -112,7 +112,7 @@ export function WhyTwoChains() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Layers className='size-4 text-violet-500' />}
+        icon={<Layers className='size-4 text-series-2' />}
         title='두 체인의 규칙 집합은 어떻게 겹치는가'
         preview='이 겹침의 모양이 이 페이지 나머지 전부를 결정한다'
         body={
@@ -127,7 +127,7 @@ export function WhyTwoChains() {
                 <p className='text-sm font-medium'>소프트포크 분기 (BIP-110)</p>
                 <div className='my-3 rounded border border-dashed p-3'>
                   <span className='text-xs text-muted-foreground'>기존 규칙에서 유효한 트랜잭션</span>
-                  <div className='mt-2 rounded border border-rose-500/50 bg-rose-500/5 p-2'>
+                  <div className='mt-2 rounded border border-bad-surface/50 bg-bad-surface/5 p-2'>
                     <span className='text-xs'>BIP-110 규칙에서도 유효</span>
                   </div>
                 </div>
@@ -138,10 +138,10 @@ export function WhyTwoChains() {
               <div className='flex-1 rounded-md border p-3'>
                 <p className='text-sm font-medium'>하드포크 분기 (eCash)</p>
                 <div className='my-3 flex gap-2 rounded border border-dashed p-3'>
-                  <div className='flex-1 rounded border border-sky-500/50 bg-sky-500/5 p-2'>
+                  <div className='flex-1 rounded border border-series-1/50 bg-series-1/5 p-2'>
                     <span className='text-xs'>기존 규칙</span>
                   </div>
-                  <div className='flex-1 rounded border border-amber-500/50 bg-amber-500/5 p-2'>
+                  <div className='flex-1 rounded border border-warn-surface/50 bg-warn-surface/5 p-2'>
                     <span className='text-xs'>eCash 규칙</span>
                   </div>
                 </div>

@@ -12,7 +12,7 @@ const HINT = FEE_PRESETS.map((p) => `${p.label} ≈ ${p.rate}`).join(' · ') + '
 export function FeeRateControl({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
     <ControlSlider
-      icon={<Gauge className='size-4 text-emerald-600 dark:text-emerald-400' />}
+      icon={<Gauge className='size-4 text-good' />}
       label='수수료율 (멤풀 혼잡도)'
       hint={HINT}
       value={value}

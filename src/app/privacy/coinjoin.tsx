@@ -34,7 +34,7 @@ export function CoinJoin() {
 
       <Panel>
         <ControlSlider
-          icon={<Shuffle className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<Shuffle className='size-4 text-warn' />}
           label='CoinJoin 참가자 수'
           value={participants}
           onChange={setParticipants}
@@ -65,7 +65,7 @@ export function CoinJoin() {
                   y1={y1}
                   x2={100}
                   y2={y2}
-                  className='stroke-amber-500/50'
+                  className='stroke-warn-surface/50'
                   strokeWidth={1.5}
                   vectorEffect='non-scaling-stroke'
                 />

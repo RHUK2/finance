@@ -19,7 +19,7 @@ export function MobileNavDrawer({ currentLabel }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <footer className='fixed inset-x-0 bottom-0 z-30 flex h-12 shrink-0 items-center gap-2 border-t bg-sidebar px-4 pb-[env(safe-area-inset-bottom)] dark:bg-background'>
+    <footer className='fixed inset-x-0 bottom-0 z-30 flex h-12 shrink-0 items-center gap-2 border-t bg-sidebar px-4 pb-safe-bottom dark:bg-background'>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger className='flex cursor-pointer items-center gap-1 text-sm font-medium outline-none'>
           {currentLabel}

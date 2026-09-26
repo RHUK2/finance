@@ -68,8 +68,8 @@ export function Reproducible() {
                 <span className='w-14 shrink-0 text-xs'>{name}</span>
                 <span
                   className={cn(
-                    'flex-1 truncate rounded-md px-2 py-1 font-mono text-[11px]',
-                    odd ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'bg-muted',
+                    'flex-1 truncate rounded-md px-2 py-1 font-mono text-2xs',
+                    odd ? 'bg-bad-surface/10 text-bad' : 'bg-muted',
                   )}
                 >
                   {groupHex(h.slice(0, 24))}
@@ -92,7 +92,7 @@ export function Reproducible() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Boxes className='size-4 text-amber-500' />}
+        icon={<Boxes className='size-4 text-warn' />}
         title='재현이 가능하다는 말과 남이 해 봤다는 말은 다르다'
         preview='지켜 주는 것은 후자다'
         body={

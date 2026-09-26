@@ -25,9 +25,9 @@ const PRICE_FLOOR = 70;
 // 증거금 배수 구간별 색. 홀더의 딜레마와 같은 읽는 법이다.
 // 위치는 청산 낙폭 순, 색은 배수 구간.
 function bandColor(multiple: number, liquidated: boolean): string {
-  if (multiple >= 15) return liquidated ? 'bg-rose-700' : 'bg-sky-300';
-  if (multiple >= 6) return liquidated ? 'bg-rose-500' : 'bg-sky-500';
-  return liquidated ? 'bg-rose-400' : 'bg-sky-700';
+  if (multiple >= 15) return liquidated ? 'bg-bad-surface' : 'bg-series-1/40';
+  if (multiple >= 6) return liquidated ? 'bg-bad-surface/70' : 'bg-series-1/70';
+  return liquidated ? 'bg-bad-surface/40' : 'bg-series-1';
 }
 
 export function LiquidationCascade() {
@@ -47,7 +47,7 @@ export function LiquidationCascade() {
 
       <Panel>
         <ControlSlider
-          icon={<Gauge className='size-4 text-sky-500' />}
+          icon={<Gauge className='size-4 text-series-1' />}
           label='평균 증거금 배수'
           hint='포지션 명목가를 증거금으로 나눈 값. 배수가 클수록 청산 낙폭이 얕아 조금만 떨어져도 털리고, 털릴 때 쏟아지는 명목가도 크다. 빌린 돈이 아니라 증거금만 걸고 가격 변동을 추적하는 구조다.'
           value={meanMultiple}
@@ -97,9 +97,8 @@ function CascadeSim({
     <CascadeStage
       notice={
         <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <Zap className='size-3.5 text-rose-500' />첫 박자에 외생 충격{' '}
-          <span className='font-medium text-rose-600 dark:text-rose-400'>−{Math.round(OPENING_SHOCK * 100)}%</span> 자동
-          적용
+          <Zap className='size-3.5 text-bad' />첫 박자에 외생 충격{' '}
+          <span className='font-medium text-bad'>−{Math.round(OPENING_SHOCK * 100)}%</span> 자동 적용
         </div>
       }
       controls={
@@ -122,8 +121,8 @@ function CascadeSim({
       reading='칸 하나가 포지션 하나다. 청산 낙폭 순으로 왼쪽부터 늘어서 있어 강제청산(붉은색)은 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다. 배수가 큰 포지션일수록 얕은 낙폭에서 털리고 털릴 때 쏟아내는 명목가도 커서, 왼쪽 몇 칸이 넘어가는 것만으로 다음 층이 연달아 넘어간다.'
       legend={
         <>
-          <Legend className='bg-sky-500' label='살아 있는 포지션' />
-          <Legend className='bg-rose-500' label='강제청산' />
+          <Legend className='bg-series-1' label='살아 있는 포지션' />
+          <Legend className='bg-bad-surface' label='강제청산' />
         </>
       }
       legendNote='진할수록 증거금 배수가 낮은 구간'
@@ -131,7 +130,7 @@ function CascadeSim({
         values: curve,
         cursor: round,
         label: `가격 ${PRICE_FLOOR}~100`,
-        className: frame.price < 80 ? 'text-rose-500' : 'text-sky-500',
+        className: frame.price < 80 ? 'text-bad' : 'text-series-1',
         min: PRICE_FLOOR,
         max: ENTRY_PRICE,
       }}

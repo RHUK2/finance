@@ -13,9 +13,9 @@ const fmt = (n: number) => `${Math.round(n)} GW`;
 
 // 막대 세그먼트와 범례를 한 곳에서 정의. 색·라벨이 항상 동기화된다.
 const SEGMENTS = [
-  { key: 'demandMet', className: 'bg-emerald-500', label: '수요 충당' },
-  { key: 'absorbed', className: 'bg-amber-500', label: '채굴 흡수' },
-  { key: 'curtailed', className: 'bg-rose-500/60', label: '버려짐' },
+  { key: 'demandMet', className: 'bg-good-surface', label: '수요 충당' },
+  { key: 'absorbed', className: 'bg-warn-surface', label: '채굴 흡수' },
+  { key: 'curtailed', className: 'bg-bad-surface/60', label: '버려짐' },
 ] as const;
 
 export function GridBatteryView() {
@@ -70,21 +70,21 @@ export function GridBatteryView() {
       {/* 컨트롤 */}
       <Panel>
         <ControlSlider
-          icon={<Wind className='size-4 text-sky-500' />}
+          icon={<Wind className='size-4 text-series-1' />}
           label='재생에너지 발전량'
           value={generation}
           onChange={setGeneration}
           format={fmt}
         />
         <ControlSlider
-          icon={<Zap className='size-4 text-emerald-500' />}
+          icon={<Zap className='size-4 text-good' />}
           label='전력 수요'
           value={demand}
           onChange={setDemand}
           format={fmt}
         />
         <ControlSlider
-          icon={<Bitcoin className='size-4 text-amber-500' />}
+          icon={<Bitcoin className='size-4 text-warn' />}
           label='채굴 부하 용량 (최대 흡수)'
           value={minerCapacity}
           onChange={setMinerCapacity}
@@ -95,7 +95,7 @@ export function GridBatteryView() {
         />
         <div className='flex items-center justify-between border-t pt-3'>
           <span className='flex items-center gap-1.5 text-sm font-medium'>
-            <Battery className='size-4 text-amber-500' />
+            <Battery className='size-4 text-warn' />
             채굴 부하 연결
           </span>
           <Button variant={minersOn ? 'default' : 'outline'} size='sm' onClick={() => setMinersOn((v) => !v)}>
@@ -150,25 +150,25 @@ export function GridBatteryView() {
       </SectionIntro>
 
       <ExplainCard
-        icon={<Wind className='size-4 text-sky-500' />}
+        icon={<Wind className='size-4 text-series-1' />}
         title='문제: 전기는 저장이 어렵다'
         preview='재생에너지는 들쭉날쭉한데 전력망은 발전·수요가 매 순간 맞아야 해서, 남는 전기는 버려진다.'
         body='태양광·풍력 같은 재생에너지는 햇빛과 바람에 따라 들쭉날쭉 생산된다. 그런데 전력망은 발전과 수요가 매 순간 정확히 일치해야 한다. 수요보다 많이 생산된 전기는 마땅히 저장할 곳이 없어 그냥 버려진다(curtailment). 송전망이 닿지 않는 오지의 가스전에서 태워 없애는 플레어링도 같은 낭비다.'
       />
       <ExplainCard
-        icon={<Bitcoin className='size-4 text-amber-500' />}
+        icon={<Bitcoin className='size-4 text-warn' />}
         title='비트코인 채굴 = 유연 부하'
         preview='1초 만에 껐다 켤 수 있는 대형 수요, 잉여 전력만 골라 먹는다.'
         body='채굴기는 어디서든 즉시 켜고 끌 수 있는 전력 수요다. 평소엔 버려질 잉여 전력을 흡수해 채굴 수익으로 바꾸고, 가정·산업 수요가 치솟으면 1초 만에 가동을 멈춰 전력을 양보한다. 전력망 운영자 입장에선 언제든 조절 가능한 유연 부하 자원인 셈이다.'
       />
       <ExplainCard
-        icon={<Battery className='size-4 text-emerald-500' />}
+        icon={<Battery className='size-4 text-good' />}
         title='그리드 배터리처럼, 더 싸게'
         preview='배터리보다 싸게, 버려질 에너지를 곧장 돈으로 바꾼다.'
         body='배터리는 잉여를 저장했다 되돌려주지만 비싸고 용량도 제한적이다. 채굴은 전기를 되돌려주진 않는 대신, 버려질 에너지를 곧장 돈으로 바꾼다. 덕분에 발전소는 남는 전기로도 수익을 내 투자 회수가 빨라지고, 좌초될 뻔한 에너지가 경제성을 얻는다. 결과적으로 버려지는 전력은 줄고, 재생에너지 발전에 대한 투자 유인은 커진다.'
       />
       <ExplainCard
-        icon={<TriangleAlert className='size-4 text-rose-500' />}
+        icon={<TriangleAlert className='size-4 text-bad' />}
         title='반론: 실제 채굴이 이 그림대로 돌아가는가'
         preview='채굴 전력의 상당 부분은 잉여가 아니라 24시간 돌아가는 기저 전력이다.'
         body='이 시뮬레이션은 채굴이 잉여 전력만 골라 먹는다고 가정하지만, 실제 채굴장 대부분은 가동률을 최대로 유지해야 장비값을 회수할 수 있어 잉여든 아니든 24시간 돌린다. 유연 부하로 실제 양보하는 물량이 얼마나 되는지, 그 양보가 전력망 계획에 반영될 만큼 안정적인지에 대해서는 연구마다 결론이 갈린다. 채굴 수요가 붙어 화석연료 발전소의 수명이 오히려 늘어난다는 지적도 있다. 여기서 보이는 것은 유연 부하가 이상적으로 작동할 때의 구조이지, 현재 채굴 산업의 평균적인 모습이 아니다.'

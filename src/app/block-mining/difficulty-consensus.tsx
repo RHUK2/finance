@@ -39,7 +39,7 @@ export function DifficultyConsensus() {
 
       <Panel>
         <ControlSlider
-          icon={<Gauge className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<Gauge className='size-4 text-warn' />}
           label='지난 2,016블록이 실제로 걸린 기간'
           hint={`목표 기간은 ${TARGET_RETARGET_DAYS}일(2,016블록 × 10분). 더 빨리 끝났으면 해시레이트가 늘어난 것, 더 걸렸으면 줄어든 것이다.`}
           value={actualDays}
@@ -146,7 +146,7 @@ function ForkBranch({
     <div
       className={cn(
         'flex flex-col gap-2 rounded-md border p-3',
-        isWinner && 'border-emerald-500/40 bg-emerald-500/5',
+        isWinner && 'border-good-surface/40 bg-good-surface/5',
         isOrphan && 'border-transparent opacity-50',
         !isWinner && !isOrphan && 'border-transparent bg-muted',
       )}
@@ -160,14 +160,14 @@ function ForkBranch({
           <div
             key={i}
             className={cn(
-              'size-4 rounded-[3px]',
+              'size-4 rounded-xs',
               i < FORK_POINT
                 ? 'bg-muted-foreground/40'
                 : isWinner
-                  ? 'bg-emerald-500'
+                  ? 'bg-good-surface'
                   : isOrphan
                     ? 'bg-muted-foreground/20'
-                    : 'bg-amber-500',
+                    : 'bg-warn-surface',
             )}
           />
         ))}

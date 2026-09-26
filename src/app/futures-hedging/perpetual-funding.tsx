@@ -31,7 +31,7 @@ export function PerpetualFunding() {
 
       <Panel>
         <ControlSlider
-          icon={<Scale className='size-4 text-violet-500' />}
+          icon={<Scale className='size-4 text-series-2' />}
           label='롱 쏠림'
           hint='포지션이 롱 쪽으로 얼마나 기울어 있는지. 50%가 균형이고, 기울수록 기운 쪽이 반대편에 돈을 낸다. 값을 내면서 버티는 사람이 늘수록 쏠림이 되돌아온다.'
           value={longShare}
@@ -42,7 +42,7 @@ export function PerpetualFunding() {
           format={pct0}
         />
         <ControlSlider
-          icon={<CalendarClock className='size-4 text-sky-500' />}
+          icon={<CalendarClock className='size-4 text-series-1' />}
           label='보유 기간'
           hint='포지션을 며칠 들고 있는지. 펀딩비는 8시간마다 한 번씩 빠져나가므로 하루에 세 번 청구된다.'
           value={days}
@@ -77,15 +77,8 @@ export function PerpetualFunding() {
 
       <Panel className='gap-3'>
         <span className='text-sm font-semibold'>베이시스가 0으로 가는 두 가지 방법</span>
-        <Sparkline values={dated} label='만기물' className='text-sky-500' min={0} max={3.3} heightClass='h-12' />
-        <Sparkline
-          values={perpetual}
-          label='무기한물'
-          className='text-violet-500'
-          min={0}
-          max={3.3}
-          heightClass='h-12'
-        />
+        <Sparkline values={dated} label='만기물' className='text-series-1' min={0} max={3.3} heightClass='h-12' />
+        <Sparkline values={perpetual} label='무기한물' className='text-series-2' min={0} max={3.3} heightClass='h-12' />
         <p className='text-xs text-muted-foreground'>
           만기물은 만기라는 한 번의 사건이 베이시스를 0으로 끌고 간다. 무기한물에는 그 사건이 없어서, 8시간마다 돌아오는
           과금이 벌어진 만큼을 깎아 내고 쏠림이 다시 밀어 올리는 톱니가 반복된다. 쏠림이 셀수록 톱니의 진폭이 커진다.

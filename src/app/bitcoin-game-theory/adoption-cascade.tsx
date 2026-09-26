@@ -25,9 +25,9 @@ const SEED = 12345;
 // 유형은 칸 색으로만 구분한다. 격자의 위치는 임계값 순서를 뜻하므로,
 // 유형을 공간으로 묶으면 임계값 축이 깨진다.
 const TYPE_COLOR: Record<AgentType, { on: string; off: string }> = {
-  개인: { on: 'bg-amber-300', off: 'bg-amber-300/15' },
-  기업: { on: 'bg-amber-500', off: 'bg-amber-500/15' },
-  국가: { on: 'bg-amber-700', off: 'bg-amber-700/20' },
+  개인: { on: 'bg-warn-surface/40', off: 'bg-warn-surface/10' },
+  기업: { on: 'bg-warn-surface/70', off: 'bg-warn-surface/15' },
+  국가: { on: 'bg-warn-surface', off: 'bg-warn-surface/20' },
 };
 
 export function AdoptionCascade() {
@@ -57,7 +57,7 @@ export function AdoptionCascade() {
           format={(v) => `${Math.round(v * 100)}%`}
         />
         <ControlSlider
-          icon={<Users className='size-4 text-amber-500' />}
+          icon={<Users className='size-4 text-warn' />}
           label='처음 사는 사람 수 (시드)'
           hint='아무도 안 사도 맨 먼저 움직이는 사람들. 임계값이 가장 낮아 격자 맨 왼쪽에 있다.'
           value={seedCount}
@@ -130,19 +130,19 @@ function CascadeSim({
       reading={
         <>
           칸은 임계값 순으로 왼쪽부터 늘어서 있다. 진한 칸이 채택자이고, 그 경계가 곧 전체 채택률{' '}
-          <span className='font-medium text-amber-600 dark:text-amber-400'>{Math.round(p * 100)}%</span>다. 채택률이
-          오르면 경계 바로 오른쪽 칸들의 임계값을 넘어서고, 그 칸들이 넘어오면 채택률이 또 오른다.
+          <span className='font-medium text-warn'>{Math.round(p * 100)}%</span>다. 채택률이 오르면 경계 바로 오른쪽
+          칸들의 임계값을 넘어서고, 그 칸들이 넘어오면 채택률이 또 오른다.
         </>
       }
       legend={
         <>
-          <Legend className='bg-amber-300' label='개인' />
-          <Legend className='bg-amber-500' label='기업' />
-          <Legend className='bg-amber-700' label='국가' />
+          <Legend className='bg-warn-surface/40' label='개인' />
+          <Legend className='bg-warn-surface/70' label='기업' />
+          <Legend className='bg-warn-surface' label='국가' />
         </>
       }
       legendNote='테두리 = 이번 라운드에 새로 채택'
-      curve={{ values: curve, cursor: round, label: '채택 곡선', className: 'text-amber-500', min: 0, max: 1 }}
+      curve={{ values: curve, cursor: round, label: '채택 곡선', className: 'text-warn', min: 0, max: 1 }}
       metrics={
         <>
           <Metric label='채택률' value={`${Math.round(p * 100)}%`} tone='accent' />

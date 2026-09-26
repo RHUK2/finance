@@ -130,7 +130,7 @@ export function RecentBlocksList({
                     </p>
                   </div>
                   <div className='shrink-0 text-right'>
-                    <p className='font-semibold text-amber-400 tabular-nums'>{b.rewardBTC} BTC</p>
+                    <p className='font-semibold text-warn tabular-nums'>{b.rewardBTC} BTC</p>
                     <p className='mt-0.5 text-xs text-muted-foreground tabular-nums'>
                       {b.txCount.toLocaleString()} tx · ~{b.medianFee} sat/vB
                     </p>
@@ -139,13 +139,13 @@ export function RecentBlocksList({
                 <div className='mt-2 flex items-center gap-2'>
                   <div className='h-1 flex-1 overflow-hidden rounded-full bg-muted'>
                     <div
-                      className='h-full rounded-full bg-blue-500/60'
+                      className='h-full rounded-full bg-series-4/60'
                       style={{
                         width: `${Math.min((b.vMB / MAX_BLOCK_MB) * 100, 100)}%`,
                       }}
                     />
                   </div>
-                  <span className='w-12 text-right text-[10px] text-muted-foreground tabular-nums'>{b.sizeMB} MB</span>
+                  <span className='w-12 text-right text-3xs text-muted-foreground tabular-nums'>{b.sizeMB} MB</span>
                 </div>
               </li>
             ))}
@@ -205,19 +205,19 @@ export function MempoolBlocksViz({
                     />
                     {/* 전면 */}
                     <div className='relative flex min-w-[128px] flex-col gap-2 rounded-md border border-purple-400/40 bg-linear-to-b from-purple-600 to-purple-800 p-3 text-purple-100'>
-                      <div className='text-[10px] text-purple-200/90'>#{i + 1} 예상 블록</div>
+                      <div className='text-3xs text-purple-200/90'>#{i + 1} 예상 블록</div>
                       <div className='text-center'>
                         <span className='text-xl leading-none font-bold text-white tabular-nums'>~{b.medianFee}</span>
                         <span className='ml-1 text-xs text-purple-200/90'>sat/vB</span>
                       </div>
-                      <div className='text-center text-[10px] text-purple-200/90 tabular-nums'>
+                      <div className='text-center text-3xs text-purple-200/90 tabular-nums'>
                         {b.feeMin}~{b.feeMax} sat/vB
                       </div>
                       {/* 블록 충전율 */}
                       <div className='h-1 w-full overflow-hidden rounded-full bg-purple-950/60'>
                         <div className='h-full rounded-full bg-purple-300' style={{ width: `${fillPct}%` }} />
                       </div>
-                      <div className='flex justify-between text-[10px] text-purple-200/90 tabular-nums'>
+                      <div className='flex justify-between text-3xs text-purple-200/90 tabular-nums'>
                         <span>{b.vMB} vMB</span>
                         <span>{b.nTx.toLocaleString()} tx</span>
                       </div>
@@ -252,7 +252,7 @@ export function Stat({
       <p className='text-xs text-muted-foreground'>{label}</p>
       <p className={cn('mt-0.5 font-bold', valueClassName)}>{value}</p>
       {change !== undefined && (
-        <p className={cn('mt-0.5 text-xs', change >= 0 ? 'text-green-400' : 'text-red-400')}>
+        <p className={cn('mt-0.5 text-xs', change >= 0 ? 'text-good' : 'text-bad')}>
           {change >= 0 ? '▲' : '▼'} {Math.abs(change).toFixed(2)}% 1주 전 대비
         </p>
       )}

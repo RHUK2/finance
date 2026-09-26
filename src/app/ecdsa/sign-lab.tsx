@@ -61,7 +61,7 @@ export function SignLab({
           format={(v) => `${v}`}
         />
         <ControlSlider
-          icon={<Dices className='size-4 text-amber-500' />}
+          icon={<Dices className='size-4 text-warn' />}
           label='일회용 비밀값 k'
           hint='서명 한 번에만 쓰고 버린다. 새어 나가면 개인키가 함께 나간다.'
           value={k}
@@ -75,7 +75,7 @@ export function SignLab({
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <PenLine className='size-4 text-emerald-500' />세 단계로 끝난다
+          <PenLine className='size-4 text-good' />세 단계로 끝난다
         </span>
         <div className='flex flex-col gap-2'>
           <Step
@@ -104,8 +104,8 @@ export function SignLab({
         <span className='text-sm font-semibold'>격자 위의 두 점</span>
         <CurveGrid
           marks={[
-            ...(Q ? [{ ...Q, label: `Q = ${d}G (공개)`, color: 'sky' as const }] : []),
-            ...(R ? [{ ...R, label: `R = ${k}G (버린다)`, color: 'amber' as const }] : []),
+            ...(Q ? [{ ...Q, label: `Q = ${d}G (공개)`, color: 'series-1' as const }] : []),
+            ...(R ? [{ ...R, label: `R = ${k}G (버린다)`, color: 'warn' as const }] : []),
           ]}
           caption='공개키 Q는 남고 R은 서명이 끝나면 버려진다. 남는 것은 R의 x좌표를 n으로 접은 r뿐이다. 다음 탭에서 검증자가 이 R을 개인키 없이 되살려 낸다.'
         />
@@ -124,7 +124,7 @@ export function SignLab({
       )}
 
       <ExplainCard
-        icon={<Dices className='size-4 text-amber-500' />}
+        icon={<Dices className='size-4 text-warn' />}
         title='k는 어디서 오나'
         preview='난수여야 한다고 배우지만, 요즘 지갑은 난수를 쓰지 않는다.'
         body={

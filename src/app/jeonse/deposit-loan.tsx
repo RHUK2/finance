@@ -45,7 +45,7 @@ export function DepositLoan() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Banknote className='size-4 text-sky-500' />}
+          icon={<Banknote className='size-4 text-series-1' />}
           label='전세보증금'
           value={depositEok}
           onChange={setDepositEok}
@@ -55,7 +55,7 @@ export function DepositLoan() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-emerald-500' />}
+          icon={<Percent className='size-4 text-good' />}
           label='시장금리'
           value={rate}
           onChange={setRate}
@@ -66,7 +66,7 @@ export function DepositLoan() {
           hint='보증금을 은행에 넣어 두었다면 받았을 이자율. 전세대출을 썼다면 그 대출 금리로 읽어도 된다.'
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-amber-500' />}
+          icon={<Wallet className='size-4 text-warn' />}
           label='같은 집의 월세'
           value={monthlyRent}
           onChange={setMonthlyRent}
@@ -106,7 +106,7 @@ export function DepositLoan() {
           label='전세로 살 때 1년치 값'
           value={jeonseCost}
           max={barMax}
-          className='bg-sky-500'
+          className='bg-series-1'
           format={formatMan}
           sub={`보증금 ${formatEok(depositEok)}을 묶어 두며 포기한 이자`}
         />
@@ -114,7 +114,7 @@ export function DepositLoan() {
           label='월세로 살 때 1년치 값'
           value={rentCost}
           max={barMax}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={formatMan}
           sub={`월 ${formatMan(monthlyRent)} × 12개월`}
         />
@@ -122,7 +122,7 @@ export function DepositLoan() {
           label='임대인이 보증금에서 얻는 연 수익'
           value={jeonseCost}
           max={barMax}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={formatMan}
           sub='임차인이 포기한 이자가 그대로 임대인에게 간다'
         />
@@ -133,7 +133,7 @@ export function DepositLoan() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Landmark className='size-4 text-sky-500' />}
+        icon={<Landmark className='size-4 text-series-1' />}
         title='왜 한국에만 전세가 있나'
         preview='은행이 대출을 잘 안 해 주던 시절, 임대인은 임차인에게서 직접 돈을 빌렸다.'
         body={

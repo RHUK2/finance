@@ -4,24 +4,24 @@ import { cn } from '@/lib/utils';
 
 import { CURVE_POINTS, P } from './models';
 
-export type MarkColor = 'sky' | 'violet' | 'amber' | 'emerald' | 'rose';
+export type MarkColor = 'series-1' | 'series-2' | 'warn' | 'good' | 'bad';
 export type GridMark = { x: number; y: number; label?: string; color: MarkColor };
 
-// 색은 키로 받아 여기서 클래스로 바꾼다. 호출부가 'fill-sky-500' 같은 문자열을 넘기면 십자선에 쓸
+// 색은 키로 받아 여기서 클래스로 바꾼다. 호출부가 'fill-series-1' 같은 문자열을 넘기면 십자선에 쓸
 // stroke 짝을 만들 길이 없다. 런타임에 이어 붙인 클래스명은 Tailwind가 훑지 못해 CSS가 안 나온다.
 const MARK_FILL: Record<MarkColor, string> = {
-  sky: 'fill-sky-500',
-  violet: 'fill-violet-500',
-  amber: 'fill-amber-500',
-  emerald: 'fill-emerald-500',
-  rose: 'fill-rose-500',
+  'series-1': 'fill-series-1',
+  'series-2': 'fill-series-2',
+  warn: 'fill-warn-surface',
+  good: 'fill-good-surface',
+  bad: 'fill-bad-surface',
 };
 const MARK_STROKE: Record<MarkColor, string> = {
-  sky: 'stroke-sky-500',
-  violet: 'stroke-violet-500',
-  amber: 'stroke-amber-500',
-  emerald: 'stroke-emerald-500',
-  rose: 'stroke-rose-500',
+  'series-1': 'stroke-series-1',
+  'series-2': 'stroke-series-2',
+  warn: 'stroke-warn-surface',
+  good: 'stroke-good-surface',
+  bad: 'stroke-bad-surface',
 };
 
 // 유한체 위의 곡선을 그리는 격자. 다섯 탭이 모두 이걸 쓴다.
@@ -103,7 +103,7 @@ export function CurveGrid({
             cx={c.x}
             cy={flip(c.y)}
             r={R_CELL}
-            className='fill-none stroke-amber-500/70'
+            className='fill-none stroke-warn-surface/70'
             strokeWidth={0.14}
           />
         ))}

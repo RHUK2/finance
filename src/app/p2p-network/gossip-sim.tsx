@@ -76,7 +76,7 @@ export function GossipSim() {
                 strokeWidth={0.3}
                 className={cn(
                   'transition-colors duration-300',
-                  reached ? 'stroke-emerald-500/40' : 'stroke-muted-foreground/15',
+                  reached ? 'stroke-good-surface/40' : 'stroke-muted-foreground/15',
                 )}
               />
             );
@@ -92,7 +92,7 @@ export function GossipSim() {
                 r={isOrigin ? 2.6 : 2}
                 className={cn(
                   'stroke-background transition-colors duration-300',
-                  isOrigin ? 'fill-amber-500' : reached ? 'fill-emerald-500' : 'fill-muted-foreground',
+                  isOrigin ? 'fill-warn-surface' : reached ? 'fill-good-surface' : 'fill-muted-foreground',
                 )}
                 strokeWidth={0.5}
               />
@@ -101,8 +101,8 @@ export function GossipSim() {
         </svg>
 
         <div className='flex flex-wrap gap-4 text-xs'>
-          <Legend className='bg-amber-500' label='발신 노드' />
-          <Legend className='bg-emerald-500' label='tx를 받은 노드' />
+          <Legend className='bg-warn-surface' label='발신 노드' />
+          <Legend className='bg-good-surface' label='tx를 받은 노드' />
           <Legend className='bg-muted-foreground' label='아직 못 받은 노드' />
         </div>
 
@@ -114,7 +114,7 @@ export function GossipSim() {
       </Panel>
 
       <ExplainCard
-        icon={<Radio className='size-4 text-sky-600 dark:text-sky-400' />}
+        icon={<Radio className='size-4 text-series-1' />}
         title='왜 노드마다 다시 검증하고서야 넘길까'
         preview='아무나 던진 가짜 tx가 그대로 퍼지지 않도록, 받는 노드마다 서명·수수료를 확인한 뒤에만 다음으로 넘긴다.'
         body={

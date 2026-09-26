@@ -49,7 +49,7 @@ export function CrackSpread() {
 
       <Panel>
         <ControlSlider
-          icon={<Droplet className='size-4 text-amber-500' />}
+          icon={<Droplet className='size-4 text-warn' />}
           label='만기 원유가 (사는 쪽)'
           hint='정유사가 원료로 사야 하는 가격. 오르면 원가가 오른다.'
           value={crude}
@@ -60,7 +60,7 @@ export function CrackSpread() {
           format={usd}
         />
         <ControlSlider
-          icon={<Flame className='size-4 text-rose-500' />}
+          icon={<Flame className='size-4 text-bad' />}
           label='만기 휘발유가 (파는 쪽)'
           hint='정유사가 제품으로 파는 가격. 내리면 매출이 준다.'
           value={gasoline}
@@ -97,7 +97,7 @@ export function CrackSpread() {
           label='헤지 없음'
           value={r.crackNow}
           max={worst}
-          className='bg-rose-500'
+          className='bg-bad-surface'
           format={usdSigned}
           sub={`원유 ${usd(crude)}에 사서 휘발유 ${usd(gasoline)}에 판다. 두 가격이 다 움직인다`}
         />
@@ -105,7 +105,7 @@ export function CrackSpread() {
           label='원유만 잠금'
           value={gasoline - CRUDE_LOCK}
           max={worst}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={usdSigned}
           sub={`매입은 ${usd(CRUDE_LOCK)}에 고정. 휘발유가 빠지면 마진이 그대로 빠진다`}
         />
@@ -113,7 +113,7 @@ export function CrackSpread() {
           label='양쪽 다 잠금'
           value={r.locked}
           max={worst}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={usdSigned}
           sub={`${usd(CRUDE_LOCK)}에 사서 ${usd(GASOLINE_LOCK)}에 판다. 두 슬라이더를 어디로 밀어도 안 움직인다`}
         />

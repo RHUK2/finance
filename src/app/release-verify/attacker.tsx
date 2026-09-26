@@ -24,7 +24,7 @@ export function Attacker() {
 
       <MarkTable
         title='검증의 사정거리'
-        icon={<Swords className='size-4 text-rose-500' />}
+        icon={<Swords className='size-4 text-bad' />}
         headers={ATTACK_HEADERS}
         rows={ATTACK_ROWS}
         selected={selected}

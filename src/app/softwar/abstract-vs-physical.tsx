@@ -42,7 +42,7 @@ export function AbstractVsPhysical() {
           format={formatUsd}
         />
         <ControlSlider
-          icon={<Crown className='size-4 text-rose-500' />}
+          icon={<Crown className='size-4 text-bad' />}
           label='추상 권력 탈취 비용'
           hint='위계·신뢰를 매수·기만·강압해 장악하는 비용. 자산 가치에 비례하지 않고 낮게 고정된다.'
           value={abstractDefense}
@@ -53,7 +53,7 @@ export function AbstractVsPhysical() {
           format={formatUsd}
         />
         <ControlSlider
-          icon={<Zap className='size-4 text-amber-500' />}
+          icon={<Zap className='size-4 text-warn' />}
           label='물리 권력 벽 (부과한 와트)'
           hint='탈취하려면 쏟아야 하는 실제 에너지 비용. 자산 가치 위로 올리면 공격이 비합리가 된다.'
           value={physicalWall}
@@ -68,7 +68,7 @@ export function AbstractVsPhysical() {
       <div className='grid gap-3 sm:grid-cols-2'>
         <RegimeCard
           title='추상 권력'
-          icon={<Crown className='size-4 text-rose-500' />}
+          icon={<Crown className='size-4 text-bad' />}
           value={value}
           cost={r.abstract.cost}
           ratio={r.abstract.bcra}
@@ -76,7 +76,7 @@ export function AbstractVsPhysical() {
         />
         <RegimeCard
           title='물리 권력'
-          icon={<Zap className='size-4 text-amber-500' />}
+          icon={<Zap className='size-4 text-warn' />}
           value={value}
           cost={r.physical.cost}
           ratio={r.physical.bcra}
@@ -85,7 +85,7 @@ export function AbstractVsPhysical() {
       </div>
 
       <Panel tone={r.physical.captured ? 'bad' : 'good'} className='flex-row items-start gap-3'>
-        <ShieldCheck className={cn('size-5 shrink-0', r.physical.captured ? 'text-rose-500' : 'text-emerald-500')} />
+        <ShieldCheck className={cn('size-5 shrink-0', r.physical.captured ? 'text-bad' : 'text-good')} />
         <p className='text-sm/relaxed'>
           추상 권력의 탈취 비용은 자산 가치가 아무리 커져도 함께 오르지 않는다. 그래서 고가치 자산일수록 BCRA가 치솟아{' '}
           <b>늘 탈취에 노출</b>된다. 반면 물리 권력은 와트를 부과해 탈취 비용을 자산 가치 위로 끌어올릴 수 있다.{' '}
@@ -112,7 +112,7 @@ export function AbstractVsPhysical() {
         <div className='grid gap-3 sm:grid-cols-2'>
           <div className='flex flex-col gap-1.5 rounded-md border p-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <Bomb className='size-4 text-rose-500' />
+              <Bomb className='size-4 text-bad' />
               하드워
             </span>
             <p className='text-xs/relaxed text-muted-foreground'>
@@ -122,7 +122,7 @@ export function AbstractVsPhysical() {
           </div>
           <div className='flex flex-col gap-1.5 rounded-md border p-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <HeartPulse className='size-4 text-emerald-500' />
+              <HeartPulse className='size-4 text-good' />
               소프트워
             </span>
             <p className='text-xs/relaxed text-muted-foreground'>
@@ -168,8 +168,8 @@ function RegimeCard({
         {icon}
         {title}
       </span>
-      <CostBar label='탈취 이득 (자원 가치)' value={value} max={max} className='bg-amber-500' />
-      <CostBar label='탈취 비용' value={cost} max={max} className='bg-sky-500' />
+      <CostBar label='탈취 이득 (자원 가치)' value={value} max={max} className='bg-warn-surface' />
+      <CostBar label='탈취 비용' value={cost} max={max} className='bg-series-1' />
       <Metric
         label='BCRA (이득÷비용)'
         value={bcraLabel(ratio)}

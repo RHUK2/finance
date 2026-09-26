@@ -25,9 +25,9 @@ const sign = (n: number) => (n > 0 ? `+${n.toFixed(1)}` : n.toFixed(1));
 
 // 슬라이더별 색 스킴. 산식·판정식·범례에서 동일하게 재사용한다.
 const C = {
-  u: 'text-emerald-600 dark:text-emerald-400',
-  r: 'text-rose-600 dark:text-rose-400',
-  f: 'text-amber-600 dark:text-amber-400',
+  u: 'text-good',
+  r: 'text-bad',
+  f: 'text-warn',
 };
 
 function Num({ color, children }: { color: string; children: React.ReactNode }) {
@@ -75,7 +75,7 @@ export function PayoffMatrix() {
 
       <Panel>
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-emerald-500' />}
+          icon={<TrendingUp className='size-4 text-good' />}
           label='상승 기대 (u)'
           value={u}
           onChange={setU}
@@ -84,7 +84,7 @@ export function PayoffMatrix() {
           format={(v) => v.toFixed(1)}
         />
         <ControlSlider
-          icon={<AlertTriangle className='size-4 text-rose-500' />}
+          icon={<AlertTriangle className='size-4 text-bad' />}
           label='조기채택 비용·리스크 (r)'
           value={r}
           onChange={setR}
@@ -93,7 +93,7 @@ export function PayoffMatrix() {
           format={(v) => v.toFixed(1)}
         />
         <ControlSlider
-          icon={<UserMinus className='size-4 text-amber-500' />}
+          icon={<UserMinus className='size-4 text-warn' />}
           label='낙오 페널티 (f)'
           hint='남들이 살 때 나만 안 사면 잃는 상대적 이득. 반대로 나만 먼저 사면 같은 크기의 선점 우위가 된다.'
           value={f}
@@ -116,15 +116,13 @@ export function PayoffMatrix() {
       </Panel>
 
       <Panel className='flex-row items-center gap-3'>
-        <Crown
-          className={cn('size-5 shrink-0', dominantStrategy === 'A' ? 'text-amber-500' : 'text-muted-foreground')}
-        />
+        <Crown className={cn('size-5 shrink-0', dominantStrategy === 'A' ? 'text-warn' : 'text-muted-foreground')} />
         <div className='text-sm'>
           <p>
             {dominantStrategy === 'A' ? (
               <>
-                <b className='text-amber-600 dark:text-amber-400'>채택이 우월전략</b> 상태다. 경쟁국이 채택하든 관망하든
-                우리는 채택하는 편이 항상 낫다. 양쪽 다 같은 결론에 이르러 <b>모두 채택</b>이 유일한 균형이 된다.
+                <b className='text-warn'>채택이 우월전략</b> 상태다. 경쟁국이 채택하든 관망하든 우리는 채택하는 편이
+                항상 낫다. 양쪽 다 같은 결론에 이르러 <b>모두 채택</b>이 유일한 균형이 된다.
               </>
             ) : dominantStrategy === 'W' ? (
               <>
@@ -173,13 +171,13 @@ function MatrixLegend() {
   return (
     <div className='flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground'>
       <span className='flex items-center gap-1.5'>
-        <span className='font-semibold text-sky-600 underline decoration-sky-500 decoration-2 underline-offset-2 dark:text-sky-400'>
+        <span className='font-semibold text-series-1 underline decoration-series-1 decoration-2 underline-offset-2'>
           밑줄
         </span>
         = 각자의 최적대응
       </span>
       <span className='flex items-center gap-1.5'>
-        <span className='size-3 rounded-sm ring-2 ring-amber-500/70' />둘 다 밑줄인 칸 = 내쉬 균형
+        <span className='size-3 rounded-sm ring-2 ring-warn-surface/70' />둘 다 밑줄인 칸 = 내쉬 균형
       </span>
       <span>칸 안의 값 = (우리 보수 / 상대 보수)</span>
     </div>
@@ -286,21 +284,21 @@ function PayoffCell({
   formula?: React.ReactNode;
 }) {
   const [me, them] = value;
-  const mark = 'underline decoration-sky-500 decoration-2 underline-offset-2';
+  const mark = 'underline decoration-series-1 decoration-2 underline-offset-2';
   return (
     <div
       className={cn(
         'flex flex-col items-center justify-center rounded-md border p-3 transition-all',
-        isNash ? 'border-amber-500/60 bg-amber-500/10 ring-2 ring-amber-500/70' : 'bg-background',
+        isNash ? 'border-warn-surface/60 bg-warn-surface/10 ring-2 ring-warn-surface/70' : 'bg-background',
       )}
     >
       <span className='text-base font-semibold tabular-nums'>
-        <span className={cn(me < 0 && 'text-rose-500', meBest && mark)}>{sign(me)}</span>
+        <span className={cn(me < 0 && 'text-bad', meBest && mark)}>{sign(me)}</span>
         <span className='text-muted-foreground'> / </span>
-        <span className={cn(them < 0 && 'text-rose-500', themBest && mark)}>{sign(them)}</span>
+        <span className={cn(them < 0 && 'text-bad', themBest && mark)}>{sign(them)}</span>
       </span>
-      {formula && <span className='mt-0.5 font-mono text-[11px] text-muted-foreground'>({formula})</span>}
-      {isNash && <span className='mt-1 text-xs font-medium text-amber-600 dark:text-amber-400'>내쉬 균형</span>}
+      {formula && <span className='mt-0.5 font-mono text-2xs text-muted-foreground'>({formula})</span>}
+      {isNash && <span className='mt-1 text-xs font-medium text-warn'>내쉬 균형</span>}
     </div>
   );
 }

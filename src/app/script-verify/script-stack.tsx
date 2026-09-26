@@ -158,8 +158,8 @@ function StackBox({ item, top }: { item: StackItem; top: boolean }) {
     <div
       className={cn(
         'flex items-center justify-between gap-2 rounded-md border px-3 py-1.5 text-xs',
-        item.tone === 'good' && 'border-emerald-500/40 bg-emerald-500/10',
-        item.tone === 'bad' && 'border-rose-500/40 bg-rose-500/10',
+        item.tone === 'good' && 'border-good-surface/40 bg-good-surface/10',
+        item.tone === 'bad' && 'border-bad-surface/40 bg-bad-surface/10',
         !item.tone && 'bg-muted',
         top && !item.tone && 'border-primary/40',
       )}
@@ -298,8 +298,8 @@ export function ScriptStack() {
             className={cn(
               'flex items-center gap-1.5 rounded-md border p-2.5 text-sm font-medium',
               topTone === 'good'
-                ? 'border-emerald-500/40 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400'
-                : 'border-rose-500/40 bg-rose-500/5 text-rose-600 dark:text-rose-400',
+                ? 'border-good-surface/40 bg-good-surface/5 text-good'
+                : 'border-bad-surface/40 bg-bad-surface/5 text-bad',
             )}
           >
             {topTone === 'good' ? <CircleCheck className='size-4 shrink-0' /> : <CircleX className='size-4 shrink-0' />}

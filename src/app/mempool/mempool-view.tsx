@@ -74,9 +74,9 @@ export function MempoolView() {
                 <Skeleton className='h-9 w-full' />
               ) : (
                 <div className='grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3'>
-                  <Stat label='느림 (~1시간)' value={`${mempool.hourFee} sat/vB`} valueClassName='text-green-400' />
-                  <Stat label='보통 (~30분)' value={`${mempool.halfHourFee} sat/vB`} valueClassName='text-yellow-400' />
-                  <Stat label='빠름 (~10분)' value={`${mempool.fastFee} sat/vB`} valueClassName='text-orange-400' />
+                  <Stat label='느림 (~1시간)' value={`${mempool.hourFee} sat/vB`} valueClassName='text-good' />
+                  <Stat label='보통 (~30분)' value={`${mempool.halfHourFee} sat/vB`} valueClassName='text-warn' />
+                  <Stat label='빠름 (~10분)' value={`${mempool.fastFee} sat/vB`} valueClassName='text-bad' />
                 </div>
               )}
               <p className='mt-4 rounded-md bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground'>
@@ -117,20 +117,12 @@ export function MempoolView() {
                     <Stat
                       label='예상 변화율'
                       value={`${mining.difficultyChangePct > 0 ? '+' : ''}${mining.difficultyChangePct}%`}
-                      valueClassName={
-                        mining.difficultyChangePct >= 0
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-rose-600 dark:text-rose-400'
-                      }
+                      valueClassName={mining.difficultyChangePct >= 0 ? 'text-good' : 'text-bad'}
                     />
                     <Stat
                       label='이전 변화율'
                       value={`${mining.previousDifficultyChangePct > 0 ? '+' : ''}${mining.previousDifficultyChangePct}%`}
-                      valueClassName={
-                        mining.previousDifficultyChangePct >= 0
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-rose-600 dark:text-rose-400'
-                      }
+                      valueClassName={mining.previousDifficultyChangePct >= 0 ? 'text-good' : 'text-bad'}
                     />
                   </div>
                   <div>
@@ -140,7 +132,7 @@ export function MempoolView() {
                     </div>
                     <div className='h-2 w-full overflow-hidden rounded-full bg-muted'>
                       <div
-                        className='h-full rounded-full bg-blue-500 transition-all'
+                        className='h-full rounded-full bg-series-4 transition-all'
                         style={{ width: `${difficultyProgress}%` }}
                       />
                     </div>

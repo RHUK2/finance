@@ -33,7 +33,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Search className='size-4 text-rose-500' />
+          <Search className='size-4 text-bad' />
           공개키 {fmtPt(Q)}에서 개인키 찾기
         </span>
         <div className='grid grid-cols-3 gap-1.5 text-xs sm:grid-cols-5 lg:grid-cols-6'>
@@ -42,7 +42,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
               key={cand}
               className={cn(
                 'flex items-center justify-between rounded-md border px-2 py-1 tabular-nums',
-                cand === found ? 'border-rose-500/60 bg-rose-500/15' : 'text-muted-foreground',
+                cand === found ? 'border-bad-surface/60 bg-bad-surface/15' : 'text-muted-foreground',
               )}
             >
               <span>{cand}G</span>
@@ -92,7 +92,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
         recovered && (
           <Panel className='gap-2'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <Unlock className='size-4 text-rose-500' />두 식에서 미지수를 지운다
+              <Unlock className='size-4 text-bad' />두 식에서 미지수를 지운다
             </span>
             <Line
               label='s₁ − s₂ = k⁻¹(z₁ − z₂)'
@@ -118,7 +118,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <History className='size-4 text-amber-500' />
+          <History className='size-4 text-warn' />
           실제로 두 번 일어났다
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>

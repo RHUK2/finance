@@ -47,9 +47,7 @@ export function MaturationCurve() {
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>실현 변동성 (90일 기준, 연 환산)</span>
           {current != null && (
-            <span className='text-lg font-semibold text-amber-600 tabular-nums dark:text-amber-400'>
-              {current.toFixed(0)}%
-            </span>
+            <span className='text-lg font-semibold text-warn tabular-nums'>{current.toFixed(0)}%</span>
           )}
         </div>
         {!data ? (

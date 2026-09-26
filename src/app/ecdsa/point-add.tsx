@@ -25,10 +25,10 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
   const third = sum === null ? null : { x: sum.x, y: mod(-sum.y, P) };
 
   const marks: GridMark[] = [];
-  if (p1) marks.push({ ...p1, label: `P = ${i}G`, color: 'sky' });
-  if (p2 && !samePt(p1, p2)) marks.push({ ...p2, label: `Q = ${j}G`, color: 'violet' });
-  if (third) marks.push({ ...third, label: '세 번째 교점', color: 'amber' });
-  if (sum) marks.push({ ...sum, label: 'P + Q', color: 'emerald' });
+  if (p1) marks.push({ ...p1, label: `P = ${i}G`, color: 'series-1' });
+  if (p2 && !samePt(p1, p2)) marks.push({ ...p2, label: `Q = ${j}G`, color: 'series-2' });
+  if (third) marks.push({ ...third, label: '세 번째 교점', color: 'warn' });
+  if (sum) marks.push({ ...sum, label: 'P + Q', color: 'good' });
 
   const dPoint = MULTIPLES_OF_G[d];
   const steps = useMemo(() => doubleAndAddSteps(d), [d]);
@@ -66,7 +66,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Plus className='size-4 text-emerald-500' />
+          <Plus className='size-4 text-good' />
           {i}G + {j}G = {mod(i + j, N) === 0 ? 'O' : `${mod(i + j, N)}G`}
         </span>
         <CurveGrid
@@ -127,7 +127,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Repeat2 className='size-4 text-sky-500' />두 배와 덧셈으로 {d}G에 닿는 길
+          <Repeat2 className='size-4 text-series-1' />두 배와 덧셈으로 {d}G에 닿는 길
         </span>
         <div className='flex flex-col gap-1'>
           {steps.map((s, idx) => (
@@ -147,7 +147,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
               key={k}
               className={cn(
                 'flex items-center justify-between rounded-md border px-2 py-1 tabular-nums',
-                k === d && 'border-emerald-500/50 bg-emerald-500/10',
+                k === d && 'border-good-surface/50 bg-good-surface/10',
               )}
             >
               <span className='text-muted-foreground'>{k}G</span>
@@ -166,7 +166,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
       </StatusBanner>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-amber-500' />}
+        icon={<KeyRound className='size-4 text-warn' />}
         title='그럼 Q에서 d를 되찾을 수 있나'
         preview='이 표를 보면 30번 훑어서 찾을 수 있다. 그게 이 곡선이 안전하지 않은 이유다.'
         body={

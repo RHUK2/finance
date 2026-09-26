@@ -77,7 +77,7 @@ export function MultisigLab() {
                 className={cn(
                   'flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors',
                   signed[i]
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    ? 'border-good-surface/40 bg-good-surface/10 text-good'
                     : 'text-muted-foreground hover:bg-muted',
                 )}
               >

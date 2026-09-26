@@ -28,7 +28,7 @@ const TIERS: Tier[] = [
     label: '최우선변제 임금채권',
     claim: 40,
     icon: HardHat,
-    className: 'bg-emerald-500',
+    className: 'bg-good-surface',
     note: '최종 3개월분 임금과 최종 3년분 퇴직급여, 재해보상금은 담보권보다도 앞선다. 사람의 생계가 걸린 채권이라 법이 순위를 따로 끌어올려 뒀다.',
   },
   {
@@ -37,7 +37,7 @@ const TIERS: Tier[] = [
     label: '담보부채권',
     claim: 300,
     icon: Landmark,
-    className: 'bg-sky-500',
+    className: 'bg-series-1',
     note: '공장과 토지에 근저당을 잡은 은행이다. 특정 자산을 붙들고 있어 다른 채권자와 나누지 않고 그 자산에서 먼저 회수한다.',
   },
   {
@@ -46,7 +46,7 @@ const TIERS: Tier[] = [
     label: '일반채권',
     claim: 260,
     icon: Receipt,
-    className: 'bg-amber-500',
+    className: 'bg-warn-surface',
     note: '거래처 외상값, 담보 없는 회사채처럼 아무 순위 약정도 없는 채권이다. 담보가 없으니 남은 재산을 채권액 비율대로 나눠 갖는다. 미지급 세금은 국세 우선권이 있어 여기보다 앞자리다.',
   },
   {
@@ -55,7 +55,7 @@ const TIERS: Tier[] = [
     label: '후순위채',
     claim: 100,
     icon: Banknote,
-    className: 'bg-fuchsia-500',
+    className: 'bg-series-3',
     note: '일반채권보다 뒤에 서겠다고 계약서에 스스로 적은 채권이다. 순위를 내주는 대가로 더 높은 금리를 받는다.',
   },
   {
@@ -64,7 +64,7 @@ const TIERS: Tier[] = [
     label: '우선주',
     claim: 100,
     icon: PieChart,
-    className: 'bg-violet-500',
+    className: 'bg-series-2',
     note: '이름에 우선이 붙지만 채권 전체보다는 뒤다. 보통주보다 먼저 배당받고 청산 시 먼저 분배받을 뿐이다.',
   },
   {
@@ -73,7 +73,7 @@ const TIERS: Tier[] = [
     label: '보통주',
     claim: 300,
     icon: Users,
-    className: 'bg-rose-500',
+    className: 'bg-bad-surface',
     note: '앞의 모두가 만족한 뒤 남은 전부를 가져간다. 남지 않으면 한 푼도 못 받는다. 그 대신 회사가 잘될 때 늘어나는 가치에는 상한이 없다.',
   },
 ];
@@ -109,7 +109,7 @@ export function Waterfall() {
 
       <Panel>
         <ControlSlider
-          icon={<Gavel className='size-4 text-sky-500' />}
+          icon={<Gavel className='size-4 text-series-1' />}
           label='자산 매각 대금'
           value={proceeds}
           onChange={setProceeds}
@@ -185,14 +185,14 @@ export function Waterfall() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
-          <PieChart className='size-4 text-violet-500' />
+          <PieChart className='size-4 text-series-2' />
           {focus.label}
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>{focus.note}</p>
       </Panel>
 
       <ExplainCard
-        icon={<Banknote className='size-4 text-fuchsia-500' />}
+        icon={<Banknote className='size-4 text-series-3' />}
         title='순위는 대부분 계약으로 만들어진다'
         preview='법이 정한 순위는 일부이고, 나머지는 당사자들이 스스로 줄을 선 결과다.'
         body={
@@ -213,7 +213,7 @@ export function Waterfall() {
       />
 
       <ExplainCard
-        icon={<Users className='size-4 text-sky-500' />}
+        icon={<Users className='size-4 text-series-1' />}
         title='주식이 0이 되면 회사의 주인이 바뀐다'
         preview='손실을 실제로 지게 된 계층이 회생 절차에서 의사결정권을 넘겨받는다.'
         body={

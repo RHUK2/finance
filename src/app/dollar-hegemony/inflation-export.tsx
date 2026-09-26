@@ -73,7 +73,7 @@ export function InflationExport() {
         <StackedBar
           total={issuance}
           segments={[
-            { label: '발행국 국내', value: r.home, className: 'bg-emerald-500' },
+            { label: '발행국 국내', value: r.home, className: 'bg-good-surface' },
             ...r.rows.map((x) => ({
               label: `${x.tier.label} (${x.tier.currencies})`,
               value: x.inflow,
@@ -89,7 +89,7 @@ export function InflationExport() {
           label='발행국 (달러)'
           value={r.homePressure}
           max={maxPressure}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={pct}
           sub='세계에서 제일 큰 경제가 흡수한다'
         />

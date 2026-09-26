@@ -109,7 +109,7 @@ export function Agency() {
 
       <Panel>
         <ControlSlider
-          icon={<Scale className='size-4 text-sky-500' />}
+          icon={<Scale className='size-4 text-series-1' />}
           label='거래 규모 (회사 총자산 대비)'
           value={dealPct}
           onChange={setDealPct}
@@ -130,11 +130,7 @@ export function Agency() {
                 <ArrowDown
                   className={cn(
                     'size-4',
-                    ORGANS[i + 1].outside
-                      ? 'text-violet-500'
-                      : i >= start
-                        ? 'text-sky-500'
-                        : 'text-muted-foreground/40',
+                    ORGANS[i + 1].outside ? 'text-series-2' : i >= start ? 'text-series-1' : 'text-muted-foreground/40',
                   )}
                 />
                 {ORGANS[i + 1].outside && <span className='text-xs text-muted-foreground'>여기서부터 회사 바깥</span>}
@@ -152,7 +148,7 @@ export function Agency() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 font-semibold'>
-          <TriangleAlert className='size-4 text-amber-500' />
+          <TriangleAlert className='size-4 text-warn' />
           대표가 절차를 건너뛰고 서명했다면
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>
@@ -173,7 +169,7 @@ export function Agency() {
       </Panel>
 
       <ExplainCard
-        icon={<Users className='size-4 text-sky-500' />}
+        icon={<Users className='size-4 text-series-1' />}
         title='소유와 경영이 갈라지면 생기는 문제'
         preview='주주는 돈을 대고, 경영자는 그 돈을 쓴다. 둘의 이해는 완전히 겹치지 않는다.'
         body={
@@ -202,9 +198,9 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
       className={cn(
         'gap-1 transition-colors',
         outside
-          ? 'border-violet-500/50 bg-violet-500/5'
+          ? 'border-series-2/50 bg-series-2/5'
           : active
-            ? 'border-sky-500/50 bg-sky-500/5'
+            ? 'border-series-1/50 bg-series-1/5'
             : 'border-dashed opacity-60',
       )}
     >
@@ -212,7 +208,7 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
         <organ.icon
           className={cn(
             'size-4 shrink-0',
-            outside ? 'text-violet-500' : active ? 'text-sky-500' : 'text-muted-foreground',
+            outside ? 'text-series-2' : active ? 'text-series-1' : 'text-muted-foreground',
           )}
         />
         <span className='font-semibold'>{organ.name}</span>
@@ -221,9 +217,9 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
           className={cn(
             'ml-auto shrink-0 rounded-full px-2 py-0.5 text-xs',
             outside
-              ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400'
+              ? 'bg-series-2/15 text-series-2'
               : active
-                ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
+                ? 'bg-series-1/15 text-series-1'
                 : 'bg-muted text-muted-foreground',
           )}
         >

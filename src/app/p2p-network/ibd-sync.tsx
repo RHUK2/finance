@@ -68,14 +68,14 @@ export function IbdSync() {
         />
 
         <SyncBar
-          icon={<FileStack className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<FileStack className='size-4 text-warn' />}
           label='① 헤더 체인'
           pct={headersPct}
           detail={`${headersDownloaded.toLocaleString('ko-KR')} / ${TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 · ${formatBytes(headersBytes(headersDownloaded))}`}
           tone='accent'
         />
         <SyncBar
-          icon={<Download className='size-4 text-emerald-600 dark:text-emerald-400' />}
+          icon={<Download className='size-4 text-good' />}
           label='② 블록 본문'
           pct={blocksPct}
           detail={`${blocksDownloaded.toLocaleString('ko-KR')} / ${TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 · ${formatBytes(blocksBytes(blocksDownloaded))}`}
@@ -93,7 +93,7 @@ export function IbdSync() {
       </Panel>
 
       <ExplainCard
-        icon={<FileStack className='size-4 text-amber-600 dark:text-amber-400' />}
+        icon={<FileStack className='size-4 text-warn' />}
         title='헤더만 봐도 "어느 체인이 진짜 최장 작업량 체인인지" 알 수 있는 이유'
         preview='헤더에는 이전 헤더 해시·난이도 목표·nonce가 들어 있어, 누적 작업량을 계산하는 데 블록 본문이 필요 없다.'
         body={
@@ -133,7 +133,10 @@ function SyncBar({
       </div>
       <div className='h-2.5 w-full overflow-hidden rounded-full bg-muted'>
         <div
-          className={cn('h-full rounded-full transition-all', tone === 'accent' ? 'bg-amber-500' : 'bg-emerald-500')}
+          className={cn(
+            'h-full rounded-full transition-all',
+            tone === 'accent' ? 'bg-warn-surface' : 'bg-good-surface',
+          )}
           style={{ width: `${Math.max(pct > 0 ? 1 : 0, pct)}%` }}
         />
       </div>

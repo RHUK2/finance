@@ -37,14 +37,14 @@ export function UtxoModel() {
 
   const status = valid
     ? {
-        box: 'border-emerald-500/40 bg-emerald-500/5',
-        text: 'text-emerald-600 dark:text-emerald-400',
+        box: 'border-good-surface/40 bg-good-surface/5',
+        text: 'text-good',
         Icon: CircleCheck,
         label: '유효한 트랜잭션',
       }
     : {
-        box: 'border-rose-500/40 bg-rose-500/5',
-        text: 'text-rose-600 dark:text-rose-400',
+        box: 'border-bad-surface/40 bg-bad-surface/5',
+        text: 'text-bad',
         Icon: CircleX,
         label: '유효하지 않은 트랜잭션',
       };
@@ -65,7 +65,7 @@ export function UtxoModel() {
 
       <Panel>
         <ControlSlider
-          icon={<Send className='size-4 text-emerald-600 dark:text-emerald-400' />}
+          icon={<Send className='size-4 text-good' />}
           label='보낼 금액'
           value={amount}
           onChange={setAmount}
@@ -78,7 +78,7 @@ export function UtxoModel() {
 
         <div className='flex flex-col gap-1.5 border-t pt-3'>
           <span className='flex items-center gap-1.5 text-sm font-medium'>
-            <Coins className='size-4 text-amber-600 dark:text-amber-400' />내 지갑의 동전들 (클릭해서 고르기)
+            <Coins className='size-4 text-warn' />내 지갑의 동전들 (클릭해서 고르기)
           </span>
           {WALLET.map((u) => {
             const on = selectedIds.includes(u.id);
@@ -89,14 +89,14 @@ export function UtxoModel() {
                 aria-pressed={on}
                 className={cn(
                   'flex items-center justify-between rounded-md border px-3 py-2 text-left transition-colors',
-                  on ? 'border-amber-500/50 bg-amber-500/10' : 'border-transparent bg-muted hover:border-border',
+                  on ? 'border-warn-surface/50 bg-warn-surface/10' : 'border-transparent bg-muted hover:border-border',
                 )}
               >
                 <span className='flex items-center gap-1.5'>
                   <span
                     className={cn(
                       'size-3.5 rounded-full border-2',
-                      on ? 'border-amber-500 bg-amber-500' : 'border-muted-foreground/40',
+                      on ? 'border-warn-surface bg-warn-surface' : 'border-muted-foreground/40',
                     )}
                   />
                   <span className='text-xs text-muted-foreground'>동전 #{u.id}</span>

@@ -7,7 +7,7 @@ pnpm dev          # 개발 서버 (워크트리 슬롯 포트로 뜬다)
 pnpm ports        # 이 워크트리가 쓰는 포트 확인
 pnpm type         # TypeScript 타입 체크
 pnpm lint         # ESLint (에러 0이 통과 조건)
-pnpm lint:prune   # 갚은 lint 빚을 eslint-suppressions.json에서 회수
+pnpm lint:prune   # 갚은 lint 빚을 동결 목록에서 회수 (동결이 있을 때만 의미가 있다)
 pnpm test:scripts # scripts/ 의 node:test 스위트
 pnpm inspect      # type + lint + test:scripts 한 번에
 pnpm build        # 프로덕션 빌드 (type·lint를 선행하지 않는다. inspect를 먼저 돌릴 것)
@@ -196,7 +196,9 @@ bash link-worktree-files.sh
 - **새 차트 추가**: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - **UI 컴포넌트**: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용
 - **상자**: 설명형 페이지의 맨 패널은 `Panel`(`src/components/panel.tsx`), 대시보드의 슬롯 카드는 `Card`다. 가르는 기준은 페이지 성격이 아니라 `CardHeader`·`CardContent`를 쓰는가다. `Panel`에 `p-4`를 다시 적지 않는다. 자기가 갖고 있다(ADR 0010)
-- **판정 색**: `tone` 값 `good`/`bad`/`accent`는 `--color-good`·`--color-bad`·`--color-warn` 토큰으로 간다(`globals.css`). 생색(`emerald-500` 등)을 직접 쓰지 않는다. `accent`만 토큰 이름이 `warn`인 것은 shadcn의 `--color-accent`와 겹쳐서다
+- **색은 두 축**: 생색(`emerald-500` 등)을 직접 쓰지 않는다. 어느 축인지는 "좋고 나쁨의 뜻이 있는가"로 가른다
+  - 판정: `good`·`bad`·`warn`. 글자·아이콘은 `text-good`(모드별 명도), 면은 `bg-good-surface`·`ring-good-surface`(고정 채도). `tone` prop의 `accent`가 `warn` 토큰을 보는 것은 shadcn의 `--color-accent`와 이름이 겹쳐서다
+  - 계열: `series-1`~`4`. 여럿을 구분하려고 쓰는 색이라 좋고 나쁨의 뜻이 없다. 스파크라인·비용막대·누적막대·SVG 점과 선, 주제를 나타내는 아이콘이 여기서 고른다
 - **통화·비율 표기**: `src/lib/utils.ts`의 `formatMan`·`formatWon`·`formatEok`·`formatEokFromMan`·`formatEokFromWon`·`formatPct`를 쓴다. 로컬에 `fmtEok` 같은 걸 다시 만들지 않는다. 억으로 찍는 함수가 셋인 것은 입력 단위가 페이지마다 다르기 때문이고, 이름 뒤 `From`이 입력 단위다. 자릿수만 다르면 인자로 넘긴다
 - **커밋 메시지**: `{type}: {한국어 설명}` 형식 (`feat` / `fix` / `refactor` / `chore` 등)
 

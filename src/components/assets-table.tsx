@@ -29,9 +29,9 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const TYPE_DOT_COLORS: Record<string, string> = {
-  crypto: 'bg-amber-500',
-  stock: 'bg-blue-500',
-  macro: 'bg-emerald-500',
+  crypto: 'bg-warn-surface',
+  stock: 'bg-series-4',
+  macro: 'bg-good-surface',
 };
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -79,7 +79,7 @@ function PercentageChange({ value, className }: { value: number | null; classNam
     <div
       className={cn(
         'flex items-center justify-end gap-1 tabular-nums',
-        isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400',
+        isPositive ? 'text-good' : 'text-bad',
         className,
       )}
     >

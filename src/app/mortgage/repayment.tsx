@@ -66,7 +66,7 @@ export function Repayment() {
           />
         </Field>
         <ControlSlider
-          icon={<Banknote className='size-4 text-sky-500' />}
+          icon={<Banknote className='size-4 text-series-1' />}
           label='대출 원금'
           value={loan}
           onChange={setLoan}
@@ -76,7 +76,7 @@ export function Repayment() {
           format={formatEokFromMan}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-rose-500' />}
+          icon={<Percent className='size-4 text-bad' />}
           label='금리'
           value={rate}
           onChange={setRate}
@@ -86,7 +86,7 @@ export function Repayment() {
           format={(v) => `${v.toFixed(1)}%`}
         />
         <ControlSlider
-          icon={<CalendarClock className='size-4 text-violet-500' />}
+          icon={<CalendarClock className='size-4 text-series-2' />}
           label='만기'
           value={years}
           onChange={setYears}
@@ -124,7 +124,7 @@ export function Repayment() {
       <Panel className='gap-3'>
         <div className='flex flex-col gap-1'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <Coins className='size-4 text-emerald-500' />
+            <Coins className='size-4 text-good' />
             해마다 내는 돈은 어떻게 구성되는가
           </span>
           <span className='text-xs/relaxed text-muted-foreground'>
@@ -144,16 +144,16 @@ export function Repayment() {
                   className='flex w-full flex-col justify-end'
                   style={{ height: `${Math.max(1, (total / peak) * 100)}%` }}
                 >
-                  <div className='w-full rounded-t-[2px] bg-rose-500' style={{ flexGrow: y.interest }} />
-                  <div className='w-full bg-emerald-500' style={{ flexGrow: y.principal }} />
+                  <div className='w-full rounded-t-xs bg-bad-surface' style={{ flexGrow: y.interest }} />
+                  <div className='w-full bg-good-surface' style={{ flexGrow: y.principal }} />
                 </div>
               </div>
             );
           })}
         </div>
         <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-          <Legend className='bg-rose-500' label='이자' />
-          <Legend className='bg-emerald-500' label='원금' />
+          <Legend className='bg-bad-surface' label='이자' />
+          <Legend className='bg-good-surface' label='원금' />
           <span className='tabular-nums'>1년차부터 {years}년차까지</span>
         </div>
       </Panel>
@@ -188,8 +188,8 @@ export function Repayment() {
               <span
                 className={cn(
                   'text-right tabular-nums',
-                  diff > 0 && 'text-rose-600 dark:text-rose-400',
-                  diff < 0 && 'text-emerald-600 dark:text-emerald-400',
+                  diff > 0 && 'text-bad',
+                  diff < 0 && 'text-good',
                   diff === 0 && 'text-muted-foreground',
                 )}
               >
@@ -201,7 +201,7 @@ export function Repayment() {
       </Panel>
 
       <ExplainCard
-        icon={<Coins className='size-4 text-amber-500' />}
+        icon={<Coins className='size-4 text-warn' />}
         title='초반에 원금이 줄지 않는 이유'
         preview='이자는 남은 잔액에 붙는다. 잔액이 가장 큰 시점이 바로 대출 초기다.'
         body={

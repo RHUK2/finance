@@ -45,7 +45,7 @@ export function Duration() {
 
       <Panel>
         <ControlSlider
-          icon={<Ruler className='size-4 text-sky-500' />}
+          icon={<Ruler className='size-4 text-series-1' />}
           label='잔존 만기'
           value={years}
           onChange={setYears}
@@ -55,7 +55,7 @@ export function Duration() {
           format={(v) => `${v}년`}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-emerald-500' />}
+          icon={<Percent className='size-4 text-good' />}
           label='표면금리'
           value={couponRate}
           onChange={setCouponRate}
@@ -66,7 +66,7 @@ export function Duration() {
           hint='이자를 많이 줄수록 원금 회수가 앞당겨져 듀레이션이 짧아진다. 0%(할인채)일 때 듀레이션은 만기와 같다.'
         />
         <ControlSlider
-          icon={<TrendingDown className='size-4 text-rose-500' />}
+          icon={<TrendingDown className='size-4 text-bad' />}
           label='금리 변동폭'
           value={delta}
           onChange={setDelta}
@@ -119,7 +119,7 @@ export function Duration() {
             label={`${l.years}년물`}
             value={l.loss}
             max={maxLoss}
-            className={delta >= 0 ? 'bg-rose-500' : 'bg-emerald-500'}
+            className={delta >= 0 ? 'bg-bad-surface' : 'bg-good-surface'}
             format={(v) => `${v.toFixed(1)}%`}
           />
         ))}
@@ -130,13 +130,13 @@ export function Duration() {
       </Panel>
 
       <ExplainCard
-        icon={<Ruler className='size-4 text-sky-500' />}
+        icon={<Ruler className='size-4 text-series-1' />}
         title='듀레이션은 왜 만기보다 짧은가'
         preview='만기 전에 받는 이자가 원금 회수의 일부를 앞당기기 때문이다.'
         body='만기 10년 채권이라도 돈을 10년 뒤에 한 번에 받는 것은 아니다. 해마다 이자가 들어오고, 그만큼 투자금 회수는 앞당겨진다. 각 현금흐름이 들어오는 시점을 그 현재가치로 가중해 평균 낸 것이 맥컬리 듀레이션이고, 그래서 이자를 주는 채권은 언제나 만기보다 짧다. 이자를 한 푼도 주지 않는 할인채(제로쿠폰)만이 듀레이션과 만기가 같다. 표면금리 슬라이더를 0으로 내리면 그 일치가 보인다.'
       />
       <ExplainCard
-        icon={<TrendingDown className='size-4 text-rose-500' />}
+        icon={<TrendingDown className='size-4 text-bad' />}
         title='만기까지 들고 가면 손해가 아닌 것 아닌가'
         preview='개인에게는 대체로 맞지만, 시가평가를 하는 기관에는 그 사이의 평가손이 실제 위험이다.'
         body='액면 상환을 약속한 국채라면 만기까지 들고 갈 수 있는 사람에게 중간의 가격 하락은 장부상의 일이다. 문제는 그 사이에 돈이 필요해지는 경우다. 2023년 미국의 지역은행 파산이 그 사례다. 예금 인출이 몰리자 장기 국채를 만기 전에 팔아야 했고, 금리 상승으로 이미 값이 빠진 상태라 장부상의 손실이 실현됐다. 부도 위험이 없는 채권에도 금리 위험은 따로 있다는 것이 듀레이션이 말하는 바다.'

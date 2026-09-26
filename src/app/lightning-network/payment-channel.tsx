@@ -52,7 +52,7 @@ export function PaymentChannel() {
 
         <div className='flex h-8 w-full overflow-hidden rounded-md bg-muted'>
           <div
-            className='flex items-center justify-end bg-amber-500 pr-2 text-xs font-medium text-white transition-all duration-300'
+            className='flex items-center justify-end bg-warn-surface pr-2 text-xs font-medium text-white transition-all duration-300'
             style={{ width: `${alicePct}%` }}
           >
             {alicePct > 15 && 'Alice'}

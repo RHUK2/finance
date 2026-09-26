@@ -44,7 +44,7 @@ export function ChainAnalysis() {
         </div>
 
         <div className='flex items-center gap-2 rounded-md border p-3 text-sm'>
-          <Users className='size-4 shrink-0 text-amber-600 dark:text-amber-400' />
+          <Users className='size-4 shrink-0 text-warn' />
           <span>
             <b>공통 입력 소유권 휴리스틱</b>: 두 입력을 한 트랜잭션에 함께 썼다는 건, 둘 다 같은 지갑의 개인키로
             서명했다는 뜻이다. 두 주소가 같은 사람 것이라는 사실이 이 순간 공개된다.
@@ -67,14 +67,14 @@ export function ChainAnalysis() {
                   className={cn(
                     'flex flex-col gap-1 rounded-md border p-3 text-left text-sm transition-colors',
                     !revealed && 'cursor-pointer hover:bg-muted',
-                    showCorrect && 'border-emerald-500/40 bg-emerald-500/5',
-                    showWrong && 'border-rose-500/40 bg-rose-500/5',
+                    showCorrect && 'border-good-surface/40 bg-good-surface/5',
+                    showWrong && 'border-bad-surface/40 bg-bad-surface/5',
                   )}
                 >
                   <span className='flex items-center justify-between'>
                     <span className='font-mono text-xs'>{shortHex(o.address, 18)}</span>
-                    {showCorrect && <CircleCheck className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />}
-                    {showWrong && <CircleX className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />}
+                    {showCorrect && <CircleCheck className='size-4 shrink-0 text-good' />}
+                    {showWrong && <CircleX className='size-4 shrink-0 text-bad' />}
                   </span>
                   <span className='tabular-nums'>{o.sats.toLocaleString('ko-KR')} sat</span>
                   <span className='text-xs text-muted-foreground'>{o.type}</span>

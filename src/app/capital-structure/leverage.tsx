@@ -46,8 +46,8 @@ export function Leverage() {
   const coverage = interest > 0 ? ebit / interest : null;
 
   const segments = [
-    { label: `부채 ${formatEok(debt, 0)}`, value: debt, className: 'bg-rose-500' },
-    { label: `자기자본 ${formatEok(equity, 0)}`, value: equity, className: 'bg-sky-500' },
+    { label: `부채 ${formatEok(debt, 0)}`, value: debt, className: 'bg-bad-surface' },
+    { label: `자기자본 ${formatEok(equity, 0)}`, value: equity, className: 'bg-series-1' },
   ];
 
   const banner =
@@ -85,7 +85,7 @@ export function Leverage() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Scale className='size-4 text-rose-500' />}
+          icon={<Scale className='size-4 text-bad' />}
           label='부채 비중'
           value={debtRatio}
           onChange={setDebtRatio}
@@ -96,7 +96,7 @@ export function Leverage() {
           hint={`총자산 ${formatEok(ASSETS, 0)} 가운데 ${formatEok(debt, 0)}을 빌리고 나머지 ${formatEok(equity, 0)}을 주주가 댄다.`}
         />
         <ControlSlider
-          icon={<Landmark className='size-4 text-amber-500' />}
+          icon={<Landmark className='size-4 text-warn' />}
           label='차입 이자율'
           value={rate}
           onChange={setRate}
@@ -107,7 +107,7 @@ export function Leverage() {
           hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${formatPct(afterTaxRate)}다. 쓴 세율은 ${TAX_RATE_NOTE}이다.`}
         />
         <ControlSlider
-          icon={<Coins className='size-4 text-emerald-500' />}
+          icon={<Coins className='size-4 text-good' />}
           label='영업이익'
           value={ebit}
           onChange={setEbit}
@@ -121,7 +121,7 @@ export function Leverage() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Scale className='size-4 text-sky-500' />
+          <Scale className='size-4 text-series-1' />
           자산 {formatEok(ASSETS, 0)}은 어디서 왔는가
         </span>
         <StackedBar segments={segments} total={ASSETS} />
@@ -156,7 +156,7 @@ export function Leverage() {
       <Panel bleed>
         <div className='flex flex-col gap-1 p-4'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <TrendingUp className='size-4 text-amber-500' />
+            <TrendingUp className='size-4 text-warn' />
             업황이 바뀌면 격차가 드러난다
           </span>
           <span className='text-xs text-muted-foreground'>
@@ -184,8 +184,8 @@ export function Leverage() {
               <span
                 className={cn(
                   'text-right font-medium tabular-nums',
-                  levered > unlevered && 'text-emerald-600 dark:text-emerald-400',
-                  levered < unlevered && 'text-rose-600 dark:text-rose-400',
+                  levered > unlevered && 'text-good',
+                  levered < unlevered && 'text-bad',
                 )}
               >
                 {formatPct(levered)}
@@ -196,7 +196,7 @@ export function Leverage() {
       </Panel>
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-amber-500' />}
+        icon={<TrendingUp className='size-4 text-warn' />}
         title='레버리지는 수익을 만들지 않는다'
         preview='빌린 돈은 결과의 폭을 넓힐 뿐, 사업이 버는 힘 자체를 키우지는 않는다.'
         body={
@@ -217,7 +217,7 @@ export function Leverage() {
       />
 
       <ExplainCard
-        icon={<TriangleAlert className='size-4 text-rose-500' />}
+        icon={<TriangleAlert className='size-4 text-bad' />}
         title='주주에게 유한책임이 있다는 사실이 여기서 작동한다'
         preview='아래쪽 손실이 출자금에서 끊기니, 주주에게는 위험을 키울 유인이 남는다.'
         body={

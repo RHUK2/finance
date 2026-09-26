@@ -54,7 +54,7 @@ export function ReverseJeonse() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Building2 className='size-4 text-sky-500' />}
+          icon={<Building2 className='size-4 text-series-1' />}
           label='계약 당시 매매가'
           value={price}
           onChange={setPrice}
@@ -64,7 +64,7 @@ export function ReverseJeonse() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-emerald-500' />}
+          icon={<Percent className='size-4 text-good' />}
           label='계약 당시 전세가율'
           value={ratio}
           onChange={setRatio}
@@ -75,7 +75,7 @@ export function ReverseJeonse() {
           hint={`이 조건에서 계약한 보증금은 ${formatEok(deposit)}이다. 만기에 돌려줄 금액은 앞으로 무슨 일이 있어도 이 금액이다.`}
         />
         <ControlSlider
-          icon={<TrendingDown className='size-4 text-rose-500' />}
+          icon={<TrendingDown className='size-4 text-bad' />}
           label='매매가 하락률'
           value={priceDrop}
           onChange={setPriceDrop}
@@ -85,7 +85,7 @@ export function ReverseJeonse() {
           format={formatPct}
         />
         <ControlSlider
-          icon={<TrendingDown className='size-4 text-amber-500' />}
+          icon={<TrendingDown className='size-4 text-warn' />}
           label='전세 시세 하락률'
           value={rentDrop}
           onChange={setRentDrop}
@@ -128,7 +128,7 @@ export function ReverseJeonse() {
           label='돌려줘야 할 보증금'
           value={deposit}
           max={barMax}
-          className='bg-sky-500'
+          className='bg-series-1'
           format={formatEok}
           sub='시세가 어떻게 되든 줄지 않는다'
         />
@@ -136,7 +136,7 @@ export function ReverseJeonse() {
           label='지금의 집값'
           value={nowPrice}
           max={barMax}
-          className={underwater > 0 ? 'bg-rose-500' : 'bg-emerald-500'}
+          className={underwater > 0 ? 'bg-bad-surface' : 'bg-good-surface'}
           format={formatEok}
           sub={`계약 당시 ${formatEok(price)}에서 ${formatPct(priceDrop)} 하락`}
         />
@@ -144,7 +144,7 @@ export function ReverseJeonse() {
           label='새 임차인에게 받을 수 있는 돈'
           value={nowMarketDeposit}
           max={barMax}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={formatEok}
           sub={refundGap > 0 ? `${formatEok(refundGap)} 부족` : '기존 보증금을 덮는다'}
         />
@@ -155,7 +155,7 @@ export function ReverseJeonse() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<ShieldAlert className='size-4 text-rose-500' />}
+        icon={<ShieldAlert className='size-4 text-bad' />}
         title='역전세와 깡통전세는 다른 문제다'
         preview='앞은 집주인의 현금 문제, 뒤는 집의 가치 문제다.'
         body={

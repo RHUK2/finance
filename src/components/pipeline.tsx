@@ -13,8 +13,8 @@ function BoxCell({ label, value, tone }: Box) {
     <div
       className={cn(
         'flex flex-col gap-1 rounded-md bg-muted p-3',
-        tone === 'accent' && 'border border-amber-500/40',
-        tone === 'good' && 'border border-emerald-500/40',
+        tone === 'accent' && 'border border-warn-surface/40',
+        tone === 'good' && 'border border-good-surface/40',
       )}
     >
       <span className='text-xs text-muted-foreground'>{label}</span>

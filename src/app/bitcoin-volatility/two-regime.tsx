@@ -39,7 +39,7 @@ export function TwoRegime() {
 
       <Panel>
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-amber-500' />}
+          icon={<TrendingUp className='size-4 text-warn' />}
           label='체제 전환 성공 확률 (p)'
           hint={
             spotP != null
@@ -53,7 +53,7 @@ export function TwoRegime() {
           format={(v) => `${v}%`}
         />
         <ControlSlider
-          icon={<Coins className='size-4 text-amber-500' />}
+          icon={<Coins className='size-4 text-warn' />}
           label='성공 시 시장 규모'
           hint='성공했을 때 비트코인이 차지할 시장의 크기. 기본값은 금 시가총액이다.'
           value={winCapT}
@@ -94,9 +94,7 @@ function Sensitivity({ p }: { p: number }) {
     <Panel className='gap-3'>
       <div className='flex items-baseline justify-between'>
         <span className='text-sm font-medium'>확률 1%포인트가 만드는 가격 변화</span>
-        <span className='text-xl font-semibold text-amber-600 tabular-nums dark:text-amber-400'>
-          +{(current * 100).toFixed(1)}%
-        </span>
+        <span className='text-xl font-semibold text-warn tabular-nums'>+{(current * 100).toFixed(1)}%</span>
       </div>
       <div className='grid grid-cols-3 gap-2'>
         {REFERENCE_P.map((ref) => {
@@ -106,7 +104,7 @@ function Sensitivity({ p }: { p: number }) {
               key={ref}
               className={cn(
                 'flex flex-col items-center rounded-md border p-2 text-xs',
-                near ? 'border-amber-500/60 bg-amber-500/10' : 'text-muted-foreground',
+                near ? 'border-warn-surface/60 bg-warn-surface/10' : 'text-muted-foreground',
               )}
             >
               <span>성공 확률 {Math.round(ref * 100)}%</span>

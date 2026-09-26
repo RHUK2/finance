@@ -43,9 +43,9 @@ export function AttackScope() {
           tone={isMajority ? 'bad' : 'good'}
           icon={
             isMajority ? (
-              <TriangleAlert className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />
+              <TriangleAlert className='size-4 shrink-0 text-bad' />
             ) : (
-              <CircleCheck className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+              <CircleCheck className='size-4 shrink-0 text-good' />
             )
           }
         >
@@ -73,9 +73,9 @@ export function AttackScope() {
             const ev = doubleSpendProbability(pq, EVENTUALLY_Z);
             return (
               <div key={pct} className='flex items-center justify-between gap-3 py-2 text-sm'>
-                <span className={cn('w-14 font-medium', pct >= 51 && 'text-rose-600 dark:text-rose-400')}>{pct}%</span>
+                <span className={cn('w-14 font-medium', pct >= 51 && 'text-bad')}>{pct}%</span>
                 <span className='flex-1 text-muted-foreground'>6확인: {formatProbability(six)}</span>
-                <span className={cn('w-32 text-right tabular-nums', pq >= 0.5 ? 'text-rose-500' : 'text-emerald-500')}>
+                <span className={cn('w-32 text-right tabular-nums', pq >= 0.5 ? 'text-bad' : 'text-good')}>
                   결국: {formatProbability(ev)}
                 </span>
               </div>
@@ -85,7 +85,7 @@ export function AttackScope() {
       </Panel>
 
       <ExplainCard
-        icon={<CircleX className='size-4 text-rose-500' />}
+        icon={<CircleX className='size-4 text-bad' />}
         title='과반 공격자도 할 수 없는 것'
         preview='남의 서명을 위조하거나, 없는 코인을 만들거나, 아주 오래된 과거를 통째로 새로 쓸 수는 없다.'
         body={

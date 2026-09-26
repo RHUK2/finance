@@ -33,7 +33,7 @@ export function HedgeLedger() {
 
       <Panel>
         <ControlSlider
-          icon={<Fuel className='size-4 text-amber-500' />}
+          icon={<Fuel className='size-4 text-warn' />}
           label='만기 시점 유가'
           hint='3개월 뒤 원유 현물이 실제로 얼마가 됐는지. 계약가보다 낮으면 산유국이 현물에서 손해를 보고 선물에서 그만큼 번다.'
           value={settle}
@@ -44,7 +44,7 @@ export function HedgeLedger() {
           format={usd}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-sky-500' />}
+          icon={<Percent className='size-4 text-series-1' />}
           label='산유국 헤지 비율'
           hint='팔 물량 중 선물로 잠그려는 비율. 100%가 언제나 정답은 아니다. 가격이 오를 것 같으면 일부만 잠그고 나머지로 상승을 받는다.'
           value={hedgeRatio}
@@ -55,7 +55,7 @@ export function HedgeLedger() {
           format={pct}
         />
         <ControlSlider
-          icon={<Users className='size-4 text-violet-500' />}
+          icon={<Users className='size-4 text-series-2' />}
           label='투기자 비중'
           hint='실물 없이 위험을 받아 주는 쪽이 시장에 얼마나 있는지. 정유사가 받아 주고 남은 물량은 투기자가 받아야 하며, 투기자가 적으면 그 물량은 아예 체결되지 않는다.'
           value={speculators}
@@ -96,10 +96,10 @@ export function HedgeLedger() {
             {
               label: `산유국이 계속 짐 ${mb(PRODUCER_BARRELS - l.matched - l.toSpeculators)}`,
               value: PRODUCER_BARRELS - l.matched - l.toSpeculators,
-              className: 'bg-amber-500',
+              className: 'bg-warn-surface',
             },
-            { label: `정유사가 받음 ${mb(l.matched)}`, value: l.matched, className: 'bg-sky-500' },
-            { label: `투기자가 받음 ${mb(l.toSpeculators)}`, value: l.toSpeculators, className: 'bg-violet-500' },
+            { label: `정유사가 받음 ${mb(l.matched)}`, value: l.matched, className: 'bg-series-1' },
+            { label: `투기자가 받음 ${mb(l.toSpeculators)}`, value: l.toSpeculators, className: 'bg-series-2' },
           ]}
         />
         <p className='text-xs text-muted-foreground'>

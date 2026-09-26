@@ -62,9 +62,9 @@ export function TaxShield() {
 
   // 영업이익 150억이 세 곳으로 갈라진다. 부채 비중을 올리면 정부 몫이 줄어든다.
   const slices = [
-    { label: `채권자 (이자) ${formatEok(interest, 0)}`, value: interest, className: 'bg-rose-500' },
+    { label: `채권자 (이자) ${formatEok(interest, 0)}`, value: interest, className: 'bg-bad-surface' },
     { label: `정부 (법인세) ${formatEok(tax, 0)}`, value: tax, className: 'bg-slate-400' },
-    { label: `주주 (순이익) ${formatEok(net, 0)}`, value: net, className: 'bg-emerald-500' },
+    { label: `주주 (순이익) ${formatEok(net, 0)}`, value: net, className: 'bg-good-surface' },
   ];
 
   return (
@@ -77,7 +77,7 @@ export function TaxShield() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Scale className='size-4 text-rose-500' />}
+          icon={<Scale className='size-4 text-bad' />}
           label='부채 비중'
           value={debtRatio}
           onChange={setDebtRatio}
@@ -88,7 +88,7 @@ export function TaxShield() {
           hint={`영업이익 ${formatEok(EBIT, 0)}, 이자율 ${RATE}%로 고정해 두고 조달 방식만 바꾼다. 부채 ${formatEok(debt, 0)}에 이자 ${formatEok(interest, 0)}.`}
         />
         <ControlSlider
-          icon={<Receipt className='size-4 text-slate-500' />}
+          icon={<Receipt className='size-4 text-muted-foreground' />}
           label='법인세율'
           value={taxRate}
           onChange={setTaxRate}
@@ -102,7 +102,7 @@ export function TaxShield() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Users className='size-4 text-sky-500' />
+          <Users className='size-4 text-series-1' />
           영업이익 {formatEok(EBIT, 0)}은 누구에게 갔는가
         </span>
         <StackedBar segments={slices} total={EBIT} />
@@ -133,7 +133,7 @@ export function TaxShield() {
       <Panel className='gap-3'>
         <div className='flex flex-col gap-1'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <Building2 className='size-4 text-amber-500' />
+            <Building2 className='size-4 text-warn' />
             그렇다면 빚을 최대한 내야 하는가
           </span>
           <span className='text-xs/relaxed text-muted-foreground'>
@@ -144,8 +144,8 @@ export function TaxShield() {
         </div>
         <ValueCurve curve={curve} current={debtRatio} best={best.d} />
         <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-          <Legend className='bg-sky-500' label='현재 선택' />
-          <Legend className='bg-emerald-500' label='가치가 가장 큰 지점' />
+          <Legend className='bg-series-1' label='현재 선택' />
+          <Legend className='bg-good-surface' label='가치가 가장 큰 지점' />
           <Legend className='bg-muted-foreground/30' label='그 밖' />
         </div>
       </Panel>
@@ -162,7 +162,7 @@ export function TaxShield() {
       </div>
 
       <ExplainCard
-        icon={<Landmark className='size-4 text-rose-500' />}
+        icon={<Landmark className='size-4 text-bad' />}
         title='방패에는 대가가 따른다'
         preview='빚이 늘수록 세금은 줄지만, 망할 확률과 망했을 때 새는 돈이 함께 커진다.'
         body={
@@ -205,14 +205,14 @@ function ValueCurve({ curve, current, best }: { curve: { d: number; v: number }[
           <div
             key={p.d}
             className={cn(
-              'flex-1 rounded-t-[2px] transition-all',
-              p.d === current ? 'bg-sky-500' : p.d === best ? 'bg-emerald-500' : 'bg-muted-foreground/30',
+              'flex-1 rounded-t-xs transition-all',
+              p.d === current ? 'bg-series-1' : p.d === best ? 'bg-good-surface' : 'bg-muted-foreground/30',
             )}
             style={{ height: `${8 + ((p.v - lo) / span) * 92}%` }}
           />
         ))}
       </div>
-      <div className='flex gap-0.5 text-[10px] text-muted-foreground tabular-nums'>
+      <div className='flex gap-0.5 text-3xs text-muted-foreground tabular-nums'>
         {curve.map((p) => (
           <span key={p.d} className='flex-1 text-center'>
             {p.d % 20 === 0 ? `${p.d}%` : ''}

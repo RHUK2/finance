@@ -51,7 +51,7 @@ export function Limit() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<House className='size-4 text-sky-500' />}
+          icon={<House className='size-4 text-series-1' />}
           label='집값'
           value={price}
           onChange={setPrice}
@@ -61,7 +61,7 @@ export function Limit() {
           format={(v) => formatEokFromMan(v, 1)}
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-emerald-500' />}
+          icon={<Wallet className='size-4 text-good' />}
           label='연소득'
           value={income}
           onChange={setIncome}
@@ -72,7 +72,7 @@ export function Limit() {
           hint='DSR은 담보가 아니라 이 숫자를 본다. 소득이 늘지 않으면 집값이 올라도 빌릴 수 있는 돈은 늘지 않는다.'
         />
         <ControlSlider
-          icon={<Ruler className='size-4 text-amber-500' />}
+          icon={<Ruler className='size-4 text-warn' />}
           label='LTV 한도'
           value={ltv}
           onChange={setLtv}
@@ -83,7 +83,7 @@ export function Limit() {
           hint='담보 가치 대비 대출 비율의 상한. 규제지역 여부, 주택 수, 생애최초 여부에 따라 달라진다.'
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-rose-500' />}
+          icon={<Percent className='size-4 text-bad' />}
           label='대출 금리'
           value={rate}
           onChange={setRate}
@@ -93,7 +93,7 @@ export function Limit() {
           format={(v) => `${v.toFixed(1)}%`}
         />
         <ControlSlider
-          icon={<CalendarClock className='size-4 text-violet-500' />}
+          icon={<CalendarClock className='size-4 text-series-2' />}
           label='만기'
           value={years}
           onChange={setYears}
@@ -150,7 +150,7 @@ export function Limit() {
           label='LTV 한도'
           value={byLtv}
           max={barMax}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={(v) => formatEokFromMan(v, 1)}
           sub='집을 보는 자, 담보 가치에 비례한다'
         />
@@ -158,7 +158,7 @@ export function Limit() {
           label='DSR 한도'
           value={byDsr}
           max={barMax}
-          className='bg-sky-500'
+          className='bg-series-1'
           format={(v) => formatEokFromMan(v, 1)}
           sub='사람을 보는 자, 소득에 비례한다'
         />
@@ -166,7 +166,7 @@ export function Limit() {
           label='자기 현금으로 메울 금액'
           value={cash}
           max={barMax}
-          className='bg-rose-500'
+          className='bg-bad-surface'
           format={(v) => formatEokFromMan(v, 1)}
           sub={`집값 ${formatEokFromMan(price, 1)} 중 대출로 안 되는 부분`}
         />
@@ -193,7 +193,7 @@ export function Limit() {
       </div>
 
       <ExplainCard
-        icon={<Banknote className='size-4 text-sky-500' />}
+        icon={<Banknote className='size-4 text-series-1' />}
         title='두 자는 서로 다른 위험을 본다'
         preview='LTV는 은행이 떼일 위험을, DSR은 차주가 무너질 위험을 잰다.'
         body={

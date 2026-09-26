@@ -31,12 +31,13 @@ const eslintConfig = defineConfig([
   //   require-static-classes  걸리는 4곳이 전부 룩업 테이블(TAG_STYLE[tag])이다. 그게 동적 클래스의
   //                         권장 패턴이라 "고치면" 호출부에 분기가 인라인된다.
   //
-  // no-raw-colors와 no-arbitrary-values의 기존 위반은 eslint-suppressions.json에 동결돼 있다.
-  // 새로 생기는 것만 막고, 기존 것은 파일 단위로 갚아 나간다.
+  // no-raw-colors와 no-arbitrary-values는 도입할 때 위반이 665건이라 eslint-suppressions.json에
+  // 동결해 두고 시작했는데, 지금은 다 갚아서 동결 파일이 없다. 남은 빚이 0이라는 사실이 파일의
+  // 부재로 드러나는 상태가 정상이다.
   //
-  // 갚은 뒤에는 반드시 `pnpm lint:prune`을 돌린다. 동결은 파일·룰별 건수로 세므로, 고치기만 하고
-  // 카운트를 줄이지 않으면 그 파일은 남은 예산만큼 새 위반을 조용히 통과시킨다. 갚은 것이 있으면
-  // lint가 "suppressions left that do not occur anymore"로 알려 준다.
+  // 다시 동결할 일이 생기면 `eslint --suppress-rule <룰>`로 만들고, 갚은 뒤에는 반드시
+  // `pnpm lint:prune`을 돌린다. 동결은 파일·룰별 건수로 세므로 고치기만 하고 카운트를 줄이지 않으면
+  // 그 파일은 남은 예산만큼 새 위반을 조용히 통과시킨다.
   //
   // no-restyle의 정책은 한 문장이다: 컴포넌트는 자기 상자(패딩·모양·기본 표면)를 소유하고,
   // 호출부는 배치와 그 인스턴스의 강조(색·그림자·전환)를 소유한다. 그래서 전역 allow가
@@ -45,8 +46,31 @@ const eslintConfig = defineConfig([
     files: ['src/**/*.{ts,tsx}'],
     plugins: { shadcn },
     rules: {
-      'shadcn/no-raw-colors': 'error',
-      'shadcn/no-arbitrary-values': 'error',
+      // 색은 두 축이다. 판정(good·bad·warn)과 계열(series-1~4). globals.css가 정본이고,
+      // 어느 쪽인지는 "좋고 나쁨의 뜻이 있는가"로 가른다.
+      // fill-none·stroke-none은 색이 아니라 none인데 룰이 색 이름으로 읽는다.
+      'shadcn/no-raw-colors': ['error', { allow: ['fill-none', 'stroke-none'] }],
+      // 스케일이 있는 것(간격·모양·글자 크기)만 본다. 아래는 스케일이 없는 값이라 정확한 수치를
+      // 쓰는 것이 정상이다: 격자 템플릿, 콘텐츠 상자 크기(차트 캔버스 높이·가로 스크롤 최소폭),
+      // 계산된 위치 보정, 4px부터 시작하는 블러 스케일이 표현 못 하는 1px, 임의 속성과 CSS 변수 선언.
+      'shadcn/no-arbitrary-values': [
+        'error',
+        {
+          allow: [
+            'grid-cols-*',
+            'grid-rows-*',
+            'h-*',
+            'min-h-*',
+            'max-h-*',
+            'min-w-*',
+            'max-w-*',
+            'left-*',
+            'bottom-*',
+            'backdrop-blur-*',
+            '[*',
+          ],
+        },
+      ],
       'shadcn/no-restyle': [
         'error',
         {
@@ -72,6 +96,13 @@ const eslintConfig = defineConfig([
         },
       ],
     },
+  },
+  // mempool.space의 보라 블록 생김새를 따라 그린 삽화다. 네 단계 명도가 서로 묶여 있어
+  // 토큰 하나로 못 바꾸고, 토큰으로 올리면 "우리 팔레트에 보라 4단계가 있다"는 거짓말이 된다.
+  // 디자인 시스템 색이 아니므로 이 파일만 연다.
+  {
+    files: ['src/app/mempool/components.tsx'],
+    rules: { 'shadcn/no-raw-colors': 'off' },
   },
   // shadcn 등 vendored 컴포넌트는 lint에서 뺀다. 원본과 다른 표기를 강제하면 diff/update 시
   // 노이즈만 커진다. 다만 "upstream 원본 그대로"는 더 이상 참이 아니다. 호출부가 기본값을

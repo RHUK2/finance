@@ -38,7 +38,7 @@ export function PrimordialEconomics() {
 
       <Panel>
         <ControlSlider
-          icon={<Zap className='size-4 text-amber-500' />}
+          icon={<Zap className='size-4 text-warn' />}
           label='평균 투사력 (개체군 평균 와트)'
           hint='개체들이 평균적으로 얼마나 강하게 물리력을 투사하는지. 높일수록 생존자가 많아진다.'
           value={meanPower}
@@ -49,7 +49,7 @@ export function PrimordialEconomics() {
           format={(v) => `${Math.round(v * 100)}%`}
         />
         <ControlSlider
-          icon={<Skull className='size-4 text-rose-500' />}
+          icon={<Skull className='size-4 text-bad' />}
           label='포식 압력'
           hint='포식자가 가하는 위협의 강도. 이 수준 미만으로 투사하는 개체는 결국 도태된다.'
           value={pressure}
@@ -80,9 +80,9 @@ export function PrimordialEconomics() {
 }
 
 function powerColor(o: Organism): string {
-  if (o.type === '강한 투사자') return 'bg-emerald-500';
-  if (o.type === '약한 방어') return 'bg-amber-500';
-  return 'bg-sky-400';
+  if (o.type === '강한 투사자') return 'bg-good-surface';
+  if (o.type === '약한 방어') return 'bg-warn-surface';
+  return 'bg-series-1';
 }
 
 function PredationSim({
@@ -132,20 +132,19 @@ function PredationSim({
         <>
           칸은 투사력 순으로 왼쪽부터 늘어서 있다. 포식 압력이 차오를 때마다 그보다 약하게 투사하는 개체가 왼쪽 끝에서
           부터 회색으로 꺼진다. 지금 압력{' '}
-          <span className='font-medium text-rose-600 dark:text-rose-400'>{Math.round(state.threshold * 100)}%</span>가
-          곧 도태 경계의 위치다.
+          <span className='font-medium text-bad'>{Math.round(state.threshold * 100)}%</span>가 곧 도태 경계의 위치다.
         </>
       }
       legend={
         <>
-          <Legend className='bg-emerald-500' label='강한 투사자' />
-          <Legend className='bg-amber-500' label='약한 방어' />
-          <Legend className='bg-sky-400' label='평화주의자' />
+          <Legend className='bg-good-surface' label='강한 투사자' />
+          <Legend className='bg-warn-surface' label='약한 방어' />
+          <Legend className='bg-series-1' label='평화주의자' />
           <Legend className='bg-muted' label='도태됨' />
         </>
       }
       legendNote='테두리 = 이번 라운드에 도태'
-      curve={{ values: curve, cursor: round, label: '생존 곡선', className: 'text-emerald-500', min: 0, max: 1 }}
+      curve={{ values: curve, cursor: round, label: '생존 곡선', className: 'text-good', min: 0, max: 1 }}
       metrics={
         <>
           <Metric label='생존 개체' value={`${aliveCount} / ${organisms.length}`} tone='good' />

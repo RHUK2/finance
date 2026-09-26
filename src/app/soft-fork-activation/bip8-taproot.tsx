@@ -25,7 +25,7 @@ export function Bip8Taproot() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <Users className='size-4 text-sky-600 dark:text-sky-400' />
+          <Users className='size-4 text-series-1' />
           BIP9 vs BIP8: 지지율이 끝까지 부족하면?
         </span>
         <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
@@ -36,7 +36,7 @@ export function Bip8Taproot() {
               무산된다.
             </p>
           </div>
-          <div className={cn('rounded-md border p-3', 'border-emerald-500/40 bg-emerald-500/5')}>
+          <div className={cn('rounded-md border p-3', 'border-good-surface/40 bg-good-surface/5')}>
             <p className='text-sm font-medium'>BIP8 (LOT=true)</p>
             <p className='mt-1 text-sm/relaxed text-muted-foreground'>
               타임아웃 시점에 강제로 <b>LOCKED_IN</b>. 이 규칙을 지키지 않는 채굴자의 블록은 노드가 거부하므로, 결국
@@ -48,7 +48,7 @@ export function Bip8Taproot() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <CalendarCheck className='size-4 text-amber-600 dark:text-amber-400' />
+          <CalendarCheck className='size-4 text-warn' />
           실제 사례: Taproot 활성화 타임라인
         </span>
         <div className='flex flex-col gap-2'>
@@ -58,8 +58,8 @@ export function Bip8Taproot() {
               <span
                 className={cn(
                   'size-2 shrink-0 rounded-full',
-                  t.tone === 'good' && 'bg-emerald-500',
-                  t.tone === 'accent' && 'bg-amber-500',
+                  t.tone === 'good' && 'bg-good-surface',
+                  t.tone === 'accent' && 'bg-warn-surface',
                   t.tone === 'muted' && 'bg-muted-foreground/40',
                 )}
               />
@@ -69,8 +69,8 @@ export function Bip8Taproot() {
         </div>
         <div className='flex flex-wrap gap-4 pt-1 text-xs'>
           <Legend className='bg-muted-foreground/40' label='제안 단계' />
-          <Legend className='bg-amber-500' label='시그널링 중' />
-          <Legend className='bg-emerald-500' label='확정·활성화' />
+          <Legend className='bg-warn-surface' label='시그널링 중' />
+          <Legend className='bg-good-surface' label='확정·활성화' />
         </div>
         <p className='text-sm/relaxed text-muted-foreground'>
           Taproot는 Speedy Trial이라는 3개월짜리 짧은 BIP9식 시그널링으로 시작했고, 지지율이 빠르게 90%를 넘기며 채굴자

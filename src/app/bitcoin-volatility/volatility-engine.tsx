@@ -38,7 +38,7 @@ export function VolatilityEngine() {
 
       <Panel>
         <ControlSlider
-          icon={<Activity className='size-4 text-amber-500' />}
+          icon={<Activity className='size-4 text-warn' />}
           label='하루치 뉴스 충격 (σ)'
           hint='하루치 뉴스가 성공 확률을 흔드는 크기. 이 값을 고정해 둬도 변동성은 성공 확률에 따라 달라진다.'
           value={sigma}
@@ -49,7 +49,7 @@ export function VolatilityEngine() {
           format={(v) => v.toFixed(3)}
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-amber-500' />}
+          icon={<TrendingUp className='size-4 text-warn' />}
           label='확률 추세 (drift)'
           hint='뉴스와 무관하게 성공 확률이 평균적으로 표류하는 속도. 음수로 두면 실패 쪽으로 향한다.'
           value={drift}
@@ -118,12 +118,12 @@ function VolSim({
           unit='라운드'
           speeds={SPEEDS}
         />
-        <Sparkline values={prices} cursor={round} label='가격' className='text-amber-500' heightClass='h-12' />
+        <Sparkline values={prices} cursor={round} label='가격' className='text-warn' heightClass='h-12' />
         <Sparkline
           values={ps}
           cursor={round}
           label='성공 확률 p'
-          className='text-sky-500'
+          className='text-series-1'
           min={0}
           max={1}
           heightClass='h-12'

@@ -29,7 +29,7 @@ export function BlockHeaderView() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Hash className='size-4 text-amber-600 dark:text-amber-400' />
+          <Hash className='size-4 text-warn' />
           헤더 필드 → 블록 해시
         </span>
         <p className='text-xs text-muted-foreground'>4 + 32 + 32 + 4 + 4 + 4 = 80바이트. 이 여섯 필드가 전부다.</p>
@@ -90,7 +90,7 @@ export function BlockHeaderView() {
             <span className='text-xs text-muted-foreground'>nonce {nonce - 1} → 해시</span>
             <code className='font-mono text-xs break-all'>{shortHex(prevHash, 20)}</code>
           </div>
-          <div className='flex flex-col gap-1 rounded-md border border-amber-500/40 bg-muted p-3'>
+          <div className='flex flex-col gap-1 rounded-md border border-warn-surface/40 bg-muted p-3'>
             <span className='text-xs text-muted-foreground'>nonce {nonce} → 해시</span>
             <code className='font-mono text-xs break-all'>{shortHex(hash, 20)}</code>
           </div>

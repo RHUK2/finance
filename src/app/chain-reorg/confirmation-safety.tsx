@@ -55,9 +55,9 @@ export function ConfirmationSafety() {
           tone={reversalLikely ? 'bad' : 'good'}
           icon={
             reversalLikely ? (
-              <TriangleAlert className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />
+              <TriangleAlert className='size-4 shrink-0 text-bad' />
             ) : (
-              <ShieldCheck className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+              <ShieldCheck className='size-4 shrink-0 text-good' />
             )
           }
         >
@@ -76,7 +76,7 @@ export function ConfirmationSafety() {
                   <div
                     className={cn(
                       'h-full rounded-full',
-                      p > 0.05 ? 'bg-rose-500' : p > 0.001 ? 'bg-amber-500' : 'bg-emerald-500',
+                      p > 0.05 ? 'bg-bad-surface' : p > 0.001 ? 'bg-warn-surface' : 'bg-good-surface',
                     )}
                     style={{ width: `${Math.max(1, Math.min(100, p * 100))}%` }}
                   />

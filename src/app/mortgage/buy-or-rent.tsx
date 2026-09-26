@@ -66,9 +66,9 @@ export function BuyOrRent() {
   const breakeven = ratio <= 0 ? null : (ratio ** (1 / years) - 1) * 100;
 
   const options = [
-    { id: 'buy', label: '매수', cost: buyCost, className: 'bg-sky-500' },
-    { id: 'jeonse', label: '전세', cost: jeonseCost, className: 'bg-emerald-500' },
-    { id: 'rent', label: '월세', cost: rentCost, className: 'bg-amber-500' },
+    { id: 'buy', label: '매수', cost: buyCost, className: 'bg-series-1' },
+    { id: 'jeonse', label: '전세', cost: jeonseCost, className: 'bg-good-surface' },
+    { id: 'rent', label: '월세', cost: rentCost, className: 'bg-warn-surface' },
   ];
   const cheapest = options.reduce((a, b) => (b.cost < a.cost ? b : a));
   const barMax = Math.max(...options.map((o) => Math.abs(o.cost)), 1);
@@ -83,7 +83,7 @@ export function BuyOrRent() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<House className='size-4 text-sky-500' />}
+          icon={<House className='size-4 text-series-1' />}
           label='집값'
           value={price}
           onChange={setPrice}
@@ -94,7 +94,7 @@ export function BuyOrRent() {
           hint={`매수하면 ${LOAN_RATIO}%인 ${formatEokFromMan(loan)}을 ${LOAN_TERM}년 원리금균등으로 빌리고 ${formatEokFromMan(equity)}을 자기 돈으로 넣는다고 본다.`}
         />
         <ControlSlider
-          icon={<CalendarClock className='size-4 text-violet-500' />}
+          icon={<CalendarClock className='size-4 text-series-2' />}
           label='거주 기간'
           value={years}
           onChange={setYears}
@@ -105,7 +105,7 @@ export function BuyOrRent() {
           hint='취득세는 한 번만 내므로 오래 살수록 매수 쪽에 유리하게 분산된다.'
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-emerald-500' />}
+          icon={<TrendingUp className='size-4 text-good' />}
           label='집값 상승률'
           value={growth}
           onChange={setGrowth}
@@ -116,7 +116,7 @@ export function BuyOrRent() {
           hint='매수와 임차를 가르는 가장 큰 변수이자, 유일하게 미리 알 수 없는 변수다.'
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-rose-500' />}
+          icon={<Percent className='size-4 text-bad' />}
           label='대출 금리'
           value={rate}
           onChange={setRate}
@@ -126,7 +126,7 @@ export function BuyOrRent() {
           format={(v) => `${v.toFixed(1)}%`}
         />
         <ControlSlider
-          icon={<KeyRound className='size-4 text-emerald-500' />}
+          icon={<KeyRound className='size-4 text-good' />}
           label='전세가율'
           value={jeonseRatio}
           onChange={setJeonseRatio}
@@ -137,7 +137,7 @@ export function BuyOrRent() {
           hint={`전세 보증금 ${formatEokFromMan(deposit)}. 전세대출 없이 자기 돈으로 넣는다고 본다.`}
         />
         <ControlSlider
-          icon={<Repeat className='size-4 text-amber-500' />}
+          icon={<Repeat className='size-4 text-warn' />}
           label='전월세전환율'
           value={convRate}
           onChange={setConvRate}
@@ -199,7 +199,7 @@ export function BuyOrRent() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-emerald-500' />}
+        icon={<KeyRound className='size-4 text-good' />}
         title='전세의 비용은 눈에 보이지 않는다'
         preview='매달 나가는 돈이 없다는 것과 비용이 없다는 것은 다르다.'
         body={
@@ -218,7 +218,7 @@ export function BuyOrRent() {
       />
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-sky-500' />}
+        icon={<TrendingUp className='size-4 text-series-1' />}
         title='이 계산이 담지 못하는 것'
         preview='숫자로 옮기기 어려운 항목이 결정에서 차지하는 비중은 작지 않다.'
         body={

@@ -63,9 +63,9 @@ export function AddressReuse() {
           tone={mode === 'reuse' ? 'bad' : 'good'}
           icon={
             mode === 'reuse' ? (
-              <Link2 className='size-4 shrink-0 text-rose-600 dark:text-rose-400' />
+              <Link2 className='size-4 shrink-0 text-bad' />
             ) : (
-              <ScanEye className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+              <ScanEye className='size-4 shrink-0 text-good' />
             )
           }
         >

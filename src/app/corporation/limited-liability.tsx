@@ -124,7 +124,7 @@ export function LimitedLiability() {
         </div>
 
         <ControlSlider
-          icon={<Banknote className='size-4 text-emerald-500' />}
+          icon={<Banknote className='size-4 text-good' />}
           label={V.assets}
           value={assets}
           onChange={setAssets}
@@ -134,7 +134,7 @@ export function LimitedLiability() {
           format={(v) => formatEok(v, 0)}
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-rose-500' />}
+          icon={<Wallet className='size-4 text-bad' />}
           label={V.debt}
           value={debts}
           onChange={setDebts}
@@ -171,7 +171,7 @@ export function LimitedLiability() {
           label='채권자가 돌려받는 돈'
           value={creditorRecovered}
           max={barMax}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={(v) => formatEok(v, 0)}
           sub={`청구액 ${formatEok(debts, 0)}`}
         />
@@ -179,7 +179,7 @@ export function LimitedLiability() {
           label='채권자가 떼이는 돈'
           value={creditorLoss}
           max={barMax}
-          className='bg-rose-500'
+          className='bg-bad-surface'
           format={(v) => formatEok(v, 0)}
           sub='유한책임의 비용은 결국 채권자가 부담한다'
         />
@@ -187,7 +187,7 @@ export function LimitedLiability() {
           label={`${V.owner}가 ${V.capital}에서 잃는 돈`}
           value={shareholderLoss}
           max={barMax}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={(v) => formatEok(v, 0)}
           sub={isCorp ? `아무리 커져도 ${V.capital}을 넘지 않는다` : '여기서 끝나지 않고 개인 재산으로 이어진다'}
         />
@@ -195,7 +195,7 @@ export function LimitedLiability() {
           label={`${V.person} 개인 재산에서 나가는 돈`}
           value={personalBurden}
           max={barMax}
-          className='bg-fuchsia-500'
+          className='bg-series-3'
           format={(v) => formatEok(v, 0)}
           sub={`보유 재산 ${formatEok(PERSONAL, 0)}`}
         />
@@ -207,7 +207,7 @@ export function LimitedLiability() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
-          <ShieldOff className='size-4 text-rose-500' />
+          <ShieldOff className='size-4 text-bad' />
           벽이 무너지는 전형적인 경우
         </span>
         <ul className='flex list-disc flex-col gap-1 pl-5 text-sm/relaxed text-muted-foreground'>
@@ -222,7 +222,7 @@ export function LimitedLiability() {
       </Panel>
 
       <ExplainCard
-        icon={<Users className='size-4 text-sky-500' />}
+        icon={<Users className='size-4 text-series-1' />}
         title='유한책임의 값은 누가 치르나'
         preview='주주가 지지 않는 손실은 사라지지 않는다. 채권자에게 옮겨 갈 뿐이다.'
         body={

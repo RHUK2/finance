@@ -71,7 +71,7 @@ export function ReorgRace() {
 
       <Panel>
         <ControlSlider
-          icon={<GitFork className='size-4 text-amber-600 dark:text-amber-400' />}
+          icon={<GitFork className='size-4 text-warn' />}
           label='공격자 해시레이트 비중'
           value={attackPct}
           onChange={(v) => {
@@ -185,7 +185,7 @@ function ChainRow({
       className={cn(
         'flex flex-col gap-2 rounded-md border border-transparent bg-muted p-3',
         // 테두리를 칠하는 건 승부가 났을 때뿐이다. 여기서 결판나는 결과는 재구성 하나라 rose만 쓴다.
-        tone === 'bad' && 'border-rose-500/40 bg-rose-500/5',
+        tone === 'bad' && 'border-bad-surface/40 bg-bad-surface/5',
         faded && 'bg-transparent opacity-50',
       )}
     >
@@ -198,16 +198,16 @@ function ChainRow({
           <div
             key={i}
             className={cn(
-              'size-4 rounded-[3px]',
+              'size-4 rounded-xs',
               i < confirmed
-                ? 'bg-sky-500/60'
+                ? 'bg-series-1/60'
                 : faded
                   ? 'bg-muted-foreground/30'
                   : tone === 'bad'
-                    ? 'bg-rose-500'
+                    ? 'bg-bad-surface'
                     : tone === 'accent'
-                      ? 'bg-amber-500'
-                      : 'bg-emerald-500',
+                      ? 'bg-warn-surface'
+                      : 'bg-good-surface',
             )}
           />
         ))}

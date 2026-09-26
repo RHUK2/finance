@@ -33,9 +33,9 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
   const u2Q = mulPt(res.u2, Q);
 
   const marks: GridMark[] = [];
-  if (u1G) marks.push({ ...u1G, label: `u₁G`, color: 'sky' });
-  if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, color: 'violet' });
-  if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', color: res.ok ? 'emerald' : 'rose' });
+  if (u1G) marks.push({ ...u1G, label: `u₁G`, color: 'series-1' });
+  if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, color: 'series-2' });
+  if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', color: res.ok ? 'good' : 'bad' });
 
   return (
     <div className='flex flex-col gap-4'>
@@ -48,7 +48,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Eye className='size-4 text-sky-500' />
+          <Eye className='size-4 text-series-1' />
           검증자가 아는 값
         </span>
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>

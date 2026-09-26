@@ -41,7 +41,7 @@ function CircularLogic() {
         strokeDasharray='5 4'
       />
       <path d='M 80 58 l -4 6 h 8 z' fill='currentColor' />
-      <text x={260} y={116} textAnchor='middle' fontSize={12} className='fill-rose-600 dark:fill-rose-400'>
+      <text x={260} y={116} textAnchor='middle' fontSize={12} className='fill-bad'>
         통과의 근거가 다시 이 사이트다
       </text>
       <text x={260} y={138} textAnchor='middle' fontSize={11} fill='currentColor' opacity={0.6}>
@@ -68,7 +68,7 @@ export function KeyOrigin() {
 
       <MarkTable
         title='공개키를 어디서 받는가'
-        icon={<Route className='size-4 text-emerald-500' />}
+        icon={<Route className='size-4 text-good' />}
         headers={CHANNEL_HEADERS}
         rows={CHANNEL_ROWS}
         selected={selected}
@@ -85,7 +85,7 @@ export function KeyOrigin() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Repeat className='size-4 text-amber-500' />}
+        icon={<Repeat className='size-4 text-warn' />}
         title='힘든 것은 첫 한 번뿐이다'
         preview='최초 신뢰를 세우고 나면 다음부터는 이미 믿는 것이 대신 검증해 준다'
         body={

@@ -87,7 +87,7 @@ export function RateStress() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Banknote className='size-4 text-sky-500' />}
+          icon={<Banknote className='size-4 text-series-1' />}
           label='대출 원금'
           value={loan}
           onChange={setLoan}
@@ -97,7 +97,7 @@ export function RateStress() {
           format={formatEokFromMan}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-emerald-500' />}
+          icon={<Percent className='size-4 text-good' />}
           label='처음 금리'
           value={rate}
           onChange={setRate}
@@ -107,7 +107,7 @@ export function RateStress() {
           format={(v) => `${v.toFixed(1)}%`}
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-rose-500' />}
+          icon={<TrendingUp className='size-4 text-bad' />}
           label='금리 상승폭'
           value={delta}
           onChange={setDelta}
@@ -118,7 +118,7 @@ export function RateStress() {
           hint={`${SHIFT_YEAR}년 뒤 금리가 이만큼 올라 만기까지 유지된다고 본다. 오른 금리는 남은 잔액에만 붙는다.`}
         />
         <ControlSlider
-          icon={<CalendarClock className='size-4 text-violet-500' />}
+          icon={<CalendarClock className='size-4 text-series-2' />}
           label='만기'
           value={years}
           onChange={setYears}
@@ -128,7 +128,7 @@ export function RateStress() {
           format={(v) => `${v}년`}
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-amber-500' />}
+          icon={<Wallet className='size-4 text-warn' />}
           label='연소득'
           value={income}
           onChange={setIncome}
@@ -166,7 +166,7 @@ export function RateStress() {
           label='변동금리, 상승 전'
           value={before}
           max={barMax}
-          className='bg-emerald-500'
+          className='bg-good-surface'
           format={formatMan}
           sub={`처음 ${SHIFT_YEAR}년 동안의 월 상환액`}
         />
@@ -174,7 +174,7 @@ export function RateStress() {
           label='변동금리, 상승 후'
           value={after.monthly}
           max={barMax}
-          className='bg-rose-500'
+          className='bg-bad-surface'
           format={formatMan}
           sub='남은 기간에 잔액을 다 갚아야 하므로 인상폭보다 크게 뛴다'
         />
@@ -182,7 +182,7 @@ export function RateStress() {
           label={`고정금리 (+${FIXED_PREMIUM}%p)`}
           value={fixed}
           max={barMax}
-          className='bg-sky-500'
+          className='bg-series-1'
           format={formatMan}
           sub='처음부터 끝까지 이 금액으로 고정된다'
         />
@@ -212,7 +212,7 @@ export function RateStress() {
       </div>
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-rose-500' />}
+        icon={<TrendingUp className='size-4 text-bad' />}
         title='금리 인상폭보다 상환액 인상폭이 큰 이유'
         preview='남은 원금은 그대로인데 갚을 기간만 짧아져 있기 때문이다.'
         body={

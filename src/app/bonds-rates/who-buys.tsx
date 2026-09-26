@@ -73,7 +73,7 @@ export function WhoBuys() {
 
       <MarkTable
         title='국채 보유 주체'
-        icon={<Banknote className='size-4 text-emerald-500' />}
+        icon={<Banknote className='size-4 text-good' />}
         headers={['보유 주체', '수익률 보고 산다', '자유롭게 판다', '금리를 낮춘다']}
         rows={ROWS}
         selected={selected}

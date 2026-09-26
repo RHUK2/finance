@@ -101,9 +101,9 @@ export function ExitCalculus() {
         <StackedBar
           total={ledger.cost}
           segments={[
-            { label: '결제 마비', value: ledger.paymentCost, className: 'bg-sky-500' },
-            { label: '안보 상실', value: ledger.securityCost, className: 'bg-amber-500' },
-            { label: '자산 동결', value: ledger.freezeCost, className: 'bg-rose-500' },
+            { label: '결제 마비', value: ledger.paymentCost, className: 'bg-series-1' },
+            { label: '안보 상실', value: ledger.securityCost, className: 'bg-warn-surface' },
+            { label: '자산 동결', value: ledger.freezeCost, className: 'bg-bad-surface' },
             { label: '기본 마찰', value: COST_FLOOR, className: 'bg-muted-foreground/40' },
           ]}
         />

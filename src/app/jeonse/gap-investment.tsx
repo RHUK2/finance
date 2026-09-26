@@ -47,7 +47,7 @@ export function GapInvestment() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Building2 className='size-4 text-sky-500' />}
+          icon={<Building2 className='size-4 text-series-1' />}
           label='매매가'
           value={price}
           onChange={setPrice}
@@ -57,7 +57,7 @@ export function GapInvestment() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-emerald-500' />}
+          icon={<Percent className='size-4 text-good' />}
           label='전세가율'
           value={ratio}
           onChange={setRatio}
@@ -68,7 +68,7 @@ export function GapInvestment() {
           hint='매매가 대비 전세가의 비율. 이 값이 높을수록 더 적은 돈으로 집을 살 수 있다.'
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-amber-500' />}
+          icon={<TrendingUp className='size-4 text-warn' />}
           label='1년 뒤 매매가 변동'
           value={change}
           onChange={setChange}
@@ -96,7 +96,7 @@ export function GapInvestment() {
           label='임차인이 대는 돈'
           value={deposit}
           max={barMax}
-          className='bg-sky-500'
+          className='bg-series-1'
           format={formatEok}
           sub={`매매가의 ${formatPct(ratio)}`}
         />
@@ -104,7 +104,7 @@ export function GapInvestment() {
           label='매수자가 대는 돈'
           value={gap}
           max={barMax}
-          className='bg-amber-500'
+          className='bg-warn-surface'
           format={formatEok}
           sub='이 돈만으로 소유권이 넘어온다'
         />
@@ -112,7 +112,7 @@ export function GapInvestment() {
           label='1년 뒤 매매가'
           value={Math.max(0, newPrice)}
           max={Math.max(barMax, newPrice)}
-          className={profit >= 0 ? 'bg-emerald-500' : 'bg-rose-500'}
+          className={profit >= 0 ? 'bg-good-surface' : 'bg-bad-surface'}
           format={formatEok}
           sub={`처음 ${formatEok(price)}에서 ${signedEok(profit)}`}
         />
@@ -123,7 +123,7 @@ export function GapInvestment() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Layers className='size-4 text-amber-500' />}
+        icon={<Layers className='size-4 text-warn' />}
         title='전세가율이 시장을 밀고 당기는 방식'
         preview='전세가율이 높으면 매수 문턱이 낮아지고, 그 매수가 다시 매매가를 밀어 올린다.'
         body={

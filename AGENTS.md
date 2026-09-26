@@ -13,11 +13,10 @@
 | 명령어                        | `package.json`의 `scripts`         |
 | 워크트리 포트                 | `scripts/worktree-ports.mjs`       |
 | 워크트리가 공유하는 로컬 파일 | `link-worktree-files.sh`의 `ITEMS` |
-| 동결된 lint 빚                | `eslint-suppressions.json`         |
 
 커밋 전에 `pnpm inspect`를 돌린다. CI가 없어 이것이 유일한 게이트다.
 
-동결된 lint 빚을 갚았으면 `pnpm lint:prune`으로 카운트를 줄인다. 규칙은 `eslint.config.mjs`가 갖는다.
+lint 빚을 동결해 두고 갚는 방법은 `eslint.config.mjs`가 갖는다. 지금은 빚이 없어 `eslint-suppressions.json`도 없다.
 
 ## Agent skills
 
