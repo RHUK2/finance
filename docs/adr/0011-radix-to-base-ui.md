@@ -20,6 +20,8 @@ codemod. `asChild` → `render`가 단순 rename이 아니라(자식이 prop으�
 
 `vaul`이 사라진다. Q4를 정할 때 "Base UI에는 drawer 대응물이 없으니 vaul을 남긴다"고 봤는데 틀렸다. `base-vega`의 `drawer`는 `@base-ui/react/drawer`를 쓴다. 그래서 재설치가 vaul 래퍼를 갈아 놓았고, 아무도 안 쓰게 된 `vaul`을 지웠다. 그 결과 `@radix-ui/*`가 lockfile에서 완전히 사라졌다. vaul이 `@radix-ui/react-dialog`를 끌고 있었기 때문에, 원래 계획은 "직접 의존만 제거, lockfile에는 남는다"였는데 실제로는 흔적 없이 끝났다.
 
+`Select.Value`가 라벨이 아니라 값을 그린다. Radix에서는 선택된 `SelectItem`의 children을 그렸는데 Base UI는 값 자체를 그리고, 라벨을 보이려면 `Select.Root`에 `items`를 준다. 다섯 곳 모두 트리거가 `native`·`256` 같은 원시 값을 보이고 있었다. 앞의 데이터 속성과 함께, 타입도 빌드도 SSR HTML도 통과하는데 눌러 봐야 드러나는 부류다. 이 전환에서 브라우저 검증이 선택이 아닌 이유다.
+
 `Select`의 `onValueChange`가 `string | null`을 준다. 값을 비울 수 있는 API라서다. 빈 값을 허용하지 않는 셀렉트 셋(`assets-table`·`key-tree` 둘)에서 `(v) => v && setX(v)`로 좁혔다.
 
 `Slider`의 `onValueChange`가 `number | readonly number[]`를 준다. 범위 슬라이더를 같은 컴포넌트로 지원하기 때문이다. `simulation.tsx`의 슬라이더는 모두 단일 썸이라 `sliderValue()` 헬퍼 한 군데서 좁힌다.
