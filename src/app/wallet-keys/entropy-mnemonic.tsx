@@ -55,6 +55,11 @@ export function EntropyMnemonic({
 }) {
   const bd = entropyBreakdown(bits);
   const hash = illustrativeSha256(entropyHex);
+  // Base UI의 Select.Value는 값을 그대로 그리므로 Root에 라벨 목록을 준다.
+  const entropyItems = ENTROPY_OPTIONS.map((b) => ({
+    value: String(b),
+    label: `${b} bit → ${entropyBreakdown(b).words}단어`,
+  }));
 
   return (
     <div className='flex flex-col gap-4'>
@@ -68,7 +73,11 @@ export function EntropyMnemonic({
         <div className='flex flex-wrap items-end justify-between gap-3'>
           <div className='flex flex-col gap-1.5'>
             <span className='text-sm font-medium'>엔트로피 강도</span>
-            <Select value={String(bits)} onValueChange={(v) => onChangeBits(Number(v) as EntropyBits)}>
+            <Select
+              items={entropyItems}
+              value={String(bits)}
+              onValueChange={(v) => onChangeBits(Number(v) as EntropyBits)}
+            >
               <SelectTrigger className='w-44'>
                 <SelectValue />
               </SelectTrigger>

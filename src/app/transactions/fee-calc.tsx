@@ -47,7 +47,7 @@ export function FeeCalc() {
             />
           </Field>
           <Field label='주소 타입'>
-            <Select value={type} onValueChange={(v) => setType(v as AddrType)}>
+            <Select items={ADDR_TYPES} value={type} onValueChange={(v) => setType(v as AddrType)}>
               <SelectTrigger className='w-full'>
                 <SelectValue />
               </SelectTrigger>
