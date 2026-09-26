@@ -9,6 +9,7 @@
     "start": "next start",
     "type": "tsc --noEmit",
     "lint": "eslint . --cache --cache-strategy content",
+    "lint:prune": "eslint . --no-cache --prune-suppressions",
     "test:scripts": "node --test scripts/*.test.mjs",
     "inspect": "pnpm type && pnpm lint && pnpm test:scripts",
     "clean:caches": "rm -rf .next",

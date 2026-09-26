@@ -17,6 +17,8 @@
 
 커밋 전에 `pnpm inspect`를 돌린다. CI가 없어 이것이 유일한 게이트다.
 
+동결된 lint 빚을 갚았으면 `pnpm lint:prune`으로 카운트를 줄인다. 규칙은 `eslint.config.mjs`가 갖는다.
+
 ## Agent skills
 
 | 스킬          | 이 레포의 대응                                  | 정본                           |

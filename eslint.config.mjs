@@ -34,6 +34,10 @@ const eslintConfig = defineConfig([
   // no-raw-colors와 no-arbitrary-values의 기존 위반은 eslint-suppressions.json에 동결돼 있다.
   // 새로 생기는 것만 막고, 기존 것은 파일 단위로 갚아 나간다.
   //
+  // 갚은 뒤에는 반드시 `pnpm lint:prune`을 돌린다. 동결은 파일·룰별 건수로 세므로, 고치기만 하고
+  // 카운트를 줄이지 않으면 그 파일은 남은 예산만큼 새 위반을 조용히 통과시킨다. 갚은 것이 있으면
+  // lint가 "suppressions left that do not occur anymore"로 알려 준다.
+  //
   // no-restyle의 정책은 한 문장이다: 컴포넌트는 자기 상자(패딩·모양·기본 표면)를 소유하고,
   // 호출부는 배치와 그 인스턴스의 강조(색·그림자·전환)를 소유한다. 그래서 전역 allow가
   // layout·color·effects·motion이다. 아래 contract 넷은 그 문장이 안 맞는 경우만 연다.
