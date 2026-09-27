@@ -111,6 +111,10 @@ export function useChart(
         vertLine: { color: chrome.crosshair },
         horzLine: { color: chrome.crosshair },
       },
+      // 세로 터치 드래그를 차트가 먹지 않게 한다. 이게 없으면 모바일에서 차트 위를 훑을 때
+      // 페이지가 스크롤되지 않아, 예전에는 "탭하여 차트 조작" 오버레이로 차트 전체를 덮어
+      // 두고 한 번 누른 뒤에만 조작이 되게 막았다(ChartContainer 주석). 확대는 핀치로 한다.
+      handleScroll: { vertTouchDrag: false },
     });
 
     chartRef.current = chart;

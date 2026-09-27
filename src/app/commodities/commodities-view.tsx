@@ -53,6 +53,7 @@ export function CommoditiesView() {
           <MacroChart
             title='금 (Gold)'
             currentLabel={data?.gold.current != null ? `$${data.gold.current.toFixed(2)}` : '-'}
+            formatValue={(v) => `$${v.toFixed(2)}`}
             changePercent={data?.gold.changePercent ?? null}
             lines={chartLines?.gold}
             updatedLabel={relTime ?? undefined}
@@ -62,6 +63,7 @@ export function CommoditiesView() {
           <MacroChart
             title='원유'
             currentLabel={data?.wti.current != null ? `$${data.wti.current.toFixed(2)}` : '-'}
+            formatValue={(v) => `$${v.toFixed(2)}`}
             changePercent={data?.wti.changePercent ?? null}
             lines={chartLines?.oil}
             updatedLabel={relTime ?? undefined}
@@ -71,6 +73,7 @@ export function CommoditiesView() {
           <MacroChart
             title='옥수수 (Corn)'
             currentLabel={data?.corn.current != null ? `$${data.corn.current.toFixed(2)}` : '-'}
+            formatValue={(v) => `$${v.toFixed(2)}`}
             changePercent={data?.corn.changePercent ?? null}
             lines={chartLines?.corn}
             updatedLabel={relTime ?? undefined}
