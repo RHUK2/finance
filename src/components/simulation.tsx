@@ -11,6 +11,7 @@ import {
   Minus,
   Pause,
   Play,
+  Plus,
   RotateCcw,
   StepForward,
   TriangleAlert,
@@ -167,6 +168,7 @@ export function RoundControls({
 
 // 로그 스케일 슬라이더가 쓰는 손잡이 눈금 수. 값이 아니라 위치를 이 정수로 잡고
 // min~max 사이를 로그 등간격으로 매핑한다.
+
 const LOG_TICKS = 240;
 
 // 슬라이더 컨트롤 한 줄: 라벨 + 포맷된 값 + 슬라이더.
@@ -209,15 +211,48 @@ export function ControlSlider({
   const toTick = (v: number) => Math.round((LOG_TICKS * Math.log(v / min)) / ratio);
   const fromTick = (t: number) => min * Math.exp((ratio * t) / LOG_TICKS);
 
+  // 한 칸씩 옮기는 버튼. 좁은 화면에서는 끌기만으로 원하는 값을 맞출 수 없다. 360px 폭에서
+  // 0~100이면 한 칸이 3.6px이고, 로그 스케일은 구간에 따라 그보다 촘촘하다.
+  // 한 칸의 크기를 끌기와 같게 두려고 로그에서도 눈금 하나를 옮긴다(값의 비율이 아니라).
+  const nudge = (dir: 1 | -1) => {
+    if (log) {
+      const tick = Math.min(LOG_TICKS, Math.max(0, toTick(value) + dir));
+      onChange(Number(fromTick(tick).toPrecision(4)));
+      return;
+    }
+    const digits = (String(step).split('.')[1] ?? '').length;
+    onChange(Number(Math.min(max, Math.max(min, value + dir * step)).toFixed(digits)));
+  };
+
   return (
     <div className='flex flex-col gap-1.5'>
       {/* Slider는 data-disabled로 스스로 흐려지므로 래퍼에는 걸지 않는다. 라벨·힌트만 맞춘다. */}
-      <div className={cn('flex items-center justify-between text-sm', disabled && 'opacity-60')}>
-        <span className='flex items-center gap-1.5 font-medium'>
+      <div className={cn('flex items-center justify-between gap-2 text-sm', disabled && 'opacity-60')}>
+        <span className='flex min-w-0 items-center gap-1.5 font-medium'>
           {icon}
-          {label}
+          <span className='truncate'>{label}</span>
         </span>
-        <span className='tabular-nums'>{format(value)}</span>
+        <span className='flex shrink-0 items-center gap-1'>
+          <button
+            type='button'
+            disabled={disabled || value <= min}
+            onClick={() => nudge(-1)}
+            className='flex size-8 items-center justify-center rounded-md border text-muted-foreground hover:text-foreground disabled:opacity-40'
+            aria-label={`${label} 한 칸 줄이기`}
+          >
+            <Minus className='size-3.5' />
+          </button>
+          <span className='min-w-20 text-center tabular-nums'>{format(value)}</span>
+          <button
+            type='button'
+            disabled={disabled || value >= max}
+            onClick={() => nudge(1)}
+            className='flex size-8 items-center justify-center rounded-md border text-muted-foreground hover:text-foreground disabled:opacity-40'
+            aria-label={`${label} 한 칸 늘리기`}
+          >
+            <Plus className='size-3.5' />
+          </button>
+        </span>
       </div>
       {log ? (
         <Slider
