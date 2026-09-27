@@ -38,7 +38,7 @@ export function Shares() {
   const segments = [
     { label: '창업자', value: FOUNDER, className: 'bg-series-1' },
     { label: '나', value: ME, className: 'bg-warn-surface' },
-    { label: '기타 주주', value: OTHERS - buyback, className: 'bg-slate-400' },
+    { label: '기타 주주', value: OTHERS - buyback, className: 'bg-muted-foreground' },
     { label: '신규 투자자', value: newIssue, className: 'bg-good-surface' },
     { label: '자사주 (의결권·배당 없음)', value: buyback, className: 'bg-muted-foreground/25' },
   ].map((s) => ({ ...s, label: `${s.label} ${((s.value / issued) * 100).toFixed(1)}%` }));

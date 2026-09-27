@@ -49,13 +49,16 @@ const eslintConfig = defineConfig([
       // 색은 두 축이다. 판정(good·bad·warn)과 계열(series-1~4). globals.css가 정본이고,
       // 어느 쪽인지는 "좋고 나쁨의 뜻이 있는가"로 가른다.
       // fill-none·stroke-none은 색이 아니라 none인데 룰이 색 이름으로 읽는다.
-      'shadcn/no-raw-colors': ['error', { allow: ['fill-none', 'stroke-none'] }],
+      // scanAllStrings를 켜는 것은 이 레포가 클래스를 상수·룩업 테이블에 자주 담기 때문이다.
+      // 켜지 않으면 TAG_STYLE·CLASSIFICATIONS 같은 객체 안의 색을 룰이 아예 못 본다.
+      'shadcn/no-raw-colors': ['error', { scanAllStrings: true, allow: ['fill-none', 'stroke-none'] }],
       // 스케일이 있는 것(간격·모양·글자 크기)만 본다. 아래는 스케일이 없는 값이라 정확한 수치를
       // 쓰는 것이 정상이다: 격자 템플릿, 콘텐츠 상자 크기(차트 캔버스 높이·가로 스크롤 최소폭),
       // 계산된 위치 보정, 4px부터 시작하는 블러 스케일이 표현 못 하는 1px, 임의 속성과 CSS 변수 선언.
       'shadcn/no-arbitrary-values': [
         'error',
         {
+          scanAllStrings: true,
           allow: [
             'grid-cols-*',
             'grid-rows-*',
@@ -96,6 +99,12 @@ const eslintConfig = defineConfig([
         },
       ],
     },
+  },
+  // 공포·탐욕 지수의 5단계 척도. 판정도 계열도 아닌 세 번째 축(척도)이고 이 레포에 하나뿐이다.
+  // 같은 5색을 lightweight-charts가 hex로도 받아야 해서 팔레트가 차트와 함께 있어야 한다.
+  {
+    files: ['src/components/fear-greed-chart.tsx'],
+    rules: { 'shadcn/no-raw-colors': 'off' },
   },
   // mempool.space의 보라 블록 생김새를 따라 그린 삽화다. 네 단계 명도가 서로 묶여 있어
   // 토큰 하나로 못 바꾸고, 토큰으로 올리면 "우리 팔레트에 보라 4단계가 있다"는 거짓말이 된다.

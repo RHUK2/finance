@@ -235,7 +235,7 @@ export const TIERS: Tier[] = [
     size: 40,
     passthrough: 0.6,
     share: 0.5,
-    className: 'bg-sky-500',
+    className: 'bg-series-1',
   },
   {
     id: 'emerging',
@@ -244,7 +244,7 @@ export const TIERS: Tier[] = [
     size: 12,
     passthrough: 1.0,
     share: 0.35,
-    className: 'bg-amber-500',
+    className: 'bg-warn-surface',
   },
   {
     id: 'fragile',
@@ -253,7 +253,7 @@ export const TIERS: Tier[] = [
     size: 2.5,
     passthrough: 1.6,
     share: 0.15,
-    className: 'bg-rose-500',
+    className: 'bg-bad-surface',
   },
 ];
 

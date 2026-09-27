@@ -63,7 +63,7 @@ export function TaxShield() {
   // 영업이익 150억이 세 곳으로 갈라진다. 부채 비중을 올리면 정부 몫이 줄어든다.
   const slices = [
     { label: `채권자 (이자) ${formatEok(interest, 0)}`, value: interest, className: 'bg-bad-surface' },
-    { label: `정부 (법인세) ${formatEok(tax, 0)}`, value: tax, className: 'bg-slate-400' },
+    { label: `정부 (법인세) ${formatEok(tax, 0)}`, value: tax, className: 'bg-muted-foreground' },
     { label: `주주 (순이익) ${formatEok(net, 0)}`, value: net, className: 'bg-good-surface' },
   ];
 
