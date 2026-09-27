@@ -12,6 +12,8 @@
  */
 export const ENDPOINTS = {
   market: 300,
+  stocks: 86400,
+  strategy: 86400,
   'mempool-stats': 300,
   'mining-stats': 300,
   'mining-pools': 86400,

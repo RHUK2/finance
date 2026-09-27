@@ -65,7 +65,8 @@ bash link-worktree-files.sh
 - **캐시 설정** (`src/lib/cache-config.ts`): 신선도(TTL)의 단일 출처. `ENDPOINTS` 표의 키 = TanStack Query queryKey = `/api/<key>` 경로 세그먼트. 서버 캐시 TTL과 클라이언트 `staleTime`/`refetchInterval`이 모두 여기서 파생
 - **Route Handler** (`src/app/api/*/route.ts`): 외부 API를 호출하고 `cached(key, fetcher)`(`src/lib/cache.ts`, Upstash read-through + 락 기반 스탬피드 차단)로 캐싱. 클라이언트에 API 키나 외부 도메인을 노출하지 않는 프록시 역할. 공용 fetch 헬퍼는 `src/lib/fred.ts`(FRED), `src/lib/yahoo.ts`(Yahoo 시계열), `src/lib/series.ts`(`MacroSeries` 타입·변환)에 위치
 - **훅** (`src/hooks/use-*.ts`): 각 훅은 `useEndpoint<T>(key)`(`src/hooks/use-endpoint.ts`) 한 줄 래퍼. 컴포넌트는 훅을 통해서만 데이터 접근
-- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 자산·거시·원자재), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조. Google Finance는 데이터 출처가 아니다. `market` 라우트의 `GF` 상수는 자산 테이블 행을 눌렀을 때 열리는 바깥 링크(`gfUrl`)를 조립할 뿐이고, 시세는 전부 `yf.quote` 하나에서 온다
+- **외부 API 의존성**: Yahoo Finance(`yahoo-finance2`, 주식·거시·원자재), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
+- **야후를 읽는 라우트가 넷**인 것은 화면이 넷이기 때문이 아니라 페이지마다 내려보낼 심볼이 다르기 때문이다. `stocks`·`strategy`·`economy`·`commodities`가 모두 `fetchYahooSeries`로 일봉을 받고(기간은 라우트가 `years`로 정한다. 거시·원자재 2년, `stocks` 5년, `strategy` 7년), `market`만 `yf.quote`로 실시간 시세를 받는다. `market`이 따로 남은 이유는 그 하나의 소비자(`bitcoin-volatility`의 두 갈래 운명 탭)가 하루 늦는 종가를 쓸 수 없어서다
 - **API 키**: `FRED_API_KEY`와 `ECOS_API_KEY` 둘뿐이고 둘 다 없어도 된다. 키를 읽는 세 라우트(`fred`·`inflation-data`·`inflation-data-kr`)가 모두 키가 없으면 `available: false`를 돌려주고, 화면은 그 데이터 없이 그려진다(`economy`의 `FredGate`, `inflation`의 안내 카드). 셋 중 어느 하나만 필수인 것이 아니므로 새 키 기반 라우트를 만들 때도 이 분기를 넣는다. 제공처별 함정은 문서가 아니라 해당 파일 주석에 둔다(폐기 시리즈와 `Promise.all` 전파는 `src/lib/fred.ts`, 키 부재를 500으로 만들지 않는 이유는 `api/inflation-data-kr/route.ts`)
 
 ### 비트코인 지표 모델 (`src/lib/bitcoin-models.ts`)
@@ -113,12 +114,16 @@ bash link-worktree-files.sh
 - `addZoneLines(series, zones)`: 기준선(대시 price line) 일괄 추가 헬퍼
 - 모든 차트 컴포넌트는 `useChart`만 사용하고 lightweight-charts를 직접 import하지 않음 — 시리즈 생성자(`LineSeries`, `AreaSeries` 등)와 타입은 `use-chart.ts`가 재수출하므로 거기서 import
 
-### 자산 테이블 (`src/components/assets-table.tsx`)
+차트 카드의 조작 규약은 `MacroChart`·`IndicatorCard`·`ChartContainer` 셋이 나눠 갖는다.
 
-모바일/데스크탑이 완전히 다른 렌더링 경로:
+| 어디             | 무엇                                                                                                        |
+| ---------------- | ----------------------------------------------------------------------------------------------------------- |
+| `useChart`       | `handleScroll.vertTouchDrag: false`. 모바일 세로 스크롤을 차트가 먹지 않게 한다. 확대는 핀치                |
+| `ChartContainer` | 차트를 덮는 오버레이를 두지 않는다. 클릭해야 조작되는 방식은 차트가 열둘인 페이지에서 열두 번의 클릭이 된다 |
+| `IndicatorCard`  | 설명은 접힘이 기본. 제목 줄 오른쪽은 `action` 슬롯(기간 탭)이 갱신시각 자리를 대신 쓴다                     |
+| `MacroChart`     | 기간 탭(1개월·6개월·1년·전체, 기본 전체)과 커서 값 표시. 좁혔을 때만 구간 수익률이 전일 대비 옆에 붙는다    |
 
-- **데스크탑**: TanStack Table (`useReactTable`) — `globalFilter` + `getSortedRowModel` 사용
-- **모바일**: `mobileSorted` useMemo로 직접 렌더링 — TanStack Table을 거치지 않으므로 `globalFilter`를 별도로 적용해야 함 (이미 적용됨)
+기간 탭은 라우트가 내려보낸 구간을 좁히기만 한다. 더 긴 기간이 필요하면 탭이 아니라 라우트의 `years`를 고친다. 커서 값을 보이려면 `formatValue`를 넘긴다. 통화·자릿수는 호출부가 알고 있으므로 `MacroChart`가 짐작하지 않는다. 선이 여럿인 차트는 첫 선의 값만 읽는다(헤드라인이 가리키는 것과 같은 선).
 
 ### 레이아웃
 
@@ -134,13 +139,13 @@ bash link-worktree-files.sh
 
 ```text
 데이터 대시보드   h1 없음 · 전폭 · 합니다체
-  자산 현황 · 경제 차트 · 원자재 차트 · 비트코인 차트 · 비트코인 네트워크
+  비트코인 차트(/) · 주식 차트 · 경제 차트 · 원자재 차트 · 비트코인 네트워크
 
 설명형 페이지     h1 · max-w-5xl · 해라체
   나머지 전부
 ```
 
-데이터를 보여 주는 화면은 존대, 개념을 설명하는 화면은 평서다. `/bitcoin`과 `/mempool`에 h1이 없는 것은 빠뜨린 게 아니라 대시보드 부류의 규약이다.
+데이터를 보여 주는 화면은 존대, 개념을 설명하는 화면은 평서다. `/`와 `/mempool`에 h1이 없는 것은 빠뜨린 게 아니라 대시보드 부류의 규약이다.
 
 어느 쪽인지는 개수를 세지 말고 껍데기로 판별한다. `ExplainerPage`(`src/components/explainer-page.tsx`)를 쓰면 설명형, `AppHeader`와 `PageMain`을 직접 쓰면 대시보드다. 대시보드는 위에 나열한 다섯뿐이고 늘어날 일이 드물다.
 
@@ -167,6 +172,15 @@ bash link-worktree-files.sh
 
 인터랙티브 설명 페이지(게임이론·소프트워·변동성·전력망·인플레이션 등)가 공유하는 UI: `SimTabs`, `ControlSlider`, `SegmentedControl`, `Metric`/`StatCard`, `StatusBanner`, `Legend`, `Sparkline`, `CostBar`, `StackedBar`, `MarkTable`, `AgentGrid`, `RoundControls`, `CascadeStage`, `ExplainCard`, `SectionIntro`, `IllustrativeDisclaimer`, `Field`, `StepPanel`. 새 시뮬레이션 페이지는 로컬 복제 대신 여기서 import. 페이지 껍데기는 여기가 아니라 `ExplainerPage`다.
 
+`ControlSlider`의 치수와 터치 규약은 손끝 기준으로 잡혀 있다. 되돌리기 쉬우니 근거를 같이 둔다.
+
+| 무엇                             | 왜                                                                                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 손잡이 24px, 트랙 12px           | shadcn 기본값(16px·6px)은 모바일에서 조준이 어렵고 빗맞으면 값이 튄다                                                               |
+| Control 높이 44px                | 닿는 면을 손잡이가 아니라 줄이 갖는다. 손잡이에 가짜 여백을 붙이면 슬라이더를 쌓았을 때 위아래 줄이 서로 겹친다                     |
+| `touch-pan-y` (not `touch-none`) | none이면 슬라이더 위에서 세로로 넘기려는 손짓까지 먹어 페이지가 스크롤되지 않는다                                                   |
+| −/+ 버튼                         | 360px 폭에서 0~100이면 한 칸이 3.6px이라 끌기만으로는 원하는 값을 못 맞춘다. 로그에서도 눈금 하나를 옮겨 끌기와 한 칸 크기를 맞춘다 |
+
 재생 배선은 `src/hooks/use-round-engine.ts`에 셋 있다. 고르는 기준은 궤적의 끝이 미리 정해져 있는가다.
 
 | 훅                                     | 쓰는 경우                                                                              |
@@ -191,7 +205,7 @@ bash link-worktree-files.sh
 
 ## 컨벤션
 
-- **새 자산 추가**: `src/app/api/market/route.ts`의 `SYMBOLS` 배열에 항목 추가
+- **새 종목 추가**: 라우트의 `SYMBOLS`와 화면의 표 둘 다 고친다. 주식은 `src/app/api/stocks/route.ts`의 `SYMBOLS` + `src/hooks/use-stocks.ts`의 `StocksData` + `src/app/stocks/stocks-view.tsx`의 `STOCKS`, 스트래티지 증권은 `src/app/api/strategy/route.ts`. 심볼을 더하기 전에 야후에서 그 티커가 살아 있는지 확인한다. 하나가 죽으면 `fetchYahooSeries`의 `Promise.all`이 라우트 전체를 500으로 만든다(`src/lib/yahoo.ts`)
 - **새 API 엔드포인트 추가**: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·TTL 추가 → 라우트에서 `cached(key, ...)` 사용 → 훅은 `useEndpoint<T>(key)` 한 줄
 - **새 차트 추가**: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - **UI 컴포넌트**: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용

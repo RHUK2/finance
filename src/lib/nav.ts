@@ -3,7 +3,7 @@ import {
   ArrowLeftRight,
   Atom,
   Banknote,
-  BarChart3,
+  CandlestickChart,
   Bitcoin,
   Building2,
   Coins,
@@ -45,16 +45,19 @@ import {
 // 때문이다. 화면에는 그 다섯의 유일한 공통점을 적는다.
 //
 // '비트코인 경제·논쟁' 안에서는 항목 라벨의 '비트코인' 접두사를 뗀다. 그룹 라벨이 이미
-// 답하고 있어서다. 실시간 데이터로 옮겨간 '비트코인 차트'·'비트코인 네트워크'는 그
-// 그룹에 없으므로 접두사를 유지한다. 경로는 어느 쪽도 바꾸지 않는다.
+// 답하고 있어서다. 실시간 데이터에 있는 '비트코인 차트'·'비트코인 네트워크'는 그 그룹에
+// 없으므로 접두사를 유지한다.
+//
+// '비트코인 차트'의 경로가 `/`인 것은 자산 현황을 걷어내면서 그 자리를 물려받았기
+// 때문이다. 파일은 `src/app/page.tsx` + `src/app/bitcoin-view.tsx`에 있다.
 export const NAV_GROUPS = [
   {
     label: '실시간 데이터',
     items: [
-      { label: '자산 현황', href: '/', icon: BarChart3 },
+      { label: '비트코인 차트', href: '/', icon: Bitcoin },
+      { label: '주식 차트', href: '/stocks', icon: CandlestickChart },
       { label: '경제 차트', href: '/economy', icon: LineChart },
       { label: '원자재 차트', href: '/commodities', icon: Wheat },
-      { label: '비트코인 차트', href: '/bitcoin', icon: Bitcoin },
       { label: '비트코인 네트워크', href: '/mempool', icon: Network },
     ],
   },

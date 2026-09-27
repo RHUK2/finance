@@ -4,11 +4,6 @@ import { useEndpoint } from '@/hooks/use-endpoint';
 
 export type MarketItem = {
   symbol: string;
-  ticker: string;
-  label: string;
-  type: 'stock' | 'crypto' | 'macro';
-  gfUrl?: string;
-  hideCurrencySymbol?: boolean;
   price: number | null;
   change: number | null;
   changePercent: number | null;
@@ -20,4 +15,5 @@ export type MarketData = {
   items: MarketItem[];
 };
 
+/** 실시간 시세(300초). 시계열이 필요하면 `use-stocks`나 `use-crypto`를 쓴다. */
 export const useMarket = () => useEndpoint<MarketData>('market');

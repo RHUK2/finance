@@ -2,14 +2,14 @@ import { HydrationBoundary } from '@tanstack/react-query';
 
 import { prefetchEndpoints } from '@/lib/prefetch';
 
-import { AssetsView } from './assets-view';
+import { BitcoinView } from './bitcoin-view';
 
-export default async function AssetsPage() {
-  const state = await prefetchEndpoints(['market']);
+export default async function BitcoinPage() {
+  const state = await prefetchEndpoints(['fear-greed', 'mvrv', 'bitcoin-historical', 'strategy']);
 
   return (
     <HydrationBoundary state={state}>
-      <AssetsView />
+      <BitcoinView />
     </HydrationBoundary>
   );
 }
