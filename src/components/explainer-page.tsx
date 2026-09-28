@@ -18,18 +18,15 @@ export function ExplainerPage({
   title,
   intro,
   children,
-  hideScrollTop,
 }: {
   title: string;
   intro: React.ReactNode;
   children: React.ReactNode;
-  /** 하단 상시 패널과 겹칠 때 스크롤-투-톱 버튼을 숨긴다 */
-  hideScrollTop?: boolean;
 }) {
   return (
     <>
       <AppHeader />
-      <PageMain hideScrollTop={hideScrollTop}>
+      <PageMain>
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>
             <h1 className='text-xl font-semibold'>{title}</h1>

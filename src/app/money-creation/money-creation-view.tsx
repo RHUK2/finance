@@ -44,7 +44,6 @@ export function MoneyCreationView() {
           단계씩 살펴본다. 수치는 개념 이해용 예시다.
         </>
       }
-      hideScrollTop
     >
       <SectionIntro title='네 주체의 장부를 동시에 본다'>
         맨 아래 단계 패널을 한 걸음씩 밀면 정부·연준·시중은행·국민의 대차대조표가 함께 바뀐다. 어느 칸이 무에서 새로

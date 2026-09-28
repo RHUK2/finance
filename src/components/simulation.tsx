@@ -899,7 +899,9 @@ function useInView(ref: RefObject<Element | null>, of: (el: Element) => Element 
 // 덮었고, 펼친 해설이 본문을 계속 가렸다. 워크스루 내내 필요한 것은 해설 전체가 아니라
 // 다음 단계 버튼이라 고정하는 것을 한 줄로 줄였다.
 //
-// 알약은 오른쪽 아래 맨 위로 버튼과 겹치므로 이 패널을 쓰는 페이지는 hideScrollTop을 켠다.
+// 알약은 모바일에서 화면 아래 가운데에 뜬다. 예전에는 오른쪽 아래에 떠 있던 맨 위로
+// 버튼과 겹쳐서 이 패널을 쓰는 페이지가 그 버튼을 껐는데, 지금은 그 버튼이 하단 바
+// 안으로 들어가(mobile-nav-drawer.tsx) 겹칠 면이 없다.
 export function StepPanel({
   step,
   total,
