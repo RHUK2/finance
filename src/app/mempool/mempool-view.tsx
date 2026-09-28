@@ -1,6 +1,6 @@
 'use client';
 
-import { AppHeader } from '@/components/app-header';
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
 import { HashrateChart } from '@/components/hashrate-chart';
 import { PageMain } from '@/components/page-main';
 import { Panel } from '@/components/panel';
@@ -45,7 +45,7 @@ export function MempoolView() {
 
   return (
     <>
-      <AppHeader />
+      <MobileNavDrawer />
       <PageMain>
         <div className='flex flex-col gap-8'>
           {/* 시간축 */}

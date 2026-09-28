@@ -3,7 +3,7 @@
 import { useMemo, useRef } from 'react';
 import { RotateCcw } from 'lucide-react';
 
-import { AppHeader } from '@/components/app-header';
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
 import { FearGreedChart } from '@/components/fear-greed-chart';
 import { MacroChart } from '@/components/macro-chart';
 import { MayerMultipleChart } from '@/components/mayer-multiple-chart';
@@ -81,7 +81,7 @@ export function BitcoinView() {
 
   return (
     <>
-      <AppHeader />
+      <MobileNavDrawer />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>

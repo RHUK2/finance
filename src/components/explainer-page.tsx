@@ -1,16 +1,15 @@
 'use client';
 
-import { AppHeader } from '@/components/app-header';
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
 import { PageMain } from '@/components/page-main';
 
 // 설명형 페이지의 껍데기. 사이트에는 성격이 다른 두 부류가 있고 껍데기 규약도
-// 갈리는데(CLAUDE.md "페이지 두 갈래"), 이 컴포넌트를 쓰면 설명형, AppHeader와
+// 갈리는데(CLAUDE.md "페이지 두 갈래"), 이 컴포넌트를 쓰면 설명형, MobileNavDrawer와
 // PageMain을 직접 쓰면 데이터 대시보드다. 대시보드는 다섯뿐이고 h1도 폭 제한도 없다.
 //
-// breadcrumb은 prop이 아니라 경로로 nav에서 끌어온다. 페이지 이름을 여기와
-// nav.ts 두 곳에 적어 두면 한쪽만 고쳤을 때 같은 페이지가 두 이름으로 보인다.
-// 설명형 페이지는 모두 최상위라 한 단계면 되고, 계층이 생기면 AppHeader에
-// breadcrumbs를 직접 넘기면 된다.
+// 페이지 이름은 여기에 적지 않는다. 데스크탑 사이드바와 모바일 하단 바가 경로로
+// nav.ts에서 끌어오므로 이름의 단일 출처는 거기다. title은 화면에 그리는 h1이고
+// 길잡이가 부르는 이름과 달라도 된다.
 //
 // intro가 ReactNode인 것은 인트로 문단에 다른 페이지로 가는 링크나 <i>, 보간값이
 // 섞이기 때문이다. 감싸는 <p>와 그 클래스는 여기서만 정한다.
@@ -25,7 +24,7 @@ export function ExplainerPage({
 }) {
   return (
     <>
-      <AppHeader />
+      <MobileNavDrawer />
       <PageMain>
         <div className='mx-auto flex max-w-5xl flex-col gap-4'>
           <div>

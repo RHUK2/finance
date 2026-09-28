@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 
+import { AppSidebar } from '@/components/app-sidebar';
 import { QueryProvider } from '@/components/query-provider';
 
 import './globals.css';
@@ -33,8 +34,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className='bg-background antialiased'>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <QueryProvider>
-            {/* 사이드바가 없다. 길잡이는 데스크탑 헤더(AppHeader)와 모바일 하단 바가 맡는다 */}
-            <div className='flex min-h-svh w-full min-w-0 flex-col bg-sidebar dark:bg-background'>{children}</div>
+            {/* 데스크탑 길잡이는 사이드바 하나다. 상단 헤더가 없어 본문이 화면 꼭대기에서 시작한다 */}
+            <div className='flex min-h-svh w-full'>
+              <AppSidebar />
+              <div className='flex min-w-0 flex-1 flex-col bg-sidebar dark:bg-background'>{children}</div>
+            </div>
           </QueryProvider>
           <Toaster position='top-center' richColors />
         </ThemeProvider>

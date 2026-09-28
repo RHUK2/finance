@@ -1,6 +1,6 @@
 'use client';
 
-import { AppHeader } from '@/components/app-header';
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer';
 import { MacroChart } from '@/components/macro-chart';
 import { PageMain } from '@/components/page-main';
 import { Button } from '@/components/ui/button';
@@ -100,7 +100,7 @@ export function EconomyView() {
 
   return (
     <>
-      <AppHeader />
+      <MobileNavDrawer />
       <PageMain>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center'>
