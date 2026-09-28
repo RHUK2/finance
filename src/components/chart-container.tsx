@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { MousePointer2, RotateCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
@@ -10,23 +10,42 @@ type Props = {
   onReset?: () => void;
 };
 
-// 예전에는 차트 위에 "클릭하여 차트 조작" 오버레이를 덮어 두고 한 번 누른 뒤에야 조작이
-// 되게 했다. 막으려던 것은 모바일에서 차트가 세로 스크롤을 먹는 문제였는데, 그 대가로
-// 데스크탑에서도 조작 전에 한 번씩 눌러야 했다. 차트가 열둘인 페이지에서는 열두 번이다.
+// 차트는 한 번 눌러서 깨우기 전에는 조작을 받지 않는다. 오버레이가 막는 것은 두 가지다.
+// 페이지를 넘기려고 차트 위에서 휠을 굴렸을 때 화면이 아니라 차트가 확대되는 것, 그리고
+// 스크롤 중에 차트를 스치면서 축이 흔들리는 것. 둘 다 의도하지 않은 첫 조작이다.
 //
-// 지금은 그 문제를 lightweight-charts 쪽에서 막는다(`handleScroll.vertTouchDrag: false`,
-// src/hooks/use-chart.ts). 세로 터치 드래그는 페이지로 흘러가고 확대는 핀치로 하므로
-// 오버레이가 할 일이 없다. 터치 장치에만 확대 방법을 한 줄 남긴다.
+// 깨운 차트는 바깥을 누르면 다시 잠긴다. 그래서 페이지를 내리다 실수로 건드릴 위험이
+// 차트 하나에만, 그것도 깨어 있는 동안만 생긴다.
+//
+// 오버레이가 있어도 useChart의 handleScroll.vertTouchDrag는 false로 둔다. 깨운 뒤에
+// 세로로 넘기려는 손짓까지 차트가 먹으면 그 차트를 지나칠 방법이 없어진다.
 export function ChartContainer({ containerRef, onReset }: Props) {
-  const [coarse, setCoarse] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
+  const [active, setActive] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCoarse(window.matchMedia('(pointer: coarse)').matches);
+    setIsTouch(window.matchMedia('(pointer: coarse)').matches);
   }, []);
 
+  useEffect(() => {
+    if (!active) return;
+
+    const eventType = isTouch ? 'touchstart' : 'mousedown';
+
+    function handleOutside(e: Event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setActive(false);
+      }
+    }
+
+    document.addEventListener(eventType, handleOutside, { passive: true });
+    return () => document.removeEventListener(eventType, handleOutside);
+  }, [active, isTouch]);
+
   return (
-    <div className='relative overflow-hidden border-y'>
+    <div ref={wrapperRef} className='relative overflow-hidden border-y'>
       <div ref={containerRef} />
       {onReset && (
         <Button
@@ -38,10 +57,16 @@ export function ChartContainer({ containerRef, onReset }: Props) {
           <RotateCcw className='size-3' />
         </Button>
       )}
-      {coarse && (
-        <span className='pointer-events-none absolute right-2 bottom-2 rounded bg-background/70 px-2 py-1 text-3xs text-muted-foreground'>
-          두 손가락으로 확대
-        </span>
+      {!active && (
+        <div
+          className='absolute inset-0 z-10 flex cursor-pointer items-center justify-center bg-black/20 backdrop-blur-[1px] transition-opacity'
+          onClick={() => setActive(true)}
+        >
+          <div className='flex flex-col items-center gap-1.5 rounded-xl border border-white/20 bg-black/50 px-5 py-3 text-white/80 backdrop-blur-sm'>
+            <MousePointer2 className='size-4' />
+            <span className='text-xs font-medium'>{isTouch ? '탭하여 차트 조작' : '클릭하여 차트 조작'}</span>
+          </div>
+        </div>
       )}
     </div>
   );
