@@ -80,7 +80,7 @@ export function illustrativeSha256(entropyHex: string): string {
 }
 
 // 엔트로피 → 체크섬 비트 = 해시의 앞 ENT/32 비트.
-export function checksumBits(entropyHex: string): string {
+function checksumBits(entropyHex: string): string {
   const cs = (entropyHex.length * 4) / 32;
   return hexToBits(illustrativeSha256(entropyHex)).slice(0, cs);
 }

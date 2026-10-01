@@ -31,15 +31,20 @@ export const RAINBOW_BANDS = [
 // 프로토콜 상수
 export const BLOCKS_PER_HALVING = 210_000;
 export const RETARGET_INTERVAL = 2016; // 난이도 조정 주기 (블록)
+export const INITIAL_SUBSIDY_BTC = 50; // 첫 시대의 블록당 보조금
+export const MAX_SUPPLY_BTC = 21_000_000;
+export const TARGET_BLOCK_MINUTES = 10;
+export const BLOCKS_PER_DAY = (24 * 60) / TARGET_BLOCK_MINUTES; // 144
+export const TARGET_RETARGET_DAYS = (RETARGET_INTERVAL * TARGET_BLOCK_MINUTES) / (24 * 60); // 14
 
-// 반감기별 블록 보상 (일일 발행량 계산용)
-const HALVINGS = [
-  { date: '2009-01-03', reward: 50 },
-  { date: '2012-11-28', reward: 25 },
-  { date: '2016-07-09', reward: 12.5 },
-  { date: '2020-05-11', reward: 6.25 },
-  { date: '2024-04-20', reward: 3.125 },
-  { date: '2028-04-20', reward: 1.5625 }, // 추정
+// 반감기별 블록 보상 (일일 발행량 계산용). estimated는 아직 오지 않은 반감기의 추정 날짜다.
+export const HALVINGS = [
+  { date: '2009-01-03', reward: 50, estimated: false },
+  { date: '2012-11-28', reward: 25, estimated: false },
+  { date: '2016-07-09', reward: 12.5, estimated: false },
+  { date: '2020-05-11', reward: 6.25, estimated: false },
+  { date: '2024-04-20', reward: 3.125, estimated: false },
+  { date: '2028-04-20', reward: 1.5625, estimated: true },
 ] as const;
 
 // 상수 날짜의 epoch-ms를 모듈 로드 시 한 번만 파싱 (getEra는 히스토리 포인트마다 호출된다)
@@ -55,9 +60,9 @@ function getEra(dateStr: string): (typeof HALVINGS)[number] {
   return era;
 }
 
-// 일일 신규 발행량 (BTC). 블록당 보상 × 하루 평균 블록 수(144)
+// 일일 신규 발행량 (BTC). 블록당 보상 × 하루 평균 블록 수
 export function dailyIssuanceBtc(dateStr: string): number {
-  return getEra(dateStr).reward * 144;
+  return getEra(dateStr).reward * BLOCKS_PER_DAY;
 }
 
 export type SeriesPoint = { time: string; value: number };

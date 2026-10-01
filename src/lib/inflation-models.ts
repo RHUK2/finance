@@ -34,19 +34,32 @@ export function grow(principal: number, start: number | null, now: number | null
 }
 
 /**
- * 예금 누적: 연 환산 금리(%) 월별 시계열을 월복리로 누적.
- * 시작연도가 금리 데이터 범위 밖이면 null.
+ * 예금 누적의 단일 출처. 시작연도 1월부터 관측월마다 그 달 초의 누적 배수를 찍고, 그 달
+ * 이자(연 환산 금리 ÷ 12)를 곱해 다음 달로 넘긴다. `final`은 마지막 관측월 이자까지 넣은
+ * 배수(마지막 관측 다음 달 초)다. 시작연도가 금리 데이터 범위 밖이면 null.
+ *
+ * 카드(`compoundDeposit`)는 월별 금리가 한 달 늦게 나오므로 마지막 관측월 이자까지 넣은
+ * `final`을 "오늘"로 쓰고, 차트(`depositIndex`)는 각 점의 x축 날짜(관측월 초) 잔고를 그린다.
+ * 두 값의 차이는 마지막 한 달 이자다. 경계를 바꾸려면 여기 한 곳만 고친다.
  */
-export function compoundDeposit(principal: number, rateHistory: Point[] | undefined, year: number): number | null {
+function depositFactors(rateHistory: Point[] | undefined, year: number) {
   if (!rateHistory || rateHistory.length === 0) return null;
   if (rateHistory[0].time > `${year}-12-31`) return null;
   const target = `${year}-01-01`;
+  const monthStart: { time: string; factor: number }[] = [];
   let factor = 1;
   for (const p of rateHistory) {
     if (p.time < target) continue;
+    monthStart.push({ time: p.time, factor });
     factor *= 1 + p.value / 100 / 12;
   }
-  return principal * factor;
+  return { monthStart, final: factor };
+}
+
+/** 예금 누적: 연 환산 금리(%) 월별 시계열을 월복리로 누적. 범위 밖이면 null. */
+export function compoundDeposit(principal: number, rateHistory: Point[] | undefined, year: number): number | null {
+  const f = depositFactors(rateHistory, year);
+  return f ? principal * f.final : null;
 }
 
 /**
@@ -75,17 +88,8 @@ export function normalizeToBase(history: Point[] | undefined, baseYear: number, 
 
 /** 예금 누적 지수 곡선(레이스 차트용). baseYear에서 base로 출발해 월복리. */
 export function depositIndex(rateHistory: Point[] | undefined, baseYear: number, base = 100): Point[] {
-  if (!rateHistory || rateHistory.length === 0) return [];
-  if (rateHistory[0].time > `${baseYear}-12-31`) return [];
-  const target = `${baseYear}-01-01`;
-  const out: Point[] = [];
-  let factor = 1;
-  for (const p of rateHistory) {
-    if (p.time < target) continue;
-    out.push({ time: p.time, value: base * factor });
-    factor *= 1 + p.value / 100 / 12;
-  }
-  return out;
+  const f = depositFactors(rateHistory, baseYear);
+  return f ? f.monthStart.map((m) => ({ time: m.time, value: base * m.factor })) : [];
 }
 
 /** 최저임금 테이블에서 해당 연도(이하 최댓값) 시급을 반환. */
@@ -101,7 +105,8 @@ export function minWageAt(table: { year: number; wage: number }[], year: number)
 // 두 표는 룩업 의미가 다르다. 미국 연방 최저임금은 2009년 이후 실제로 그대로라
 // 표에 없는 연도는 "안 바뀐 것"이고 이하 최댓값 룩업이 옳다. 한국은 매년 바뀌므로
 // 표에 없는 연도는 "아직 표에 안 넣은 것"이라 그대로 조회하면 낡은 값을 오늘 값으로
-// 쓰게 된다. 그래서 한국은 표가 커버하는 마지막 해까지만 조회하도록 아래 값으로 막는다.
+// 쓰게 된다. 그래서 한국은 표가 커버하는 마지막 해(아래 KR_WAGE_LAST_YEAR)까지만 조회한다.
+// 조회 상한은 낡은 값을 막지 못하고 마지막 해 값을 돌려줄 뿐이라, 화면이 그 연도를 함께 적는다.
 
 /** 미국 연방 최저임금 ($/시간). 주요 인상 시점만 기록(이하 최댓값 룩업). */
 export const US_MIN_WAGE: { year: number; wage: number }[] = [

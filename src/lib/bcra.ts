@@ -4,7 +4,7 @@
 //
 // 방향을 여기 한 곳에서 고정한다. 같은 관계를 `비용 ÷ 이득`으로 뒤집어 쓰면
 // "숫자가 크면 안전"과 "숫자가 크면 위험"이 페이지마다 갈려 독자가 혼란스럽다.
-// 비트코인 소프트워와 비트코인 게임이론이 함께 쓴다.
+// 공격이나 이탈의 이득 ÷ 비용을 다루는 페이지가 모두 이 방향을 쓴다.
 
 export function bcra(benefit: number, cost: number): number {
   return benefit / cost;
@@ -18,9 +18,11 @@ export function deterred(ratio: number): boolean {
 // 이득÷비용 비율의 표시용 문자열. 값이 자릿수를 넘나들어 고정 소수점 하나로는
 // 0.03이 `0.0배`가 된다. BCRA 전용이 아니라 같은 모양의 비율이면 무엇이든 쓴다
 // (기축통화의 이탈 유인 비율도 0.03배~200배를 오간다).
+// 구간은 반올림한 값으로 고른다. 원값으로 고르면 9.96이 `10.0배`, 10이 `10배`로 찍혀
+// 같은 크기가 두 모양이 된다.
 export function ratioLabel(ratio: number): string {
-  if (ratio >= 10) return `${Math.round(ratio)}배`;
-  if (ratio >= 0.1) return `${ratio.toFixed(1)}배`;
+  if (Number(ratio.toFixed(1)) >= 10) return `${Math.round(ratio)}배`;
+  if (Number(ratio.toFixed(2)) >= 0.1) return `${ratio.toFixed(1)}배`;
   return `${ratio.toFixed(2)}배`;
 }
 

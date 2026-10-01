@@ -17,11 +17,15 @@ export const REGULATION = {
 // 6억 이하 1%, 6억 초과 9억 이하는 (가액[억] × 2/3 − 3), 9억 초과 3%.
 // 여기에 지방교육세가 취득세율의 10%만큼 붙는다(취득세율 × 1/2 × 20%).
 // 다주택·조정대상지역 중과세율과 전용 85제곱미터 초과에 붙는 농특세 0.2%는 넣지 않았다.
-export const ACQUISITION_TAX_NOTE = '1주택 기준, 지방교육세 포함';
+// 구간 경계는 계산과 화면 설명이 같은 값을 쓰도록 여기 한 번만 둔다.
+const ACQUISITION_TAX_BRACKET_EOK = { flatUpTo: 6, progressiveUpTo: 9 } as const;
+export const ACQUISITION_TAX_NOTE = '1주택 기준, 지방교육세 포함, 2026년 8월 현재';
+export const ACQUISITION_TAX_BRACKET_NOTE = `${ACQUISITION_TAX_BRACKET_EOK.flatUpTo}억 초과 ${ACQUISITION_TAX_BRACKET_EOK.progressiveUpTo}억 이하는 가격에 따라 오른다`;
 
 export function acquisitionTaxRate(priceMan: number) {
   const eok = priceMan / 10000;
-  const base = eok <= 6 ? 1 : eok <= 9 ? (eok * 2) / 3 - 3 : 3;
+  const { flatUpTo, progressiveUpTo } = ACQUISITION_TAX_BRACKET_EOK;
+  const base = eok <= flatUpTo ? 1 : eok <= progressiveUpTo ? (eok * 2) / 3 - 3 : 3;
   return base * 1.1;
 }
 

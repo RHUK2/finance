@@ -31,8 +31,12 @@ export function openChannel(fundingSats: number): ChannelState {
 }
 
 // 오프체인 이체: 채널 잔액만 옮기고 새 커밋먼트 tx로 교체한다(온체인 tx는 발생하지 않는다).
+// 보내는 쪽 잔액을 넘는 금액은 잘라 보내지 않고 거절한다(채널 용량 한도). 옮긴 것이 없으면
+// 새 커밋먼트도 없으므로 업데이트 횟수를 올리지 않는다.
 export function payOffchain(state: ChannelState, fromAlice: boolean, amountSats: number): ChannelState {
-  const amount = Math.min(amountSats, fromAlice ? state.aliceSats : state.bobSats);
+  const available = fromAlice ? state.aliceSats : state.bobSats;
+  if (amountSats <= 0 || amountSats > available) return state;
+  const amount = amountSats;
   return {
     aliceSats: state.aliceSats + (fromAlice ? -amount : amount),
     bobSats: state.bobSats + (fromAlice ? amount : -amount),

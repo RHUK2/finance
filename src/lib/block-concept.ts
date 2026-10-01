@@ -3,6 +3,7 @@
 // 그럴듯하게 보이는 결정적 값(illustrative)이며, 실제 채굴 연산이 아니다.
 
 import { illustrativeHex } from './bip-concept';
+import { TARGET_RETARGET_DAYS } from './bitcoin-models';
 import { clamp } from './utils';
 
 export type BlockHeader = {
@@ -43,8 +44,6 @@ export function meetsTarget(hash: string, leadingZeros: number): boolean {
 export function expectedTries(leadingZeros: number): number {
   return Math.pow(16, leadingZeros);
 }
-
-export const TARGET_RETARGET_DAYS = 14; // 2016블록 × 10분 = 20,160분 = 14일
 
 // 난이도 조정: 목표 기간(14일) ÷ 실제 걸린 기간의 배율로 난이도를 바꾸되,
 // 프로토콜 규칙대로 조정 폭을 ±4배로 제한한다.

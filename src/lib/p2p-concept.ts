@@ -21,7 +21,7 @@ export type GossipGraph = {
   positions: { x: number; y: number }[];
 };
 
-// 반발력(forceManyBody)·연결(forceLink)·중심 고정(forceCenter)·겹침 방지(forceCollide) 힘을
+// 반발력(forceManyBody)·연결(forceLink)·중심 인력(forceX·forceY)·겹침 방지(forceCollide) 힘을
 // 정해진 틱 수만큼 미리 계산해, 노드가 자연스럽게 퍼진 정적 레이아웃을 얻는다.
 // 초기 좌표는 seeded RNG로 뽑아 리셋해도 매번 같은 모양이 나오게 한다.
 function layoutWithForce(nodeCount: number, edges: [number, number][], rng: () => number) {
@@ -132,7 +132,8 @@ export function canReplaceByFee(
 // IBD(초기 블록 동기화) 개념 수치. 헤더는 80바이트 고정, 블록은 평균 크기로 근사.
 export const HEADER_BYTES = 80;
 export const AVG_BLOCK_BYTES = 1_500_000; // 최근 블록 평균 크기 근사(1.5MB, SegWit 할인 반영 후 체감치)
-export const TOTAL_BLOCKS_APPROX = 963_000; // 2026년 8월 기준 근사 블록 높이
+export const TOTAL_BLOCKS_APPROX = 963_000; // 근사 블록 높이. 기준 시점은 아래 상수이고 화면에도 함께 적는다
+export const TOTAL_BLOCKS_AS_OF = '2026년 8월';
 
 export function headersBytes(blocks: number): number {
   return blocks * HEADER_BYTES;
