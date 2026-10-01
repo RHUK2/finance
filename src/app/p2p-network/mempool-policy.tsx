@@ -12,7 +12,7 @@ import { feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
 const TX_VBYTES = txVBytes('native', 1, 2);
 
 export function MempoolPolicy() {
-  const [minRelayRate, setMinRelayRate] = useState(1);
+  const [minRelayRate, setMinRelayRate] = useState(0.1);
 
   const [feeRate, setFeeRate] = useState(1);
   const fee = feeSats(TX_VBYTES, feeRate);
@@ -37,12 +37,12 @@ export function MempoolPolicy() {
         <ControlSlider
           icon={<Gauge className='size-4 text-series-1' />}
           label='이 노드의 최소 릴레이 수수료율 (아래 두 시연 공통)'
-          hint='기본값 1 sat/vB. 멤풀이 꽉 차면 노드가 이 값을 스스로 더 올리기도 한다.'
+          hint='기본값 0.1 sat/vB(Bitcoin Core 29.1부터, 그 전에는 1 sat/vB). 멤풀이 꽉 차면 노드가 이 값을 스스로 더 올리기도 한다.'
           value={minRelayRate}
           onChange={setMinRelayRate}
-          min={0.5}
+          min={0.1}
           max={5}
-          step={0.5}
+          step={0.1}
           format={(v) => `${v} sat/vB`}
         />
       </Panel>
@@ -59,7 +59,7 @@ export function MempoolPolicy() {
           onChange={setFeeRate}
           min={0}
           max={10}
-          step={0.5}
+          step={0.1}
           format={(v) => `${v} sat/vB`}
         />
 
@@ -101,9 +101,9 @@ export function MempoolPolicy() {
           label='원본 tx 수수료율 (멤풀에 멈춰 있음)'
           value={oldFeeRate}
           onChange={setOldFeeRate}
-          min={0.5}
+          min={0.1}
           max={10}
-          step={0.5}
+          step={0.1}
           format={(v) => `${v} sat/vB`}
         />
         <ControlSlider
@@ -111,9 +111,9 @@ export function MempoolPolicy() {
           label='대체 tx 수수료율'
           value={newFeeRate}
           onChange={setNewFeeRate}
-          min={0.5}
+          min={0.1}
           max={10}
-          step={0.5}
+          step={0.1}
           format={(v) => `${v} sat/vB`}
         />
 
@@ -145,7 +145,7 @@ export function MempoolPolicy() {
           <>
             멤풀 용량(기본 300MB)이 꽉 차면 노드는 더 이상 아무 tx나 받아주지 않는다. 이미 들어 있는 tx 중{' '}
             <b>수수료율이 가장 낮은 것부터 밀어내고</b>, 그 밀려난 tx의 수수료율을 새로운 &#39;최소 릴레이 수수료&#39;로
-            삼는다. 그래서 네트워크가 혼잡할수록 이 문턱은 1 sat/vB보다 훨씬 높아진다.
+            삼는다. 그래서 네트워크가 혼잡할수록 이 문턱은 기본값 0.1 sat/vB보다 훨씬 높아진다.
           </>
         }
       />

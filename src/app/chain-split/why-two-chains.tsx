@@ -18,13 +18,15 @@ import {
   formatDuration,
 } from './models';
 
-// 슬라이더의 시작값(0~100). 화면 문구는 models의 SIGNAL_PCT_LABEL을 쓴다.
+// 슬라이더의 시작값(0~100). 블록 신호율이지 해시레이트가 아니다. 소수 체인으로 실제 옮겨 간 해시는
+// 이보다 훨씬 적었으므로(보도 약 257 PH/s, 전체의 0.03% 안팎) 넉넉한 상한으로 놓고 시작한다.
+// 화면 문구는 models의 SIGNAL_PCT_LABEL을 쓴다.
 const SIGNAL_HASH_PCT = FACTS.signalingShare.value * 100;
 const MINORITY_BLOCKS = `${FACTS.minorityBlocks.value}블록`;
 
 export function WhyTwoChains() {
-  // 실제 BIP-110 신호 비율에서 시작한다. 여기가 이 탭이 설명하려는 지점이고,
-  // 슬라이더를 오른쪽으로 밀어 보면 왜 이 값이 회복 불능인지가 대비로 드러난다.
+  // 실제 BIP-110 신호 비율에서 시작한다. 상한으로 잡아도 회복 불능이라는 것이 이 탭이 설명하려는 지점이고,
+  // 슬라이더를 오른쪽으로 밀어 보면 대비가 드러난다.
   const [hashPct, setHashPct] = useState(SIGNAL_HASH_PCT);
   const share = hashPct / 100;
   const interval = blockIntervalMinutes(share);
@@ -67,8 +69,8 @@ export function WhyTwoChains() {
         <p className='text-sm/relaxed text-muted-foreground'>
           BIP-110은 {FACTS.signalingHeight.value.toLocaleString('ko-KR')}블록부터 이 구간에 들어갔다. 직전{' '}
           {RETARGET_INTERVAL.toLocaleString('ko-KR')}블록 중 신호한 블록은 {FACTS.signalingBlocks.value}개,{' '}
-          {SIGNAL_PCT_LABEL}였다. 조기 활성화 임계값은 {LOCK_IN_PCT_LABEL}다. 활성화에 필요한 지지의 20분의 1도 안 되는
-          해시레이트가 다수 체인에서 떨어져 나온 셈이다.
+          {SIGNAL_PCT_LABEL}였다. 조기 활성화 임계값은 {LOCK_IN_PCT_LABEL}다. 신호율은 활성화에 필요한 지지의 20분의 1도
+          안 됐고, 소수 체인으로 실제 옮겨 간 해시레이트는 그보다도 훨씬 적었다(보도된 값은 전체의 0.03% 안팎).
         </p>
       </Panel>
 
@@ -83,7 +85,7 @@ export function WhyTwoChains() {
         <ControlSlider
           icon={<Gauge className='size-4 text-series-1' />}
           label='소수 체인이 가져간 해시레이트 비중'
-          hint={`BIP-110 실제 신호 비율은 ${SIGNAL_PCT_LABEL}였다`}
+          hint={`시작값은 BIP-110 블록 신호율 ${SIGNAL_PCT_LABEL}. 실제로 옮겨 간 해시는 이보다 훨씬 적었다`}
           value={hashPct}
           onChange={setHashPct}
           min={0.5}

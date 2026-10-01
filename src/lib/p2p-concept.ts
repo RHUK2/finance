@@ -1,5 +1,5 @@
 // P2P 네트워크 전파 개념 시연용 순수 계산 함수.
-// ⚠️ 실제 비트코인 노드는 8~125개의 피어와 무작위로 연결된다. 여기서는 화면에 다 그릴 수 있게
+// ⚠️ 실제 비트코인 노드는 8~125개의 피어와 무작위로 연결된다(Bitcoin Core 31 기준. 상한은 32.0에서 200으로 오른다). 여기서는 화면에 다 그릴 수 있게
 // 노드 수·평균 연결 수를 훨씬 작게 줄였을 뿐, 그래프가 격자가 아니라 무작위라는 점(그래서 홉 수가
 // 적다는 스몰월드 성질)은 실제와 같은 구조로 재현한다.
 
@@ -129,22 +129,22 @@ export function canReplaceByFee(
   return { accepted: feeDelta > 0 && feeDelta >= requiredDelta, feeDelta, requiredDelta };
 }
 
-// IBD(초기 블록 동기화) 개념 수치. 헤더는 80바이트 고정, 블록은 평균 크기로 근사.
+// IBD(초기 블록 동기화) 개념 수치. 헤더는 80바이트 고정, 블록 하나는 최근 평균 크기로 근사하고 체인 전체는 실측을 쓴다.
 export const HEADER_BYTES = 80;
 export const AVG_BLOCK_BYTES = 1_500_000; // 최근 블록 평균 크기 근사(1.5MB, SegWit 할인 반영 후 체감치)
 export const TOTAL_BLOCKS_APPROX = 963_000; // 근사 블록 높이. 기준 시점은 아래 상수이고 화면에도 함께 적는다
 export const TOTAL_BLOCKS_AS_OF = '2026년 8월';
+// 체인 전체 크기 실측. 초기 블록은 훨씬 작았으므로 "최근 평균 × 높이"(약 1.4TB)로 셈하면 두 배 가까이 부풀려진다.
+// 블록 963,000이 나온 2026-08-18 무렵 약 762GB(blockchain.info `blocks-size`). 기준 시점은 TOTAL_BLOCKS_AS_OF와 같다.
+export const CHAIN_SIZE_APPROX_BYTES = 760e9;
 
 export function headersBytes(blocks: number): number {
   return blocks * HEADER_BYTES;
 }
 
-export function blocksBytes(blocks: number): number {
-  return blocks * AVG_BLOCK_BYTES;
-}
-
 export function formatBytes(bytes: number): string {
   if (bytes >= 1e12) return `${(bytes / 1e12).toFixed(1)}TB`;
+  if (bytes >= 1e11) return `${(bytes / 1e9).toFixed(0)}GB`; // 세 자리 GB는 소수점이 근사치의 정밀도를 부풀린다
   if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(1)}GB`;
   if (bytes >= 1e6) return `${(bytes / 1e6).toFixed(1)}MB`;
   if (bytes >= 1e3) return `${(bytes / 1e3).toFixed(1)}KB`;

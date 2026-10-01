@@ -81,7 +81,7 @@ export function ReorgRace() {
           format={(v) => `${v}%`}
         />
         <ControlSlider
-          icon={<ShieldOff className='size-4 text-muted-foreground' />}
+          icon={<ShieldOff className='size-4 text-series-2' />}
           label='가맹점이 기다린 확인 수'
           hint='공격자는 이 수만큼 뒤처진 상태에서 비밀 체인을 시작한다.'
           value={confirmations}

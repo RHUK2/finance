@@ -207,7 +207,7 @@ export function LimitedLiability() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 font-semibold'>
-          <ShieldOff className='size-4 text-bad' />
+          <ShieldOff className='size-4 text-series-3' />
           벽이 무너지는 전형적인 경우
         </span>
         <ul className='flex list-disc flex-col gap-1 pl-5 text-sm/relaxed text-muted-foreground'>

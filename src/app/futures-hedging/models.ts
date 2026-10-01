@@ -89,7 +89,7 @@ export type CrackResult = {
   exposedTo: 'both' | 'gasoline' | 'none';
 };
 
-// 원유 1배럴이 휘발유 1배럴이 된다고 단순화한다. 실제 정제 수율(3:2:1)을 넣으면
+// 원유 1배럴이 휘발유 1배럴이 된다고 단순화한다. 관례 비율(3:2:1, 실제 수율의 근사 벤치마크)을 넣으면
 // 계수 계산에 시선이 쏠려 양방향 헤지라는 요점이 묻힌다.
 export function crackResult(crude: number, gasoline: number, hedge: CrackHedge): CrackResult {
   const crackNow = gasoline - crude;

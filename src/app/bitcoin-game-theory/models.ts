@@ -271,7 +271,7 @@ export type AttackInput = {
   electricity: number; // USD per kWh
 };
 
-const J_PER_TH = 20; // 최신 ASIC 효율 ≈ 20 J/TH → 20 W per TH/s
+const J_PER_TH = 15; // 현행 주력 세대 ASIC 효율 ≈ 15 J/TH(S21 Pro급) → 15 W per TH/s
 // 지금 블록 보상 (BTC). 마지막으로 실제 일어난 반감기의 보상이라 다음 반감기가 오면 HALVINGS를 따라 바뀐다.
 const BLOCK_REWARD = HALVINGS.filter((h) => !h.estimated).at(-1)!.reward;
 const BLOCKS_PER_HOUR = 60 / TARGET_BLOCK_MINUTES;
@@ -281,6 +281,14 @@ const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불
 // ASIC 채굴기의 실효 수명. 신형이 나오면 효율에서 밀려 채산성이 사라지는 시점까지를 본다.
 // 회수 기간이 이 값을 넘으면 "정직하게 채굴하면 장비값을 회수하고 그 뒤로 계속 번다"는
 // 이 탭의 논지 자체가 성립하지 않으므로, 화면의 판정 기준으로 쓴다.
+//
+// 5년은 회계상 내용연수가 아니라 실가동 수명이다. 상장 채굴사는 채굴기를 3년에 걸쳐 감가상각한다
+// (CleanSpark 10-K FY2025, FY2024에 5년에서 단축. Cipher도 3년). 그러나 감가상각 기간은 장부를
+// 보수적으로 잡는 기준이고, 장비를 끄는 시점은 전기료가 정한다. 네트워크 평균 효율이 약 28.2 J/TH
+// (Cambridge Digital Mining Industry Report 2025, 2024년 6월 추정)로 현행 주력(15 J/TH)보다 한참 나쁘다는
+// 것은 상각이 끝난 구세대 기종이 여전히 돌고 있다는 뜻이다. 이 탭의 기본 전기료($0.025/kWh)는 전력이 가장
+// 싼 축이라 구세대 기종이 가장 오래 버티는 곳이다.
+// 수명을 3년으로 줄이면 기본값(약 4.3년)에서도 판정이 뒤집히므로, 값을 바꿀 때는 그 점을 함께 본다.
 export const HARDWARE_LIFE_YEARS = 5;
 
 export function attack51({ btcPrice, networkHashrate, attackHours, hardwareCostPerTH, electricity }: AttackInput) {

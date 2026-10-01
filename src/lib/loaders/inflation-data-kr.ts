@@ -5,12 +5,12 @@ import { toMacroSeries, type MacroSeries } from '@/lib/series';
 
 import type { InflationData } from './inflation';
 
-const START = '199601'; // 기준금리 시계열 시작 시점에 맞춤
+const START = '199601'; // CPI·KB 주택지수가 닿는 1996년부터 받는다. 기준금리(722Y001)는 1999년 5월부터다
 const STAT = {
   // ⚠️ 통계표코드/항목코드는 ECOS "통계코드검색"으로 검증 후 확정할 것.
   //    한국은행이 표를 개편하면 코드가 바뀔 수 있다.
   cpi: { stat: '901Y009', item: '0' }, // 소비자물가지수(총지수)
-  m2: { stat: '161Y006', item: 'BBHA00' }, // M2(광의통화, 평잔·원계열) 신계열, 2003~
+  m2: { stat: '161Y006', item: 'BBHA00' }, // M2(광의통화, 평잔·원계열) 신계열, 2003-10~
   deposit: { stat: '722Y001', item: '0101000' }, // 한국은행 기준금리(단기 안전금리 근사, 미국 TB3MS에 대응)
   stock: { stat: '901Y014', item: '1070000' }, // KOSPI 종가(월), 배당 제외
   house: { stat: '901Y062', item: 'P63A' }, // KB 주택매매가격지수(총지수)

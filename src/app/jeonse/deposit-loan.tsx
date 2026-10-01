@@ -141,7 +141,7 @@ export function DepositLoan() {
 
       <ExplainCard
         icon={<Landmark className='size-4 text-series-1' />}
-        title='왜 한국에만 전세가 있나'
+        title='왜 전세는 한국에서 이렇게 커졌나'
         preview='은행이 대출을 잘 안 해 주던 시절, 임대인은 임차인에게서 직접 돈을 빌렸다.'
         body={
           <>

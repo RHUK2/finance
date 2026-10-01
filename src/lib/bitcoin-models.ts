@@ -6,7 +6,8 @@ export function daysSinceGenesis(dateStr: string): number {
 }
 
 // Power Law: log10(price) = A * log10(days) + B
-// Calibrated to BTC cycle lows: Nov 2012 (~$13), Jul 2015 (~$280), Dec 2018 (~$3,200)
+// 세 점에 맞춘 자체 보정: 2012-11(~$13), 2015-07(~$280), 2018-12(~$3,200). 사이클 저점은 2018-12뿐이고
+// (2015년 저점은 1월 약 $170, 2012-11은 반감기 시점), 공개 모델(Burger 2019: A 5.845, B −17.016)과 계수가 다르다.
 const PL_A = 5.97;
 const PL_B = -17.72;
 
@@ -44,7 +45,8 @@ export const HALVINGS = [
   { date: '2016-07-09', reward: 12.5, estimated: false },
   { date: '2020-05-11', reward: 6.25, estimated: false },
   { date: '2024-04-20', reward: 3.125, estimated: false },
-  { date: '2028-04-20', reward: 1.5625, estimated: true },
+  // 2026-08-18 블록 963,000에서 1,050,000까지 87,000블록을 10분 간격으로 셈한 추정. 실제 반감기 뒤 확정값으로 바꾼다.
+  { date: '2028-04-13', reward: 1.5625, estimated: true },
 ] as const;
 
 // 상수 날짜의 epoch-ms를 모듈 로드 시 한 번만 파싱 (getEra는 히스토리 포인트마다 호출된다)

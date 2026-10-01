@@ -19,7 +19,7 @@ const MARKET_AS_OF = BTC_PRICE_BASELINE.asOf;
 export function AttackGame() {
   // 기준 시점의 시장 상황을 기본값으로 둔다. 슬라이더로 바꿔 보는 게 이 탭의 목적이다.
   const [btcPrice, setBtcPrice] = useState(BTC_PRICE_BASELINE.value);
-  const [networkHashrate, setNetworkHashrate] = useState(810);
+  const [networkHashrate, setNetworkHashrate] = useState(910);
   const [attackHours, setAttackHours] = useState(6);
   const [hardwareCostPerTH, setHardwareCostPerTH] = useState(15);
   const [electricity, setElectricity] = useState(0.025);
@@ -94,7 +94,7 @@ export function AttackGame() {
         <ControlSlider
           icon={<Zap className='size-4 text-series-3' />}
           label='전기 요금'
-          hint='기본값은 대형 채굴장이 맺는 산업용 전력 계약 수준이다.'
+          hint='기본값은 전력이 가장 싼 축의 대형 채굴장 수준이다.'
           value={electricity}
           onChange={setElectricity}
           min={0.02}

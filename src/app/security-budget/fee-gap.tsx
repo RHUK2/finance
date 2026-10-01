@@ -68,7 +68,7 @@ export function FeeGap() {
           max={10}
           scale='log'
           format={fmtFee}
-          hint={`기준점(${BTC_PRICE_BASELINE.asOf} 언저리의 대략적인 시장, BTC ${formatUsd(BASE.btcPrice)})의 수수료는 ${fmtFee(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배를 넘기도 하지만 평시 수준은 이 언저리다.`}
+          hint={`기준점(${BTC_PRICE_BASELINE.asOf} 언저리의 대략적인 시장, BTC ${formatUsd(BASE.btcPrice)})의 수수료는 ${fmtFee(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배 가까이 오르기도 하지만 평시 수준은 이 언저리다.`}
         />
       </Panel>
 

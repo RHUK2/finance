@@ -22,7 +22,7 @@ export async function loadInflationData(): Promise<InflationData> {
     // 살아 있는지 먼저 확인한다(같은 함정과 이유는 src/lib/fred.ts).
     const [cpi, m2, deposit, stock, house] = await Promise.all([
       fetchFredSeries('CPIAUCSL', key, OBSERVATION_START), // 소비자물가지수
-      fetchFredSeries('M2SL', key, OBSERVATION_START), // 광의통화 (2021년 정의 변경)
+      fetchFredSeries('M2SL', key, OBSERVATION_START), // 광의통화
       fetchFredSeries('TB3MS', key, OBSERVATION_START), // 3개월 국채금리(단기 예금금리 근사)
       fetchFredSeries('NASDAQCOM', key, OBSERVATION_START), // NASDAQ 종합지수 (배당 제외, 1971~)
       fetchFredSeries('CSUSHPISA', key, OBSERVATION_START), // Case-Shiller 전미주택가격지수 (1987~)

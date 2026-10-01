@@ -229,7 +229,7 @@ export function Leverage() {
       />
 
       <ExplainCard
-        icon={<TriangleAlert className='size-4 text-bad' />}
+        icon={<TriangleAlert className='size-4 text-series-3' />}
         title='주주에게 유한책임이 있다는 사실이 여기서 작동한다'
         preview='아래쪽 손실이 출자금에서 끊기니, 주주에게는 위험을 키울 유인이 남는다.'
         body={

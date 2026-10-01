@@ -9,7 +9,7 @@ import { useTrajectory } from '@/hooks/use-round-engine';
 import { cn } from '@/lib/utils';
 import {
   AVG_BLOCK_BYTES,
-  blocksBytes,
+  CHAIN_SIZE_APPROX_BYTES,
   formatBytes,
   HEADER_BYTES,
   headersBytes,
@@ -47,11 +47,11 @@ export function IbdSync() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='헤더 먼저, 블록은 나중에 (Headers-First)'>
         새 노드가 네트워크에 처음 참여하면 지금까지의 전체 체인({TOTAL_BLOCKS_AS_OF} 기준 약{' '}
-        {TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 블록)을 검증해야 한다. 블록 전체({formatBytes(AVG_BLOCK_BYTES)}{' '}
-        안팎)를 처음부터 순서대로 받으면 너무 느리니, 먼저{' '}
-        <b>80바이트짜리 헤더만 이어 붙여 작업량이 가장 많은 체인을 빠르게 확정</b>한 다음, 그 체인을 따라 블록 본문을
-        여러 피어에게서 병렬로 받는다. 헤더 {HEADER_ROUNDS}라운드·본문 {BLOCK_ROUNDS}라운드라는 눈금은 둘의 무게 차이를
-        보이기 위한 예시이고, 실제 동기화 시간은 대역폭과 피어 수에 따라 달라진다.
+        {TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 블록, 약 {formatBytes(CHAIN_SIZE_APPROX_BYTES)})을 검증해야
+        한다. 블록 본문(최근 블록 하나에 {formatBytes(AVG_BLOCK_BYTES)} 안팎, 초기 블록은 훨씬 작다)을 처음부터 순서대로
+        받으면 너무 느리니, 먼저 <b>80바이트짜리 헤더만 이어 붙여 작업량이 가장 많은 체인을 빠르게 확정</b>한 다음, 그
+        체인을 따라 블록 본문을 여러 피어에게서 병렬로 받는다. 헤더 {HEADER_ROUNDS}라운드·본문 {BLOCK_ROUNDS}라운드라는
+        눈금은 둘의 무게 차이를 보이기 위한 예시이고, 실제 동기화 시간은 대역폭과 피어 수에 따라 달라진다.
       </SectionIntro>
 
       <Panel>
@@ -80,15 +80,15 @@ export function IbdSync() {
           icon={<Download className='size-4 text-series-2' />}
           label='② 블록 본문'
           pct={blocksPct}
-          detail={`${blocksDownloaded.toLocaleString('ko-KR')} / ${TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 · ${formatBytes(blocksBytes(blocksDownloaded))}`}
+          detail={`${blocksDownloaded.toLocaleString('ko-KR')} / ${TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 · ${formatBytes((blocksDownloaded / TOTAL_BLOCKS_APPROX) * CHAIN_SIZE_APPROX_BYTES)}`}
           series='series-2'
         />
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='헤더 전체 용량' value={formatBytes(headersBytes(TOTAL_BLOCKS_APPROX))} />
-          <Metric label='블록 전체 용량' value={formatBytes(blocksBytes(TOTAL_BLOCKS_APPROX))} tone='accent' />
+          <Metric label='블록 전체 용량' value={formatBytes(CHAIN_SIZE_APPROX_BYTES)} tone='accent' />
           <Metric
-            label='크기 비율'
+            label='크기 비율(최근 블록 1개)'
             value={`약 ${Math.round(AVG_BLOCK_BYTES / HEADER_BYTES).toLocaleString('ko-KR')}배`}
           />
         </div>

@@ -84,8 +84,10 @@ export function blockRevenue({ era, btcPrice, feePerBlock }: RevenueInput) {
 /**
  * 기준점. 기준 시점(BTC_PRICE_BASELINE.asOf)의 대략적인 시장 상황이고, 수수료의 몫 탭의 모든
  * '지금 대비'와 공격 비용 탭의 출발점이 이 한 점에서 나온다. 정확한 실측값이 아니라 비교의 원점이다.
+ * 수수료 0.02 BTC는 2026년 8월 무렵 블록 평균 수수료(mempool.space 1개월 평균 약 0.024, 6개월 약 0.022 BTC)를
+ * 반올림한 값이다. 6개월 최대가 약 0.13~0.2 BTC라 화면 힌트의 "혼잡하면 열 배 가까이"가 여기서 나온다.
  */
-export const BASE = { era: CURRENT_ERA, btcPrice: BTC_PRICE_BASELINE.value, feePerBlock: 0.05 };
+export const BASE = { era: CURRENT_ERA, btcPrice: BTC_PRICE_BASELINE.value, feePerBlock: 0.02 };
 export const BASE_ANNUAL = blockRevenue(BASE).annualUsd;
 
 /**

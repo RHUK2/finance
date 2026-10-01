@@ -16,23 +16,23 @@ const RETARGET_LABEL = RETARGET_INTERVAL.toLocaleString('ko-KR');
 
 const TIMELINE = [
   {
-    date: '2026.07',
-    label: 'BIP-110(Reduced Data Temporary Softfork) 공개, 반대 진영 결집',
+    date: '2025.10',
+    label: 'BIP-110(Reduced Data Temporary Softfork) 초안 공개(12월 BIP 번호 부여), 반대 진영 결집',
     tone: 'muted' as const,
   },
   {
-    date: '2026.08.07',
+    date: '2026.08.08',
     label: `${FACTS.signalingHeight.value.toLocaleString('ko-KR')}블록에서 mandatory signaling 개시, 신호율 ${SIGNAL_PCT_LABEL} (임계값 ${LOCK_IN_PCT_LABEL})`,
     tone: 'accent' as const,
   },
   {
     date: '2026.08.09',
-    label: `BIP-110 소수 체인이 ${MINORITY_BLOCKS}블록을 캔 뒤 정지`,
+    label: `BIP-110 소수 체인이 ${MINORITY_BLOCKS}블록을 캔 뒤 정지 (${FACTS.minorityBlocks.asOf} 기준)`,
     tone: 'bad' as const,
   },
   {
-    date: '2026.08.21',
-    label: `${FACTS.ecashHeight.value.toLocaleString('ko-KR')}블록에서 eCash 하드포크, 보유자에게 1:1 크레딧`,
+    date: '2026.08.23',
+    label: `${FACTS.ecashHeight.value.toLocaleString('ko-KR')}블록에서 eCash(ECX) 알파 분기, 1:1 크레딧을 정하는 정식 스냅샷은 10월 31일(${FACTS.ecashSnapshotHeight.value.toLocaleString('ko-KR')}블록) 예정`,
     tone: 'accent' as const,
   },
 ];
@@ -86,8 +86,9 @@ export function August2026() {
               {RETARGET_LABEL}블록 중 신호한 블록은 {FACTS.signalingBlocks.value}개, {SIGNAL_PCT_LABEL}였다. 조기 활성화
               임계값 {LOCK_IN_PCT_LABEL}에 한참 못 미쳤다. 그런데도 규칙을 강제하도록 설정된 노드들은 신호하지 않는
               블록을 거부했고, 그 결과 소수 체인이 갈라져 나왔다. 이 체인은 {MINORITY_BLOCKS}블록을 캔 뒤 멈췄고{' '}
-              {FACTS.minorityBlocks.asOf}까지 다음 블록이 나오지 않았다. 첫 탭에서 본 대로다. 2%대 해시레이트로는 난이도
-              조정에 필요한 {RETARGET_LABEL}블록에 도달할 방법이 없다.
+              {FACTS.minorityBlocks.asOf}까지 다음 블록이 나오지 않았다. 첫 탭에서 본 대로다. {SIGNAL_PCT_LABEL}는 블록
+              신호율이고 소수 체인으로 실제 옮겨 간 해시레이트는 그보다도 훨씬 적었다. 그 정도로는 난이도 조정에 필요한{' '}
+              {RETARGET_LABEL}블록에 도달할 방법이 없다.
             </p>
             <p>
               분기 코인은 값이 붙지 않았다. 안전하게 거래할 방법이 없었고, 주요 거래소 중 상장을 확약한 곳도 없었다. 이
@@ -106,9 +107,10 @@ export function August2026() {
           <div className='flex flex-col gap-2'>
             <p>
               eCash는 폴 스토르츠가 제안한 별개의 하드포크로, {FACTS.ecashHeight.value.toLocaleString('ko-KR')}블록에서
-              갈라졌다. 비트코인의 과거 장부를 그대로 복사해 1 BTC마다 1 eCash를 주고, SHA-256 채굴을 유지하면서
-              Drivechain 방식의 사이드체인을 얹는다. 사토시 것으로 추정되는 휴면 코인 약 50만 개를 분기 체인에서
-              재배정하는 내용이 함께 들어 있어, 이를 선례로 삼는 것이 위험하다는 반발이 컸다.
+              알파 체인이 갈라졌다. 비트코인의 과거 장부를 복사해 1 BTC마다 1 eCash를 주는 설계이고(그 기준이 되는 정식
+              스냅샷은 10월 31일 예정), SHA-256 채굴을 유지하면서 Drivechain 방식의 사이드체인을 얹는다. 사토시 것으로
+              추정되는 휴면 코인 약 50만 개를 분기 체인에서 재배정하는 내용이 함께 들어 있어, 이를 선례로 삼는 것이
+              위험하다는 반발이 컸다.
             </p>
             <p>
               보유자에게 더 중요한 것은 다른 대목이다. 두 체인 사이에 완전한 리플레이 보호가 들어가지 않았다. 한쪽에서

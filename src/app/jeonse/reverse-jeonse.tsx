@@ -157,7 +157,7 @@ export function ReverseJeonse() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<ShieldAlert className='size-4 text-bad' />}
+        icon={<ShieldAlert className='size-4 text-series-3' />}
         title='역전세와 깡통전세는 다른 문제다'
         preview='앞은 집주인의 현금 문제, 뒤는 집의 가치 문제다.'
         body={

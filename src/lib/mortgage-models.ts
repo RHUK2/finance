@@ -6,11 +6,11 @@
 export const REGULATION = {
   // 차주단위 DSR 한도. 은행권 기준이고 제2금융권은 50%다.
   dsrCap: 40,
-  dsrNote: '은행권 기준, 2026년 8월 현재',
+  dsrNote: '은행권 기준, 2026년 10월 현재',
   // 스트레스 DSR 3단계는 2025.7부터 하한 1.5%p였으나, 10·15 대책으로 2025.10.16부터
   // 수도권·규제지역 주택담보대출은 3.0%p로 올랐다. 비수도권은 더 낮다.
   stressAdd: 3.0,
-  stressNote: '수도권·규제지역, 2025.10.16 시행',
+  stressNote: '수도권·규제지역 변동금리 기준, 2025.10.16 시행',
 } as const;
 
 // 주택 유상거래 취득세율(%). 지방세법 11조 1항 8호의 1주택 기준이다.
@@ -19,7 +19,7 @@ export const REGULATION = {
 // 다주택·조정대상지역 중과세율과 전용 85제곱미터 초과에 붙는 농특세 0.2%는 넣지 않았다.
 // 구간 경계는 계산과 화면 설명이 같은 값을 쓰도록 여기 한 번만 둔다.
 const ACQUISITION_TAX_BRACKET_EOK = { flatUpTo: 6, progressiveUpTo: 9 } as const;
-export const ACQUISITION_TAX_NOTE = '1주택 기준, 지방교육세 포함, 2026년 8월 현재';
+export const ACQUISITION_TAX_NOTE = '1주택 기준, 지방교육세 포함, 2026년 10월 현재';
 export const ACQUISITION_TAX_BRACKET_NOTE = `${ACQUISITION_TAX_BRACKET_EOK.flatUpTo}억 초과 ${ACQUISITION_TAX_BRACKET_EOK.progressiveUpTo}억 이하는 가격에 따라 오른다`;
 
 export function acquisitionTaxRate(priceMan: number) {

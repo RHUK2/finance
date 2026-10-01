@@ -51,7 +51,7 @@ export function PrimordialEconomics() {
           format={(v) => formatPct(v * 100, 0)}
         />
         <ControlSlider
-          icon={<Skull className='size-4 text-bad' />}
+          icon={<Skull className='size-4 text-series-3' />}
           label='포식 압력'
           hint='포식자가 가하는 위협의 강도. 이 수준 미만으로 투사하는 개체는 결국 도태된다.'
           value={pressure}

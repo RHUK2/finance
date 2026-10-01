@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils';
 
 const ZONE_LINES = [
   { price: 25, label: '극도의 공포', color: '#ef4444' },
-  { price: 45, label: '공포', color: '#f97316' },
-  { price: 55, label: '중립', color: '#eab308' },
+  { price: 46, label: '공포', color: '#f97316' },
+  { price: 54, label: '중립', color: '#eab308' },
   { price: 75, label: '탐욕', color: '#22c55e' },
 ];
 
@@ -72,7 +72,7 @@ export function FearGreedChart({ data, resetRef, updatedLabel, error }: Props) {
       description={
         <>
           시장 심리를 0~100으로 수치화한 지표. 숫자보다 &lsquo;극단&rsquo;을 역발상 신호로 읽는 것이 핵심입니다.
-          0~25(극도의 공포)는 과매도로 분할 매수 기회, 75~100(극도의 탐욕)은 과열로 차익실현·리스크 관리 신호로
+          0~25(극도의 공포)는 과매도로 분할 매수 기회, 76~100(극도의 탐욕)은 과열로 차익실현·리스크 관리 신호로
           해석합니다.
         </>
       }

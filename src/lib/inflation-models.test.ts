@@ -12,11 +12,12 @@ import {
 
 // 기대값은 docs/fact-check-log.md 「최저임금」이다.
 describe('최저임금 표', () => {
-  it('한국 2024~2026년', () => {
+  it('한국 2024~2027년', () => {
     expect(minWageAt(KR_MIN_WAGE, 2024)).toBe(9_860);
     expect(minWageAt(KR_MIN_WAGE, 2025)).toBe(10_030);
     expect(minWageAt(KR_MIN_WAGE, 2026)).toBe(10_320);
-    expect(KR_WAGE_LAST_YEAR).toBe(2026);
+    expect(minWageAt(KR_MIN_WAGE, 2027)).toBe(10_700);
+    expect(KR_WAGE_LAST_YEAR).toBe(2027);
   });
 
   it('미국 연방은 2009년 $7.25 이후 변동 없다 (표에 없는 해는 안 바뀐 것)', () => {
@@ -24,6 +25,12 @@ describe('최저임금 표', () => {
     expect(minWageAt(US_MIN_WAGE, 2008)).toBe(6.55);
     expect(minWageAt(US_MIN_WAGE, 2009)).toBe(7.25);
     expect(minWageAt(US_MIN_WAGE, 2026)).toBe(7.25);
+  });
+
+  it('미국 1974년 $2.00 → 1975년 $2.10 → 1976년 $2.30', () => {
+    expect(minWageAt(US_MIN_WAGE, 1974)).toBe(2.0);
+    expect(minWageAt(US_MIN_WAGE, 1975)).toBe(2.1);
+    expect(minWageAt(US_MIN_WAGE, 1976)).toBe(2.3);
   });
 
   it('표보다 앞선 해는 null', () => {

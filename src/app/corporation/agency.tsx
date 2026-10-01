@@ -149,7 +149,7 @@ export function Agency() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 font-semibold'>
-          <TriangleAlert className='size-4 text-warn' />
+          <TriangleAlert className='size-4 text-series-3' />
           대표가 절차를 건너뛰고 서명했다면
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>

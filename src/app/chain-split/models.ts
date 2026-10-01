@@ -18,19 +18,19 @@ export const FACTS = {
   signalingHeight: {
     value: 961_632,
     label: 'BIP-110 mandatory signaling 개시 블록',
-    asOf: '2026년 8월 7일',
+    asOf: '2026년 8월 8일(UTC)',
     source: 'BIP-110 배포 파라미터',
   },
   signalingBlocks: {
     value: SIGNALING_BLOCKS,
     label: '개시 직전 2,016블록 중 BIP-110을 신호한 블록 수',
-    asOf: '2026년 8월 7일',
+    asOf: '2026년 8월 8일(UTC)',
     source: '블록 헤더 집계',
   },
   signalingShare: {
     value: SIGNALING_BLOCKS / RETARGET_INTERVAL,
     label: '개시 직전 2,016블록의 BIP-110 신호 비율',
-    asOf: '2026년 8월 7일',
+    asOf: '2026년 8월 8일(UTC)',
     source: '블록 헤더 집계 (51 / 2,016)',
   },
   lockInThreshold: {
@@ -45,11 +45,18 @@ export const FACTS = {
     asOf: '2026년 8월 9일 오후',
     source: '소수 체인 관측',
   },
+  // 발표 당시 예정은 964,000블록·8월 21일이었으나 8월 8일 알파·베타·정식의 3단계로 바뀌었다.
   ecashHeight: {
-    value: 964_000,
-    label: 'eCash 하드포크 분기 블록',
-    asOf: '2026년 8월 21일',
-    source: 'eCash 제안 파라미터',
+    value: 963_648,
+    label: 'eCash(ECX) 알파 분기 블록',
+    asOf: '2026년 8월 23일',
+    source: 'eCash 단계별 일정 (8월 8일 변경)',
+  },
+  ecashSnapshotHeight: {
+    value: 973_728,
+    label: 'eCash 1:1 크레딧을 확정하는 정식 스냅샷 예정 블록',
+    asOf: '2026년 8월',
+    source: 'eCash 단계별 일정 (8월 8일 변경, 10월 31일 예정)',
   },
 } satisfies Record<string, Fact>;
 
@@ -232,7 +239,7 @@ export const SEPARATION_METHODS: SeparationMethod[] = [
     label: '분기 후 UTXO 섞기',
     sub: '한쪽에만 존재하는 입력을 끼워 넣는다',
     marks: ['yes', 'yes', 'partial'],
-    body: '분기 이후에 채굴된 코인이나 분기 이후 거래소에서 출금한 코인은 한쪽 체인에만 존재한다. 이런 UTXO를 입력에 하나 섞어 트랜잭션을 만들면, 반대편 체인에는 그 입력 자체가 없으므로 복사해 던져도 검증을 통과하지 못한다. 두 분기 유형 어디서나 통하는 유일한 방법이고, 실제로 거래소가 분기 후 입출금을 재개하는 순서가 이 재료를 만들어 준다. 개인이 바로 쓰기 어려운 이유는 그 UTXO를 먼저 손에 넣어야 하고, 그러려면 이미 한 번 거래를 해야 하기 때문이다. 닭과 달걀이 걸린다.',
+    body: '분기 이후에 채굴된 코인이나, 거래소가 분기 후 코인과 섞어 분리해 둔 뒤 출금한 코인은 한쪽 체인에만 존재한다. 이런 UTXO를 입력에 하나 섞어 트랜잭션을 만들면, 반대편 체인에는 그 입력 자체가 없으므로 복사해 던져도 검증을 통과하지 못한다. 두 분기 유형 어디서나 통하는 유일한 방법이고, 실제로 거래소가 분기 후 입출금을 재개하는 순서가 이 재료를 만들어 준다. 개인이 바로 쓰기 어려운 이유는 그 UTXO를 먼저 손에 넣어야 하고, 그러려면 이미 한 번 거래를 해야 하기 때문이다. 닭과 달걀이 걸린다.',
   },
   {
     id: 'rule',

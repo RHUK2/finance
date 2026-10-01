@@ -50,33 +50,33 @@ describe('보수 행렬의 내시 균형', () => {
 });
 
 // 티켓 29: 정직 채굴 회수 기간은 전기비를 뺀 순현금흐름으로 잰다.
-// 기본값은 docs/fact-check-log.md 「시간이 지나면 다시 봐야 하는 값」: $75,000, 810 EH/s, $0.025/kWh.
+// 기본값은 docs/fact-check-log.md 「시간이 지나면 다시 봐야 하는 값」: $75,000, 910 EH/s, $0.025/kWh. 효율은 15 J/TH.
 describe('attack51 회수 기간', () => {
-  const base = { btcPrice: 75_000, networkHashrate: 810, attackHours: 6, hardwareCostPerTH: 15, electricity: 0.025 };
+  const base = { btcPrice: 75_000, networkHashrate: 910, attackHours: 6, hardwareCostPerTH: 15, electricity: 0.025 };
 
   it('기준 시세는 $75,000이다', () => {
     expect(BTC_PRICE_BASELINE.value).toBe(base.btcPrice);
   });
 
-  it('기본값: 매출 61.6억 달러 − 전기 35.5억 달러, 장비 121.5억 달러 → 약 4.65년', () => {
+  it('기본값: 매출 61.6억 달러 − 전기 29.9억 달러, 장비 136.5억 달러 → 약 4.31년', () => {
     const a = attack51(base);
     expect(a.honestRevenue).toBeCloseTo(6_159_375_000, 0);
-    expect(a.honestPowerCost).toBeCloseTo(3_547_800_000, 0);
-    expect(a.honestNet).toBeCloseTo(2_611_575_000, 0);
-    expect(a.hardwareCost).toBe(12_150_000_000);
-    expect(a.paybackYears).toBeCloseTo(4.65, 2);
+    expect(a.honestPowerCost).toBeCloseTo(2_989_350_000, 0);
+    expect(a.honestNet).toBeCloseTo(3_170_025_000, 0);
+    expect(a.hardwareCost).toBe(13_650_000_000);
+    expect(a.paybackYears).toBeCloseTo(4.31, 2);
     expect(a.paybackYears).toBeLessThan(HARDWARE_LIFE_YEARS);
   });
 
   it.each([
-    [0.02, 3.66],
-    [0.03, 6.39],
+    [0.02, 3.62],
+    [0.03, 5.31],
   ])('전기 $%d/kWh → %d년', (electricity, years) => {
     expect(attack51({ ...base, electricity }).paybackYears).toBeCloseTo(years, 2);
   });
 
-  it('전기 $0.05/kWh면 연 전기비가 매출을 넘어 회수 불가', () => {
-    const a = attack51({ ...base, electricity: 0.05 });
+  it('전기 $0.055/kWh면 연 전기비가 매출을 넘어 회수 불가(손익분기 약 $0.0515)', () => {
+    const a = attack51({ ...base, electricity: 0.055 });
     expect(a.honestNet).toBeLessThan(0);
     expect(a.paybackYears).toBe(Infinity);
   });

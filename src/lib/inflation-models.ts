@@ -112,6 +112,7 @@ export function minWageAt(table: { year: number; wage: number }[], year: number)
 export const US_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 1968, wage: 1.6 },
   { year: 1974, wage: 2.0 },
+  { year: 1975, wage: 2.1 },
   { year: 1976, wage: 2.3 },
   { year: 1978, wage: 2.65 },
   { year: 1979, wage: 2.9 },
@@ -126,7 +127,10 @@ export const US_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 2009, wage: 7.25 },
 ];
 
-/** 한국 최저임금 (원/시간), 적용연도 기준. */
+/**
+ * 한국 최저임금 (원/시간), 적용연도 기준. 2006년 이전은 적용기간이 전년 9월~당해 8월이라
+ * 그 기간이 끝나는 해를 `year`로 둔다(2000 → '99.9~'00.8, 2006 → '05.9~'06.12).
+ */
 export const KR_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 2000, wage: 1600 },
   { year: 2001, wage: 1865 },
@@ -155,6 +159,7 @@ export const KR_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 2024, wage: 9860 },
   { year: 2025, wage: 10030 },
   { year: 2026, wage: 10320 },
+  { year: 2027, wage: 10700 }, // 고용노동부 고시 제2026-60호(2026-08-05)
 ];
 
 /** 한국 최저임금 표가 커버하는 마지막 연도. 표를 갱신하면 자동으로 따라간다. */

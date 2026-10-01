@@ -108,8 +108,8 @@ export function BitcoinQuantumView() {
         />
         <Metric
           label='추정 노출 잔고 비중'
-          value='약 20~30%'
-          sub='재사용·P2PK·분실 초기 채굴분 등 (연구마다 추정 상이)'
+          value='약 25~33%'
+          sub='P2PK·P2TR·P2MS·재사용 주소의 잔고 기준. 어느 타입까지 세느냐에 따라 연구마다 다르다'
         />
       </div>
 
