@@ -51,7 +51,9 @@ bash link-worktree-files.sh
 | `FRED_API_KEY`                        | `fred`·`inflation-data`가 `available: false` |
 | `ECOS_API_KEY`                        | `inflation-data-kr`가 `available: false`     |
 
-새 변수를 넣을 때는 양쪽에 다 넣는다. 배포 쪽은 `vercel env add <NAME> production`, 로컬 쪽은 기준 체크아웃의 `.env`에 직접 적는다.
+새 변수를 넣을 때는 양쪽에 다 넣는다. 배포 쪽은 `vercel env add <NAME> production`, 로컬 쪽은 기준 체크아웃의 `.env`에 직접 적는다. `vercel --prod`는 `.gitignore`를 읽지 않으므로 로컬 `.env`·`.scratch` 등이 배포 소스로 올라가지 않게 `.vercelignore`가 막는다. 로컬 전용 파일을 새로 두면 거기에도 적는다.
+
+응답 보안 헤더(`nosniff`·`X-Frame-Options`·`Referrer-Policy`, `poweredByHeader: false`)는 `next.config.ts`가 갖는다. HSTS는 Vercel이 붙인다.
 
 로컬이 프로덕션 캐시를 건드리지 않게 Upstash 데이터베이스는 로컬용을 따로 판다. 캐시 키가 `cache:<key>`·`lock:<key>`라 환경 구분이 없어서(`src/lib/cache.ts`), 한 데이터베이스를 나눠 쓰면 로컬에서 바꾼 응답 형태가 그대로 프로덕션이 내보내는 값이 된다.
 
