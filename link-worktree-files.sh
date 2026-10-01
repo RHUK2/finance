@@ -27,13 +27,15 @@
 
 set -euo pipefail
 
-BASE="${WORKTREE_LINK_BASE:-$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')}"
+# 접두어 "worktree "(9자)만 떼어 경로 전체를 보존한다. $2로 뽑으면 공백에서 잘려 이웃 디렉터리를
+# 기준으로 삼을 수 있다. scripts/worktree-ports.mjs의 baseCheckout과 같은 규칙.
+BASE="${WORKTREE_LINK_BASE:-$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10); exit}')}"
 
 ITEMS=(
   .claude/settings.local.json
   .scratch
   .vercel
-  .env.local
+  .env
 )
 
 force=0
@@ -59,13 +61,19 @@ fi
 
 linked=0
 skipped=0
+missing=0
 diverged=()
 
 for f in "${ITEMS[@]}"; do
   src="$base/$f"
   dst="$here/$f"
 
-  [ -e "$src" ] || continue
+  # 기준에 없는 항목도 이름을 찍는다. 말없이 건너뛰면 이름이 틀린 항목이 성공처럼 끝난다.
+  if [ ! -e "$src" ]; then
+    printf '  %-30s 기준에 없음\n' "$f"
+    missing=$((missing + 1))
+    continue
+  fi
 
   if [ -L "$dst" ]; then
     printf '  %-30s 이미 링크\n' "$f"
@@ -91,7 +99,7 @@ done
 
 echo
 echo "기준: $base"
-echo "링크 ${linked}개, 건너뜀 ${skipped}개"
+echo "링크 ${linked}개, 건너뜀 ${skipped}개, 기준에 없음 ${missing}개"
 
 if [ ${#diverged[@]} -gt 0 ]; then
   echo

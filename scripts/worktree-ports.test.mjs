@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { BASE_PORT, resolvePort } from './worktree-ports.mjs';
 
@@ -11,8 +12,8 @@ function git(args, cwd) {
 }
 
 /** 커밋 하나를 가진 저장소. 워크트리를 붙이려면 HEAD가 있어야 한다. */
-function repo(t) {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'finance-ports-')));
+function repo(t, prefix = 'finance-ports-') {
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), prefix)));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
   git(['init', '-q', '-b', 'main', dir], tmpdir());
@@ -112,4 +113,17 @@ test('범위를 벗어난 FINANCE_PORT_SLOT은 거부한다', (t) => {
   env(t, 'FINANCE_PORT_SLOT', '10');
 
   assert.throws(() => resolvePort(base), /FINANCE_PORT_SLOT/);
+});
+
+test('CLI는 경로에 한글·공백이 있어도 포트를 출력한다', (t) => {
+  env(t, 'FINANCE_PORT_SLOT', undefined);
+  const base = repo(t, 'finance 차트 정리-');
+  // 판정이 보는 것은 cwd가 아니라 스크립트 자신의 경로라 사본을 그 저장소 안에 둔다.
+  const script = join(base, 'scripts', 'worktree-ports.mjs');
+  mkdirSync(dirname(script));
+  copyFileSync(fileURLToPath(new URL('./worktree-ports.mjs', import.meta.url)), script);
+
+  const out = execFileSync('node', [script], { cwd: base, encoding: 'utf8' });
+
+  assert.match(out, new RegExp(`http://localhost:${BASE_PORT}`));
 });

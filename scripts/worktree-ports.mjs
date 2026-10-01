@@ -19,8 +19,9 @@
  */
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, renameSync, rmdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, realpathSync, renameSync, rmdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const BASE_PORT = 3000;
 export const SLOT_COUNT = 10;
@@ -163,14 +164,10 @@ export function resolvePort(cwd = process.cwd()) {
 
 function main() {
   const { name, slot, pinned, port } = resolvePort();
-
-  if (process.argv.includes('--port')) {
-    process.stdout.write(String(port));
-    return;
-  }
-
   console.log(`워크트리 ${name} · 슬롯 ${slot}${pinned ? ' (FINANCE_PORT_SLOT 지정)' : ''}`);
   console.log(`  http://localhost:${port}`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main();
+// import.meta.url은 퍼센트 인코딩된 실경로라 argv[1]과 문자열로 비교하면 한글·공백 경로에서
+// 거짓이 되어 아무것도 출력하지 않는다. 둘 다 파일 경로의 실경로로 풀어서 비교한다.
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) main();
