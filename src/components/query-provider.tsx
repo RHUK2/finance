@@ -5,19 +5,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // 엔드포인트별 staleTime·refetchInterval은 각 훅이 cache-config에서
-            // 파생해 지정한다. 전역 폴링을 두면 빠른 엔드포인트의 신선도가 묻히므로
-            // 여기서는 안전한 fallback staleTime만 둔다.
-            staleTime: 15 * 60 * 1000,
-          },
-        },
-      }),
-  );
+  // 신선도 기본값을 두지 않는다. 쿼리는 useEndpoint 하나뿐이고 거기서 cache-config로
+  // staleTime·refetchInterval을 매번 정한다. 여기에 값을 두면 신선도의 출처가 둘이 된다.
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>

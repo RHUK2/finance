@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import {
   Activity,
   ArrowLeftRight,
@@ -41,8 +42,8 @@ import {
 // 값을 받아오는 다섯이고, 나머지는 전부 설명형이라 주제로 가른다. CLAUDE.md
 // "페이지 두 갈래"가 껍데기 규약으로 갈라 둔 선을 사이드바도 그대로 따른다.
 //
-// 그룹 라벨이 '대시보드'가 아닌 것은 그 말이 CLAUDE.md 안에서만 통하는 내부 용어이기
-// 때문이다. 화면에는 그 다섯의 유일한 공통점을 적는다.
+// 그룹 라벨이 '대시보드'가 아닌 것은 페이지 부류로서의 대시보드가 CLAUDE.md 안에서만 통하는
+// 내부 용어이기 때문이다. 화면에는 그 다섯의 유일한 공통점을 적는다.
 //
 // '비트코인 경제·논쟁' 안에서는 항목 라벨의 '비트코인' 접두사를 뗀다. 그룹 라벨이 이미
 // 답하고 있어서다. 실시간 데이터에 있는 '비트코인 차트'·'비트코인 네트워크'는 그 그룹에
@@ -89,7 +90,7 @@ export const NAV_GROUPS = [
       { label: '역사', href: '/bitcoin-history', icon: History },
       { label: '게임이론', href: '/bitcoin-game-theory', icon: Swords },
       { label: '소프트워', href: '/softwar', icon: Radar },
-      { label: '변동성', href: '/bitcoin-volatility', icon: Activity },
+      { label: '실현 변동성', href: '/bitcoin-volatility', icon: Activity },
       { label: '전력망', href: '/grid-battery', icon: Zap },
       { label: '양자컴퓨터', href: '/bitcoin-quantum', icon: Atom },
       { label: '자금추적', href: '/illicit-funds', icon: Fingerprint },
@@ -124,9 +125,10 @@ export const NAV_GROUPS = [
 ];
 
 /**
- * 경로로 그 페이지의 이름을 찾는다. 사이드바·모바일 드로어·breadcrumb이 같은
- * 문자열을 쓰게 하는 단일 출처다. 예전에는 페이지마다 breadcrumb 문자열을 따로
- * 적어 두어, 여기 라벨을 고치면 같은 페이지가 두 이름으로 보였다.
+ * 경로로 그 페이지의 이름을 찾는다. 모바일 하단 바와 문서 제목(`pageMetadata`)이 쓰고,
+ * 사이드바는 `NAV_GROUPS`를 직접 그린다. 이름을 여기 한 곳에만 두는 것은 예전에
+ * 페이지마다 breadcrumb 문자열을 따로 적어 두어, 여기 라벨을 고치면 같은 페이지가
+ * 두 이름으로 보였기 때문이다.
  */
 export function navLabel(pathname: string): string | undefined {
   for (const group of NAV_GROUPS) {
@@ -135,3 +137,25 @@ export function navLabel(pathname: string): string | undefined {
   }
   return undefined;
 }
+
+/** 길잡이(사이드바·드로어)에서 이 항목이 지금 페이지인가. 두 목록이 같은 판정을 쓴다. */
+export function isCurrentPath(pathname: string, href: string): boolean {
+  return pathname === href;
+}
+
+/**
+ * 페이지의 문서 제목. `page.tsx`에서 `export const metadata = pageMetadata('/wallet-keys')`로 쓴다.
+ * 제목이 페이지마다 달라야 Next의 경로 알림이 클라이언트 이동을 보조기술에 알린다(직전 제목과
+ * 같으면 알리지 않는다). 뒤에 붙는 사이트 이름은 layout.tsx의 title.template이 정한다.
+ * 다만 Next는 template을 그것을 정의한 세그먼트의 page에는 적용하지 않아서, layout과 같은
+ * 세그먼트인 `/`만 완성된 제목을 absolute로 준다.
+ * 목록에 없는 경로면 제목을 비워 layout의 기본 제목을 쓴다.
+ */
+export function pageMetadata(href: string): Metadata {
+  const title = navLabel(href);
+  if (!title) return {};
+  return href === '/' ? { title: { absolute: `${title} · ${SITE_NAME}` } } : { title };
+}
+
+/** 사이트 이름. layout.tsx의 title과 manifest가 같은 값을 쓴다. */
+export const SITE_NAME = 'Finance';

@@ -21,12 +21,14 @@ export function PageMain({ children }: Props) {
     function onScroll() {
       setVisible(window.scrollY > 300);
     }
+    // 스크롤이 복원된 채 열린 페이지는 한 번 굴리기 전에는 scroll 이벤트가 오지 않는다.
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <main className='min-h-[calc(100dvh-3rem)] px-4 pt-4 pb-(--footer-clearance) [--footer-clearance:calc(4rem+env(safe-area-inset-bottom))] sm:px-6 sm:pt-6 md:p-8 md:pb-8 lg:p-10'>
+    <main className='px-4 pt-4 pb-(--footer-clearance) [--footer-clearance:calc(4rem+var(--spacing-safe-bottom))] sm:px-6 sm:pt-6 md:p-8 md:pb-8 lg:p-10'>
       {children}
       {visible && (
         <Button
@@ -35,6 +37,7 @@ export function PageMain({ children }: Props) {
           shape='pill'
           className='fixed right-4 bottom-4 z-20 hidden size-12 shadow-md md:flex'
           onClick={() => scrollToTop()}
+          aria-label='맨 위로'
         >
           <ChevronUp className='size-6' />
         </Button>

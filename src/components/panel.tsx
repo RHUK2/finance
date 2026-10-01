@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { type Tone, TONE_RING_SURFACE } from '@/components/tone';
 import { cn } from '@/lib/utils';
 
 // 설명형 페이지가 쓰는 맨 패널. Card와 생김새는 같지만 패딩의 주인이 다르다.
@@ -10,27 +11,21 @@ import { cn } from '@/lib/utils';
 // bleed는 내부가 구획을 나눠 테두리를 끝까지 긋는 패널용이다. 패딩과 간격을 0으로 두고
 // 자식이 각자 p-4를 갖는다.
 //
-// tone은 StatusBanner와 같은 어휘(good/bad/accent)다. accent가 warn 토큰을 보는 것은
-// shadcn이 --color-accent를 호버 배경에 이미 쓰고 있어서다(globals.css 주석).
-const TONE = {
-  good: 'bg-good-surface/5 ring-good-surface/40',
-  bad: 'bg-bad-surface/5 ring-bad-surface/40',
-  accent: 'bg-warn-surface/5 ring-warn-surface/40',
-} as const;
+// tone은 StatusBanner와 같은 어휘(good/bad/accent)다. 토큰 클래스 표는 tone.ts 한 곳에 있다.
 
 function Panel({
   className,
   bleed = false,
   tone,
   ...props
-}: React.ComponentProps<'div'> & { bleed?: boolean; tone?: keyof typeof TONE }) {
+}: React.ComponentProps<'div'> & { bleed?: boolean; tone?: Tone }) {
   return (
     <div
       data-slot='panel'
       className={cn(
         'flex flex-col overflow-hidden rounded-xl bg-card text-sm text-card-foreground shadow-xs ring-1 ring-foreground/10',
         bleed ? 'gap-0' : 'gap-4 p-4',
-        tone && TONE[tone],
+        tone && TONE_RING_SURFACE[tone],
         className,
       )}
       {...props}

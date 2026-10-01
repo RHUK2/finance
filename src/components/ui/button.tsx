@@ -17,6 +17,9 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
         link: 'text-primary underline-offset-4 hover:underline',
+        // 여러 줄 선택 카드·행. 고르는 대상이 값 하나가 아니라 설명이 붙은 항목일 때 쓴다(size='card'와 짝).
+        // 고른 상태의 기본 표면은 aria-pressed가 켠다. 판정·계열 강조색은 호출부가 얹는다.
+        choice: 'border-border hover:bg-muted aria-pressed:bg-muted',
       },
       shape: {
         default: '',
@@ -33,6 +36,8 @@ const buttonVariants = cva(
           "size-6 rounded-[min(var(--radius-md),8px)] in-data-[slot=button-group]:rounded-md [&_svg:not([class*='size-'])]:size-3",
         'icon-sm': 'size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-md',
         'icon-lg': 'size-10',
+        // 여러 줄 내용을 담는 카드. 높이는 내용이 정하고 글자는 줄바꿈된다. 안쪽 배치(flex-col 등)는 호출부 몫.
+        card: 'h-auto min-h-9 justify-start gap-2 px-3 py-2 text-left font-normal whitespace-normal',
       },
     },
     defaultVariants: {
@@ -47,9 +52,16 @@ function Button({
   className,
   variant = 'default',
   size = 'default',
+  shape = 'default',
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  return <ButtonPrimitive data-slot='button' className={cn(buttonVariants({ variant, size, className }))} {...props} />;
+  return (
+    <ButtonPrimitive
+      data-slot='button'
+      className={cn(buttonVariants({ variant, size, shape, className }))}
+      {...props}
+    />
+  );
 }
 
 export { Button, buttonVariants };

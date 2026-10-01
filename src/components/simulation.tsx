@@ -1,7 +1,9 @@
 'use client';
 
-import { type ReactNode, type RefObject, useEffect, useRef, useState } from 'react';
+import { createContext, type ReactNode, type RefObject, useContext, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { Field as FieldPrimitive } from '@base-ui/react/field';
 
 import {
   Check,
@@ -20,6 +22,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Panel } from '@/components/panel';
+import { type Tone, TONE_BORDER_SURFACE, TONE_TEXT } from '@/components/tone';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,19 +31,14 @@ import { clamp, cn, formatUsd } from '@/lib/utils';
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
 
-// 에이전트 격자. 상태별 배경색 className 배열을 받아 사각형으로 렌더링.
+// 행위자나 포지션의 격자. 상태별 배경색 className 배열을 받아 사각형으로 렌더링.
 // 라운드마다 색이 바뀌며 transition-colors로 부드럽게 전환된다.
 //
 // orientation='column'은 칸을 위→아래, 다음 열 순서로 채운다. states가 어떤 기준으로
 // 정렬돼 있고 상태 전이가 항상 앞에서부터 일어나는 시뮬레이션(임계값 캐스케이드 등)에서
 // 경계가 수직선으로 전진해 보인다. 기본값 'row'는 기존 동작(행 우선, 반응형 열 수)이다.
 // highlight[i]가 true면 그 칸에 링을 둘러 이번 라운드에 바뀐 칸을 짚어 준다.
-// Base UI Slider는 썸이 하나면 number, 범위면 배열을 준다. 이 파일의 슬라이더는 모두 단일 썸이다.
-function sliderValue(v: number | readonly number[]) {
-  return typeof v === 'number' ? v : v[0];
-}
-
-export function AgentGrid({
+function AgentGrid({
   states,
   orientation = 'row',
   rows = 6,
@@ -75,6 +73,12 @@ export function AgentGrid({
       ))}
     </div>
   );
+}
+
+// ui/slider는 value를 배열로 받아야 썸을 하나만 그린다(숫자를 주면 [min, max]로 보고 둘을 그린다).
+// onValueChange 쪽은 number | readonly number[]라 여기서 좁힌다. 이 파일의 슬라이더는 모두 단일 썸이다.
+function sliderValue(v: number | readonly number[]) {
+  return typeof v === 'number' ? v : v[0];
 }
 
 const DEFAULT_SPEEDS = [
@@ -117,6 +121,7 @@ export function RoundControls({
   onSeek?: (round: number) => void;
 }) {
   const seekable = total !== undefined && onSeek !== undefined && total > 0;
+  const seekLabelId = useId();
   return (
     <div className='flex flex-col gap-2'>
       <div className='flex flex-wrap items-center gap-2'>
@@ -140,7 +145,9 @@ export function RoundControls({
             {speeds.map((s) => (
               <button
                 key={s.ms}
+                type='button'
                 onClick={() => onSpeed(s.ms)}
+                aria-pressed={speedMs === s.ms}
                 className={cn(
                   'px-2 py-1 text-xs tabular-nums transition-colors',
                   speedMs === s.ms ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
@@ -153,14 +160,21 @@ export function RoundControls({
         </div>
       </div>
       {seekable && (
-        <Slider
-          value={round}
-          onValueChange={(v) => onSeek(sliderValue(v))}
-          min={0}
-          max={total}
-          step={1}
-          aria-label={`${unit} 이동`}
-        />
+        <>
+          {/* Base UI는 루트의 aria-label을 group div에 두고 range input으로 넘기지 않는다.
+              aria-labelledby는 input까지 간다. */}
+          <span id={seekLabelId} className='sr-only'>
+            {unit} 이동
+          </span>
+          <Slider
+            value={[round]}
+            onValueChange={(v) => onSeek(sliderValue(v))}
+            min={0}
+            max={total}
+            step={1}
+            aria-labelledby={seekLabelId}
+          />
+        </>
       )}
     </div>
   );
@@ -202,10 +216,12 @@ export function ControlSlider({
   format: (v: number) => string;
   /**
    * 지금 조건에서 이 슬라이더가 결과를 바꾸지 못할 때 켠다. 숨기지 않는 이유는
-   * 다른 조건에서는 살아난다는 사실이 설명의 일부이기 때문이다(CLAUDE.md P5).
+   * 다른 조건에서는 살아난다는 사실이 설명의 일부이기 때문이다(CLAUDE.md 「시뮬레이션 공용
+   * 프리미티브」의 "지금 조건에서 결과를 못 바꾸는 컨트롤").
    */
   disabled?: boolean;
 }) {
+  const labelId = useId();
   const log = scale === 'log';
   const ratio = log ? Math.log(max / min) : 0;
   const toTick = (v: number) => Math.round((LOG_TICKS * Math.log(v / min)) / ratio);
@@ -230,47 +246,57 @@ export function ControlSlider({
       <div className={cn('flex items-center justify-between gap-2 text-sm', disabled && 'opacity-60')}>
         <span className='flex min-w-0 items-center gap-1.5 font-medium'>
           {icon}
-          <span className='truncate'>{label}</span>
+          <span id={labelId} className='truncate'>
+            {label}
+          </span>
         </span>
         <span className='flex shrink-0 items-center gap-1'>
-          <button
-            type='button'
+          <Button
+            variant='outline'
+            size='icon-sm'
             disabled={disabled || value <= min}
             onClick={() => nudge(-1)}
-            className='flex size-8 items-center justify-center rounded-md border text-muted-foreground hover:text-foreground disabled:opacity-40'
+            className='text-muted-foreground'
             aria-label={`${label} 한 칸 줄이기`}
           >
             <Minus className='size-3.5' />
-          </button>
+          </Button>
           <span className='min-w-20 text-center tabular-nums'>{format(value)}</span>
-          <button
-            type='button'
+          <Button
+            variant='outline'
+            size='icon-sm'
             disabled={disabled || value >= max}
             onClick={() => nudge(1)}
-            className='flex size-8 items-center justify-center rounded-md border text-muted-foreground hover:text-foreground disabled:opacity-40'
+            className='text-muted-foreground'
             aria-label={`${label} 한 칸 늘리기`}
           >
             <Plus className='size-3.5' />
-          </button>
+          </Button>
         </span>
       </div>
+      {/* 이름은 화면 라벨을, 값은 화면에 찍힌 표기를 읽게 한다. 로그 슬라이더의 손잡이 값은
+          금액이 아니라 눈금 번호라 값 문구가 없으면 보조기술이 눈금을 읽는다. */}
       {log ? (
         <Slider
           min={0}
           max={LOG_TICKS}
           step={1}
-          value={toTick(value)}
+          value={[toTick(value)]}
           onValueChange={(v) => onChange(fromTick(sliderValue(v)))}
           disabled={disabled}
+          aria-labelledby={labelId}
+          getAriaValueText={(_, t) => format(fromTick(t))}
         />
       ) : (
         <Slider
           min={min}
           max={max}
           step={step}
-          value={value}
+          value={[value]}
           onValueChange={(v) => onChange(sliderValue(v))}
           disabled={disabled}
+          aria-labelledby={labelId}
+          getAriaValueText={(_, v) => format(v)}
         />
       )}
       {hint && <p className={cn('text-xs text-muted-foreground', disabled && 'opacity-60')}>{hint}</p>}
@@ -278,7 +304,12 @@ export function ControlSlider({
   );
 }
 
-// 지표 카드.
+// 값이 아직 없거나(분기 전, 재생 시작 전) 데이터가 없는 칸의 자리표시. 대시보드가 값 없음을
+// 찍는 문자와 같게 둔다.
+const EMPTY_VALUE = '-';
+
+// 지표 카드. value가 null이면 값 자리에 흐린 자리표시를 찍고 tone은 무시한다. 칸을 지우지 않고
+// 남겨 두는 것은 격자의 자리가 단계마다 같아야 어느 칸이 무엇인지 따라 읽을 수 있어서다.
 export function Metric({
   label,
   value,
@@ -286,8 +317,8 @@ export function Metric({
   sub,
 }: {
   label: string;
-  value: string;
-  tone?: 'good' | 'bad' | 'accent';
+  value: string | null;
+  tone?: Tone;
   sub?: string;
 }) {
   return (
@@ -296,12 +327,10 @@ export function Metric({
       <span
         className={cn(
           'text-xl font-semibold tabular-nums sm:text-2xl',
-          tone === 'good' && 'text-good',
-          tone === 'bad' && 'text-bad',
-          tone === 'accent' && 'text-warn',
+          value === null ? 'text-muted-foreground' : tone && TONE_TEXT[tone],
         )}
       >
-        {value}
+        {value ?? EMPTY_VALUE}
       </span>
       {sub && <span className='text-xs text-muted-foreground'>{sub}</span>}
     </Panel>
@@ -309,27 +338,44 @@ export function Metric({
 }
 
 // 아이콘 + 한 줄 메시지로 결과를 알리는 배너. tone은 Metric과 같은 어휘(good/bad/accent)를 쓴다.
+// 판정색은 면·테두리와 아이콘(호출부가 칠한다)에만 둔다. 문구는 기본 전경색이다.
+//
+// detail을 주면 두 줄 배너가 된다. children이 판정 한 줄, detail이 그 아래 근거 줄(흐린 글자)이다.
+// 두 줄이면 아이콘을 첫 줄 높이에 맞춰 위로 붙인다. 가운데 정렬로 두면 아이콘이 두 줄 사이에
+// 떠서 어느 줄의 표시인지 흐려진다.
 export function StatusBanner({
   icon,
   tone,
+  detail,
   children,
 }: {
   icon?: React.ReactNode;
-  tone?: 'good' | 'bad' | 'accent';
+  tone?: Tone;
+  detail?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-md border p-3 text-sm font-medium',
-        tone === 'good' && 'border-good-surface/40 bg-good-surface/5',
-        tone === 'bad' && 'border-bad-surface/40 bg-bad-surface/5',
-        tone === 'accent' && 'border-warn-surface/40 bg-warn-surface/5',
-        !tone && 'border-transparent bg-muted',
+        'flex gap-2 rounded-md border p-3 text-sm font-medium',
+        detail ? 'items-start' : 'items-center',
+        tone ? TONE_BORDER_SURFACE[tone] : 'border-transparent bg-muted',
       )}
     >
-      {icon}
-      {children}
+      {detail ? (
+        <>
+          {icon && <span className='flex h-5 shrink-0 items-center'>{icon}</span>}
+          <div className='flex min-w-0 flex-col gap-1'>
+            <span>{children}</span>
+            <div className='font-normal text-muted-foreground'>{detail}</div>
+          </div>
+        </>
+      ) : (
+        <>
+          {icon}
+          {children}
+        </>
+      )}
     </div>
   );
 }
@@ -345,7 +391,7 @@ export function StatCard({
   label: string;
   value: number;
   format: (n: number) => string;
-  tone?: 'good' | 'bad' | 'accent';
+  tone?: Tone;
   sub?: string;
 }) {
   const animated = useCountUp(value);
@@ -407,7 +453,7 @@ const MD_GRID_COLS: Record<number, string> = {
   6: 'md:grid-cols-6',
 };
 
-export type SimTab = {
+type SimTab = {
   value: string;
   label: React.ReactNode;
   node: React.ReactNode;
@@ -446,12 +492,21 @@ export function SimTabs({ tabs, defaultValue }: { tabs: SimTab[]; defaultValue: 
 }
 
 // 라벨 + 입력 컨트롤(Select·Input 등)을 세로로 묶는 폼 필드.
+//
+// Base UI Field로 감싸는 것은 라벨을 입력의 이름으로 잇기 위해서다. ui/input·ui/select의
+// 트리거는 Field 안에 있으면 스스로 등록해 <label for>가 그쪽을 가리킨다. 등록할 입력이 없는
+// 버튼 묶음(SegmentedControl)은 FieldLabelContext로 라벨 id를 받아 group의 이름으로 쓴다.
+const FieldLabelContext = createContext<string | undefined>(undefined);
+
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  const labelId = useId();
   return (
-    <div className='flex flex-col gap-1.5'>
-      <span className='text-sm font-medium'>{label}</span>
-      {children}
-    </div>
+    <FieldPrimitive.Root className='flex flex-col gap-1.5'>
+      <FieldPrimitive.Label id={labelId} className='text-sm font-medium'>
+        {label}
+      </FieldPrimitive.Label>
+      <FieldLabelContext value={labelId}>{children}</FieldLabelContext>
+    </FieldPrimitive.Root>
   );
 }
 
@@ -469,13 +524,20 @@ export function SegmentedControl<T extends string | boolean>({
   onChange: (v: T) => void;
   disabled?: boolean;
 }) {
+  const labelId = useContext(FieldLabelContext);
   return (
-    <div className={cn('flex overflow-hidden rounded-md border', disabled && 'opacity-50')}>
+    <div
+      role='group'
+      aria-labelledby={labelId}
+      className={cn('flex overflow-hidden rounded-md border', disabled && 'opacity-50')}
+    >
       {options.map((o) => (
         <button
           key={String(o.value)}
+          type='button'
           onClick={() => onChange(o.value)}
           disabled={disabled}
+          aria-pressed={value === o.value}
           className={cn(
             'flex-1 px-2 py-1.5 text-sm transition-colors',
             value === o.value ? 'bg-primary text-primary-foreground' : !disabled && 'hover:bg-muted',
@@ -493,7 +555,7 @@ export function SegmentedControl<T extends string | boolean>({
 export function IllustrativeDisclaimer({ children }: { children: React.ReactNode }) {
   return (
     <Panel tone='accent' className='gap-2 text-sm/relaxed'>
-      <span className='flex items-center gap-1.5 font-semibold text-warn'>
+      <span className={cn('flex items-center gap-1.5 font-semibold', TONE_TEXT.accent)}>
         <TriangleAlert className='size-4' />
         교육용 개념 시연
       </span>
@@ -538,10 +600,19 @@ export function Sparkline({
   const fmt = (pts: readonly (readonly [number, number])[]) =>
     pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
   const at = cursor === undefined ? undefined : xy[clamp(cursor, 0, xy.length - 1)];
+  const labelId = useId();
   return (
     <div className='flex items-center gap-2'>
-      <span className='w-16 shrink-0 text-xs text-muted-foreground'>{label}</span>
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio='none' className={cn('w-full', heightClass)}>
+      <span id={labelId} className='w-16 shrink-0 text-xs text-muted-foreground'>
+        {label}
+      </span>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio='none'
+        className={cn('w-full', heightClass)}
+        role='img'
+        aria-labelledby={labelId}
+      >
         {at && (
           <polyline
             points={fmt(xy)}
@@ -577,31 +648,48 @@ export function Sparkline({
   );
 }
 
-// 라벨 + USD 금액 + 수평 비교 막대 (max 대비 비율로 폭 결정).
+// 라벨 + 금액 + 수평 비교 막대 (max 대비 비율로 폭 결정). 총량 없는 개별 크기 비교용.
+//
+// icon은 라벨 앞 주제 아이콘. aside는 값 뒤에 흐린 글자로 붙는 보조 값이다(받은 액 뒤의
+// "/ 청구액", 수수료 뒤의 크기처럼 같은 행의 두 번째 수). 막대 폭은 언제나 value가 정한다.
+// 값이 0이면 폭도 0이다. 0보다 크면 1%를 남겨 아주 작은 값도 막대가 있다는 것이 보이게 한다.
 export function CostBar({
+  icon,
   label,
   value,
   max,
   className,
   sub,
+  aside,
   format = formatUsd,
 }: {
+  icon?: React.ReactNode;
   label: string;
   value: number;
   max: number;
   className: string;
   sub?: string;
+  aside?: React.ReactNode;
   format?: (v: number) => string;
 }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <div className='flex flex-col gap-1'>
-      <div className='flex items-baseline justify-between text-xs'>
-        <span className='text-muted-foreground'>{label}</span>
-        <span className='tabular-nums'>{format(value)}</span>
+      <div className='flex items-baseline justify-between gap-2 text-xs'>
+        <span className='flex min-w-0 items-center gap-1.5 text-muted-foreground'>
+          {icon}
+          {label}
+        </span>
+        <span className='shrink-0 tabular-nums'>
+          {format(value)}
+          {aside && <span className='text-muted-foreground'> {aside}</span>}
+        </span>
       </div>
       <div className='h-5 w-full overflow-hidden rounded-md bg-muted'>
-        <div className={cn('h-full rounded-md transition-all', className)} style={{ width: `${Math.max(1, pct)}%` }} />
+        <div
+          className={cn('h-full rounded-md transition-all', className)}
+          style={{ width: `${value > 0 ? Math.max(1, pct) : 0}%` }}
+        />
       </div>
       {sub && <span className='text-xs text-muted-foreground'>{sub}</span>}
     </div>
@@ -619,7 +707,7 @@ export function SectionIntro({ title, children }: { title: string; children: Rea
 }
 
 // 임계값 캐스케이드 시각화 한 벌. 채택 캐스케이드·홀더 딜레마·자연의 파워 프로젝션·
-// 강제청산 연쇄가 공유한다. 넷 모두 개체를 하나의 축(임계값·확신도·투사력·청산 낙폭)
+// 강제청산 연쇄가 공유한다. 넷 모두 개체를 하나의 정렬 축(임계값·확신도·투사력·청산 낙폭)
 // 오름차순으로 정렬해 두므로 상태가 바뀐 집합이 언제나 격자 앞에서부터의 연속 구간이
 // 되고, 그 경계의 위치가 곧 진행률이 된다(docs/adr/0001 참조. 강제청산 연쇄의 칸을
 // 행위자라 부르지 않는 이유는 0003). 축 라벨·읽는 법·범례·궤적 스파크라인이 함께
@@ -654,7 +742,7 @@ export function CascadeStage({
     max?: number;
   };
   metrics: React.ReactNode;
-  outcome?: { tone?: 'good' | 'bad' | 'accent'; text: string };
+  outcome?: { tone?: Tone; text: string };
 }) {
   return (
     <>
@@ -686,19 +774,8 @@ export function CascadeStage({
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>{metrics}</div>
 
-      {outcome && (
-        <p
-          className={cn(
-            'rounded-md px-3 py-2 text-xs',
-            outcome.tone === 'good' && 'bg-good-surface/10 text-good',
-            outcome.tone === 'bad' && 'bg-bad-surface/10 text-bad',
-            outcome.tone === 'accent' && 'bg-warn-surface/10 text-warn',
-            !outcome.tone && 'bg-muted text-muted-foreground',
-          )}
-        >
-          {outcome.text}
-        </p>
-      )}
+      {/* 결론 한 줄은 다른 판정 배너와 같은 StatusBanner로 그린다(CLAUDE.md 「고르는 기준」). */}
+      {outcome && <StatusBanner tone={outcome.tone}>{outcome.text}</StatusBanner>}
     </>
   );
 }
@@ -706,15 +783,21 @@ export function CascadeStage({
 // 하나의 총량이 여러 몫으로 갈리는 것을 보여 주는 가로 누적 막대 + 범례.
 // 총량이 고정된 파이를 나누는 그림(자본구조, 지분 구성, 이익의 분배, 발전량 배분)에서 쓴다.
 // 막대 폭은 value/total로만 정해지므로, 라벨의 단위는 호출하는 쪽이 정해서 넘긴다.
+//
+// 값이 0인 몫은 막대에서 빠진다. keepEmpty를 켜면 범례에는 남는다. 몫의 주인이 정해져 있어
+// 0이 된 것 자체가 읽을거리인 그림(채널의 한쪽 잔고가 0)에서 쓴다. 기본은 범례에서도 뺀다.
 export function StackedBar({
   segments,
   total,
+  keepEmpty = false,
 }: {
   segments: { label: string; value: number; className: string }[];
   total: number;
+  keepEmpty?: boolean;
 }) {
   // total이 0인 순간(발전량 0 등)에도 폭이 NaN이 되지 않게 막는다.
   const shown = total > 0 ? segments.filter((s) => s.value > 0) : [];
+  const legend = keepEmpty ? segments : shown;
   return (
     <>
       <div className='flex h-8 w-full overflow-hidden rounded-md bg-muted'>
@@ -728,7 +811,7 @@ export function StackedBar({
         ))}
       </div>
       <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-        {shown.map((s) => (
+        {legend.map((s) => (
           <Legend key={s.label} className={s.className} label={s.label} />
         ))}
       </div>
@@ -783,7 +866,8 @@ export function MarkTable({
         </span>
         <span className='text-xs text-muted-foreground'>항목을 누르면 표 아래에 설명이 열린다</span>
       </div>
-      <div className={cn(grid, 'border-y px-4 py-2 text-xs text-muted-foreground')}>
+      {/* 머리글은 눈으로 칸을 맞추는 줄이다. 보조기술에는 칸마다 머리글 이름을 붙여 읽히므로 숨긴다. */}
+      <div aria-hidden className={cn(grid, 'border-y px-4 py-2 text-xs text-muted-foreground')}>
         {headers.map((h, i) => (
           <span key={h} className={i === 0 ? undefined : 'text-center'}>
             {h}
@@ -793,7 +877,9 @@ export function MarkTable({
       {rows.map((r) => (
         <button
           key={r.id}
+          type='button'
           onClick={() => onSelect(r.id)}
+          aria-pressed={selected === r.id}
           className={cn(
             grid,
             'border-b px-4 py-2.5 text-left text-sm transition-colors last:border-b-0',
@@ -806,7 +892,7 @@ export function MarkTable({
             {r.sub && <span className='text-xs text-muted-foreground'>{r.sub}</span>}
           </span>
           {r.marks.map((m, i) => (
-            <Mark key={i} state={m} />
+            <Mark key={i} state={m} header={headers[i + 1]} />
           ))}
         </button>
       ))}
@@ -814,16 +900,20 @@ export function MarkTable({
   );
 }
 
-function Mark({ state }: { state: MarkState }) {
+// 아이콘은 lucide 기본값대로 aria-hidden이라, 칸의 뜻은 sr-only 문구로 따로 둔다. 잣대가 질문형인
+// 표와 속성형인 표가 섞여 있어 문구는 어느 쪽에도 읽히는 예·아니오·일부로 둔다.
+const MARK_TEXT: Record<MarkState, string> = { yes: '예', no: '아니오', partial: '일부' };
+const MARK_TONE: Record<MarkState, Tone> = { yes: 'good', no: 'bad', partial: 'accent' };
+const MARK_ICON: Record<MarkState, typeof Check> = { yes: Check, no: X, partial: Minus };
+
+function Mark({ state, header }: { state: MarkState; header: string }) {
+  const Icon = MARK_ICON[state];
   return (
     <span className='flex justify-center'>
-      {state === 'yes' ? (
-        <Check className='size-4 text-good' />
-      ) : state === 'no' ? (
-        <X className='size-4 text-bad' />
-      ) : (
-        <Minus className='size-4 text-warn' />
-      )}
+      <span className='sr-only'>
+        {header}: {MARK_TEXT[state]}
+      </span>
+      <Icon className={cn('size-4', TONE_TEXT[MARK_TONE[state]])} />
     </span>
   );
 }
@@ -862,7 +952,9 @@ function StepControls({
         {Array.from({ length: total }, (_, i) => (
           <button
             key={i}
+            type='button'
             aria-label={`${i}단계로 이동`}
+            aria-current={i === step ? 'step' : undefined}
             onClick={() => onJump(i)}
             className={cn(
               'size-2.5 rounded-full transition-colors',
@@ -948,7 +1040,7 @@ export function StepPanel({
       {showPill &&
         createPortal(
           // 하단 네비(h-12, z-30) 바로 위. 네비와 겹치지 않으므로 z는 본문 위이기만 하면 된다.
-          <div className='fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 z-20 -translate-x-1/2 md:bottom-4'>
+          <div className='fixed bottom-[calc(3.5rem+var(--spacing-safe-bottom))] left-1/2 z-20 -translate-x-1/2 md:bottom-4'>
             <div className='flex items-center gap-1 rounded-full border bg-card p-1 shadow-xl'>
               <Button
                 variant='ghost'
@@ -960,13 +1052,17 @@ export function StepPanel({
               >
                 <ChevronLeft className='size-4' />
               </Button>
-              <button
-                type='button'
+              <Button
+                variant='ghost'
+                size='sm'
+                shape='pill'
                 onClick={() => panel.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                className='max-w-48 truncate px-2 text-sm font-medium'
+                className='max-w-48'
               >
-                {step}/{total - 1} · {title}
-              </button>
+                <span className='truncate'>
+                  {step}/{total - 1} · {title}
+                </span>
+              </Button>
               <Button
                 variant='ghost'
                 size='icon'

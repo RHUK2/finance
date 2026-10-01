@@ -6,7 +6,9 @@ import { usePathname } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/theme-toggle';
-import { NAV_GROUPS } from '@/lib/nav';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { isCurrentPath, NAV_GROUPS } from '@/lib/nav';
 import { cn } from '@/lib/utils';
 
 // 데스크탑 길잡이. 상단 헤더는 없다. 길잡이가 왼쪽에 상시로 있는데 위에 한 줄을 더 두면
@@ -14,8 +16,12 @@ import { cn } from '@/lib/utils';
 // 헤더가 담던 셋을 전부 이 안으로 들였다. 위에 검색, 가운데 목록, 아래 테마다.
 //
 // 검색은 팔레트를 여는 버튼이 아니라 목록을 그 자리에서 거르는 입력이다. 사이드바가 이미
-// 마흔한 개를 보이고 있으므로 같은 목록을 따로 띄울 이유가 없다. 거르면 결과가 남은
+// 전체 목록을 보이고 있으므로 같은 목록을 따로 띄울 이유가 없다. 거르면 결과가 남은
 // 그룹만 머리글과 함께 남는다.
+//
+// 그룹 이름도 거르는 대상이다. 비트코인 두 그룹은 그룹 이름이 '비트코인'을 대신 말하므로
+// 항목 라벨에서 그 접두사를 뗐다(nav.ts, ADR 0008). 항목 라벨만 보면 '비트코인'으로 거를 때
+// 그 두 그룹이 통째로 사라진다.
 //
 // 그룹을 접었다 펴는 기능은 두지 않는다. 목록의 자리가 화면마다 같아야 어디쯤에 무엇이
 // 있는지를 몸이 기억한다. 길면 스크롤로 푼다.
@@ -30,7 +36,7 @@ export function AppSidebar() {
     if (!q) return NAV_GROUPS;
     return NAV_GROUPS.map((g) => ({
       ...g,
-      items: g.items.filter((i) => i.label.toLowerCase().includes(q)),
+      items: g.label.toLowerCase().includes(q) ? g.items : g.items.filter((i) => i.label.toLowerCase().includes(q)),
     })).filter((g) => g.items.length > 0);
   }, [query]);
 
@@ -41,19 +47,27 @@ export function AppSidebar() {
       </Link>
 
       <div className='px-3 pb-2'>
-        <div className='flex items-center gap-1.5 rounded-md border px-2'>
-          <Search className='size-3.5 shrink-0 text-muted-foreground' />
-          <input
+        {/* 아이콘과 지우기 버튼은 입력 위에 겹쳐 놓고 그 폭만큼 좌우 여백을 연다(Input 계약의 pl·pr).
+            테두리·포커스 링은 Input 것을 그대로 쓴다. */}
+        <div className='relative'>
+          <Search className='pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground' />
+          <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder='거르기'
-            className='h-8 min-w-0 flex-1 bg-transparent text-sm outline-none'
+            className='h-8 pr-8 pl-7'
             aria-label='페이지 거르기'
           />
           {query && (
-            <button type='button' onClick={() => setQuery('')} aria-label='지우기'>
+            <Button
+              variant='ghost'
+              size='icon-xs'
+              onClick={() => setQuery('')}
+              aria-label='지우기'
+              className='absolute inset-y-0 right-1 my-auto'
+            >
               <X className='size-3.5 text-muted-foreground' />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -67,9 +81,10 @@ export function AppSidebar() {
                 <Link
                   key={href}
                   href={href}
+                  aria-current={isCurrentPath(pathname, href) ? 'page' : undefined}
                   className={cn(
                     'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted',
-                    pathname === href && 'bg-muted font-medium',
+                    isCurrentPath(pathname, href) && 'bg-muted font-medium',
                   )}
                 >
                   <Icon className='size-4 shrink-0' />

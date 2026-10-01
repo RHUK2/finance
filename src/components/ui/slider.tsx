@@ -10,8 +10,20 @@ import { cn } from '@/lib/utils';
 // touch-action이 none이 아니라 pan-y인 것도 같은 이유다. none이면 슬라이더 위에서
 // 세로로 넘기려는 손짓까지 슬라이더가 먹어 페이지가 스크롤되지 않는다. pan-y면 가로
 // 끌기만 슬라이더가 가져가고 세로는 페이지로 흘러간다.
+//
+// getAriaValueText는 upstream에 없는 통로다. Base UI는 값 읽기 문구를 Root가 아니라 Thumb에서만
+// 받는데, 이 래퍼가 Thumb를 직접 그리므로 호출부가 그 문구를 줄 길이 없었다. 로그 슬라이더처럼
+// 손잡이 값이 눈금 번호인 곳은 이 문구가 없으면 보조기술이 금액 대신 눈금을 읽는다.
 
-function Slider({ className, defaultValue, value, min = 0, max = 100, ...props }: SliderPrimitive.Root.Props) {
+function Slider({
+  className,
+  defaultValue,
+  value,
+  min = 0,
+  max = 100,
+  getAriaValueText,
+  ...props
+}: SliderPrimitive.Root.Props & Pick<SliderPrimitive.Thumb.Props, 'getAriaValueText'>) {
   const _values = Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max];
 
   return (
@@ -39,6 +51,7 @@ function Slider({ className, defaultValue, value, min = 0, max = 100, ...props }
           <SliderPrimitive.Thumb
             data-slot='slider-thumb'
             key={index}
+            getAriaValueText={getAriaValueText}
             className='block size-6 shrink-0 rounded-full border-2 border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] select-none hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden active:ring-4 disabled:pointer-events-none disabled:opacity-50'
           />
         ))}

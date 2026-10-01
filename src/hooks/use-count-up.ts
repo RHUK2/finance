@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-/** 목표값으로 RAF cubic-ease 카운트업하는 훅. (page-main.tsx의 RAF 이징과 동일 방식) */
+/** 목표값으로 RAF cubic-ease 카운트업하는 훅. (lib/scroll.ts의 scrollToTop과 같은 이징) */
 export function useCountUp(target: number, duration = 500) {
   const [value, setValue] = useState(target);
   const fromRef = useRef(target);

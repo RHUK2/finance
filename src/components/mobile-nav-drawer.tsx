@@ -7,7 +7,8 @@ import { ArrowUp, ChevronUp } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
-import { NAV_GROUPS, navLabel } from '@/lib/nav';
+import { Button } from '@/components/ui/button';
+import { isCurrentPath, NAV_GROUPS, navLabel } from '@/lib/nav';
 import { cn } from '@/lib/utils';
 import { scrollToTop } from '@/lib/scroll';
 
@@ -32,7 +33,7 @@ function useScrollProgress() {
   return state;
 }
 
-// 모바일 길잡이. 데스크탑 헤더가 메뉴와 검색을 쓰는 것과 달리 여기는 하단 바 하나와
+// 모바일 길잡이. 데스크탑 사이드바가 목록과 거르는 칸을 상시로 보이는 것과 달리 여기는 하단 바 하나와
 // 전체 목록 드로어다. 좁은 화면에서는 그룹 여섯을 가로로 늘어놓을 자리가 없다.
 //
 // 맨 위로 버튼이 이 바 안에 있는 것은 예전에 그것이 오른쪽 아래에 떠 있으면서 워크스루의
@@ -54,7 +55,7 @@ export function MobileNavDrawer() {
 
       <div className='flex h-12 items-center gap-2 px-4'>
         <Drawer open={open} onOpenChange={setOpen}>
-          <DrawerTrigger className='flex min-w-0 cursor-pointer items-center gap-1 text-sm font-medium outline-none'>
+          <DrawerTrigger className='flex min-w-0 cursor-pointer items-center gap-1 rounded-md text-sm font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/50'>
             <span className='truncate'>{currentLabel}</span>
             <ChevronUp className='size-3.5 shrink-0 opacity-60' />
           </DrawerTrigger>
@@ -72,9 +73,10 @@ export function MobileNavDrawer() {
                         <Link
                           href={href}
                           onClick={() => setOpen(false)}
+                          aria-current={isCurrentPath(pathname, href) ? 'page' : undefined}
                           className={cn(
                             'flex h-11 items-center gap-2 rounded-md px-2 text-sm hover:bg-muted',
-                            pathname === href && 'bg-muted font-medium',
+                            isCurrentPath(pathname, href) && 'bg-muted font-medium',
                           )}
                         >
                           <Icon className='size-4 shrink-0' />
@@ -91,19 +93,17 @@ export function MobileNavDrawer() {
 
         <div className='ml-auto flex shrink-0 items-center gap-1'>
           {/* 자리를 늘 차지하고 투명도만 바꾼다. 나타났다 사라지면서 옆 버튼이 움직이지 않게 */}
-          <button
-            type='button'
+          <Button
+            variant='ghost'
+            size='icon'
             onClick={() => scrollToTop()}
             aria-label='맨 위로'
             aria-hidden={!scrolled}
             tabIndex={scrolled ? 0 : -1}
-            className={cn(
-              'flex size-9 items-center justify-center rounded-md transition-opacity',
-              scrolled ? 'opacity-100' : 'pointer-events-none opacity-0',
-            )}
+            className={cn('transition-opacity', scrolled ? 'opacity-100' : 'pointer-events-none opacity-0')}
           >
             <ArrowUp className='size-4' />
-          </button>
+          </Button>
           <ThemeToggle />
         </div>
       </div>

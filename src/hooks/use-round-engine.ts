@@ -62,10 +62,15 @@ export function useTrajectory(last: number, speedMs: number) {
   return { round, last, done: round >= last, step, seek, engine };
 }
 
-// 미리 계산해 둔 프레임 배열을 재생한다. 결정론적 캐스케이드 넷(채택, 홀더 딜레마,
-// 자연의 파워 프로젝션, 강제청산 연쇄)이 공유하는 배선으로, useTrajectory에 지금
-// 프레임 조회만 얹은 것이다. CascadeStage에 그대로 넘길 수 있다.
-export function useTrajectoryPlayer<T>(frames: T[], speedMs: number) {
+// 미리 계산해 둔 프레임 배열을 재생한다. 결정론적 캐스케이드처럼 궤적이 프레임 배열로
+// 나오는 시뮬레이션이 공유하는 배선으로, useTrajectory에 지금 프레임 조회만 얹은 것이다.
+// CascadeStage에 그대로 넘길 수 있다.
+//
+// frames는 비어 있지 않아야 한다(첫 프레임은 언제나 시작 상태다). 조회는 마지막 프레임에서
+// 자른다. 리마운트 없이 frames가 짧아지면 round가 새 끝을 넘어 있을 수 있는데, 그때도 frame이
+// undefined가 되지 않고 마지막 프레임을 가리킨다. 호출부는 frames[round]를 직접 읽지 말고
+// 이 frame을 쓴다.
+export function useTrajectoryPlayer<T>(frames: readonly T[], speedMs: number) {
   const player = useTrajectory(frames.length - 1, speedMs);
-  return { ...player, frame: frames[player.round] };
+  return { ...player, frame: frames[Math.min(player.round, frames.length - 1)] };
 }
