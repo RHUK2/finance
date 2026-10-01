@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
+import { formatPct } from '@/lib/utils';
 
 import { KR_RATE, krwChain } from './models';
 
@@ -21,8 +22,7 @@ export function WonPosition() {
       <SectionIntro title='사실상 달러본위제는 매달 내는 이자로 착지한다'>
         앞 탭의 계층 표에서 원화는 신흥국 칸에 있었다. 그 자리가 실제로 무엇을 뜻하는지는 금리로 드러난다. 미국이 금리를
         올리면 한국은 따라 올릴지 말지를 고르는 게 아니라 얼마나 오래 버틸지를 고른다. 버티면 환율이 밀리고, 밀린 환율은
-        수입물가로 돌아온다. 아래 두 슬라이더로 그 사슬을 직접 밀어 보자. 전가 계수와 가산폭은 구조를 보여주기 위한
-        근사값이고 실제 금리 결정은 이보다 훨씬 많은 것을 본다.
+        수입물가로 돌아온다. 아래 두 슬라이더로 그 사슬을 직접 밀어 보자. 실제 금리 결정은 이보다 훨씬 많은 것을 본다.
       </SectionIntro>
 
       <Panel>
@@ -34,7 +34,7 @@ export function WonPosition() {
           min={0}
           max={7}
           step={0.25}
-          format={(v) => `${v.toFixed(2)}%`}
+          format={(v) => formatPct(v, 2)}
           hint='한국이 정할 수 없는 값이다. 이 페이지에서 유일하게 외부에서 주어지는 조건이다.'
         />
         <ControlSlider
@@ -45,7 +45,7 @@ export function WonPosition() {
           min={0}
           max={7}
           step={0.25}
-          format={(v) => `${v.toFixed(2)}%`}
+          format={(v) => formatPct(v, 2)}
           hint={`국내 경기만 보면 이 정도가 좋겠다는 값. 금리차가 ${KR_RATE.tolerance.toFixed(1)}%p를 넘어가면 이 값을 지킬 수 없다.`}
         />
       </Panel>
@@ -59,14 +59,14 @@ export function WonPosition() {
         />
         <Metric
           label='원화 절하 압력'
-          value={`${c.depreciation.toFixed(1)}%`}
+          value={formatPct(c.depreciation, 1)}
           tone={c.depreciation > 6 ? 'bad' : undefined}
           sub='따라 올린 뒤에도 남는 금리차가 환율에 실린다'
         />
         <Metric
           label='수입물가 기여'
           value={`+${c.importInflation.toFixed(2)}%p`}
-          sub={`절하분의 ${(KR_RATE.importPassthrough * 100).toFixed(0)}%가 소비자물가로`}
+          sub={`절하분의 ${formatPct(KR_RATE.importPassthrough * 100, 0)}가 소비자물가로`}
         />
       </div>
 
@@ -75,8 +75,8 @@ export function WonPosition() {
         tone={c.holds ? 'good' : 'bad'}
       >
         {c.holds
-          ? `금리차가 감내 폭 안이라 한국은 원하던 ${intended.toFixed(2)}%를 지킬 수 있다.`
-          : `한국은 원하던 ${intended.toFixed(2)}%를 지키지 못하고 ${c.forcedRate.toFixed(2)}%까지 따라 올리게 된다. 국내 경기와 무관하게 ${forcedUp.toFixed(2)}%p가 강제됐다.`}
+          ? `금리차가 감내 폭 안이라 한국은 원하던 ${formatPct(intended, 2)}를 지킬 수 있다.`
+          : `한국은 원하던 ${formatPct(intended, 2)}를 지키지 못하고 ${formatPct(c.forcedRate, 2)}까지 따라 올리게 된다. 국내 경기와 무관하게 ${forcedUp.toFixed(2)}%p가 강제됐다.`}
       </StatusBanner>
 
       <Panel className='gap-3'>
@@ -85,13 +85,13 @@ export function WonPosition() {
             <TrendingDown className='size-4 text-muted-foreground' />
             국내 대출금리는 무엇으로 이뤄지는가
           </span>
-          <span className='text-lg font-semibold tabular-nums'>{c.loanRate.toFixed(2)}%</span>
+          <span className='text-lg font-semibold tabular-nums'>{formatPct(c.loanRate, 2)}</span>
         </div>
         <StackedBar
           total={c.loanRate}
           segments={[
-            { label: `한국이 원하던 기준금리 ${intended.toFixed(2)}%`, value: intended, className: 'bg-series-1' },
-            { label: `달러가 강제한 인상분 ${forcedUp.toFixed(2)}%p`, value: forcedUp, className: 'bg-bad-surface' },
+            { label: `한국이 원하던 기준금리 ${formatPct(intended, 2)}`, value: intended, className: 'bg-series-1' },
+            { label: `달러가 강제한 인상분 ${forcedUp.toFixed(2)}%p`, value: forcedUp, className: 'bg-series-2' },
             {
               label: `은행 가산폭 ${KR_RATE.spread.value.toFixed(2)}%p`,
               value: KR_RATE.spread.value,

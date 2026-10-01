@@ -13,14 +13,11 @@ const NOTE_GRAMS = 1;
 const NOTE_CM3 = 15.61 * 6.63 * 0.01093;
 const SUITCASE_KG = 23; // 위탁 수하물 1개 기준 중량
 
-// 슬라이더 0~100을 $1M ~ $1B로 로그 매핑한다.
-const amountOf = (t: number) => 1e6 * Math.pow(10, (t / 100) * 3);
-
 const fmtNum = (n: number) => Math.round(n).toLocaleString('ko-KR');
 
 export function CashVsChain() {
-  const [t, setT] = useState(40);
-  const amount = amountOf(t);
+  // $1M ~ $1B 로그 눈금의 40% 지점(약 $15.8M)에서 연다.
+  const [amount, setAmount] = useState(1e6 * 10 ** 1.2);
 
   const notes = amount / NOTE_VALUE;
   const kg = (notes * NOTE_GRAMS) / 1000;
@@ -39,16 +36,19 @@ export function CashVsChain() {
         <ControlSlider
           icon={<DollarSign className='size-4' />}
           label='옮길 금액'
-          value={t}
-          onChange={setT}
-          format={(v) => formatUsd(amountOf(v))}
+          value={amount}
+          onChange={setAmount}
+          min={1e6}
+          max={1e9}
+          scale='log'
+          format={formatUsd}
           hint='$1M부터 $1B까지 로그 스케일'
         />
 
         <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
           <Panel className='gap-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <Banknote className='size-4 text-good' />
+              <Banknote className='size-4 text-series-1' />
               현금 (100달러권)
             </span>
             <div className='grid grid-cols-2 gap-2'>

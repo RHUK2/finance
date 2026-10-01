@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { ChartContainer } from '@/components/chart-container';
 import { SectionIntro } from '@/components/simulation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { LineSeries, useChart } from '@/hooks/use-chart';
+import { CHART_MUTED, CHART_SERIES, LineSeries, useChart } from '@/hooks/use-chart';
 import type { InflationData } from '@/hooks/use-inflation';
 import { depositIndex, normalizeToBase, type Point } from '@/lib/inflation-models';
 import { BTC_COLOR } from '@/lib/utils';
@@ -25,11 +25,11 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
     const out: Line[] = [];
     let hasLateEntrant = false;
     const dep = depositIndex(data.deposit?.history, baseYear);
-    if (dep.length) out.push({ label: '예금', color: '#9ca3af', data: dep });
+    if (dep.length) out.push({ label: '예금', color: CHART_MUTED, data: dep });
 
     const assets: { label: string; color: string; series?: Point[] }[] = [
-      { label: stockLabel, color: '#3b82f6', series: data.stock?.history },
-      { label: '주택', color: '#f59e0b', series: data.house?.history },
+      { label: stockLabel, color: CHART_SERIES[3], series: data.stock?.history },
+      { label: '주택', color: CHART_SERIES[2], series: data.house?.history },
       { label: '비트코인', color: BTC_COLOR, series: btc },
     ];
     let hasAsset = false;
@@ -45,12 +45,12 @@ export function AssetRaceChart({ data, btc, baseYear, stockLabel, updatedLabel }
       }
     }
 
-    // 위험자산 데이터가 없는 시장(예: 한국)에서는 통화팽창·물가를 기준선으로.
+    // 위험자산 시계열이 비어 온 경우에는 통화팽창·물가를 기준선으로.
     if (!hasAsset) {
       const m2 = normalizeToBase(data.m2?.history, baseYear);
-      if (m2.length) out.push({ label: '통화량(M2)', color: '#ef4444', data: m2 });
+      if (m2.length) out.push({ label: '통화량(M2)', color: CHART_SERIES[1], data: m2 });
       const cpi = normalizeToBase(data.cpi?.history, baseYear);
-      if (cpi.length) out.push({ label: '물가(CPI)', color: '#22c55e', data: cpi });
+      if (cpi.length) out.push({ label: '물가(CPI)', color: CHART_SERIES[0], data: cpi });
     }
     return { lines: out, hasLateEntrant };
   }, [data, btc, baseYear, stockLabel]);

@@ -10,7 +10,7 @@ import { Shares } from './shares';
 
 const TABS = [
   { value: 'person', label: '법인격', node: <LegalPerson /> },
-  { value: 'agency', label: '대리인·기관', node: <Agency /> },
+  { value: 'agency', label: '기관', node: <Agency /> },
   { value: 'shares', label: '주식 발행·매입', node: <Shares /> },
   { value: 'liability', label: '유한책임', node: <LimitedLiability /> },
 ];

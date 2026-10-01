@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 
 import { MacroChart, type MacroLine } from '@/components/macro-chart';
+import { CHART_SERIES } from '@/hooks/use-chart';
 import type { InflationData } from '@/hooks/use-inflation';
 import { latestValue, normalizeToBase } from '@/lib/inflation-models';
 
@@ -17,8 +18,8 @@ export function CpiM2GapChart({ data, baseYear, updatedLabel }: Props) {
     const cpi = normalizeToBase(data.cpi?.history, baseYear);
     const m2 = normalizeToBase(data.m2?.history, baseYear);
     const lines: MacroLine[] = [];
-    if (cpi.length) lines.push({ label: 'CPI', data: cpi, color: '#22c55e' });
-    if (m2.length) lines.push({ label: 'M2', data: m2, color: '#ef4444' });
+    if (cpi.length) lines.push({ label: 'CPI', data: cpi, color: CHART_SERIES[0] });
+    if (m2.length) lines.push({ label: 'M2', data: m2, color: CHART_SERIES[1] });
 
     const cpiNow = latestValue(cpi);
     const m2Now = latestValue(m2);
@@ -33,6 +34,7 @@ export function CpiM2GapChart({ data, baseYear, updatedLabel }: Props) {
       title='CPI vs M2: 통화팽창과 물가의 괴리'
       currentLabel={gapLabel}
       lines={lines}
+      frequency='monthly'
       updatedLabel={updatedLabel}
       description={`CPI는 소비재 바스켓 가격을, M2는 통화량을 측정한다. ${baseYear}년을 100으로 맞추면 두 지표가 벌어지는 폭이 드러난다. 그 격차의 상당 부분은 소비재 대신 자산(주택·주식)으로 흘러가 CPI에는 포착되지 않는다.`}
     />

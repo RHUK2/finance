@@ -21,9 +21,16 @@ export function DepositLoan() {
   const conversionRate = deposit > 0 ? (rentCost / deposit) * 100 : 0;
   const gap = rentCost - jeonseCost;
   const barMax = Math.max(jeonseCost, rentCost, 1);
+  // 슬라이더 값의 곱이라 같은 금액도 부동소수 끝자리가 갈릴 수 있다. 만원의 1/1000 안쪽은 같다고 본다.
+  const tie = Math.abs(gap) < 1e-3;
 
-  const banner =
-    gap > 0
+  const banner = tie
+    ? {
+        tone: 'accent' as const,
+        icon: <Percent className='size-4 shrink-0' />,
+        text: `전월세전환율 ${formatPct(conversionRate, 2)}가 시장금리 ${formatPct(rate, 2)}와 같다. 전세로 포기하는 이자와 월세가 연 ${formatMan(rentCost)}으로 같아 어느 쪽도 유리하지 않다.`,
+      }
+    : gap > 0
       ? {
           tone: 'good' as const,
           icon: <House className='size-4 shrink-0' />,
@@ -55,7 +62,7 @@ export function DepositLoan() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-good' />}
+          icon={<Percent className='size-4 text-series-1' />}
           label='시장금리'
           value={rate}
           onChange={setRate}
@@ -66,7 +73,7 @@ export function DepositLoan() {
           hint='보증금을 은행에 넣어 두었다면 받았을 이자율. 전세대출을 썼다면 그 대출 금리로 읽어도 된다.'
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-warn' />}
+          icon={<Wallet className='size-4 text-series-3' />}
           label='같은 집의 월세'
           value={monthlyRent}
           onChange={setMonthlyRent}
@@ -84,20 +91,20 @@ export function DepositLoan() {
           label='전세의 연 비용'
           value={formatMan(jeonseCost)}
           sub='포기한 이자'
-          tone={jeonseCost <= rentCost ? 'good' : 'bad'}
+          tone={tie ? undefined : jeonseCost < rentCost ? 'good' : 'bad'}
         />
         <Metric
           label='월세의 연 비용'
           value={formatMan(rentCost)}
           sub='통장에서 나가는 돈'
-          tone={rentCost < jeonseCost ? 'good' : 'bad'}
+          tone={tie ? undefined : rentCost < jeonseCost ? 'good' : 'bad'}
         />
         {/* 톤은 아래 배너와 같은 임차인 관점으로 읽는다. 전환율이 금리보다 높으면 전세가 유리하다. */}
         <Metric
           label='전월세전환율'
           value={formatPct(conversionRate, 2)}
           sub={`시장금리 ${formatPct(rate, 2)}`}
-          tone={conversionRate > rate ? 'good' : 'accent'}
+          tone={tie ? undefined : conversionRate > rate ? 'good' : 'accent'}
         />
       </div>
 
@@ -114,7 +121,7 @@ export function DepositLoan() {
           label='월세로 살 때 1년치 값'
           value={rentCost}
           max={barMax}
-          className='bg-warn-surface'
+          className='bg-series-2'
           format={formatMan}
           sub={`월 ${formatMan(monthlyRent)} × 12개월`}
         />
@@ -122,7 +129,7 @@ export function DepositLoan() {
           label='임대인이 보증금에서 얻는 연 수익'
           value={jeonseCost}
           max={barMax}
-          className='bg-good-surface'
+          className='bg-series-3'
           format={formatMan}
           sub='임차인이 포기한 이자가 그대로 임대인에게 간다'
         />

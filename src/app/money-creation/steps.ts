@@ -58,7 +58,7 @@ export function buildSteps(r: number): Step[] {
       id: 'issue',
       title: '정부, 국채 발행 → 은행 매입',
       narration:
-        '정부가 적자지출 재원을 마련하려 국채를 발행하고 은행이 이를 매입한다. 은행은 정부 계좌에 예금을 적어주고 국채를 받는다. 정부예금은 통화량에 포함되지 않으므로 아직 새 돈은 없다. 정부가 빚을 졌을 뿐이다. 실제 정부 계좌는 중앙은행에 있지만, 아직 지급준비금이 없는 단계라 은행 예금으로 단순화했다.',
+        '정부가 적자지출 재원을 마련하려 국채를 발행하고 은행이 이를 매입한다. 은행은 정부 계좌에 예금을 적어주고 국채를 받는다. 정부예금은 통화량(M2)에 포함되지 않으므로 아직 새 돈은 없다. 정부가 빚을 졌을 뿐이다. 실제 정부 계좌는 중앙은행에 있지만, 아직 지급준비금이 없는 단계라 은행 예금으로 단순화했다.',
       ops: [
         { entity: 'gov', side: 'asset', item: '정부예금', delta: B },
         { entity: 'gov', side: 'liability', item: '국채', delta: B },
@@ -124,7 +124,7 @@ export function buildSteps(r: number): Step[] {
     {
       id: 'multiplier',
       title: '통화승수 (재예치·재대출 반복)',
-      narration: `대출금이 다시 예치되고 또 대출되는 과정이 반복된다. 지급준비율 ${pct}%에서 통화량은 본원통화의 ${mult}배까지 확장된다. 아래 슬라이더로 지급준비율을 바꿔 승수가 어떻게 달라지는지 확인해 보라. 이 승수는 확장의 상한을 보여주는 교과서 모형이고, 실제로 은행 대출을 묶는 것은 지급준비율보다 자기자본 규제와 빌릴 사람의 상환능력이고, 미국의 지급준비율은 2020년 3월부터 0%다.`,
+      narration: `대출금이 다시 예치되고 또 대출되는 과정이 반복된다. 지급준비율 ${pct}%에서 통화량(M2)은 본원통화의 ${mult}배까지 확장된다. 아래 슬라이더로 지급준비율을 바꿔 승수가 어떻게 달라지는지 확인해 보라. 이 승수는 확장의 상한을 보여주는 교과서 모형이고, 실제로 은행 대출을 묶는 것은 지급준비율보다 자기자본 규제와 빌릴 사람의 상환능력이고, 미국의 지급준비율은 2020년 3월부터 0%다.`,
       ops: [
         { entity: 'bank', side: 'asset', item: '대출', delta: loanTotal - L1 },
         {
@@ -150,6 +150,8 @@ export type Line = {
   amount: number;
   created: boolean;
   flowChanged: boolean;
+  /** 앞 단계보다 금액이 바뀌었는가. 생성·이동 어느 쪽도 아닌 변화(국채 발행의 정부예금, 통화승수의 반복 대출)도 여기서 잡힌다. */
+  changed: boolean;
 };
 export type Sheet = { asset: Line[]; liability: Line[] };
 
@@ -165,7 +167,9 @@ function emptySheets(): Record<EntityId, Sheet> {
 /** 0~stepIndex 단계를 누적해 각 주체의 대차대조표를 만든다. */
 export function sheetsAt(steps: Step[], stepIndex: number): Record<EntityId, Sheet> {
   const amounts = new Map<string, number>();
+  let prevAmounts = new Map<string, number>();
   for (let i = 0; i <= stepIndex; i++) {
+    if (i === stepIndex) prevAmounts = new Map(amounts);
     for (const op of steps[i].ops) {
       const key = `${op.entity}|${op.side}|${op.item}`;
       amounts.set(key, (amounts.get(key) ?? 0) + op.delta);
@@ -179,8 +183,8 @@ export function sheetsAt(steps: Step[], stepIndex: number): Record<EntityId, She
       allKeys.add(`${op.entity}|${op.side}|${op.item}`);
     }
   }
-  // 현재 단계에서 새로 생성된 항목(amber 강조)과
-  // 이미 있던 돈이 이동·변환된 항목(sky 강조)을 구분해 표시한다.
+  // 현재 단계에서 새로 생성된 항목(series-3 강조)과
+  // 이미 있던 돈이 이동·변환된 항목(series-1 강조)을 구분해 표시한다.
   // 흐름 변경은 자동 감지: 이번 단계에 유출(delta<0)이 있으면,
   // 그 단계에서 건드린 비-생성 항목을 이동·변환으로 본다.
   const createdNow = new Set<string>();
@@ -209,6 +213,7 @@ export function sheetsAt(steps: Step[], stepIndex: number): Record<EntityId, She
           amount,
           created: createdNow.has(key),
           flowChanged: hasOutflow && touchedNow.has(key) && !createdNow.has(key),
+          changed: amount !== (prevAmounts.get(key) ?? 0),
         });
       }
       result[id][side] = lines;

@@ -15,7 +15,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { formatEok, formatWon } from '@/lib/utils';
+import { formatEok, formatPct, formatWon } from '@/lib/utils';
 
 // 교육용 예시 회사. 금액 단위는 억원, 주가는 원.
 const BASE_SHARES = 10_000_000;
@@ -99,9 +99,9 @@ export function Hybrid() {
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='채권과 주식 사이'>
-        앞 탭의 워터폴은 층이 뚜렷하게 나뉜 그림이었다. 실제 자금 조달에는 그 사이에 걸친 증권이 많다. 평소에는 채권처럼
-        원금을 약속받다가 회사가 잘되면 주식으로 갈아타는 전환사채, 주식이면서 배당은 먼저 받고 의결권은 포기하는
-        우선주가 그렇다. 어느 성질을 얼마나 가져오느냐로 값이 정해진다.
+        앞 탭의 청산 순위는 층이 뚜렷하게 나뉜 그림이었다. 실제 자금 조달에는 그 사이에 걸친 증권이 많다. 평소에는
+        채권처럼 원금을 약속받다가 회사가 잘되면 주식으로 갈아타는 전환사채, 주식이면서 배당은 먼저 받고 의결권은
+        포기하는 우선주가 그렇다. 어느 성질을 얼마나 가져오느냐로 값이 정해진다.
       </SectionIntro>
 
       <MarkTable
@@ -134,7 +134,7 @@ export function Hybrid() {
 
       <Panel>
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-good' />}
+          icon={<TrendingUp className='size-4 text-series-1' />}
           label='만기 시점의 회사 가치'
           value={value}
           onChange={setValue}
@@ -142,7 +142,7 @@ export function Hybrid() {
           max={5000}
           step={50}
           format={(v) => formatEok(v, 0)}
-          hint={`기존 주식 ${BASE_SHARES.toLocaleString('ko-KR')}주에 전환사채 하나만 있는 회사다. 전환하면 지분의 ${(CONV_STAKE * 100).toFixed(2)}%를 가져간다.`}
+          hint={`기존 주식 ${BASE_SHARES.toLocaleString('ko-KR')}주에 전환사채 하나만 있는 회사다. 전환하면 지분의 ${formatPct(CONV_STAKE * 100, 2)}를 가져간다.`}
         />
       </Panel>
 
@@ -157,7 +157,7 @@ export function Hybrid() {
           label='전환하면'
           value={formatEok(convValue, 0)}
           tone={converts ? 'good' : undefined}
-          sub={`지분 ${(CONV_STAKE * 100).toFixed(2)}%의 값`}
+          sub={`지분 ${formatPct(CONV_STAKE * 100, 2)}의 값`}
         />
         <Metric
           label='보유자의 선택'
@@ -223,7 +223,7 @@ export function Hybrid() {
       />
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-bad' />}
+        icon={<TrendingUp className='size-4 text-series-2' />}
         title='전환가가 내려가면 이야기가 달라진다'
         preview='주가가 빠질 때 전환가를 함께 낮추는 조항이 붙으면 희석의 한도가 사라진다.'
         body={

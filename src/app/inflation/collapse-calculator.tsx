@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from 'react';
 
-import { ControlSlider, Metric, SectionIntro } from '@/components/simulation';
-import { Button } from '@/components/ui/button';
+import { ControlSlider, Field, Metric, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, valueAt, type Point } from '@/lib/inflation-models';
+import { formatPct } from '@/lib/utils';
 
-import { EmptyCard, fmtMultiple, hi, makeMoneyFmt, type Currency, type HiTone } from './components';
+import { fmtMultiple, hi, makeMoneyFmt, type Currency, type HiTone } from './components';
 
 type Basis = 'M2' | 'CPI';
 
@@ -82,14 +82,16 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
       </SectionIntro>
 
       <Panel className='gap-5'>
-        <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium'>기준</span>
-          {(['M2', 'CPI'] as const).map((b) => (
-            <Button key={b} size='sm' variant={basis === b ? 'default' : 'outline'} onClick={() => setBasis(b)}>
-              {b === 'M2' ? '통화량(M2)' : '물가(CPI)'}
-            </Button>
-          ))}
-        </div>
+        <Field label='기준'>
+          <SegmentedControl
+            value={basis}
+            onChange={setBasis}
+            options={[
+              { value: 'M2', label: '통화량(M2)' },
+              { value: 'CPI', label: '물가(CPI)' },
+            ]}
+          />
+        </Field>
 
         <ControlSlider
           label='시작 연도'
@@ -106,9 +108,9 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
             <>
               {startYear}년에 {hi(money(amount), 'strong')}을 예금에 넣었다면 오늘 통장엔{' '}
               {hi(money(r.depositNominal!), 'strong')}(명목)이다. 하지만 같은 기간 {refName}이{' '}
-              {hi(`${r.ratio!.toFixed(1)}배`, 'amber')} 늘어, 같은 값어치를 유지하려면 오늘{' '}
+              {hi(`${r.ratio!.toFixed(1)}배`, 'accent')} 늘어, 같은 값어치를 유지하려면 오늘{' '}
               {hi(money(r.holdLine!), 'strong')}이 있어야 한다. 통장은 유지선 대비{' '}
-              {hi(`${Math.abs(r.lossPct!).toFixed(0)}%`, realTone)} {r.lossPct! < 0 ? '부족하다' : '초과한다'}.
+              {hi(formatPct(Math.abs(r.lossPct!), 0), realTone)} {r.lossPct! < 0 ? '부족하다' : '초과한다'}.
               {head && head.value != null ? (
                 <>
                   {' '}
@@ -126,7 +128,7 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
           )}
         </p>
 
-        <div className='grid gap-3 sm:grid-cols-3'>
+        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='통장 잔고 (명목)' value={money(r.depositNominal ?? amount)} />
           <Metric
             label={holdLabel}
@@ -137,16 +139,16 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
             label='유지선 대비'
             value={money(r.gap ?? 0)}
             tone={r.lossPct != null && r.lossPct < 0 ? 'bad' : 'good'}
-            sub={r.lossPct != null ? `${r.lossPct >= 0 ? '+' : ''}${r.lossPct.toFixed(0)}%` : '데이터 범위 밖'}
+            sub={r.lossPct != null ? formatPct(r.lossPct, 0, { plus: true }) : '데이터 범위 밖'}
           />
         </div>
 
         <div>
           <div className='mb-2 text-xs font-medium text-muted-foreground'>같은 원금을 자산에 넣었다면</div>
-          <div className='grid gap-3 sm:grid-cols-3'>
+          <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
             {r.assets.map((a) =>
               a.value == null ? (
-                <EmptyCard key={a.key} label={a.label} note={`${startYear}년 데이터 없음`} />
+                <Metric key={a.key} label={a.label} value={null} sub={`${startYear}년 데이터 없음`} />
               ) : (
                 <Metric
                   key={a.key}

@@ -6,8 +6,9 @@ import { ControlSlider, Metric, SectionIntro } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import type { InflationData } from '@/hooks/use-inflation';
 import { compoundDeposit, grow, latestValue, minWageAt, valueAt, type Point } from '@/lib/inflation-models';
+import { formatPct } from '@/lib/utils';
 
-import { EmptyCard, fmtHours, hi, makeMoneyFmt, type Currency } from './components';
+import { fmtHours, hi, makeMoneyFmt, type Currency } from './components';
 
 type Props = {
   data: InflationData;
@@ -22,6 +23,9 @@ type Props = {
 export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, stockLabel }: Props) {
   const [startYear, setStartYear] = useState(minYear);
   const money = makeMoneyFmt(currency);
+  // 최저임금은 해마다 고시로 바뀌는 법정 금액이라 화면에 어느 해 값인지 함께 적는다.
+  // 조회는 maxYear 이하 최댓값이라 표를 갱신하지 않은 해에는 표의 마지막 해 시급이 쓰인다.
+  const wageYear = wageTable.filter((row) => row.year <= maxYear).at(-1)?.year;
 
   const r = useMemo(() => {
     const wage = minWageAt(wageTable, startYear); // 시작연도 시급 = 1시간 노동
@@ -66,8 +70,8 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
   return (
     <>
       <SectionIntro title='노동시간 환산'>
-        {startYear}년 최저임금 <b>1시간</b>어치를 저축했다면, 오늘 그 돈으로 몇 시간어치를 살 수 있을까? (오늘 최저임금{' '}
-        {r.currentWage != null ? money(r.currentWage) : '-'} 기준)
+        {startYear}년 최저임금 <b>1시간</b>어치를 저축했다면, 오늘 그 돈으로 몇 시간어치를 살 수 있을까? ({wageYear}년
+        기준 최저임금 {r.currentWage != null ? money(r.currentWage) : '-'} 적용)
       </SectionIntro>
 
       <Panel className='gap-5'>
@@ -85,9 +89,9 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           {ready ? (
             <>
               {startYear}년 최저임금 {hi('1시간', 'strong')}어치(시급 {money(r.wage!)})를 예금에 넣었다면 오늘{' '}
-              {hi(money(deposit!.value!), 'strong')}이 된다. 오늘 최저임금(
-              {money(r.currentWage!)}) 기준 {hi(fmtHours(depositHours!), depositTone)}어치다. 같은 1시간 노동의 구매력이{' '}
-              {hi(`${Math.abs((depositHours! - 1) * 100).toFixed(0)}%`, depositTone)}{' '}
+              {hi(money(deposit!.value!), 'strong')}이 된다. {wageYear}년 기준 최저임금(
+              {money(r.currentWage!)})으로 재면 {hi(fmtHours(depositHours!), depositTone)}어치다. 같은 1시간 노동의
+              구매력이 {hi(formatPct(Math.abs((depositHours! - 1) * 100), 0), depositTone)}{' '}
               {depositHours! < 1 ? '줄었다' : '늘었다'}.
               {best ? (
                 <>
@@ -103,10 +107,10 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
           )}
         </p>
 
-        <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
           {r.entries.map((e) =>
             e.value == null || r.currentWage == null ? (
-              <EmptyCard key={e.key} label={e.label} note={`${startYear}년 데이터 없음`} />
+              <Metric key={e.key} label={e.label} value={null} sub={`${startYear}년 데이터 없음`} />
             ) : (
               <Metric
                 key={e.key}

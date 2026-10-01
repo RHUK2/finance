@@ -37,11 +37,11 @@ export function Shares() {
   // 분모가 다르므로, 어느 기준인지를 라벨과 주석에서 반드시 밝힌다.
   const segments = [
     { label: '창업자', value: FOUNDER, className: 'bg-series-1' },
-    { label: '나', value: ME, className: 'bg-warn-surface' },
+    { label: '나', value: ME, className: 'bg-series-2' },
     { label: '기타 주주', value: OTHERS - buyback, className: 'bg-muted-foreground' },
-    { label: '신규 투자자', value: newIssue, className: 'bg-good-surface' },
+    { label: '신규 투자자', value: newIssue, className: 'bg-series-3' },
     { label: '자사주 (의결권·배당 없음)', value: buyback, className: 'bg-muted-foreground/25' },
-  ].map((s) => ({ ...s, label: `${s.label} ${((s.value / issued) * 100).toFixed(1)}%` }));
+  ].map((s) => ({ ...s, label: `${s.label} ${formatPct((s.value / issued) * 100, 1)}` }));
 
   return (
     <div className='flex flex-col gap-4'>
@@ -54,7 +54,7 @@ export function Shares() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Coins className='size-4 text-good' />}
+          icon={<Coins className='size-4 text-series-1' />}
           label='신주 발행 (유상증자)'
           value={newIssue}
           onChange={setNewIssue}
@@ -65,7 +65,7 @@ export function Shares() {
           hint={`주당 ${formatWon(PRICE)}에 새 주식을 찍어 판다. 회사 금고에 현금이 들어오지만, 파이의 조각 수가 늘어 기존 주주의 몫은 묽어진다.`}
         />
         <ControlSlider
-          icon={<Undo2 className='size-4 text-warn' />}
+          icon={<Undo2 className='size-4 text-series-3' />}
           label='자사주 매입'
           value={buyback}
           onChange={setBuyback}
@@ -117,7 +117,7 @@ export function Shares() {
       )}
 
       <ExplainCard
-        icon={<Repeat className='size-4 text-warn' />}
+        icon={<Repeat className='size-4 text-series-3' />}
         title='자사주 매입은 왜 배당과 닮았고, 또 다른가'
         preview='둘 다 회사 돈을 주주에게 돌려주는 통로지만, 남는 주주의 지분율이 달라진다.'
         body={
@@ -137,7 +137,7 @@ export function Shares() {
       />
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-good' />}
+        icon={<TrendingUp className='size-4 text-series-1' />}
         title='희석이 항상 손해는 아니다'
         preview='조각 수가 늘어도 파이 자체가 더 커지면 내 몫의 절대 크기는 커진다.'
         body={

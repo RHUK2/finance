@@ -16,6 +16,7 @@ import {
   SectionIntro,
 } from '@/components/simulation';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
+import { formatPct } from '@/lib/utils';
 
 import { type AgentType, type CascadeAgent, buildCascadeAgents, cascadeTrajectory } from './models';
 
@@ -25,9 +26,9 @@ const SEED = 12345;
 // 유형은 칸 색으로만 구분한다. 격자의 위치는 임계값 순서를 뜻하므로,
 // 유형을 공간으로 묶으면 임계값 축이 깨진다.
 const TYPE_COLOR: Record<AgentType, { on: string; off: string }> = {
-  개인: { on: 'bg-warn-surface/40', off: 'bg-warn-surface/10' },
-  기업: { on: 'bg-warn-surface/70', off: 'bg-warn-surface/15' },
-  국가: { on: 'bg-warn-surface', off: 'bg-warn-surface/20' },
+  개인: { on: 'bg-series-1/40', off: 'bg-series-1/10' },
+  기업: { on: 'bg-series-1/70', off: 'bg-series-1/15' },
+  국가: { on: 'bg-series-1', off: 'bg-series-1/20' },
 };
 
 export function AdoptionCascade() {
@@ -54,10 +55,10 @@ export function AdoptionCascade() {
           min={0.1}
           max={0.6}
           step={0.01}
-          format={(v) => `${Math.round(v * 100)}%`}
+          format={(v) => formatPct(v * 100, 0)}
         />
         <ControlSlider
-          icon={<Users className='size-4 text-warn' />}
+          icon={<Users className='size-4 text-series-3' />}
           label='처음 사는 사람 수 (시드)'
           hint='아무도 안 사도 맨 먼저 움직이는 사람들. 임계값이 가장 낮아 격자 맨 왼쪽에 있다.'
           value={seedCount}
@@ -130,22 +131,22 @@ function CascadeSim({
       reading={
         <>
           칸은 임계값 순으로 왼쪽부터 늘어서 있다. 진한 칸이 채택자이고, 그 경계가 곧 전체 채택률{' '}
-          <span className='font-medium text-warn'>{Math.round(p * 100)}%</span>다. 채택률이 오르면 경계 바로 오른쪽
+          <span className='font-medium text-series-1'>{formatPct(p * 100, 0)}</span>다. 채택률이 오르면 경계 바로 오른쪽
           칸들의 임계값을 넘어서고, 그 칸들이 넘어오면 채택률이 또 오른다.
         </>
       }
       legend={
         <>
-          <Legend className='bg-warn-surface/40' label='개인' />
-          <Legend className='bg-warn-surface/70' label='기업' />
-          <Legend className='bg-warn-surface' label='국가' />
+          <Legend className='bg-series-1/40' label='개인' />
+          <Legend className='bg-series-1/70' label='기업' />
+          <Legend className='bg-series-1' label='국가' />
         </>
       }
       legendNote='테두리 = 이번 라운드에 새로 채택'
-      curve={{ values: curve, cursor: round, label: '채택 곡선', className: 'text-warn', min: 0, max: 1 }}
+      curve={{ values: curve, cursor: round, label: '채택 곡선', className: 'text-series-1', min: 0, max: 1 }}
       metrics={
         <>
-          <Metric label='채택률' value={`${Math.round(p * 100)}%`} tone='accent' />
+          <Metric label='채택률' value={formatPct(p * 100, 0)} tone='accent' />
           <Metric label='채택자' value={`${adoptedCount} / ${N}`} />
           <Metric label='남은 관망자' value={`${N - adoptedCount}`} />
         </>

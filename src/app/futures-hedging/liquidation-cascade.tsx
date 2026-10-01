@@ -15,6 +15,7 @@ import {
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
+import { formatPct } from '@/lib/utils';
 
 import { CASCADE_IMPACT, ENTRY_PRICE, OPENING_SHOCK, type Position, buildPositions, cascadeTrajectory } from './models';
 
@@ -41,8 +42,7 @@ export function LiquidationCascade() {
       <SectionIntro title='위험을 받은 쪽이 감당하지 못하면'>
         앞 두 탭에서 헤저가 넘긴 위험은 투기자의 장부에 쌓였다. 투기자는 증거금만 걸고 명목가가 훨씬 큰 포지션을 들고
         있어서, 가격이 일정 폭 이상 빠지면 거래소가 그 포지션을 강제로 닫는다. 그 매도가 가격을 더 끌어내려 다음 층을
-        넘긴다. 평균 증거금 배수를 바꿔 가며 연쇄가 어디서 멈추는지 보자. 배수·명목가·낙폭은 구조를 보여주기 위한 예시
-        수치다.
+        넘긴다. 평균 증거금 배수를 바꿔 가며 연쇄가 어디서 멈추는지 보자.
       </SectionIntro>
 
       <Panel>
@@ -65,7 +65,7 @@ export function LiquidationCascade() {
       <ExplainCard
         title='홀더의 딜레마와 모양이 같은데 왜 다른가'
         preview='거기서는 각자가 던질지 말지를 골랐다. 여기서는 아무도 고르지 않는다.'
-        body='비트코인 게임이론의 홀더의 딜레마도 이것과 똑같이 생겼다. 개체를 하나의 축으로 정렬하고, 전역 신호 하나가 앞에서부터 경계를 밀고 나가며, 그 전이가 다시 신호를 키운다. 다른 것은 축의 정체다. 확신도는 보유자가 얼마나 견딜지를 스스로 정한 값이라 그 연쇄는 뱅크런처럼 각자의 선택이 모인 결과다. 청산 낙폭은 증거금 배수가 정해 버린 값이고, 거기 도달하면 보유자의 의사와 무관하게 거래소가 포지션을 닫는다. 같은 모양이 선택에서도 나오고 강제에서도 나온다는 사실이 이 페이지의 논지다. 위험은 넘긴 순간 사라지는 게 아니라 받은 쪽에서 다른 얼굴로 다시 나타난다.'
+        body='비트코인 게임이론의 홀더의 딜레마도 이것과 똑같이 생겼다. 개체를 하나의 정렬 축에 늘어놓고, 전역 신호 하나가 앞에서부터 경계를 밀고 나가며, 그 전이가 다시 신호를 키운다. 다른 것은 정렬 축의 정체다. 확신도는 보유자가 얼마나 견딜지를 스스로 정한 값이라 그 연쇄는 뱅크런처럼 각자의 선택이 모인 결과다. 청산 낙폭은 증거금 배수가 정해 버린 값이고, 거기 도달하면 보유자의 의사와 무관하게 거래소가 포지션을 닫는다. 같은 모양이 선택에서도 나오고 강제에서도 나온다는 사실이 이 페이지의 논지다. 위험은 넘긴 순간 사라지는 게 아니라 받은 쪽에서 다른 얼굴로 다시 나타난다.'
       />
     </div>
   );
@@ -97,8 +97,8 @@ function CascadeSim({
     <CascadeStage
       notice={
         <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <Zap className='size-3.5 text-bad' />첫 박자에 외생 충격{' '}
-          <span className='font-medium text-bad'>−{Math.round(OPENING_SHOCK * 100)}%</span> 자동 적용
+          <Zap className='size-3.5 text-series-2' />첫 박자에 외생 충격{' '}
+          <span className='font-medium text-bad'>{formatPct(-OPENING_SHOCK * 100, 0)}</span> 자동 적용
         </div>
       }
       controls={
@@ -118,7 +118,7 @@ function CascadeSim({
       axisLabels={['청산 낙폭 얕음 (고배수)', '청산 낙폭 깊음 (저배수)']}
       states={states}
       highlight={frame.justChanged}
-      reading='칸 하나가 포지션 하나다. 청산 낙폭 순으로 왼쪽부터 늘어서 있어 강제청산(붉은색)은 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다. 배수가 큰 포지션일수록 얕은 낙폭에서 털리고 털릴 때 쏟아내는 명목가도 커서, 왼쪽 몇 칸이 넘어가는 것만으로 다음 층이 연달아 넘어간다.'
+      reading='칸 하나가 포지션 하나다. 청산 낙폭 순으로 왼쪽부터 늘어서 있어 강제청산 칸은 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다. 배수가 큰 포지션일수록 얕은 낙폭에서 털리고 털릴 때 쏟아내는 명목가도 커서, 왼쪽 몇 칸이 넘어가는 것만으로 다음 층이 연달아 넘어간다.'
       legend={
         <>
           <Legend className='bg-series-1' label='살아 있는 포지션' />
@@ -139,7 +139,7 @@ function CascadeSim({
           <Metric
             label='가격 (진입 100)'
             value={frame.price.toFixed(1)}
-            sub={`누적 낙폭 ${Math.round(frame.drawdown * 100)}%`}
+            sub={`누적 낙폭 ${formatPct(frame.drawdown * 100, 0)}`}
             tone={frame.price < 80 ? 'bad' : frame.price >= 85 ? 'good' : undefined}
           />
           <Metric label='강제청산된 포지션' value={`${wiped}`} tone={wiped > 0 ? 'bad' : undefined} />

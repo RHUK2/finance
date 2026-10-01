@@ -42,7 +42,7 @@ const ROWS: Row[] = [
     labor: 'partial',
     marginal: 'yes',
     detail:
-      '노동가치설은 밭에 들어간 개간 노동과 앞으로 들어갈 경작 노동으로 답한다. 그런데 같은 밭이 와인 인기에 따라 값이 몇 배로 갈리는 것은 설명하지 못한다. 귀속은 방향을 뒤집어 답한다. 밭의 값은 그 밭이 닿는 와인의 값에서 내려온다.',
+      '노동가치설은 밭에 들어간 개간 노동과 앞으로 들어갈 경작 노동으로 답한다. 그런데 같은 밭이 와인 인기에 따라 값이 몇 배로 갈리는 것은 설명하지 못한다. 귀속은 방향을 뒤집어 답한다. 밭의 값은 그 밭이 닿는 와인의 값에서 거슬러 정해진다.',
   },
   {
     id: 'fit',
@@ -63,7 +63,7 @@ const ARROWS = [
     id: 'labor',
     title: '노동가치설',
     icon: Hammer,
-    color: 'text-bad',
+    color: 'text-series-2',
     steps: ['투입한 노동', '비용', '가치', '가격'],
     note: '노동에서 출발한다. 얼마를 들였느냐가 얼마짜리인지를 정한다.',
   },
@@ -71,7 +71,7 @@ const ARROWS = [
     id: 'marginal',
     title: '한계효용',
     icon: Eye,
-    color: 'text-good',
+    color: 'text-series-1',
     steps: ['평가하는 사람', '가격', '감당 가능한 비용', '들어가는 노동'],
     note: '평가에서 출발한다. 얼마짜리인지가 얼마까지 들여도 되는지를 정한다.',
   },
@@ -135,7 +135,7 @@ export function Causation() {
       </Panel>
 
       <ExplainCard
-        icon={<Filter className='size-4 text-warn' />}
+        icon={<Filter className='size-4 text-series-3' />}
         title='그런데 왜 노동가치설은 아직도 그럴듯한가'
         preview='살아남은 생산만 눈에 보이기 때문이다. 상관은 진짜인데 인과가 반대다.'
         body={

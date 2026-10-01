@@ -16,7 +16,7 @@ import {
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { byYear, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage-models';
-import { cn, formatEokFromMan, formatMan } from '@/lib/utils';
+import { cn, formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
 
 export function Repayment() {
   const [loan, setLoan] = useState(40000);
@@ -76,14 +76,14 @@ export function Repayment() {
           format={formatEokFromMan}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-bad' />}
+          icon={<Percent className='size-4 text-series-2' />}
           label='금리'
           value={rate}
           onChange={setRate}
           min={2.5}
           max={7}
           step={0.1}
-          format={(v) => `${v.toFixed(1)}%`}
+          format={(v) => formatPct(v, 1)}
         />
         <ControlSlider
           icon={<CalendarClock className='size-4 text-series-2' />}
@@ -112,7 +112,7 @@ export function Repayment() {
           label='총 이자'
           value={formatEokFromMan(totalInterest)}
           tone={totalInterest === cheapest ? 'good' : totalInterest === dearest ? 'bad' : 'accent'}
-          sub={`원금의 ${((totalInterest / loan) * 100).toFixed(0)}% · 세 방식 중 ${interestRank}`}
+          sub={`원금의 ${formatPct((totalInterest / loan) * 100, 0)} · 세 방식 중 ${interestRank}`}
         />
         <Metric
           label='총 상환액'
@@ -124,7 +124,7 @@ export function Repayment() {
       <Panel className='gap-3'>
         <div className='flex flex-col gap-1'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <Coins className='size-4 text-good' />
+            <Coins className='size-4 text-series-1' />
             해마다 내는 돈은 어떻게 구성되는가
           </span>
           <span className='text-xs/relaxed text-muted-foreground'>
@@ -144,16 +144,16 @@ export function Repayment() {
                   className='flex w-full flex-col justify-end'
                   style={{ height: `${Math.max(1, (total / peak) * 100)}%` }}
                 >
-                  <div className='w-full rounded-t-xs bg-bad-surface' style={{ flexGrow: y.interest }} />
-                  <div className='w-full bg-good-surface' style={{ flexGrow: y.principal }} />
+                  <div className='w-full rounded-t-xs bg-series-2' style={{ flexGrow: y.interest }} />
+                  <div className='w-full bg-series-1' style={{ flexGrow: y.principal }} />
                 </div>
               </div>
             );
           })}
         </div>
         <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-          <Legend className='bg-bad-surface' label='이자' />
-          <Legend className='bg-good-surface' label='원금' />
+          <Legend className='bg-series-2' label='이자' />
+          <Legend className='bg-series-1' label='원금' />
           <span className='tabular-nums'>1년차부터 {years}년차까지</span>
         </div>
       </Panel>
@@ -201,7 +201,7 @@ export function Repayment() {
       </Panel>
 
       <ExplainCard
-        icon={<Coins className='size-4 text-warn' />}
+        icon={<Coins className='size-4 text-series-3' />}
         title='초반에 원금이 줄지 않는 이유'
         preview='이자는 남은 잔액에 붙는다. 잔액이 가장 큰 시점이 바로 대출 초기다.'
         body={
@@ -209,7 +209,7 @@ export function Repayment() {
             <p>
               원리금균등에서 매달 내는 총액은 고정이지만 그 구성은 계속 바뀐다. 첫 달에는 잔액이 원금 전액이라 이자가
               가장 크고, 정해진 납입액에서 이자를 뺀 나머지만 원금으로 들어간다. 잔액이 조금 줄면 다음 달 이자가 조금
-              줄고, 그만큼 원금 상환분이 늘어난다. 이 과정이 눈덩이처럼 가속되기 때문에 위 그래프에서 초록색 영역이 뒤로
+              줄고, 그만큼 원금 상환분이 늘어난다. 이 과정이 눈덩이처럼 가속되기 때문에 위 그래프에서 원금 막대가 뒤로
               갈수록 두꺼워진다.
             </p>
             <p className='mt-2'>

@@ -7,21 +7,21 @@ import { Coins, TrendingUp } from 'lucide-react';
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { useMarket } from '@/hooks/use-market';
-import { cn, formatUsd } from '@/lib/utils';
+import { cn, formatPct, formatUsd } from '@/lib/utils';
 
-import { impliedProbability, pricePerPointOfP, regimeImpliedPrice } from './models';
+import { GOLD_CAP, GOLD_CAP_AS_OF, SUPPLY, impliedProbability, pricePerPointOfP, regimeImpliedPrice } from './models';
 
 // 민감도 대비용 기준점. 저확률 구간에서 같은 1%포인트가 얼마나 다르게 작동하는지 보인다.
 const REFERENCE_P = [0.05, 0.15, 0.5];
 
 export function TwoRegime() {
   const [pPct, setPPct] = useState(5); // 성공 확률 %. 기본값은 대략의 현재 시세가 함의하는 값.
-  const [winCapT, setWinCapT] = useState(32); // 성공 시 목표 시총 $T (기본값 ≈ 금 시가총액, models.ts 참조)
+  const [winCapT, setWinCapT] = useState(Math.round(GOLD_CAP / 1e12)); // 성공 시 목표 시총 $T. 슬라이더 눈금이 1이라 정수로 반올림한다
 
   // 성숙 곡선 탭이 쓰는 일간 종가가 아니라 실시간 시세를 쓴다. 종가는 하루 늦어
-  // 자산 현황 페이지가 보여 주는 값과 어긋난다.
+  // 지금 시세가 함의하는 성공 확률을 읽는 자리에 맞지 않는다.
   const { data } = useMarket();
-  const spot = data?.items.find((i) => i.symbol === 'BTC-USD')?.price ?? undefined;
+  const spot = data?.price ?? undefined;
 
   const p = pPct / 100;
   const winCap = winCapT * 1e12;
@@ -33,17 +33,17 @@ export function TwoRegime() {
       <SectionIntro title='두 갈래 운명: 가격은 곧 확률이다'>
         이 탭은 비트코인의 미래 가치에 어중간한 중간이 없다고 <b>가정</b>한다. 진짜 화폐로 자리 잡아 거대한 시장을
         차지하거나(성공), 그러지 못해 0에 가까워지거나(실패) 둘 중 하나로만 본다. 실제로는 그 사이에 자리 잡을 여지도
-        있지만, 이 단순한 가정을 받아들이면 오늘의 가격이 곧 <b>성공 확률 × 성공했을 때의 가격</b>이 되어 변동성의
+        있지만, 이 단순한 가정을 받아들이면 오늘의 가격이 곧 <b>성공 확률 × 성공했을 때의 가격</b>이 되어 실현 변동성의
         정체가 드러난다. 아래 슬라이더로 성공 확률을 직접 움직여 보자. 수치는 개념 이해용 예시다.
       </SectionIntro>
 
       <Panel>
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-warn' />}
+          icon={<TrendingUp className='size-4 text-series-3' />}
           label='체제 전환 성공 확률 (p)'
           hint={
             spotP != null
-              ? `지금 시세 ${formatUsd(spot!)}는 이 모델에서 성공 확률 ${(spotP * 100).toFixed(1)}%를 함의한다.`
+              ? `지금 시세 ${formatUsd(spot!)}는 이 모델에서 성공 확률 ${formatPct(spotP * 100, 1)}를 함의한다.`
               : "시장이 '비트코인이 끝내 진짜 화폐가 된다'고 믿는 정도. 이 한 숫자가 가격을 좌우한다."
           }
           value={pPct}
@@ -53,9 +53,9 @@ export function TwoRegime() {
           format={(v) => `${v}%`}
         />
         <ControlSlider
-          icon={<Coins className='size-4 text-warn' />}
+          icon={<Coins className='size-4 text-series-3' />}
           label='성공 시 시장 규모'
-          hint='성공했을 때 비트코인이 차지할 시장의 크기. 기본값은 금 시가총액이다.'
+          hint={`성공했을 때 비트코인이 차지할 시장의 크기. 기본값은 ${GOLD_CAP_AS_OF} 금 시가총액(약 ${formatUsd(GOLD_CAP)})이다.`}
           value={winCapT}
           onChange={setWinCapT}
           min={1}
@@ -69,7 +69,7 @@ export function TwoRegime() {
           label='성공 시 가격'
           value={formatUsd(winPrice)}
           tone='good'
-          sub={`${formatUsd(winCap)} ÷ 2,100만 개`}
+          sub={`${formatUsd(winCap)} ÷ ${(SUPPLY / 1e4).toLocaleString('ko-KR')}만 개`}
         />
         <Metric label='실패 시 가격' value='$0' tone='bad' sub='성공하지 못하면' />
         <Metric label='현재 함의 가격' value={formatUsd(implied)} tone='accent' sub={`성공 확률 ${pPct}% 반영`} />
@@ -94,7 +94,9 @@ function Sensitivity({ p }: { p: number }) {
     <Panel className='gap-3'>
       <div className='flex items-baseline justify-between'>
         <span className='text-sm font-medium'>확률 1%포인트가 만드는 가격 변화</span>
-        <span className='text-xl font-semibold text-warn tabular-nums'>+{(current * 100).toFixed(1)}%</span>
+        <span className='text-xl font-semibold text-series-1 tabular-nums'>
+          {formatPct(current * 100, 1, { plus: true })}
+        </span>
       </div>
       <div className='grid grid-cols-3 gap-2'>
         {REFERENCE_P.map((ref) => {
@@ -104,11 +106,13 @@ function Sensitivity({ p }: { p: number }) {
               key={ref}
               className={cn(
                 'flex flex-col items-center rounded-md border p-2 text-xs',
-                near ? 'border-warn-surface/60 bg-warn-surface/10' : 'text-muted-foreground',
+                near ? 'border-series-1/60 bg-series-1/10' : 'text-muted-foreground',
               )}
             >
-              <span>성공 확률 {Math.round(ref * 100)}%</span>
-              <span className='mt-0.5 font-semibold tabular-nums'>+{(pricePerPointOfP(ref) * 100).toFixed(1)}%</span>
+              <span>성공 확률 {formatPct(ref * 100, 0)}</span>
+              <span className='mt-0.5 font-semibold tabular-nums'>
+                {formatPct(pricePerPointOfP(ref) * 100, 1, { plus: true })}
+              </span>
             </div>
           );
         })}

@@ -6,10 +6,16 @@ import { useState } from 'react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StackedBar } from '@/components/simulation';
 import { Panel } from '@/components/panel';
+import { formatPct } from '@/lib/utils';
 
-import { exportLedger } from './models';
+import { exportLedger, type TierId } from './models';
 
-const pct = (v: number) => `${v.toFixed(2)}%`;
+// 계층을 가르는 막대 색. 색은 화면의 몫이라 모델이 아니라 여기 둔다.
+const TIER_CLASS: Record<TierId, string> = {
+  semi: 'bg-series-1',
+  emerging: 'bg-series-2',
+  fragile: 'bg-series-3',
+};
 
 export function InflationExport() {
   const [issuance, setIssuance] = useState(4);
@@ -23,8 +29,7 @@ export function InflationExport() {
       <SectionIntro title='찍은 쪽이 다 뒤집어쓰지는 않는다'>
         발행국이 통화를 늘리면 물가가 오른다. 그런데 그 통화가 국경 밖에서도 쓰이면 늘어난 돈의 일부가 밖으로 흘러 나가
         국내 물가 압력이 옅어진다. 옅어진 만큼이 사라진 게 아니라 다른 나라로 건너간 것이고, 같은 금액이 들어와도 경제
-        규모가 작고 환율을 방어할 수단이 적을수록 더 크게 맞는다. 발행 규모와 유출 비율, 계층별 전가 계수는 구조를
-        보여주기 위한 예시 수치다.
+        규모가 작고 환율을 방어할 수단이 적을수록 더 크게 맞는다.
       </SectionIntro>
 
       <Panel>
@@ -51,10 +56,14 @@ export function InflationExport() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='발행국 물가 압력' value={pct(r.homePressure)} sub={`국내에 남은 ${r.home.toFixed(1)}조 달러`} />
+        <Metric
+          label='발행국 물가 압력'
+          value={formatPct(r.homePressure, 2)}
+          sub={`국내에 남은 ${r.home.toFixed(1)}조 달러`}
+        />
         <Metric
           label='한 푼도 안 나갔다면'
-          value={pct(r.closedPressure)}
+          value={formatPct(r.closedPressure, 2)}
           tone='accent'
           sub='기축통화가 아니었을 때의 압력'
         />
@@ -73,11 +82,11 @@ export function InflationExport() {
         <StackedBar
           total={issuance}
           segments={[
-            { label: '발행국 국내', value: r.home, className: 'bg-good-surface' },
+            { label: '발행국 국내', value: r.home, className: 'bg-series-4' },
             ...r.rows.map((x) => ({
               label: `${x.tier.label} (${x.tier.currencies})`,
               value: x.inflow,
-              className: x.tier.className,
+              className: TIER_CLASS[x.tier.id],
             })),
           ]}
         />
@@ -89,8 +98,8 @@ export function InflationExport() {
           label='발행국 (달러)'
           value={r.homePressure}
           max={maxPressure}
-          className='bg-good-surface'
-          format={pct}
+          className='bg-series-4'
+          format={(v) => formatPct(v, 2)}
           sub='세계에서 제일 큰 경제가 흡수한다'
         />
         {r.rows.map((x) => (
@@ -99,8 +108,8 @@ export function InflationExport() {
             label={`${x.tier.label} (${x.tier.currencies})`}
             value={x.pressure}
             max={maxPressure}
-            className={x.tier.className}
-            format={pct}
+            className={TIER_CLASS[x.tier.id]}
+            format={(v) => formatPct(v, 2)}
             sub={`유입 ${x.inflow.toFixed(2)}조 달러 · 전가 계수 ${x.tier.passthrough.toFixed(1)}`}
           />
         ))}

@@ -5,19 +5,17 @@
 // 때문이다(CLAUDE.md "설명 페이지의 모델 배치"). 반감기 날짜와 일일 발행량이 필요한
 // 차트 쪽 계산은 그쪽에 이미 있고, 여기서는 높이(블록 번호) 기준으로 본다.
 
-import { BLOCKS_PER_HALVING } from '@/lib/bitcoin-models';
-
-/** 제네시스 블록의 보조금 (BTC) */
-export const INITIAL_SUBSIDY = 50;
+import { BLOCKS_PER_DAY, BLOCKS_PER_HALVING, HALVINGS, INITIAL_SUBSIDY_BTC } from '@/lib/bitcoin-models';
+import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 
 /** 하루 144블록 × 365일. 난이도 조정이 10분을 유지한다는 전제다. */
-export const BLOCKS_PER_YEAR = 144 * 365;
+export const BLOCKS_PER_YEAR = BLOCKS_PER_DAY * 365;
 
 /** 반감기 한 번의 길이. 210,000블록 ÷ 52,560블록/년 ≈ 3.995년이라 4년으로 읽는다. */
-export const HALVING_YEARS = BLOCKS_PER_HALVING / BLOCKS_PER_YEAR;
+const HALVING_YEARS = BLOCKS_PER_HALVING / BLOCKS_PER_YEAR;
 
 /**
- * 보조금이 0이 되는 시대 번호. 비트코인은 사토시(1e-8 BTC) 단위 정수로 계산하므로
+ * 마지막으로 보조금이 나오는 시대 번호. 비트코인은 사토시(1e-8 BTC) 단위 정수로 계산하므로
  * 50 BTC = 5e9 사토시를 33번 반으로 자르면 정수 나눗셈에서 0이 된다. 그래서
  * 마지막으로 보조금이 나오는 시대는 32번이고, 그 끝이 2140년 언저리다.
  */
@@ -27,8 +25,8 @@ const SATOSHI = 1e-8;
 
 /** 시대(반감기 횟수) 기준 블록 보조금 (BTC). 사토시 단위로 내림한다. */
 export function subsidyAt(era: number): number {
-  if (era < 0) return INITIAL_SUBSIDY;
-  const sats = Math.floor(INITIAL_SUBSIDY / SATOSHI / 2 ** era);
+  if (era < 0) return INITIAL_SUBSIDY_BTC;
+  const sats = Math.floor(INITIAL_SUBSIDY_BTC / SATOSHI / 2 ** era);
   return sats * SATOSHI;
 }
 
@@ -41,7 +39,10 @@ export function subsidyAt(era: number): number {
  * 마지막 실측 지점에서 210,000블록 ÷ 10분 간격으로 늘린다. 그래서 보조금이
  * 사라지는 시점이 흔히 말하는 2140년 언저리로 떨어진다.
  */
-const OBSERVED_START_YEARS = [2009, 2012, 2016, 2020, 2024];
+const OBSERVED_START_YEARS = HALVINGS.filter((h) => !h.estimated).map((h) => Number(h.date.slice(0, 4)));
+
+/** 지금 시대. 마지막으로 실제 일어난 반감기 뒤의 시대라 다음 반감기가 오면 `HALVINGS`를 따라 바뀐다. */
+export const CURRENT_ERA = OBSERVED_START_YEARS.length - 1;
 
 export function eraStartYear(era: number): number {
   if (era < OBSERVED_START_YEARS.length) return OBSERVED_START_YEARS[Math.max(0, era)];
@@ -79,6 +80,13 @@ export function blockRevenue({ era, btcPrice, feePerBlock }: RevenueInput) {
   const feeShare = totalBtc > 0 ? feePerBlock / totalBtc : 1;
   return { subsidy, totalBtc, perBlockUsd, annualUsd, feeShare };
 }
+
+/**
+ * 기준점. 기준 시점(BTC_PRICE_BASELINE.asOf)의 대략적인 시장 상황이고, 수수료의 몫 탭의 모든
+ * '지금 대비'와 공격 비용 탭의 출발점이 이 한 점에서 나온다. 정확한 실측값이 아니라 비교의 원점이다.
+ */
+export const BASE = { era: CURRENT_ERA, btcPrice: BTC_PRICE_BASELINE.value, feePerBlock: 0.05 };
+export const BASE_ANNUAL = blockRevenue(BASE).annualUsd;
 
 /**
  * 지금과 같은 보안 예산을 유지하려면 블록당 수수료가 얼마여야 하는가 (BTC).

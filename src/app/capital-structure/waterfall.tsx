@@ -4,9 +4,9 @@ import { useState } from 'react';
 
 import { Banknote, Gavel, HardHat, Landmark, PieChart, Receipt, Users } from 'lucide-react';
 
-import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { cn, formatEok } from '@/lib/utils';
+import { formatEok, formatPct } from '@/lib/utils';
 
 // 단위는 억원. 장부상 자산 1,000억짜리 회사가 청산에 들어갔다고 하자.
 const BOOK_ASSETS = 1000;
@@ -28,7 +28,7 @@ const TIERS: Tier[] = [
     label: '최우선변제 임금채권',
     claim: 40,
     icon: HardHat,
-    className: 'bg-good-surface',
+    className: 'bg-series-4',
     note: '최종 3개월분 임금과 최종 3년분 퇴직급여, 재해보상금은 담보권보다도 앞선다. 사람의 생계가 걸린 채권이라 법이 순위를 따로 끌어올려 뒀다.',
   },
   {
@@ -46,7 +46,7 @@ const TIERS: Tier[] = [
     label: '일반채권',
     claim: 260,
     icon: Receipt,
-    className: 'bg-warn-surface',
+    className: 'bg-series-1/50',
     note: '거래처 외상값, 담보 없는 회사채처럼 아무 순위 약정도 없는 채권이다. 담보가 없으니 남은 재산을 채권액 비율대로 나눠 갖는다. 미지급 세금은 국세 우선권이 있어 여기보다 앞자리다.',
   },
   {
@@ -73,7 +73,7 @@ const TIERS: Tier[] = [
     label: '보통주',
     claim: 300,
     icon: Users,
-    className: 'bg-bad-surface',
+    className: 'bg-muted-foreground/40',
     note: '앞의 모두가 만족한 뒤 남은 전부를 가져간다. 남지 않으면 한 푼도 못 받는다. 그 대신 회사가 잘될 때 늘어나는 가치에는 상한이 없다.',
   },
 ];
@@ -117,7 +117,7 @@ export function Waterfall() {
           max={1100}
           step={25}
           format={(v) => formatEok(v, 0)}
-          hint={`장부상 자산은 ${formatEok(BOOK_ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금은 장부가 대비 ${discount > 0 ? `${discount.toFixed(0)}% 할인` : `${(-discount).toFixed(0)}% 웃돈`}이다.`}
+          hint={`장부상 자산은 ${formatEok(BOOK_ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금은 장부가 대비 ${discount > 0 ? `${formatPct(discount, 0)} 할인` : `${formatPct(-discount, 0)} 웃돈`}이다.`}
         />
       </Panel>
 
@@ -126,35 +126,24 @@ export function Waterfall() {
           매각 대금 {formatEok(proceeds, 0)}이 위에서 아래로 흐른다. 총 청구액은 {formatEok(TOTAL_CLAIM, 0)}
         </span>
         {rows.map((r) => (
-          <div key={r.id} className='flex flex-col gap-1'>
-            <div className='flex items-baseline justify-between gap-2 text-sm'>
-              <span className='flex items-center gap-1.5 font-medium'>
-                <r.icon className='size-4 shrink-0 text-muted-foreground' />
-                {r.label}
-              </span>
-              <span className='shrink-0 tabular-nums'>
-                {formatEok(r.paid, 0)}
-                <span className='text-muted-foreground'> / {formatEok(r.claim, 0)}</span>
-              </span>
-            </div>
-            <div className='h-5 w-full overflow-hidden rounded-md bg-muted'>
-              <div
-                className={cn('h-full rounded-md transition-all', r.className)}
-                style={{ width: `${Math.max(r.paid > 0 ? 1 : 0, r.rate)}%` }}
-              />
-            </div>
-            <span className='text-xs text-muted-foreground'>
-              회수율 {r.rate.toFixed(0)}%
-              {r.rate === 100 ? ', 전액 회수' : r.rate === 0 ? ', 물이 닿지 않았다' : ', 여기서 물이 끊긴다'}
-            </span>
-          </div>
+          <CostBar
+            key={r.id}
+            icon={<r.icon className='size-4 shrink-0' />}
+            label={r.label}
+            value={r.paid}
+            max={r.claim}
+            className={r.className}
+            format={(v) => formatEok(v, 0)}
+            aside={`/ ${formatEok(r.claim, 0)}`}
+            sub={`회수율 ${formatPct(r.rate, 0)}${r.rate === 100 ? ', 전액 회수' : r.rate === 0 ? ', 물이 닿지 않았다' : ', 여기서 물이 끊긴다'}`}
+          />
         ))}
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='채권 전체 회수율'
-          value={`${((debtPaid / DEBT_CLAIM) * 100).toFixed(0)}%`}
+          value={formatPct((debtPaid / DEBT_CLAIM) * 100, 0)}
           tone={debtPaid >= DEBT_CLAIM ? 'good' : 'bad'}
           sub={`청구 ${formatEok(DEBT_CLAIM, 0)} 중 ${formatEok(debtPaid, 0)}`}
         />

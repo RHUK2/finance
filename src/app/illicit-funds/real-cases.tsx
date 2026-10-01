@@ -49,7 +49,7 @@ export function RealCases() {
             </div>
             <p className='text-sm/relaxed text-muted-foreground'>{c.body}</p>
             <div className='flex items-start gap-2 rounded-md bg-muted p-3 text-sm/relaxed'>
-              <Search className='mt-0.5 size-4 shrink-0 text-good' />
+              <Search className='mt-0.5 size-4 shrink-0 text-series-1' />
               <span>{c.lesson}</span>
             </div>
             <span className='flex items-center gap-1.5 text-xs text-muted-foreground'>

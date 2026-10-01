@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeftRight, Minus, Sparkles } from 'lucide-react';
+import { ArrowLeftRight, ArrowUpDown, Minus, Sparkles } from 'lucide-react';
 
 import { ExplainCard } from '@/components/simulation';
 import { Panel } from '@/components/panel';
@@ -17,11 +17,11 @@ function AmountRow({ line, side }: { line: Line; side: 'asset' | 'liability' }) 
     <div
       className={cn(
         'flex items-center justify-between gap-2 rounded-md border px-2.5 py-1.5 text-sm',
-        side === 'asset' ? 'border-good-surface/30 bg-good-surface/5' : 'border-bad-surface/30 bg-bad-surface/5',
+        side === 'asset' ? 'border-series-4/30 bg-series-4/5' : 'border-series-2/30 bg-series-2/5',
         isCapital && 'border-border bg-muted/40 text-muted-foreground',
         isIdle && 'opacity-45',
         line.flowChanged && 'border-series-1/70 bg-series-1/15 ring-1 ring-series-1/60',
-        line.created && 'animate-pulse border-warn-surface/70 bg-warn-surface/15 ring-1 ring-warn-surface/60',
+        line.created && 'animate-pulse border-series-3/70 bg-series-3/15 ring-1 ring-series-3/60',
       )}
     >
       <span className='truncate'>{line.item}</span>
@@ -41,13 +41,14 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
   const capital = sheet.liability.filter((l) => l.item === '자본');
   const hasCreated = [...sheet.asset, ...sheet.liability].some((l) => l.created);
   const hasFlow = [...sheet.asset, ...sheet.liability].some((l) => l.flowChanged);
+  const hasChange = [...sheet.asset, ...sheet.liability].some((l) => l.changed);
 
   return (
     <Panel
       bleed
       className={cn(
         'transition-shadow',
-        hasCreated && 'shadow-lg ring-2 ring-warn-surface/50',
+        hasCreated && 'shadow-lg ring-2 ring-series-3/50',
         !hasCreated && hasFlow && 'shadow-lg ring-2 ring-series-1/50',
       )}
     >
@@ -58,7 +59,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
 
       <div className='flex flex-1 flex-col p-3'>
         {hasCreated ? (
-          <div className='mb-2 flex items-center gap-1 text-xs font-medium text-warn'>
+          <div className='mb-2 flex items-center gap-1 text-xs font-medium text-series-3'>
             <Sparkles className='size-3.5' />
             無에서 자산·부채가 동시에 생성됨
           </div>
@@ -67,6 +68,11 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
             <ArrowLeftRight className='size-3.5' />
             기존의 돈이 이동·변환됨
           </div>
+        ) : hasChange ? (
+          <div className='mb-2 flex items-center gap-1 text-xs font-medium text-muted-foreground'>
+            <ArrowUpDown className='size-3.5' />
+            금액이 바뀜
+          </div>
         ) : (
           <div className='mb-2 flex items-center gap-1 text-xs font-medium text-muted-foreground/70'>
             <Minus className='size-3.5' />이 단계에서 변동 없음
@@ -74,7 +80,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
         )}
         <div className='mb-3 grid grid-cols-2 gap-2'>
           <div className='space-y-1.5'>
-            <div className='text-xs font-medium text-good'>자산</div>
+            <div className='text-xs font-medium text-series-4'>자산</div>
             {sheet.asset.map((l) => (
               <AmountRow key={l.item} line={l} side='asset' />
             ))}
@@ -82,7 +88,7 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
           <div className='space-y-1.5'>
             {debts.length > 0 && (
               <>
-                <div className='text-xs font-medium text-bad'>부채</div>
+                <div className='text-xs font-medium text-series-2'>부채</div>
                 {debts.map((l) => (
                   <AmountRow key={l.item} line={l} side='liability' />
                 ))}
@@ -114,13 +120,13 @@ export function BalanceSheet({ name, sub, sheet }: { name: string; sub: string; 
 const ASSET_GROUPS = [
   {
     title: '자산',
-    color: 'text-good',
+    color: 'text-series-4',
     desc: '내가 가진 가치 있는 것 (왼쪽)',
     items: ['현금·예금', '부동산·주식', '보유 국채', '대출해 준 돈(채권)'],
   },
   {
     title: '부채',
-    color: 'text-bad',
+    color: 'text-series-2',
     desc: '남에게 갚아야 할 것 (오른쪽)',
     items: ['대출·차입금', '발행한 국채', '외상 매입금', '예금(은행 입장)'],
   },

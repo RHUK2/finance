@@ -4,22 +4,25 @@ import { useMemo, useState } from 'react';
 
 import { Bitcoin, Cpu, ShieldCheck, Zap } from 'lucide-react';
 
-import Link from 'next/link';
-
 import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { bcra, bcraLabel, deterred } from '@/lib/bcra';
-import { formatUsd } from '@/lib/utils';
+import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
+import { BTC_COLOR, formatUsd } from '@/lib/utils';
 
 import { attack51, HARDWARE_LIFE_YEARS } from './models';
 
+// BTC 가격·해시레이트 기본값의 기준 시점. 해시레이트도 BTC 기준 시세와 같은 시점에 맞춘다.
+// 화면 힌트에 함께 적는다(docs/fact-check-log.md 재확인 표).
+const MARKET_AS_OF = BTC_PRICE_BASELINE.asOf;
+
 export function AttackGame() {
-  // 2026년 8월 기준 시장 상황을 기본값으로 둔다. 슬라이더로 바꿔 보는 게 이 탭의 목적이다.
-  const [btcPrice, setBtcPrice] = useState(75000);
+  // 기준 시점의 시장 상황을 기본값으로 둔다. 슬라이더로 바꿔 보는 게 이 탭의 목적이다.
+  const [btcPrice, setBtcPrice] = useState(BTC_PRICE_BASELINE.value);
   const [networkHashrate, setNetworkHashrate] = useState(810);
   const [attackHours, setAttackHours] = useState(6);
   const [hardwareCostPerTH, setHardwareCostPerTH] = useState(15);
-  const [electricity, setElectricity] = useState(0.05);
+  const [electricity, setElectricity] = useState(0.025);
 
   const r = useMemo(
     () =>
@@ -36,29 +39,24 @@ export function AttackGame() {
   const ratio = bcra(r.doubleSpendGain, r.attackCost);
   const safe = deterred(ratio);
   const max = Math.max(r.attackCost, r.doubleSpendGain);
+  const recoverable = Number.isFinite(r.paybackYears);
+  const pays = r.paybackYears < HARDWARE_LIFE_YEARS;
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='51% 공격: 합리적이라면 정직하게 채굴한다'>
         네트워크 과반 해시파워를 확보하면 이론상 이중지불 공격이 가능하다. 아래에서 쓰는 <b>BCRA</b>(공격 이득 ÷ 공격
         비용)는 제이슨 로워리가 <i>Softwar</i>에서 쓴 용어로, 1 미만이면 공격이 비합리가 되어 방어에 성공한 것으로 본다.
-        같은 비율을{' '}
-        <Link href='/softwar' className='underline underline-offset-2'>
-          비트코인 소프트워
-        </Link>{' '}
-        페이지가 추상 권력과 물리 권력을 견주는 데 쓴다. 문제는 그 해시파워를 갖추는 비용이다. 장비값은 공격하든
-        정직하게 채굴하든 똑같이 치러야 하므로, 갈림길은 그 장비로 무엇을 할 것이냐다. 다만 51%로도 남의 과거 거래를
-        바꾸거나 없는 코인을 만들어 낼 수는 없다. 뒤집을 수 있는 건 공격자 자신이 최근에 보낸 거래뿐이며, 그 범위는{' '}
-        <Link href='/chain-reorg' className='underline underline-offset-2'>
-          체인 재구성·파이널리티
-        </Link>{' '}
-        페이지에서 따로 다룬다.
+        문제는 그 해시파워를 갖추는 비용이다. 장비값은 공격하든 정직하게 채굴하든 똑같이 치러야 하므로, 갈림길은 그
+        장비로 무엇을 할 것이냐다. 다만 51%로도 남의 과거 거래를 바꾸거나 없는 코인을 만들어 낼 수는 없다. 뒤집을 수
+        있는 건 공격자 자신이 최근에 보낸 거래뿐이다.
       </SectionIntro>
 
       <Panel>
         <ControlSlider
-          icon={<Bitcoin className='size-4 text-warn' />}
+          icon={<Bitcoin className='size-4' style={{ color: BTC_COLOR }} />}
           label='BTC 가격'
+          hint={`기본값은 ${MARKET_AS_OF} 시세 언저리다.`}
           value={btcPrice}
           onChange={setBtcPrice}
           min={10000}
@@ -69,6 +67,7 @@ export function AttackGame() {
         <ControlSlider
           icon={<Cpu className='size-4 text-series-1' />}
           label='네트워크 해시레이트'
+          hint={`기본값은 ${MARKET_AS_OF} 네트워크 수준이다.`}
           value={networkHashrate}
           onChange={setNetworkHashrate}
           min={100}
@@ -93,8 +92,9 @@ export function AttackGame() {
           format={(v) => `$${v}/TH`}
         />
         <ControlSlider
-          icon={<Zap className='size-4 text-warn' />}
+          icon={<Zap className='size-4 text-series-3' />}
           label='전기 요금'
+          hint='기본값은 대형 채굴장이 맺는 산업용 전력 계약 수준이다.'
           value={electricity}
           onChange={setElectricity}
           min={0.02}
@@ -110,10 +110,10 @@ export function AttackGame() {
           label='공격 비용 (장비 + 전기)'
           value={r.attackCost}
           max={max}
-          className='bg-bad-surface'
+          className='bg-series-1'
           sub={`장비 ${formatUsd(r.hardwareCost)} · 전기 ${formatUsd(r.energyCost)}`}
         />
-        <CostBar label='이중지불 이득 (최대 추정)' value={r.doubleSpendGain} max={max} className='bg-warn-surface' />
+        <CostBar label='이중지불 이득 (최대 추정)' value={r.doubleSpendGain} max={max} className='bg-series-2' />
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -122,9 +122,9 @@ export function AttackGame() {
         <Metric label='BCRA (이득÷비용)' value={bcraLabel(ratio)} tone={safe ? 'good' : 'bad'} sub='1 미만이면 방어' />
         <Metric
           label='장비 회수 기간'
-          value={`${r.paybackYears.toFixed(1)}년`}
-          tone={r.paybackYears < HARDWARE_LIFE_YEARS ? 'good' : 'bad'}
-          sub={`정직 채굴 연 ${formatUsd(r.honestYearly)} · 장비 수명 ${HARDWARE_LIFE_YEARS}년`}
+          value={recoverable ? `${r.paybackYears.toFixed(1)}년` : '회수 불가'}
+          tone={pays ? 'good' : 'bad'}
+          sub={`정직 채굴 연 순수입 ${r.honestNet < 0 ? '−' : ''}${formatUsd(Math.abs(r.honestNet))}(매출 ${formatUsd(r.honestRevenue)} − 전기 ${formatUsd(r.honestPowerCost)}) · 장비 수명 ${HARDWARE_LIFE_YEARS}년`}
         />
       </div>
 
@@ -132,10 +132,25 @@ export function AttackGame() {
         {safe ? (
           <span className='text-sm/relaxed font-normal'>
             BCRA가 <b className='text-good'>{bcraLabel(ratio)}</b>다. 같은 장비를 정직 채굴에 쓰면{' '}
-            <b>{r.paybackYears.toFixed(1)}년</b>
-            {r.paybackYears < HARDWARE_LIFE_YEARS
-              ? `이면 장비값을 회수하고 그 뒤로는 계속 번다`
-              : `이 걸려 장비 수명 ${HARDWARE_LIFE_YEARS}년 안에는 장비값도 못 건진다. 이 설정에선 정직 채굴 자체가 수지가 맞지 않아, 공격을 막는 것은 회수 전망이 아니라 아래의 자기 파괴 논리뿐이다`}
+            {pays ? (
+              <>
+                전기비를 치르고도 <b>{r.paybackYears.toFixed(1)}년</b>이면 장비값을 회수하고 그 뒤로는 계속 번다
+              </>
+            ) : (
+              <>
+                {recoverable ? (
+                  <>
+                    전기비를 치르고 장비값을 회수하는 데 <b>{r.paybackYears.toFixed(1)}년</b>이 걸려
+                  </>
+                ) : (
+                  <>
+                    매출이 전기비에도 못 미쳐 장비값을 <b>회수할 수 없고</b>,
+                  </>
+                )}{' '}
+                장비 수명 {HARDWARE_LIFE_YEARS}년 안에는 장비값도 못 건진다. 이 설정에선 정직 채굴 자체가 수지가 맞지
+                않아, 공격을 막는 것은 회수 전망이 아니라 아래의 자기 파괴 논리뿐이다
+              </>
+            )}
             . 공격은 그 자산을 단 한 번의 이중지불과 맞바꾸는 선택이고, 성공하는 순간 신뢰가 무너져 BTC 가격이 폭락하면
             채굴에만 쓰이는 장비와 보유 코인이 함께 휴지가 된다.
           </span>

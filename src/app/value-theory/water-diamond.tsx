@@ -71,9 +71,13 @@ export function WaterDiamond() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Scale className='size-4 text-warn' />한 단위 더의 값어치
+          <Scale className='size-4 text-series-3' />한 단위 더의 값어치
         </span>
-        <div className='flex items-end gap-4'>
+        <div
+          role='img'
+          aria-label={`물 한 잔 더의 지불의사가 1잔째 ${formatValue(bars[0])}에서 ${cups}잔째 ${formatValue(marginal)}까지 줄어든다. 다이아몬드 하나 더는 ${formatValue(diamondWon)}.`}
+          className='flex items-end gap-4'
+        >
           <div className='flex h-32 flex-1 items-end gap-0.5'>
             {bars.map((v, i) => (
               <div
@@ -102,15 +106,19 @@ export function WaterDiamond() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label={`물 총효용 (${cups}잔 전부)`} value={formatValue(total)} sub='첫 잔부터 지금 잔까지의 합' />
         <Metric
-          label={`물 한계효용 (${cups}잔째)`}
-          value={formatValue(marginal)}
-          tone={waterWins ? 'good' : 'bad'}
-          sub='한 잔 더 얻을 때 늘어나는 값어치'
+          label={`물 지불의사 합 (${cups}잔 전부)`}
+          value={formatValue(total)}
+          sub='첫 잔부터 지금 잔까지의 합. 총효용을 금액으로 잰 값'
         />
         <Metric
-          label='다이아몬드 한계효용'
+          label={`물 ${cups}잔째의 지불의사`}
+          value={formatValue(marginal)}
+          tone={waterWins ? 'good' : 'bad'}
+          sub='한 잔 더 얻으려고 내놓을 최대 금액. 한계효용을 금액으로 잰 값'
+        />
+        <Metric
+          label='다이아몬드 하나 더의 지불의사'
           value={formatValue(diamondWon)}
           sub={situation === 'desert' ? '사막에서는 당장 쓸 데가 없다' : '희소해서 다음 하나가 여전히 비싸다'}
         />
@@ -119,7 +127,7 @@ export function WaterDiamond() {
       <StatusBanner icon={<Gem className='size-4' />} tone={waterWins ? 'good' : 'accent'}>
         {waterWins
           ? `물 ${cups}잔째가 다이아몬드보다 비싸다. 같은 물과 같은 다이아몬드인데 상황이 값을 뒤집었다.`
-          : `물 총효용은 다이아몬드의 ${(total / diamondWon).toFixed(0)}배인데, 값을 정하는 ${cups}잔째는 다이아몬드보다 싸다.`}
+          : `물 지불의사 합은 다이아몬드의 ${(total / diamondWon).toFixed(0)}배인데, 값을 정하는 ${cups}잔째는 다이아몬드보다 싸다.`}
       </StatusBanner>
 
       <p className='text-sm/relaxed text-muted-foreground'>

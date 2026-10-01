@@ -15,12 +15,9 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
+import { formatUsdPrice } from '@/lib/utils';
 
 import { CRUDE_LOCK, type CrackHedge, GASOLINE_LOCK, crackResult } from './models';
-
-const usd = (n: number) => `$${n.toFixed(2)}`;
-// 마진은 음수가 될 수 있다. 막대는 최소폭으로 눕더라도 숫자는 부호까지 그대로 보인다.
-const usdSigned = (n: number) => `${n < 0 ? '−' : ''}$${Math.abs(n).toFixed(2)}`;
 
 const HEDGE_OPTIONS: { value: CrackHedge; label: string }[] = [
   { value: 'none', label: '헤지 없음' },
@@ -36,7 +33,28 @@ export function CrackSpread() {
   const [hedge, setHedge] = useState<CrackHedge>('none');
 
   const r = crackResult(crude, gasoline, hedge);
-  const worst = Math.max(Math.abs(r.crackNow), Math.abs(r.margin), Math.abs(r.locked), 1);
+  // 세 막대가 한 축을 쓰도록 최대값은 막대에 넘기는 값 그대로에서 구한다.
+  const bars = [
+    {
+      label: '헤지 없음',
+      value: r.crackNow,
+      className: 'bg-series-1',
+      sub: `원유 ${formatUsdPrice(crude)}에 사서 휘발유 ${formatUsdPrice(gasoline)}에 판다. 두 가격이 다 움직인다`,
+    },
+    {
+      label: '원유만 잠금',
+      value: gasoline - CRUDE_LOCK,
+      className: 'bg-series-2',
+      sub: `매입은 ${formatUsdPrice(CRUDE_LOCK)}에 고정. 휘발유가 빠지면 마진이 그대로 빠진다`,
+    },
+    {
+      label: '양쪽 다 잠금',
+      value: r.locked,
+      className: 'bg-series-3',
+      sub: `${formatUsdPrice(CRUDE_LOCK)}에 사서 ${formatUsdPrice(GASOLINE_LOCK)}에 판다. 두 슬라이더를 어디로 밀어도 안 움직인다`,
+    },
+  ];
+  const worst = Math.max(...bars.map((b) => Math.abs(b.value)), 1);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -49,7 +67,7 @@ export function CrackSpread() {
 
       <Panel>
         <ControlSlider
-          icon={<Droplet className='size-4 text-warn' />}
+          icon={<Droplet className='size-4 text-series-3' />}
           label='만기 원유가 (사는 쪽)'
           hint='정유사가 원료로 사야 하는 가격. 오르면 원가가 오른다.'
           value={crude}
@@ -57,10 +75,10 @@ export function CrackSpread() {
           min={40}
           max={120}
           step={1}
-          format={usd}
+          format={formatUsdPrice}
         />
         <ControlSlider
-          icon={<Flame className='size-4 text-bad' />}
+          icon={<Flame className='size-4 text-series-2' />}
           label='만기 휘발유가 (파는 쪽)'
           hint='정유사가 제품으로 파는 가격. 내리면 매출이 준다.'
           value={gasoline}
@@ -68,7 +86,7 @@ export function CrackSpread() {
           min={50}
           max={150}
           step={1}
-          format={usd}
+          format={formatUsdPrice}
         />
         <Field label='헤지 방식'>
           <SegmentedControl options={HEDGE_OPTIONS} value={hedge} onChange={setHedge} />
@@ -76,10 +94,10 @@ export function CrackSpread() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='지금 조건의 크랙' value={usdSigned(r.crackNow)} sub='헤지가 없을 때의 배럴당 마진' />
+        <Metric label='지금 조건의 크랙' value={formatUsdPrice(r.crackNow)} sub='헤지가 없을 때의 배럴당 마진' />
         <Metric
           label='이 헤지 방식의 마진'
-          value={usdSigned(r.margin)}
+          value={formatUsdPrice(r.margin)}
           tone={r.margin > r.crackNow ? 'good' : r.margin < r.crackNow ? 'bad' : undefined}
           sub={hedge === 'both' ? '두 가격과 무관하게 고정' : '아직 시장에 노출됨'}
         />
@@ -93,38 +111,17 @@ export function CrackSpread() {
 
       <Panel className='gap-3'>
         <span className='text-sm font-semibold'>같은 시장에서 세 가지 선택이 만드는 마진</span>
-        <CostBar
-          label='헤지 없음'
-          value={r.crackNow}
-          max={worst}
-          className='bg-bad-surface'
-          format={usdSigned}
-          sub={`원유 ${usd(crude)}에 사서 휘발유 ${usd(gasoline)}에 판다. 두 가격이 다 움직인다`}
-        />
-        <CostBar
-          label='원유만 잠금'
-          value={gasoline - CRUDE_LOCK}
-          max={worst}
-          className='bg-warn-surface'
-          format={usdSigned}
-          sub={`매입은 ${usd(CRUDE_LOCK)}에 고정. 휘발유가 빠지면 마진이 그대로 빠진다`}
-        />
-        <CostBar
-          label='양쪽 다 잠금'
-          value={r.locked}
-          max={worst}
-          className='bg-good-surface'
-          format={usdSigned}
-          sub={`${usd(CRUDE_LOCK)}에 사서 ${usd(GASOLINE_LOCK)}에 판다. 두 슬라이더를 어디로 밀어도 안 움직인다`}
-        />
+        {bars.map((b) => (
+          <CostBar key={b.label} {...b} max={worst} format={formatUsdPrice} />
+        ))}
       </Panel>
 
       <StatusBanner tone={hedge === 'both' ? 'good' : r.margin < 5 ? 'bad' : 'accent'}>
         {hedge === 'both'
-          ? `두 슬라이더를 어디로 밀어도 마진은 ${usd(r.locked)}에 붙어 있다. 정유사는 원유 가격도 휘발유 가격도 예측하지 않았고, 둘의 차이만 샀다.`
+          ? `두 슬라이더를 어디로 밀어도 마진은 ${formatUsdPrice(r.locked)}에 붙어 있다. 정유사는 원유 가격도 휘발유 가격도 예측하지 않았고, 둘의 차이만 샀다.`
           : hedge === 'crude'
-            ? `원가는 ${usd(CRUDE_LOCK)}에 잠겼지만 휘발유가 ${usd(gasoline)}까지 움직이면서 마진이 ${usdSigned(r.margin)}이 됐다. 절반만 잠그는 것은 절반만 안전한 게 아니라, 남은 절반에 전부를 건 것이다.`
-            : `두 가격이 다 열려 있어 마진이 ${usdSigned(r.crackNow)}다. 두 슬라이더를 만지는 대로 이 숫자가 따라 움직인다. 원유와 휘발유를 같은 방향으로 밀면 마진이 거의 안 변하고, 벌리면 무너진다. 정유사를 죽이는 건 가격의 높낮이가 아니라 둘 사이의 벌어짐이다.`}
+            ? `원가는 ${formatUsdPrice(CRUDE_LOCK)}에 잠겼지만 휘발유가 ${formatUsdPrice(gasoline)}까지 움직이면서 마진이 ${formatUsdPrice(r.margin)}이 됐다. 절반만 잠그는 것은 절반만 안전한 게 아니라, 남은 절반에 전부를 건 것이다.`
+            : `두 가격이 다 열려 있어 마진이 ${formatUsdPrice(r.crackNow)}다. 두 슬라이더를 만지는 대로 이 숫자가 따라 움직인다. 원유와 휘발유를 같은 방향으로 밀면 마진이 거의 안 변하고, 벌리면 무너진다. 정유사를 죽이는 건 가격의 높낮이가 아니라 둘 사이의 벌어짐이다.`}
       </StatusBanner>
 
       <ExplainCard

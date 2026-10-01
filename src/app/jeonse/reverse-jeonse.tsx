@@ -64,7 +64,7 @@ export function ReverseJeonse() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-good' />}
+          icon={<Percent className='size-4 text-series-1' />}
           label='계약 당시 전세가율'
           value={ratio}
           onChange={setRatio}
@@ -75,7 +75,7 @@ export function ReverseJeonse() {
           hint={`이 조건에서 계약한 보증금은 ${formatEok(deposit)}이다. 만기에 돌려줄 금액은 앞으로 무슨 일이 있어도 이 금액이다.`}
         />
         <ControlSlider
-          icon={<TrendingDown className='size-4 text-bad' />}
+          icon={<TrendingDown className='size-4 text-series-2' />}
           label='매매가 하락률'
           value={priceDrop}
           onChange={setPriceDrop}
@@ -85,7 +85,7 @@ export function ReverseJeonse() {
           format={formatPct}
         />
         <ControlSlider
-          icon={<TrendingDown className='size-4 text-warn' />}
+          icon={<TrendingDown className='size-4 text-series-3' />}
           label='전세 시세 하락률'
           value={rentDrop}
           onChange={setRentDrop}
@@ -115,11 +115,13 @@ export function ReverseJeonse() {
           label='내 보증금 ÷ 지금 집값'
           value={formatPct(depositRatio)}
           sub={
-            depositRatio >= 100
+            underwater > 0
               ? `깡통전세. 지금 시장의 전세가율은 ${formatPct(marketRatio)}다`
-              : `집값 ${formatEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
+              : deposit === nowPrice
+                ? `집값과 같다. 집주인의 자기 자본이 0이다. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
+                : `집값 ${formatEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
           }
-          tone={depositRatio >= 100 ? 'bad' : depositRatio >= 90 ? 'accent' : 'good'}
+          tone={underwater > 0 ? 'bad' : depositRatio >= 90 ? 'accent' : 'good'}
         />
       </div>
 
@@ -144,7 +146,7 @@ export function ReverseJeonse() {
           label='새 임차인에게 받을 수 있는 돈'
           value={nowMarketDeposit}
           max={barMax}
-          className='bg-warn-surface'
+          className='bg-series-2'
           format={formatEok}
           sub={refundGap > 0 ? `${formatEok(refundGap)} 부족` : '기존 보증금을 덮는다'}
         />

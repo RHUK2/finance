@@ -59,13 +59,13 @@ export type PredationState = {
 
 const PREDATION_INC = 0.05; // 라운드마다 포식 압력이 차오르는 폭
 
-export function initialPredationState(n: number): PredationState {
+function initialPredationState(n: number): PredationState {
   return { alive: Array(n).fill(true), threshold: 0, round: 0, history: [1] };
 }
 
 // 한 라운드 진행: 포식 압력을 PREDATION_INC만큼 올리고, 그보다 약하게 투사하는
 // 생존 개체를 도태시킨다. 압력이 목표 pressure에 도달하면 changed=false로 멈춘다.
-export function predationStep(
+function predationStep(
   state: PredationState,
   organisms: Organism[],
   pressure: number,

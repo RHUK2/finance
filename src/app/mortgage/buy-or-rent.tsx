@@ -8,12 +8,13 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import {
   acquisitionTaxRate,
+  ACQUISITION_TAX_BRACKET_NOTE,
   ACQUISITION_TAX_NOTE,
   HOLDING_TAX_NOTE,
   HOLDING_TAX_RATE,
   schedule,
 } from '@/lib/mortgage-models';
-import { formatEokFromMan, formatMan } from '@/lib/utils';
+import { formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
 
 // 금액 단위는 만원. 비교를 단순하게 하려고 조달 조건 몇 가지는 고정한다.
 const LOAN_RATIO = 60; // 집값 대비 대출 비중
@@ -61,14 +62,14 @@ export function BuyOrRent() {
 
   // 매수가 전세보다 싸지려면 집값이 해마다 얼마나 올라야 하는가.
   // buyFixed - price*((1+g)^years - 1) = jeonseCost 를 g에 대해 푼다.
-  // 필요한 상승분이 집값 전체보다 크면 어떤 상승률로도 따라잡을 수 없다.
+  // ratio ≤ 0이면 집값이 0이 돼도(g = −100%) 매수가 전세보다 싸다는 뜻이라 손익분기 상승률이 없다.
   const ratio = 1 + (buyFixed - jeonseCost) / price;
   const breakeven = ratio <= 0 ? null : (ratio ** (1 / years) - 1) * 100;
 
   const options = [
     { id: 'buy', label: '매수', cost: buyCost, className: 'bg-series-1' },
-    { id: 'jeonse', label: '전세', cost: jeonseCost, className: 'bg-good-surface' },
-    { id: 'rent', label: '월세', cost: rentCost, className: 'bg-warn-surface' },
+    { id: 'jeonse', label: '전세', cost: jeonseCost, className: 'bg-series-2' },
+    { id: 'rent', label: '월세', cost: rentCost, className: 'bg-series-3' },
   ];
   const cheapest = options.reduce((a, b) => (b.cost < a.cost ? b : a));
   const barMax = Math.max(...options.map((o) => Math.abs(o.cost)), 1);
@@ -105,28 +106,28 @@ export function BuyOrRent() {
           hint='취득세는 한 번만 내므로 오래 살수록 매수 쪽에 유리하게 분산된다.'
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-good' />}
+          icon={<TrendingUp className='size-4 text-series-1' />}
           label='집값 상승률'
           value={growth}
           onChange={setGrowth}
           min={-3}
           max={8}
           step={0.5}
-          format={(v) => `연 ${v.toFixed(1)}%`}
+          format={(v) => `연 ${formatPct(v, 1)}`}
           hint='매수와 임차를 가르는 가장 큰 변수이자, 유일하게 미리 알 수 없는 변수다.'
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-bad' />}
+          icon={<Percent className='size-4 text-series-2' />}
           label='대출 금리'
           value={rate}
           onChange={setRate}
           min={2.5}
           max={7}
           step={0.1}
-          format={(v) => `${v.toFixed(1)}%`}
+          format={(v) => formatPct(v, 1)}
         />
         <ControlSlider
-          icon={<KeyRound className='size-4 text-good' />}
+          icon={<KeyRound className='size-4 text-series-1' />}
           label='전세가율'
           value={jeonseRatio}
           onChange={setJeonseRatio}
@@ -137,14 +138,14 @@ export function BuyOrRent() {
           hint={`전세 보증금 ${formatEokFromMan(deposit)}. 전세대출 없이 자기 돈으로 넣는다고 본다.`}
         />
         <ControlSlider
-          icon={<Repeat className='size-4 text-warn' />}
+          icon={<Repeat className='size-4 text-series-3' />}
           label='전월세전환율'
           value={convRate}
           onChange={setConvRate}
           min={3}
           max={9}
           step={0.5}
-          format={(v) => `${v.toFixed(1)}%`}
+          format={(v) => formatPct(v, 1)}
           hint={`보증금을 월세로 바꿀 때 적용하는 비율. 보증금 ${formatEokFromMan(monthlyDeposit)}에 월세 ${formatMan(monthlyRent)}이 된다.`}
         />
       </Panel>
@@ -158,7 +159,7 @@ export function BuyOrRent() {
             tone={o.id === cheapest.id ? 'good' : undefined}
             sub={
               o.id === 'buy'
-                ? `집값 변동 ${priceGain >= 0 ? '+' : ''}${formatEokFromMan(priceGain)} 반영`
+                ? `집값 변동 ${formatEokFromMan(priceGain, 2, { plus: true })} 반영`
                 : o.id === 'jeonse'
                   ? '묶인 보증금의 기회비용'
                   : `월세 ${formatMan(monthlyRent)} 기준`
@@ -170,8 +171,8 @@ export function BuyOrRent() {
       <Panel>
         <span className='text-xs/relaxed text-muted-foreground'>
           {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다. 세금은 취득세{' '}
-          {acqRate.toFixed(2)}%({ACQUISITION_TAX_NOTE}, 6억 초과 9억 이하는 가격에 따라 오른다)와 보유세 연{' '}
-          {HOLDING_TAX_RATE}%로 잡았다. 보유세율은 {HOLDING_TAX_NOTE}이다
+          {formatPct(acqRate, 2)}({ACQUISITION_TAX_NOTE}, {ACQUISITION_TAX_BRACKET_NOTE})와 보유세 연 {HOLDING_TAX_RATE}
+          %로 잡았다. 보유세율은 {HOLDING_TAX_NOTE}이다
         </span>
         {options.map((o) => (
           <CostBar
@@ -180,7 +181,7 @@ export function BuyOrRent() {
             value={Math.abs(o.cost)}
             max={barMax}
             className={o.className}
-            format={(v) => (o.cost < 0 ? `-${formatEokFromMan(v)}` : formatEokFromMan(v))}
+            format={(v) => formatEokFromMan(o.cost < 0 ? -v : v)}
             sub={
               o.id === 'buy'
                 ? `이자 ${formatEokFromMan(interest)}, 세금 ${formatEokFromMan(acqTax + holdTax)}, 자기자본 기회비용 ${formatEokFromMan(buyOpportunity)}`
@@ -195,11 +196,11 @@ export function BuyOrRent() {
       <StatusBanner tone='accent' icon={<ArrowLeftRight className='size-4 shrink-0' />}>
         {breakeven === null || breakeven <= 0
           ? '집값이 오르지 않아도 매수가 전세보다 싸다. 전세 보증금이 커서 묶이는 돈의 기회비용이 대출 이자와 세금을 넘어선 상황이다.'
-          : `매수가 전세보다 싸지려면 집값이 해마다 ${breakeven.toFixed(1)}% 이상 올라야 한다. 지금 입력한 ${growth.toFixed(1)}%는 그 기준보다 ${growth >= breakeven ? '높다' : '낮다'}.`}
+          : `매수가 전세보다 싸지려면 집값이 해마다 ${formatPct(breakeven, 1)} 이상 올라야 한다. 지금 입력한 ${formatPct(growth, 1)}는 그 기준보다 ${growth >= breakeven ? '높다' : '낮다'}.`}
       </StatusBanner>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-good' />}
+        icon={<KeyRound className='size-4 text-series-1' />}
         title='전세의 비용은 눈에 보이지 않는다'
         preview='매달 나가는 돈이 없다는 것과 비용이 없다는 것은 다르다.'
         body={

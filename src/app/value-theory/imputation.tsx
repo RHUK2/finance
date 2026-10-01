@@ -11,7 +11,7 @@ const CHAIN = [
     order: '1차재',
     label: '와인 한 병',
     icon: Wine,
-    color: 'text-bad',
+    color: 'text-series-3',
     note: '사람이 직접 마신다. 값어치가 여기서 생긴다.',
   },
   {
@@ -25,7 +25,7 @@ const CHAIN = [
     order: '3차재',
     label: '포도밭 1,000평',
     icon: Sprout,
-    color: 'text-good',
+    color: 'text-series-1',
     note: '마실 수도 먹을 수도 없다. 포도를 통해서만 와인에 닿는다.',
   },
 ];
@@ -41,12 +41,12 @@ export function Imputation() {
       <SectionIntro title='아무도 마시지 않는 밭의 값은 어디서 오나'>
         포도밭은 그 자체로 아무 쓸모가 없다. 밭을 씹어 먹을 수 없고 포도알을 병에 담아 팔 수도 없다. 그런데도 밭에는
         값이 붙는다. 멩거는 재화에 차수를 매겨 이걸 설명했다. 사람이 직접 소비하는 것이 1차재이고, 그것을 만드는 데
-        쓰이는 것이 그 위의 고차재다. 고차재에는 자기 값어치가 없고, 아래에서 올라온 값을 나눠 가질 뿐이다. 이 흐름을
-        귀속이라 부른다.
+        쓰이는 것이 고차재다. 고차재에는 자기 값어치가 없고, 소비재에서 넘어온 값을 나눠 가질 뿐이다. 이 흐름을 귀속이라
+        부른다.
       </SectionIntro>
 
       <Panel className='gap-3'>
-        <span className='text-sm font-semibold'>귀속: 값어치는 아래에서 위로 올라온다</span>
+        <span className='text-sm font-semibold'>귀속: 값어치는 소비재에서 고차재로 거슬러 간다</span>
         <div className='flex items-stretch gap-3'>
           <div className='flex w-8 shrink-0 items-center justify-center rounded-md border border-dashed'>
             <ArrowUp className='size-4 text-muted-foreground' />
@@ -65,8 +65,8 @@ export function Imputation() {
           </div>
         </div>
         <p className='text-xs/relaxed text-muted-foreground'>
-          밭에서 포도로, 포도에서 와인으로 물건이 흐르는 방향과 값어치가 정해지는 방향이 반대다. 물건은 위에서 내려오고
-          값어치는 아래에서 올라온다.
+          밭에서 포도로, 포도에서 와인으로 물건이 흐르는 방향과 값어치가 정해지는 방향이 반대다. 물건은 고차재에서
+          소비재로 가고, 값어치는 소비재에서 고차재로 거슬러 간다.
         </p>
       </Panel>
 
@@ -85,24 +85,25 @@ export function Imputation() {
         </div>
         <p className='text-xs/relaxed text-muted-foreground'>
           두 해의 밭은 같은 밭이고 들어간 노동도 같다. 그런데 값이 다섯 배 갈린다. 노동이 값을 정한다면 이 표는 나올 수
-          없다. 값을 정한 것은 와인을 마실 사람의 사정이고, 그 판정이 포도를 거쳐 밭까지 올라온 것이다.
+          없다. 값을 정한 것은 와인을 마실 사람의 사정이고, 그 판정이 포도를 거쳐 밭까지 거슬러 간 것이다.
         </p>
       </Panel>
 
       <ExplainCard
-        icon={<Cigarette className='size-4 text-warn' />}
+        icon={<Cigarette className='size-4 text-series-3' />}
         title='멩거가 든 예는 담배였다'
         preview='담배를 아무도 원하지 않게 되면 담배밭과 건조장과 기계가 함께 값을 잃는다.'
         body={
           <>
             <p>
               멩거는 담배를 예로 들었다. 사람들이 담배를 원하지 않게 되는 순간, 담배밭도 건조장도 그 기계를 만드는 전문
-              기술도 함께 값을 잃는다. 그 설비에 들어간 노동이 사라진 것도 아니고 기계가 고장 난 것도 아니다. 아래에서
-              올라오던 값어치가 끊겼을 뿐이다.
+              기술도 함께 값을 잃는다. 그 설비에 들어간 노동이 사라진 것도 아니고 기계가 고장 난 것도 아니다. 소비재에서
+              넘어오던 값어치가 끊겼을 뿐이다.
             </p>
             <p className='mt-2'>
               반대 방향은 성립하지 않는다. 밭과 기계에 아무리 많은 노동을 더 부어도 담배를 원하는 사람이 없으면 값은
-              돌아오지 않는다. 고차재의 값은 아래에서 올라오는 것이지 위에서 쌓아 내리는 것이 아니다.
+              돌아오지 않는다. 고차재의 값은 소비재에서 거슬러 오는 것이지 고차재에서 쌓여 소비재로 넘어가는 것이
+              아니다.
             </p>
           </>
         }

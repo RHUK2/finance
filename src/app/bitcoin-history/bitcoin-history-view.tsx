@@ -8,13 +8,13 @@ import { BTC_COLOR, cn } from '@/lib/utils';
 import { GOVERNANCE_EVENTS, MARKET_EVENTS, type EventTag, type TimelineEvent } from './events';
 
 const TAG_STYLE: Record<EventTag, string> = {
-  논쟁: 'text-bad border-bad-surface/30',
-  분열: 'text-warn border-warn-surface/30',
-  업그레이드: 'text-good border-good-surface/30',
+  논쟁: 'text-series-3 border-series-3/30',
+  분열: 'text-series-2 border-series-2/30',
+  업그레이드: 'text-series-4 border-series-4/30',
   사건: 'text-muted-foreground border-border',
-  이정표: 'text-warn border-warn-surface/30',
-  채택: 'text-good border-good-surface/30',
-  붕괴: 'text-bad border-bad-surface/30',
+  이정표: 'text-series-2 border-series-2/30',
+  채택: 'text-series-4 border-series-4/30',
+  붕괴: 'text-series-3 border-series-3/30',
   제도: 'text-series-1 border-series-1/30',
 };
 
@@ -91,7 +91,7 @@ const TABS = [
 export function BitcoinHistoryView() {
   return (
     <ExplainerPage
-      title='비트코인 역사: 두 개의 타임라인'
+      title='비트코인은 어떻게 바뀌어 왔고 세상은 그것을 어떻게 받아들였나'
       intro={
         <>
           같은 역사를 두 렌즈로 본다. 하나는 프로토콜이 어떻게 (안) 바뀌어 왔는가라는 거버넌스의 전장, 다른 하나는

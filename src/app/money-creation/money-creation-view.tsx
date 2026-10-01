@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { ExplainerPage } from '@/components/explainer-page';
-import { ControlSlider, SectionIntro, StatCard, StepPanel } from '@/components/simulation';
+import { ControlSlider, Legend, SectionIntro, StatCard, StepPanel } from '@/components/simulation';
 import { formatSigned } from '@/lib/utils';
 
 import { AssetEquationCard, BalanceSheet, TrustSection } from './components';
@@ -30,7 +30,7 @@ export function MoneyCreationView() {
         step={1}
         onChange={(v) => setReserveRatio(v / 100)}
         format={(v) => `${v}%`}
-        hint='지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량 = 본원통화 ÷ 지급준비율).'
+        hint='지급준비율이 낮을수록 통화승수가 커진다 (최대 통화량(M2) = 본원통화 ÷ 지급준비율).'
       />
     </div>
   ) : null;
@@ -57,14 +57,14 @@ export function MoneyCreationView() {
       </div>
 
       <div className='flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-        <span className='flex items-center gap-1.5'>
-          <span className='size-3 rounded-sm border border-warn-surface/70 bg-warn-surface/15 ring-1 ring-warn-surface/60' />
-          무(無)에서 새로 창조
-        </span>
-        <span className='flex items-center gap-1.5'>
-          <span className='size-3 rounded-sm border border-series-1/70 bg-series-1/15 ring-1 ring-series-1/60' />
-          기존 돈이 이동·변환
-        </span>
+        <Legend
+          className='border border-series-3/70 bg-series-3/15 ring-1 ring-series-3/60'
+          label='무(無)에서 새로 창조'
+        />
+        <Legend
+          className='border border-series-1/70 bg-series-1/15 ring-1 ring-series-1/60'
+          label='기존 돈이 이동·변환'
+        />
       </div>
 
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>

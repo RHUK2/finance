@@ -3,9 +3,8 @@
 import { useMemo, useState } from 'react';
 
 import { ExplainerPage } from '@/components/explainer-page';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { SimTabs } from '@/components/simulation';
+import { Field, SegmentedControl, SimTabs } from '@/components/simulation';
 import { useBitcoinHistorical } from '@/hooks/use-crypto';
 import { useRelativeTime } from '@/hooks/use-relative-time';
 import { useInflationData, useInflationDataKr, type InflationData } from '@/hooks/use-inflation';
@@ -42,8 +41,8 @@ const CONFIG: Record<
     label: '한국',
     currency: '₩',
     minYear: 2003, // M2 신계열(161Y006) 시작연도에 맞춤
-    // 최저임금 표가 커버하는 해까지만. 한국 최저임금은 매년 바뀌므로 표보다 앞선 연도를
-    // 고를 수 있게 두면 작년 시급을 "오늘 최저임금"으로 쓰게 된다.
+    // 시작 연도 슬라이더와 기준 시급 조회를 최저임금 표가 커버하는 해까지로 묶는다. 표를
+    // 갱신하지 않은 해에는 표의 마지막 해 시급이 쓰이므로, 화면이 그 연도를 함께 적는다.
     maxYear: Math.min(CURRENT_YEAR, KR_WAGE_LAST_YEAR),
     principal: 1_000_000,
     gapBaseYear: 2003,
@@ -74,7 +73,8 @@ export function InflationView() {
   const btcQuery = useBitcoinHistorical();
 
   const cfg = CONFIG[country];
-  const data = country === 'US' ? us.data : kr.data;
+  const query = country === 'US' ? us : kr;
+  const data = query.data;
   // BTC 가격은 USD 기준. 미국은 그대로, 한국은 월별 환율로 원화 환산해 KRW 자산과 단위를 맞춘다.
   // useMemo로 참조를 고정해 하위 컴포넌트들의 useMemo·차트가 리렌더마다 무효화되지 않게 한다.
   const btc = useMemo(
@@ -92,18 +92,20 @@ export function InflationView() {
         </>
       }
     >
-      <div className='flex gap-2'>
-        {(Object.keys(CONFIG) as Country[]).map((c) => (
-          <Button key={c} size='sm' variant={country === c ? 'default' : 'outline'} onClick={() => setCountry(c)}>
-            {CONFIG[c].label}
-          </Button>
-        ))}
-      </div>
+      <Field label='나라'>
+        <SegmentedControl
+          value={country}
+          onChange={setCountry}
+          options={(Object.keys(CONFIG) as Country[]).map((c) => ({ value: c, label: CONFIG[c].label }))}
+        />
+      </Field>
 
       {!data ? (
         <Card>
           <CardContent>
-            <p className='text-sm text-muted-foreground'>데이터를 불러오는 중…</p>
+            <p className='text-sm text-muted-foreground'>
+              {query.isError ? '데이터를 받지 못했다. 잠시 뒤 다시 시도한다.' : '데이터를 불러오는 중…'}
+            </p>
           </CardContent>
         </Card>
       ) : data.available === false ? (

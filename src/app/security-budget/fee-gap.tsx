@@ -7,14 +7,10 @@ import { Bitcoin, Hourglass, Receipt, ShieldCheck, TriangleAlert } from 'lucide-
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { formatUsd } from '@/lib/utils';
+import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
+import { BTC_COLOR, formatPct, formatUsd } from '@/lib/utils';
 
-import { blockRevenue, eraStartYear, LAST_SUBSIDY_ERA, requiredFee } from './models';
-
-// 기준점. 2026년 언저리의 대략적인 시장 상황이고, 이 페이지의 모든 '지금 대비'는
-// 이 한 점에서 나온다. 정확한 실측값이 아니라 비교의 원점이다.
-const BASE = { era: 4, btcPrice: 75_000, feePerBlock: 0.05 };
-const BASE_ANNUAL = blockRevenue(BASE).annualUsd;
+import { BASE, BASE_ANNUAL, blockRevenue, eraStartYear, LAST_SUBSIDY_ERA, requiredFee } from './models';
 
 const fmtFee = (n: number) =>
   n >= 0.01 ? `${n.toFixed(2)} BTC` : `${Math.round(n * 1e8).toLocaleString('ko-KR')} sat`;
@@ -22,7 +18,7 @@ const fmtFee = (n: number) =>
 export function FeeGap() {
   const [era, setEra] = useState(10);
   const [btcPrice, setBtcPrice] = useState(500_000);
-  const [feePerBlock, setFeePerBlock] = useState(0.05);
+  const [feePerBlock, setFeePerBlock] = useState(BASE.feePerBlock);
 
   const r = blockRevenue({ era, btcPrice, feePerBlock });
   const ratio = r.annualUsd / BASE_ANNUAL;
@@ -54,7 +50,7 @@ export function FeeGap() {
           format={(v) => `${v}번째 · ${eraStartYear(v)}년~`}
         />
         <ControlSlider
-          icon={<Bitcoin className='size-4 text-warn' />}
+          icon={<Bitcoin className='size-4' style={{ color: BTC_COLOR }} />}
           label='BTC 가격'
           value={btcPrice}
           onChange={setBtcPrice}
@@ -64,7 +60,7 @@ export function FeeGap() {
           format={formatUsd}
         />
         <ControlSlider
-          icon={<Receipt className='size-4 text-good' />}
+          icon={<Receipt className='size-4 text-series-1' />}
           label='블록당 수수료'
           value={feePerBlock}
           onChange={setFeePerBlock}
@@ -72,7 +68,7 @@ export function FeeGap() {
           max={10}
           scale='log'
           format={fmtFee}
-          hint={`기준점은 ${fmtFee(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배를 넘기도 하지만 평시 수준은 이 언저리다.`}
+          hint={`기준점(${BTC_PRICE_BASELINE.asOf} 언저리의 대략적인 시장, BTC ${formatUsd(BASE.btcPrice)})의 수수료는 ${fmtFee(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배를 넘기도 하지만 평시 수준은 이 언저리다.`}
         />
       </Panel>
 
@@ -85,8 +81,8 @@ export function FeeGap() {
         </div>
         <StackedBar
           segments={[
-            { label: `보조금 ${fmtFee(r.subsidy)}`, value: r.subsidy, className: 'bg-warn-surface' },
-            { label: `수수료 ${fmtFee(feePerBlock)}`, value: feePerBlock, className: 'bg-good-surface' },
+            { label: `보조금 ${fmtFee(r.subsidy)}`, value: r.subsidy, className: 'bg-series-2' },
+            { label: `수수료 ${fmtFee(feePerBlock)}`, value: feePerBlock, className: 'bg-series-3' },
           ]}
           total={r.totalBtc}
         />
@@ -105,7 +101,7 @@ export function FeeGap() {
         />
         <Metric
           label='수수료 비중'
-          value={`${(r.feeShare * 100).toFixed(1)}%`}
+          value={formatPct(r.feeShare * 100, 1)}
           tone='accent'
           sub='채굴자 수입 중 수수료 몫'
         />
@@ -129,13 +125,13 @@ export function FeeGap() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Receipt className='size-4 text-good' />}
+        icon={<Receipt className='size-4 text-series-1' />}
         title='수수료가 그만큼 오를 수 있나'
         preview='블록 공간은 고정인데 수요만 늘어야 한다. 그런데 그 수요를 오프체인으로 빼내는 것이 라이트닝이다.'
         body='수수료 총액은 블록 공간의 경매가격이다. 공간은 늘지 않으므로 총액이 오르려면 그 공간을 두고 다투는 수요가 커져야 한다. 여기에 긴장이 있다. 온체인 수수료가 감당할 수 없이 비싸지면 결제는 라이트닝 같은 상위 레이어로 옮겨가는데, 그러면 온체인 수요가 줄어 수수료가 다시 내려간다. 결제 수요만으로 보안 예산을 채우기 어렵다는 지적이 여기서 나온다. 반대편에서는 대형 정산과 채널 개폐 자체가 고가의 블록 공간 수요라고 본다. 어느 쪽이 맞는지는 아직 데이터로 갈리지 않았다.'
       />
       <ExplainCard
-        icon={<Bitcoin className='size-4 text-warn' />}
+        icon={<Bitcoin className='size-4' style={{ color: BTC_COLOR }} />}
         title='가격이 오르면 해결되는 것 아닌가'
         preview='반감기 하나를 상쇄하려면 가격이 두 배가 되어야 한다. 4년마다 영원히.'
         body='보조금은 BTC로 정해져 있으므로 달러로 환산한 보안 예산은 가격에 정비례한다. 반감기마다 보조금이 반이 되니, 예산을 유지하려면 4년마다 가격이 두 배가 되어야 한다. 지금까지는 대체로 그랬지만 그것은 영원히 계속될 수 없는 조건이다. 가격이 어느 수준에서 멈추면 그 뒤로는 반감기마다 보안 예산이 반토막 난다. 이 페이지가 묻는 것은 그때 무엇이 남느냐다.'

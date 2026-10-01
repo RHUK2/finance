@@ -3,11 +3,10 @@
 // 이탈 유인 비율은 이득 ÷ 비용이고 기준선은 1이다. BCRA(src/lib/bcra.ts)와 방향과
 // 기준선은 같지만 이탈은 공격이 아니므로 이름을 갈라 둔다(docs/adr/0004 참조).
 
+import type { Fact } from '@/lib/fact';
 import { clamp } from '@/lib/utils';
 
-// 화면에 쓰는 정책·통계 수치는 값과 기준 시점을 한 객체에 묶어 단일 출처로 둔다.
-// 기준 없는 수치는 몇 년 뒤 조용히 틀린 문서가 된다.
-export type Fact = { value: number; label: string; asOf: string; source: string };
+// 화면에 쓰는 정책·통계 수치는 값과 기준 시점을 한 객체에 묶어(Fact) 단일 출처로 둔다.
 
 export const FACTS = {
   reserveShare: {
@@ -214,8 +213,10 @@ export function exitLedger(country: ExitCountry, network: number, sanction: numb
 // 들어와도 경제 규모가 작고 방어 수단이 적을수록 물가 충격이 커진다.
 // ─────────────────────────────────────────────────────────────
 
+export type TierId = 'semi' | 'emerging' | 'fragile';
+
 export type Tier = {
-  id: string;
+  id: TierId;
   label: string;
   currencies: string;
   // 명목 GDP 규모(조 달러) 근사. 물가 충격의 분모다.
@@ -224,7 +225,6 @@ export type Tier = {
   passthrough: number;
   // 국외 유출분을 나눠 갖는 비중
   share: number;
-  className: string;
 };
 
 export const TIERS: Tier[] = [
@@ -235,7 +235,6 @@ export const TIERS: Tier[] = [
     size: 40,
     passthrough: 0.6,
     share: 0.5,
-    className: 'bg-series-1',
   },
   {
     id: 'emerging',
@@ -244,7 +243,6 @@ export const TIERS: Tier[] = [
     size: 12,
     passthrough: 1.0,
     share: 0.35,
-    className: 'bg-warn-surface',
   },
   {
     id: 'fragile',
@@ -253,7 +251,6 @@ export const TIERS: Tier[] = [
     size: 2.5,
     passthrough: 1.6,
     share: 0.15,
-    className: 'bg-bad-surface',
   },
 ];
 
@@ -299,7 +296,12 @@ export function exportLedger(issuance: number, outflow: number): ExportResult {
 
 export const KR_RATE = {
   // 기준금리 대비 은행 대출금리 가산폭
-  spread: { value: 1.6, label: '가산폭 (%p)', asOf: '2024년 평균', source: '한국은행 예금은행 가중평균 대출금리' },
+  spread: {
+    value: 1.6,
+    label: '가산폭 (%p)',
+    asOf: '2024년 평균',
+    source: '한국은행 예금은행 가중평균 대출금리',
+  } satisfies Fact,
   // 한은이 환율 압력을 감내하고 버티는 금리차의 폭
   tolerance: 1.5,
   // 금리차 1%p당 원화 절하 압력(%)

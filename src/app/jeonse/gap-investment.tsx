@@ -57,7 +57,7 @@ export function GapInvestment() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-good' />}
+          icon={<Percent className='size-4 text-series-1' />}
           label='전세가율'
           value={ratio}
           onChange={setRatio}
@@ -68,14 +68,14 @@ export function GapInvestment() {
           hint='매매가 대비 전세가의 비율. 이 값이 높을수록 더 적은 돈으로 집을 살 수 있다.'
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-warn' />}
+          icon={<TrendingUp className='size-4 text-series-3' />}
           label='1년 뒤 매매가 변동'
           value={change}
           onChange={setChange}
           min={-30}
           max={30}
           step={1}
-          format={(v) => `${v > 0 ? '+' : ''}${v.toFixed(0)}%`}
+          format={(v) => formatPct(v, 0, { plus: true })}
         />
       </Panel>
 
@@ -104,7 +104,7 @@ export function GapInvestment() {
           label='매수자가 대는 돈'
           value={gap}
           max={barMax}
-          className='bg-warn-surface'
+          className='bg-series-2'
           format={formatEok}
           sub='이 돈만으로 소유권이 넘어온다'
         />
@@ -123,7 +123,7 @@ export function GapInvestment() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Layers className='size-4 text-warn' />}
+        icon={<Layers className='size-4 text-series-3' />}
         title='전세가율이 시장을 밀고 당기는 방식'
         preview='전세가율이 높으면 매수 문턱이 낮아지고, 그 매수가 다시 매매가를 밀어 올린다.'
         body={

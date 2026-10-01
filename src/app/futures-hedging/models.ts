@@ -15,13 +15,13 @@ export const REFINER_BARRELS = 600_000; // 정유사가 3개월 뒤 살 물량 (
 // 헤저끼리 물량이 딱 맞아떨어지는 일은 없다. 산유국이 넘기려는 물량 중 정유사가
 // 받아 주고 남은 몫은 투기자가 받아야 하고, 투기자가 적으면 그 몫은 체결되지 않는다.
 // 투기자가 많을수록 단조롭게 좋아지며 포화한다.
-export function fillableShare(speculatorShare: number): number {
+function fillableShare(speculatorShare: number): number {
   return 1 - Math.exp(-3.2 * clamp01(speculatorShare));
 }
 
 // 투기자가 많아질수록 선물이 현물에서 벌어진다. 가격 발견을 넘어선 쏠림이라
 // 헤저가 잠그는 가격 자체를 밀어 올린다. 단조 증가이며 단위는 배럴당 달러다.
-export function basisDistortion(speculatorShare: number): number {
+function basisDistortion(speculatorShare: number): number {
   return 6 * clamp01(speculatorShare) ** 3;
 }
 
@@ -195,17 +195,15 @@ export function cascadeTrajectory(positions: Position[], impact: number): Cascad
 // 무기한선물·펀딩비
 // ---------------------------------------------------------------------------
 
-export const FUNDING_PER_DAY = 3; // 8시간마다 한 번
-export const FUNDING_CAP = 0.0075; // 회당 상한
+const FUNDING_PER_DAY = 3; // 8시간마다 한 번
 
 // 롱이 쏠릴수록 롱이 숏에게 내는 돈이 커진다. 0.5는 양쪽이 균형인 지점이고,
-// 그때도 완전히 0이 아닌 것은 무기한선물이 대체로 현물 위에서 거래되기 때문이다.
-export function fundingRate(longShare: number): number {
+// 그때도 0이 아니라 롱 쪽 부호(0.01%)인 것은 무기한선물이 대체로 현물 위에서 거래되기 때문이다.
+function fundingRate(longShare: number): number {
   const skew = clamp01(longShare) - 0.5;
   const magnitude = 0.0001 + 0.0025 * (Math.abs(skew) / 0.4) ** 2;
-  // 균형점(skew 0)에서도 부호는 롱 쪽이다. 무기한선물은 대체로 현물 위에서 거래된다.
   const direction = skew < 0 ? -1 : 1;
-  return clamp(direction * magnitude, -FUNDING_CAP, FUNDING_CAP);
+  return direction * magnitude;
 }
 
 export type FundingResult = {

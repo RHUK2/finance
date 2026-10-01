@@ -16,6 +16,8 @@ import {
   SectionIntro,
 } from '@/components/simulation';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
+import { formatPct } from '@/lib/utils';
+
 import { type Organism, buildOrganisms, predationTrajectory } from './models';
 
 const N = 180;
@@ -38,7 +40,7 @@ export function PrimordialEconomics() {
 
       <Panel>
         <ControlSlider
-          icon={<Zap className='size-4 text-warn' />}
+          icon={<Zap className='size-4 text-series-3' />}
           label='평균 투사력 (개체군 평균 와트)'
           hint='개체들이 평균적으로 얼마나 강하게 물리력을 투사하는지. 높일수록 생존자가 많아진다.'
           value={meanPower}
@@ -46,7 +48,7 @@ export function PrimordialEconomics() {
           min={0.2}
           max={0.8}
           step={0.01}
-          format={(v) => `${Math.round(v * 100)}%`}
+          format={(v) => formatPct(v * 100, 0)}
         />
         <ControlSlider
           icon={<Skull className='size-4 text-bad' />}
@@ -57,7 +59,7 @@ export function PrimordialEconomics() {
           min={0.1}
           max={0.9}
           step={0.01}
-          format={(v) => `${Math.round(v * 100)}%`}
+          format={(v) => formatPct(v * 100, 0)}
         />
       </Panel>
 
@@ -80,8 +82,8 @@ export function PrimordialEconomics() {
 }
 
 function powerColor(o: Organism): string {
-  if (o.type === '강한 투사자') return 'bg-good-surface';
-  if (o.type === '약한 방어') return 'bg-warn-surface';
+  if (o.type === '강한 투사자') return 'bg-series-2';
+  if (o.type === '약한 방어') return 'bg-series-3';
   return 'bg-series-1';
 }
 
@@ -99,8 +101,8 @@ function PredationSim({
   // 압력이 라운드마다 정해진 폭으로 차오르는 결정론적 모델이라 궤적을 미리 계산해 둔다.
   // 채택 캐스케이드·홀더 딜레마와 같은 구조다.
   const frames = useMemo(() => predationTrajectory(organisms, pressure), [organisms, pressure]);
-  const { round, last, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
-  const { state, justChanged } = frames[round];
+  const { round, last, frame, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
+  const { state, justChanged } = frame;
   const aliveCount = state.alive.filter(Boolean).length;
   const dead = organisms.length - aliveCount;
   const survivorAvg =
@@ -131,25 +133,25 @@ function PredationSim({
       reading={
         <>
           칸은 투사력 순으로 왼쪽부터 늘어서 있다. 포식 압력이 차오를 때마다 그보다 약하게 투사하는 개체가 왼쪽 끝에서
-          부터 회색으로 꺼진다. 지금 압력{' '}
-          <span className='font-medium text-bad'>{Math.round(state.threshold * 100)}%</span>가 곧 도태 경계의 위치다.
+          부터 도태되어 꺼진다. 지금 압력{' '}
+          <span className='font-medium text-bad'>{formatPct(state.threshold * 100, 0)}</span>가 곧 도태 경계의 위치다.
         </>
       }
       legend={
         <>
-          <Legend className='bg-good-surface' label='강한 투사자' />
-          <Legend className='bg-warn-surface' label='약한 방어' />
+          <Legend className='bg-series-2' label='강한 투사자' />
+          <Legend className='bg-series-3' label='약한 방어' />
           <Legend className='bg-series-1' label='평화주의자' />
           <Legend className='bg-muted' label='도태됨' />
         </>
       }
       legendNote='테두리 = 이번 라운드에 도태'
-      curve={{ values: curve, cursor: round, label: '생존 곡선', className: 'text-good', min: 0, max: 1 }}
+      curve={{ values: curve, cursor: round, label: '생존 곡선', className: 'text-series-4', min: 0, max: 1 }}
       metrics={
         <>
           <Metric label='생존 개체' value={`${aliveCount} / ${organisms.length}`} tone='good' />
           <Metric label='도태 개체' value={`${dead}`} tone='bad' />
-          <Metric label='생존자 평균 투사력' value={`${Math.round(survivorAvg * 100)}%`} tone='accent' />
+          <Metric label='생존자 평균 투사력' value={formatPct(survivorAvg * 100, 0)} tone='accent' />
         </>
       }
       outcome={

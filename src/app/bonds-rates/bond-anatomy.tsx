@@ -6,13 +6,11 @@ import { ArrowDownRight, ArrowUpRight, CalendarClock, Coins, Equal, Percent } fr
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
+import { formatPct, formatWon } from '@/lib/utils';
 
 import { bondPrice, type Bond } from './models';
 
 const FACE = 1_000_000;
-
-const fmtWon = (n: number) => `${Math.round(n).toLocaleString('ko-KR')}원`;
-const fmtPct = (n: number) => `${(n * 100).toFixed(2)}%`;
 
 export function BondAnatomy() {
   const [couponRate, setCouponRate] = useState(0.03);
@@ -42,15 +40,15 @@ export function BondAnatomy() {
 
       <Panel>
         <ControlSlider
-          icon={<Percent className='size-4 text-good' />}
+          icon={<Percent className='size-4 text-series-1' />}
           label='표면금리 (약속된 이자)'
           value={couponRate}
           onChange={setCouponRate}
           min={0}
           max={0.1}
           step={0.005}
-          format={fmtPct}
-          hint={`해마다 ${fmtWon(coupon)}을 받는다. 발행 뒤에는 바뀌지 않는다.`}
+          format={(v) => formatPct(v * 100, 2)}
+          hint={`해마다 ${formatWon(coupon)}을 받는다. 발행 뒤에는 바뀌지 않는다.`}
         />
         <ControlSlider
           icon={<CalendarClock className='size-4 text-series-1' />}
@@ -63,14 +61,14 @@ export function BondAnatomy() {
           format={(v) => `${v}년`}
         />
         <ControlSlider
-          icon={<Coins className='size-4 text-warn' />}
+          icon={<Coins className='size-4 text-series-3' />}
           label='시장 요구수익률 (만기수익률)'
           value={ytm}
           onChange={setYtm}
           min={0.001}
           max={0.12}
           step={0.001}
-          format={fmtPct}
+          format={(v) => formatPct(v * 100, 2)}
           hint='시장이 이 정도 위험에 요구하는 수익률이다. 이것만이 날마다 움직인다.'
         />
       </Panel>
@@ -78,16 +76,12 @@ export function BondAnatomy() {
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='채권 가격'
-          value={fmtWon(price)}
+          value={formatWon(price)}
           tone={state === 'par' ? undefined : state === 'premium' ? 'good' : 'bad'}
-          sub={
-            state === 'par'
-              ? `액면 ${fmtWon(FACE)}과 같음`
-              : `액면 대비 ${gapPct >= 0 ? '+' : '−'}${Math.abs(gapPct).toFixed(1)}%`
-          }
+          sub={state === 'par' ? `액면 ${formatWon(FACE)}과 같음` : `액면 대비 ${formatPct(gapPct, 1, { plus: true })}`}
         />
-        <Metric label='연 이자' value={fmtWon(coupon)} sub={`표면금리 ${fmtPct(couponRate)}`} />
-        <Metric label='받는 이자 총액' value={fmtWon(coupon * years)} sub={`${years}년 동안 · 할인 전 금액`} />
+        <Metric label='연 이자' value={formatWon(coupon)} sub={`표면금리 ${formatPct(couponRate * 100, 2)}`} />
+        <Metric label='받는 이자 총액' value={formatWon(coupon * years)} sub={`${years}년 동안 · 할인 전 금액`} />
       </div>
 
       <StatusBanner
@@ -114,12 +108,12 @@ export function BondAnatomy() {
       <Panel className='gap-3'>
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>가격은 무엇의 합인가</span>
-          <span className='text-xs text-muted-foreground tabular-nums'>{fmtWon(price)}</span>
+          <span className='text-xs text-muted-foreground tabular-nums'>{formatWon(price)}</span>
         </div>
         <StackedBar
           segments={[
-            { label: `이자의 현재가치 ${fmtWon(couponPv)}`, value: couponPv, className: 'bg-good-surface' },
-            { label: `원금의 현재가치 ${fmtWon(principalPv)}`, value: principalPv, className: 'bg-series-1' },
+            { label: `이자의 현재가치 ${formatWon(couponPv)}`, value: couponPv, className: 'bg-series-2' },
+            { label: `원금의 현재가치 ${formatWon(principalPv)}`, value: principalPv, className: 'bg-series-1' },
           ]}
           total={price}
         />
@@ -130,13 +124,13 @@ export function BondAnatomy() {
       </Panel>
 
       <ExplainCard
-        icon={<Coins className='size-4 text-warn' />}
+        icon={<Coins className='size-4 text-series-3' />}
         title='왜 금리가 오르면 가격이 떨어지나'
         preview='내 채권의 이자는 고정인데, 새로 나온 채권이 더 준다면 내 것은 깎여야 팔린다.'
         body='표면금리 3%짜리를 들고 있는데 시장금리가 5%로 올랐다고 하자. 지금 새로 발행되는 채권은 5%를 준다. 아무도 3%짜리를 액면가에 사 주지 않는다. 팔리려면 값이 깎여야 하고, 깎인 값으로 사서 만기에 액면을 돌려받는 차익까지 더했을 때 수익률이 5%에 맞아떨어지는 지점이 곧 지금의 가격이다. 금리와 가격이 반대로 움직이는 것은 시장의 심리가 아니라 이 산수의 결과다.'
       />
       <ExplainCard
-        icon={<Percent className='size-4 text-good' />}
+        icon={<Percent className='size-4 text-series-1' />}
         title='표면금리와 만기수익률은 다른 숫자다'
         preview='앞은 발행 때 못 박힌 약속, 뒤는 오늘 이 값에 사면 만기까지 얼마를 버는가.'
         body='표면금리(쿠폰)는 액면 대비 해마다 주는 이자의 비율로, 발행 때 정해지고 끝까지 바뀌지 않는다. 만기수익률(YTM)은 오늘의 시장가격에 사서 만기까지 들고 갔을 때의 연평균 수익률이라, 가격이 움직일 때마다 함께 움직인다. 뉴스에서 "국채 금리가 올랐다"고 할 때의 금리는 언제나 뒤쪽이다. 액면가에 거래될 때만 둘이 같아진다.'

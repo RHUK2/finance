@@ -6,11 +6,9 @@ import { CalendarClock, Scale } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, Sparkline, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
+import { formatPct } from '@/lib/utils';
 
-import { FUNDING_CAP, basisCurves, fundingCost } from './models';
-
-const pct2 = (n: number) => `${(n * 100).toFixed(3)}%`;
-const pct0 = (n: number) => `${Math.round(n * 100)}%`;
+import { basisCurves, fundingCost } from './models';
 
 export function PerpetualFunding() {
   const [longShare, setLongShare] = useState(0.7);
@@ -18,7 +16,6 @@ export function PerpetualFunding() {
 
   const f = fundingCost(longShare, days);
   const { dated, perpetual } = basisCurves(longShare);
-  const capped = Math.abs(f.perCharge) >= FUNDING_CAP - 1e-9;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -26,7 +23,7 @@ export function PerpetualFunding() {
         앞의 세 탭은 전부 만기가 있는 계약이었다. 만기가 다가오면 선물 가격은 현물 가격으로 끌려간다. 벌어져 있으면
         차익거래자가 싼 쪽을 사고 비싼 쪽을 팔아 그 간극을 닫기 때문이고, 만기일에는 어차피 실물로 정산되므로 두 값이
         같아질 수밖에 없다. 그런데 비트코인에서 실제로 거래되는 것은 만기가 없는 무기한선물이다. 끌어당길 만기가 없는
-        계약을 무엇이 현물에 붙잡아 두는가. 펀딩비다. 요율과 기간은 구조를 보여주기 위한 예시 수치다.
+        계약을 무엇이 현물에 붙잡아 두는가. 펀딩비다.
       </SectionIntro>
 
       <Panel>
@@ -39,7 +36,7 @@ export function PerpetualFunding() {
           min={0.5}
           max={0.9}
           step={0.01}
-          format={pct0}
+          format={(v) => formatPct(v * 100, 0)}
         />
         <ControlSlider
           icon={<CalendarClock className='size-4 text-series-1' />}
@@ -55,21 +52,16 @@ export function PerpetualFunding() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric
-          label='8시간당 펀딩비'
-          value={pct2(f.perCharge)}
-          tone={capped ? 'bad' : undefined}
-          sub={capped ? '상한에 걸렸다' : '롱이 숏에게 낸다'}
-        />
+        <Metric label='8시간당 펀딩비' value={formatPct(f.perCharge * 100, 3)} sub='롱이 숏에게 낸다' />
         <Metric
           label='연환산'
-          value={pct0(f.annualized)}
+          value={formatPct(f.annualized * 100, 0)}
           tone={f.annualized > 1 ? 'bad' : f.annualized > 0.3 ? 'accent' : undefined}
           sub={`${f.charges}회 청구 예정`}
         />
         <Metric
           label='누적 잠식률'
-          value={pct0(f.cumulative)}
+          value={formatPct(f.cumulative * 100, 0)}
           tone={f.cumulative > 0.1 ? 'bad' : undefined}
           sub={`${Math.round(days)}일 들고 있으면 원금에서 이만큼 빠진다`}
         />
@@ -86,9 +78,9 @@ export function PerpetualFunding() {
       </Panel>
 
       <StatusBanner tone={f.cumulative > 0.08 ? 'bad' : f.cumulative > 0.03 ? 'accent' : 'good'}>
-        롱 {pct0(longShare)} 쏠림에서 {Math.round(days)}일을 버티면 원금의 {pct0(f.cumulative)}가 반대편으로 넘어간다.
-        방향을 맞혀도 그만큼을 먼저 벌어야 본전이다. 위험을 넘긴 대가는 만기물에서는 잠긴 가격으로 한 번에 청구되고,
-        무기한물에서는 8시간마다 조금씩 청구된다.
+        롱 {formatPct(longShare * 100, 0)} 쏠림에서 {Math.round(days)}일을 버티면 원금의{' '}
+        {formatPct(f.cumulative * 100, 0)}가 반대편으로 넘어간다. 방향을 맞혀도 그만큼을 먼저 벌어야 본전이다. 위험을
+        넘긴 대가는 만기물에서는 잠긴 가격으로 한 번에 청구되고, 무기한물에서는 8시간마다 조금씩 청구된다.
       </StatusBanner>
 
       <ExplainCard

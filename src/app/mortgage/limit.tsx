@@ -16,7 +16,7 @@ import {
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { levelPayment, maxLoanByDsr, REGULATION } from '@/lib/mortgage-models';
-import { formatEokFromMan, formatMan } from '@/lib/utils';
+import { formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
 
 // 금액 단위는 만원. 규제 수치와 그 기준은 REGULATION 한곳에서만 온다.
 const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE, stressAdd: STRESS_ADD, stressNote: STRESS_NOTE } = REGULATION;
@@ -61,7 +61,7 @@ export function Limit() {
           format={(v) => formatEokFromMan(v, 1)}
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-good' />}
+          icon={<Wallet className='size-4 text-series-1' />}
           label='연소득'
           value={income}
           onChange={setIncome}
@@ -72,7 +72,7 @@ export function Limit() {
           hint='DSR은 담보가 아니라 이 숫자를 본다. 소득이 늘지 않으면 집값이 올라도 빌릴 수 있는 돈은 늘지 않는다.'
         />
         <ControlSlider
-          icon={<Ruler className='size-4 text-warn' />}
+          icon={<Ruler className='size-4 text-series-3' />}
           label='LTV 한도'
           value={ltv}
           onChange={setLtv}
@@ -80,17 +80,17 @@ export function Limit() {
           max={80}
           step={5}
           format={(v) => `${v}%`}
-          hint='담보 가치 대비 대출 비율의 상한. 규제지역 여부, 주택 수, 생애최초 여부에 따라 달라진다.'
+          hint='담보 가치 대비 대출 비율의 상한. 기본값 70%는 예시 값이고, 실제 LTV는 규제지역 여부·주택 수·생애최초 여부에 따라 다르다.'
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-bad' />}
+          icon={<Percent className='size-4 text-series-2' />}
           label='대출 금리'
           value={rate}
           onChange={setRate}
           min={2.5}
           max={7}
           step={0.1}
-          format={(v) => `${v.toFixed(1)}%`}
+          format={(v) => formatPct(v, 1)}
         />
         <ControlSlider
           icon={<CalendarClock className='size-4 text-series-2' />}
@@ -132,8 +132,8 @@ export function Limit() {
           tone={binding === 'dsr' ? 'accent' : undefined}
           sub={
             stress
-              ? `스트레스 금리 ${stressRate.toFixed(1)}%, DSR ${DSR_CAP}%`
-              : `약정 금리 ${rate.toFixed(1)}%, DSR ${DSR_CAP}%`
+              ? `스트레스 금리 ${formatPct(stressRate, 1)}, DSR ${DSR_CAP}%(${DSR_NOTE})`
+              : `약정 금리 ${formatPct(rate, 1)}, DSR ${DSR_CAP}%(${DSR_NOTE})`
           }
         />
         <Metric label='실제 대출 한도' value={formatEokFromMan(limit, 1)} tone='good' sub='둘 중 짧은 자에 맞춘다' />
@@ -150,7 +150,7 @@ export function Limit() {
           label='LTV 한도'
           value={byLtv}
           max={barMax}
-          className='bg-warn-surface'
+          className='bg-series-2'
           format={(v) => formatEokFromMan(v, 1)}
           sub='집을 보는 자, 담보 가치에 비례한다'
         />
@@ -166,7 +166,7 @@ export function Limit() {
           label='자기 현금으로 메울 금액'
           value={cash}
           max={barMax}
-          className='bg-bad-surface'
+          className='bg-series-3'
           format={(v) => formatEokFromMan(v, 1)}
           sub={`집값 ${formatEokFromMan(price, 1)} 중 대출로 안 되는 부분`}
         />
@@ -182,12 +182,12 @@ export function Limit() {
         <Metric label='월 원리금 상환액' value={formatMan(monthly)} sub={`원리금균등, 만기 ${years}년`} />
         <Metric
           label='소득 대비 연 원리금 비율'
-          value={`${dsrActual.toFixed(1)}%`}
+          value={formatPct(dsrActual, 1)}
           tone='good'
           sub={
             stress && binding === 'dsr'
-              ? `약정 금리 기준. 한도 ${DSR_CAP}%까지 ${(DSR_CAP - dsrActual).toFixed(1)}%p 남고, 이 여유가 스트레스 금리로 미리 깎아 둔 몫이다`
-              : `약정 금리 기준, 한도는 ${DSR_CAP}%`
+              ? `약정 금리 기준. 한도 ${DSR_CAP}%(${DSR_NOTE})까지 ${(DSR_CAP - dsrActual).toFixed(1)}%p 남고, 이 여유가 스트레스 금리로 미리 깎아 둔 몫이다`
+              : `약정 금리 기준, 한도는 ${DSR_CAP}%(${DSR_NOTE})`
           }
         />
       </div>

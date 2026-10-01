@@ -30,7 +30,7 @@ export function bondPrice({ face, couponRate, years, ytm }: Bond): number {
  * 맥컬리 듀레이션: 현금흐름을 현재가치로 가중한 평균 회수 기간 (년).
  * 만기와 다른 값인 이유는 중간에 받는 이자가 원금 회수를 앞당기기 때문이다.
  */
-export function macaulayDuration(bond: Bond): number {
+function macaulayDuration(bond: Bond): number {
   const { face, couponRate, years, ytm } = bond;
   const coupon = face * couponRate;
   const price = bondPrice(bond);
@@ -65,6 +65,10 @@ export const TENORS = [
   { label: '30Y', years: 30 },
 ] as const;
 
+/** 2년물·10년물의 자리. 스프레드와 화면의 만기별 Metric이 같은 만기를 읽도록 한 번만 찾는다. */
+export const I2 = TENORS.findIndex((t) => t.label === '2Y');
+export const I10 = TENORS.findIndex((t) => t.label === '10Y');
+
 export type CurveShape = 'normal' | 'flat' | 'inverted';
 
 /**
@@ -85,7 +89,5 @@ export function curveYields(shape: CurveShape, shortRate: number): number[] {
 
 /** 10년물 − 2년물. 이 값이 음수인 상태를 장단기 금리 역전이라 부른다. */
 export function spread10y2y(ys: number[]): number {
-  const i10 = TENORS.findIndex((t) => t.label === '10Y');
-  const i2 = TENORS.findIndex((t) => t.label === '2Y');
-  return ys[i10] - ys[i2];
+  return ys[I10] - ys[I2];
 }

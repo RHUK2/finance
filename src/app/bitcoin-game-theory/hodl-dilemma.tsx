@@ -15,6 +15,7 @@ import {
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
+import { formatPct } from '@/lib/utils';
 
 import { type Holder, type HolderBand, buildHolders, hodlTrajectory } from './models';
 
@@ -28,9 +29,9 @@ const PRICE_FLOOR = 50;
 
 // 확신도 구간별 색. 채택 캐스케이드와 같은 읽는 법: 위치는 확신도 순, 색은 구간.
 const BAND_COLOR: Record<HolderBand, { holding: string; sold: string }> = {
-  '약한 손': { holding: 'bg-good-surface/40', sold: 'bg-bad-surface/40' },
-  '일반 보유자': { holding: 'bg-good-surface/70', sold: 'bg-bad-surface/70' },
-  다이아몬드손: { holding: 'bg-good-surface', sold: 'bg-bad-surface' },
+  '약한 손': { holding: 'bg-series-1/40', sold: 'bg-series-2/40' },
+  '일반 보유자': { holding: 'bg-series-1/70', sold: 'bg-series-2/70' },
+  다이아몬드손: { holding: 'bg-series-1', sold: 'bg-series-2' },
 };
 
 export function HodlDilemma() {
@@ -50,7 +51,7 @@ export function HodlDilemma() {
 
       <Panel>
         <ControlSlider
-          icon={<Diamond className='size-4 text-good' />}
+          icon={<Diamond className='size-4 text-series-1' />}
           label='얼마나 잘 버티나 (평균 확신도)'
           hint='시작가 대비 몇 %까지 떨어져도 안 던지는지. 확신도 60%면 60% 낙폭까지 버틴다는 뜻이다. 높일수록 다이아몬드손이 많아 충격을 흡수하고, 낮추면 약한 손이 먼저 던져 연쇄 매도가 터진다.'
           value={meanConviction}
@@ -58,7 +59,7 @@ export function HodlDilemma() {
           min={0.2}
           max={0.9}
           step={0.01}
-          format={(v) => `${Math.round(v * 100)}%`}
+          format={(v) => formatPct(v * 100, 0)}
         />
       </Panel>
 
@@ -77,8 +78,8 @@ export function HodlDilemma() {
 function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: number; onSpeed: (ms: number) => void }) {
   // 난수가 개입하지 않는 결정론적 연쇄라 전 궤적을 미리 계산할 수 있다.
   const frames = useMemo(() => hodlTrajectory(holders, SHOCK), [holders]);
-  const { round, last, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
-  const { state, justChanged } = frames[round];
+  const { round, last, frame, done, step, seek, engine } = useTrajectoryPlayer(frames, speedMs);
+  const { state, justChanged } = frame;
   const soldCount = state.sold.filter(Boolean).length;
   const holding = N - soldCount;
 
@@ -93,8 +94,8 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
     <CascadeStage
       notice={
         <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <Zap className='size-3.5 text-bad' />첫 박자에 외생 공포 충격{' '}
-          <span className='font-medium text-bad'>−{Math.round(SHOCK * 100)}%</span> 자동 적용
+          <Zap className='size-3.5 text-series-3' />첫 박자에 외생 공포 충격{' '}
+          <span className='font-medium text-bad'>{formatPct(-SHOCK * 100, 0)}</span> 자동 적용
         </div>
       }
       controls={
@@ -114,11 +115,11 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
       axisLabels={['확신도 낮음 (약한 손)', '확신도 높음 (다이아몬드손)']}
       states={states}
       highlight={justChanged}
-      reading='칸은 확신도 순으로 왼쪽부터 늘어서 있다. 매도(붉은색)는 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다. 누적 낙폭이 깊어질수록 더 높은 확신도까지 무너지기 때문이다. 가운데는 보유자가 촘촘해 한 번 뚫리면 빠르게 번지고, 오른쪽 끝은 성겨서 연쇄가 거기서 힘을 잃는다.'
+      reading='칸은 확신도 순으로 왼쪽부터 늘어서 있다. 매도 칸은 언제나 왼쪽 끝에서 시작해 오른쪽으로 밀고 들어온다. 누적 낙폭이 깊어질수록 더 높은 확신도까지 무너지기 때문이다. 가운데는 보유자가 촘촘해 한 번 뚫리면 빠르게 번지고, 오른쪽 끝은 성겨서 연쇄가 거기서 힘을 잃는다.'
       legend={
         <>
-          <Legend className='bg-good-surface' label='버티는 손' />
-          <Legend className='bg-bad-surface' label='매도' />
+          <Legend className='bg-series-1' label='버티는 손' />
+          <Legend className='bg-series-2' label='매도' />
         </>
       }
       legendNote='진할수록 확신도가 높은 구간'
@@ -135,7 +136,7 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
           <Metric
             label='가격 (시작 100)'
             value={state.price.toFixed(1)}
-            sub={`누적 낙폭 ${Math.round(state.drawdown * 100)}%`}
+            sub={`누적 낙폭 ${formatPct(state.drawdown * 100, 0)}`}
             tone={state.price < 60 ? 'bad' : state.price >= 95 ? 'good' : undefined}
           />
           <Metric label='매도자' value={`${soldCount}`} tone='bad' />

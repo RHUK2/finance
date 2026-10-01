@@ -146,7 +146,7 @@ export function LegalPerson() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Stamp className='size-4 text-bad' />
+          <Stamp className='size-4 text-series-2' />
           법인격이 생기는 순서
         </span>
         <div className='grid grid-cols-2 gap-2 sm:grid-cols-4'>
@@ -183,7 +183,7 @@ export function LegalPerson() {
       </Panel>
 
       <ExplainCard
-        icon={<Landmark className='size-4 text-warn' />}
+        icon={<Landmark className='size-4 text-series-3' />}
         title='왜 인격을 하나 더 만들었을까'
         preview='자연인의 인격 하나로는 사업의 실패와 출자자의 파산을 떼어 놓을 수 없었다.'
         body={

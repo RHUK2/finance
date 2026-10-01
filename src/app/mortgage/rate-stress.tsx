@@ -7,7 +7,7 @@ import { Banknote, CalendarClock, Percent, ShieldCheck, TrendingUp, TriangleAler
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { levelPayment, REGULATION, schedule } from '@/lib/mortgage-models';
-import { formatEokFromMan, formatMan } from '@/lib/utils';
+import { formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
 
 // 변동금리가 몇 년 뒤에 움직인다고 보고 계산한다. 고정금리는 그 대가로 처음부터 가산금리를 얹는다.
 const SHIFT_YEAR = 3;
@@ -63,13 +63,13 @@ export function RateStress() {
         ? {
             tone: 'bad' as const,
             icon: <TriangleAlert className='size-4 shrink-0' />,
-            text: `상환액이 소득의 ${dsrAfter.toFixed(0)}%까지 올라가 DSR 한도 ${DSR_CAP}%를 넘는다. 대출을 새로 받는다면 승인되지 않았을 수준이라, 스트레스 금리로 한도를 미리 깎아 두는 이유가 여기 있다.`,
+            text: `상환액이 소득의 ${formatPct(dsrAfter, 0)}까지 올라가 DSR 한도 ${DSR_CAP}%를 넘는다. 대출을 새로 받는다면 승인되지 않았을 수준이라, 스트레스 금리로 한도를 미리 깎아 두는 이유가 여기 있다.`,
           }
         : jumpPct > 20
           ? {
               tone: 'accent' as const,
               icon: <TrendingUp className='size-4 shrink-0' />,
-              text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${jumpPct.toFixed(0)}% 늘었다. 이자만이 아니라 남은 원금을 더 짧아진 기간에 갚아야 하기 때문이다.`,
+              text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${formatPct(jumpPct, 0)} 늘었다. 이자만이 아니라 남은 원금을 더 짧아진 기간에 갚아야 하기 때문이다.`,
             }
           : {
               tone: 'good' as const,
@@ -97,17 +97,17 @@ export function RateStress() {
           format={formatEokFromMan}
         />
         <ControlSlider
-          icon={<Percent className='size-4 text-good' />}
+          icon={<Percent className='size-4 text-series-1' />}
           label='처음 금리'
           value={rate}
           onChange={setRate}
           min={2}
           max={6}
           step={0.1}
-          format={(v) => `${v.toFixed(1)}%`}
+          format={(v) => formatPct(v, 1)}
         />
         <ControlSlider
-          icon={<TrendingUp className='size-4 text-bad' />}
+          icon={<TrendingUp className='size-4 text-series-2' />}
           label='금리 상승폭'
           value={delta}
           onChange={setDelta}
@@ -128,7 +128,7 @@ export function RateStress() {
           format={(v) => `${v}년`}
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-warn' />}
+          icon={<Wallet className='size-4 text-series-3' />}
           label='연소득'
           value={income}
           onChange={setIncome}
@@ -140,24 +140,24 @@ export function RateStress() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-        <Metric label='지금 월 상환액' value={formatMan(before)} sub={`금리 ${rate.toFixed(1)}%`} />
+        <Metric label='지금 월 상환액' value={formatMan(before)} sub={`금리 ${formatPct(rate, 1)}`} />
         <Metric
           label={`${SHIFT_YEAR}년 뒤 월 상환액`}
           value={formatMan(after.monthly)}
           tone={jumpPct > 20 ? 'bad' : jumpPct > 0 ? 'accent' : 'good'}
-          sub={`금리 ${(rate + delta).toFixed(1)}%, 잔액 ${formatEokFromMan(after.balance)}`}
+          sub={`금리 ${formatPct(rate + delta, 1)}, 잔액 ${formatEokFromMan(after.balance)}`}
         />
         <Metric
           label='월 부담 증가'
           value={formatMan(jump)}
           tone={jump > 0 ? 'bad' : 'good'}
-          sub={`${jumpPct >= 0 ? '+' : ''}${jumpPct.toFixed(1)}%`}
+          sub={formatPct(jumpPct, 1, { plus: true })}
         />
         <Metric
           label='소득 대비 원리금'
-          value={`${dsrAfter.toFixed(1)}%`}
+          value={formatPct(dsrAfter, 1)}
           tone={dsrAfter > DSR_CAP ? 'bad' : 'good'}
-          sub={`상승 전 ${dsrBefore.toFixed(1)}%, 한도 ${DSR_CAP}% (${DSR_NOTE})`}
+          sub={`상승 전 ${formatPct(dsrBefore, 1)}, 한도 ${DSR_CAP}% (${DSR_NOTE})`}
         />
       </div>
 
@@ -166,7 +166,7 @@ export function RateStress() {
           label='변동금리, 상승 전'
           value={before}
           max={barMax}
-          className='bg-good-surface'
+          className='bg-series-2'
           format={formatMan}
           sub={`처음 ${SHIFT_YEAR}년 동안의 월 상환액`}
         />
@@ -174,7 +174,7 @@ export function RateStress() {
           label='변동금리, 상승 후'
           value={after.monthly}
           max={barMax}
-          className='bg-bad-surface'
+          className='bg-series-3'
           format={formatMan}
           sub='남은 기간에 잔액을 다 갚아야 하므로 인상폭보다 크게 뛴다'
         />
@@ -199,20 +199,20 @@ export function RateStress() {
           tone={after.interest > fixedInterest ? 'bad' : 'good'}
           sub={
             delta === 0
-              ? `${rate.toFixed(1)}%가 만기까지 유지된 경우`
-              : `${SHIFT_YEAR}년 뒤 ${(rate + delta).toFixed(1)}%로 오른 경우`
+              ? `${formatPct(rate, 1)}가 만기까지 유지된 경우`
+              : `${SHIFT_YEAR}년 뒤 ${formatPct(rate + delta, 1)}로 오른 경우`
           }
         />
         <Metric
           label='고정금리 총이자'
           value={formatEokFromMan(fixedInterest)}
           tone={fixedInterest > after.interest ? 'bad' : 'good'}
-          sub={`처음부터 ${(rate + FIXED_PREMIUM).toFixed(1)}%`}
+          sub={`처음부터 ${formatPct(rate + FIXED_PREMIUM, 1)}`}
         />
       </div>
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-bad' />}
+        icon={<TrendingUp className='size-4 text-series-2' />}
         title='금리 인상폭보다 상환액 인상폭이 큰 이유'
         preview='남은 원금은 그대로인데 갚을 기간만 짧아져 있기 때문이다.'
         body={

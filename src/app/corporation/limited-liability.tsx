@@ -124,7 +124,7 @@ export function LimitedLiability() {
         </div>
 
         <ControlSlider
-          icon={<Banknote className='size-4 text-good' />}
+          icon={<Banknote className='size-4 text-series-1' />}
           label={V.assets}
           value={assets}
           onChange={setAssets}
@@ -134,7 +134,7 @@ export function LimitedLiability() {
           format={(v) => formatEok(v, 0)}
         />
         <ControlSlider
-          icon={<Wallet className='size-4 text-bad' />}
+          icon={<Wallet className='size-4 text-series-2' />}
           label={V.debt}
           value={debts}
           onChange={setDebts}
@@ -171,7 +171,7 @@ export function LimitedLiability() {
           label='채권자가 돌려받는 돈'
           value={creditorRecovered}
           max={barMax}
-          className='bg-good-surface'
+          className='bg-series-1'
           format={(v) => formatEok(v, 0)}
           sub={`청구액 ${formatEok(debts, 0)}`}
         />
@@ -179,7 +179,7 @@ export function LimitedLiability() {
           label='채권자가 떼이는 돈'
           value={creditorLoss}
           max={barMax}
-          className='bg-bad-surface'
+          className='bg-series-2'
           format={(v) => formatEok(v, 0)}
           sub='유한책임의 비용은 결국 채권자가 부담한다'
         />
@@ -187,7 +187,7 @@ export function LimitedLiability() {
           label={`${V.owner}가 ${V.capital}에서 잃는 돈`}
           value={shareholderLoss}
           max={barMax}
-          className='bg-warn-surface'
+          className='bg-series-3'
           format={(v) => formatEok(v, 0)}
           sub={isCorp ? `아무리 커져도 ${V.capital}을 넘지 않는다` : '여기서 끝나지 않고 개인 재산으로 이어진다'}
         />

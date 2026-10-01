@@ -44,9 +44,15 @@ export function Leverage() {
   const roe = (net / equity) * 100;
   const afterTaxRate = rate * (1 - TAX_RATE / 100);
   const coverage = interest > 0 ? ebit / interest : null;
+  // 손금 효과는 깎을 이익이 있을 때만 실현된다. 영업이익이 이자보다 작으면 모자란 만큼 덜 깎인다.
+  const realizedShield = netIncome(ebit, interest) - (netIncome(ebit, 0) - interest);
+  const realizedRate = debt > 0 ? ((interest - realizedShield) / debt) * 100 : afterTaxRate;
+  // 부동소수 오차로 같은 값이 한쪽으로 기울지 않게 작은 허용치로 동률을 가른다.
+  const EPS = 1e-9;
+  const tie = Math.abs(roa - afterTaxRate) < EPS;
 
   const segments = [
-    { label: `부채 ${formatEok(debt, 0)}`, value: debt, className: 'bg-bad-surface' },
+    { label: `부채 ${formatEok(debt, 0)}`, value: debt, className: 'bg-series-2' },
     { label: `자기자본 ${formatEok(equity, 0)}`, value: equity, className: 'bg-series-1' },
   ];
 
@@ -63,17 +69,23 @@ export function Leverage() {
             icon: <TriangleAlert className='size-4 shrink-0' />,
             text: `영업이익 ${formatEok(ebit, 0)}으로 이자 ${formatEok(interest, 0)}조차 감당하지 못한다. 이자는 실적과 무관하게 약속된 금액이라, 못 내는 순간 채권자가 회사의 운명을 쥔다.`,
           }
-        : roa > afterTaxRate
+        : tie
           ? {
-              tone: 'good' as const,
-              icon: <TrendingUp className='size-4 shrink-0' />,
-              text: `자산이 세후로 벌어들이는 ${formatPct(roa)}이 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}보다 높다. 남는 차익이 전부 주주 몫으로 쌓여 ROE ${formatPct(roe)}가 ROA를 넘어선다.`,
-            }
-          : {
               tone: 'accent' as const,
               icon: <Percent className='size-4 shrink-0' />,
-              text: `자산의 세후 수익률 ${formatPct(roa)}이 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}에 못 미친다. 빌린 돈이 제 값도 못 벌어 오는 상태라, 레버리지가 오히려 ROE를 ${formatPct(roe)}까지 끌어내린다.`,
-            };
+              text: `자산의 세후 수익률 ${formatPct(roa)}과 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}이 같다. 빌린 돈이 딱 제 값만 벌어 와 남는 차익이 없으니 ROE도 ROA와 같은 ${formatPct(roe)}에 머문다. 증폭 효과가 없는 경계다.`,
+            }
+          : roa > afterTaxRate
+            ? {
+                tone: 'good' as const,
+                icon: <TrendingUp className='size-4 shrink-0' />,
+                text: `자산이 세후로 벌어들이는 ${formatPct(roa)}이 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}보다 높다. 남는 차익이 전부 주주 몫으로 쌓여 ROE ${formatPct(roe)}가 ROA를 넘어선다.`,
+              }
+            : {
+                tone: 'accent' as const,
+                icon: <Percent className='size-4 shrink-0' />,
+                text: `자산의 세후 수익률 ${formatPct(roa)}이 빌린 돈의 세후 부담 ${formatPct(afterTaxRate)}에 못 미친다. 빌린 돈이 제 값도 못 벌어 오는 상태라, 레버리지가 오히려 ROE를 ${formatPct(roe)}까지 끌어내린다.`,
+              };
 
   return (
     <div className='flex flex-col gap-4'>
@@ -85,7 +97,7 @@ export function Leverage() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Scale className='size-4 text-bad' />}
+          icon={<Scale className='size-4 text-series-2' />}
           label='부채 비중'
           value={debtRatio}
           onChange={setDebtRatio}
@@ -96,18 +108,18 @@ export function Leverage() {
           hint={`총자산 ${formatEok(ASSETS, 0)} 가운데 ${formatEok(debt, 0)}을 빌리고 나머지 ${formatEok(equity, 0)}을 주주가 댄다.`}
         />
         <ControlSlider
-          icon={<Landmark className='size-4 text-warn' />}
+          icon={<Landmark className='size-4 text-series-3' />}
           label='차입 이자율'
           value={rate}
           onChange={setRate}
           min={2}
           max={12}
           step={0.5}
-          format={(v) => `${v.toFixed(1)}%`}
-          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 법인세율 ${TAX_RATE}%만큼 실부담이 깎여, 회사가 실제로 지는 값은 ${formatPct(afterTaxRate)}다. 쓴 세율은 ${TAX_RATE_NOTE}이다.`}
+          format={(v) => formatPct(v, 1)}
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''} 쓴 세율은 ${TAX_RATE_NOTE}이다.`}
         />
         <ControlSlider
-          icon={<Coins className='size-4 text-good' />}
+          icon={<Coins className='size-4 text-series-1' />}
           label='영업이익'
           value={ebit}
           onChange={setEbit}
@@ -132,7 +144,7 @@ export function Leverage() {
         <Metric
           label='ROE (자기자본 수익률)'
           value={formatPct(roe)}
-          tone={roe > roa ? 'good' : roe < 0 ? 'bad' : 'accent'}
+          tone={roe - roa > EPS ? 'good' : roe < 0 ? 'bad' : Math.abs(roe - roa) < EPS ? undefined : 'accent'}
           sub={`자기자본 ${formatEok(equity, 0)} 기준`}
         />
         <Metric
@@ -156,7 +168,7 @@ export function Leverage() {
       <Panel bleed>
         <div className='flex flex-col gap-1 p-4'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <TrendingUp className='size-4 text-warn' />
+            <TrendingUp className='size-4 text-series-3' />
             업황이 바뀌면 격차가 드러난다
           </span>
           <span className='text-xs text-muted-foreground'>
@@ -196,7 +208,7 @@ export function Leverage() {
       </Panel>
 
       <ExplainCard
-        icon={<TrendingUp className='size-4 text-warn' />}
+        icon={<TrendingUp className='size-4 text-series-3' />}
         title='레버리지는 수익을 만들지 않는다'
         preview='빌린 돈은 결과의 폭을 넓힐 뿐, 사업이 버는 힘 자체를 키우지는 않는다.'
         body={

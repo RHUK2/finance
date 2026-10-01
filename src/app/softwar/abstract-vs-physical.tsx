@@ -42,7 +42,7 @@ export function AbstractVsPhysical() {
           format={formatUsd}
         />
         <ControlSlider
-          icon={<Crown className='size-4 text-bad' />}
+          icon={<Crown className='size-4 text-series-2' />}
           label='추상 권력 탈취 비용'
           hint='위계·신뢰를 매수·기만·강압해 장악하는 비용. 자산 가치에 비례하지 않고 낮게 고정된다.'
           value={abstractDefense}
@@ -53,7 +53,7 @@ export function AbstractVsPhysical() {
           format={formatUsd}
         />
         <ControlSlider
-          icon={<Zap className='size-4 text-warn' />}
+          icon={<Zap className='size-4 text-series-3' />}
           label='물리 권력 벽 (부과한 와트)'
           hint='탈취하려면 쏟아야 하는 실제 에너지 비용. 자산 가치 위로 올리면 공격이 비합리가 된다.'
           value={physicalWall}
@@ -68,7 +68,7 @@ export function AbstractVsPhysical() {
       <div className='grid gap-3 sm:grid-cols-2'>
         <RegimeCard
           title='추상 권력'
-          icon={<Crown className='size-4 text-bad' />}
+          icon={<Crown className='size-4 text-series-2' />}
           value={value}
           cost={r.abstract.cost}
           ratio={r.abstract.bcra}
@@ -76,7 +76,7 @@ export function AbstractVsPhysical() {
         />
         <RegimeCard
           title='물리 권력'
-          icon={<Zap className='size-4 text-warn' />}
+          icon={<Zap className='size-4 text-series-3' />}
           value={value}
           cost={r.physical.cost}
           ratio={r.physical.bcra}
@@ -112,7 +112,7 @@ export function AbstractVsPhysical() {
         <div className='grid gap-3 sm:grid-cols-2'>
           <div className='flex flex-col gap-1.5 rounded-md border p-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <Bomb className='size-4 text-bad' />
+              <Bomb className='size-4 text-series-2' />
               하드워
             </span>
             <p className='text-xs/relaxed text-muted-foreground'>
@@ -122,7 +122,7 @@ export function AbstractVsPhysical() {
           </div>
           <div className='flex flex-col gap-1.5 rounded-md border p-3'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <HeartPulse className='size-4 text-good' />
+              <HeartPulse className='size-4 text-series-1' />
               소프트워
             </span>
             <p className='text-xs/relaxed text-muted-foreground'>
@@ -168,7 +168,7 @@ function RegimeCard({
         {icon}
         {title}
       </span>
-      <CostBar label='탈취 이득 (자원 가치)' value={value} max={max} className='bg-warn-surface' />
+      <CostBar label='탈취 이득 (자원 가치)' value={value} max={max} className='bg-series-2' />
       <CostBar label='탈취 비용' value={cost} max={max} className='bg-series-1' />
       <Metric
         label='BCRA (이득÷비용)'

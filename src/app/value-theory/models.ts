@@ -6,7 +6,7 @@
 
 // 물 한 방울도 없는 상태에서 첫 잔의 지불의사. 마시지 못하면 죽으므로 목숨값이다.
 // 상황이 달라져도 이 값은 같다. 갈리는 것은 그 다음 잔부터의 떨어지는 속도다.
-export const FIRST_CUP_WON = 100_000_000;
+const FIRST_CUP_WON = 100_000_000;
 
 export type Situation = 'city' | 'desert';
 

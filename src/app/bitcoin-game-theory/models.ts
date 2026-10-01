@@ -1,6 +1,7 @@
 // 비트코인 게임이론 페이지에 쓰이는 순수 계산 모델을 한 곳에 모은다.
 // 외부 API 없이 클라이언트에서 계산하며, 모든 수치는 개념 설명용 예시다.
 
+import { HALVINGS, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
 import { clamp01, mulberry32 } from '@/lib/utils';
 
 // ── 1. 보수 행렬 (2인 채택 게임) ───────────────────────────────────────────
@@ -28,10 +29,9 @@ export function payoffMatrix({ u, r, f }: PayoffInput) {
 
   // 채택 우월 판정 마진. 상대 선택과 무관하게 채택이 유리하면 > 0.
   const margin = u - r + f;
-  const nash: keyof typeof cells = margin > 0 ? 'AA' : 'WW';
   const dominantStrategy: Choice | null = margin === 0 ? null : margin > 0 ? 'A' : 'W';
 
-  return { cells, nash, dominantStrategy, margin };
+  return { cells, dominantStrategy, margin };
 }
 
 // 2×2 행렬의 칸 위치 키. 첫째/둘째 전략의 의미(채택·관망, 협력·배신)는 게임마다 다르다.
@@ -44,7 +44,8 @@ export type BestResponses = {
 
 // 각 칸에서 두 플레이어의 최적대응(상대 선택을 고정했을 때 더 큰 보수) 여부.
 // 행 플레이어는 같은 열에서 행을, 열 플레이어는 같은 행에서 열을 비교하므로
-// 두 비교의 짝이 다르다. meBest/themBest가 동시에 true인 칸이 곧 내쉬 균형.
+// 두 비교의 짝이 다르다. meBest/themBest가 동시에 true인 칸이 곧 내쉬 균형이고,
+// 보수가 같으면(>=) 여러 칸이 동시에 균형일 수 있어 화면도 칸마다 이 둘로 판정한다.
 export function bestResponses(cells: PayoffCells): BestResponses {
   const meBest: Record<CellKey, boolean> = {
     AA: cells.AA[0] >= cells.WA[0], // 상대=첫째 열: 우리 첫째 vs 둘째
@@ -62,9 +63,9 @@ export function bestResponses(cells: PayoffCells): BestResponses {
 }
 
 // 정석 죄수의 딜레마. 행/열 첫째 = 협력(A 자리), 둘째 = 배신(W 자리).
-// 우월전략은 '배신'이라 내쉬 균형은 WW(1,1)이고, 협력 AA(3,3)보다 모두에게 나쁜
+// 우월전략은 '배신'이라 내쉬 균형은 WW(1,1) 한 칸이고(bestResponses로 파생된다), 협력 AA(3,3)보다 모두에게 나쁜
 // 파레토 열등 결과로 수렴한다. 채택 게임과의 대비용.
-export function prisonersDilemma(): { cells: PayoffCells; nash: CellKey } {
+export function prisonersDilemma(): { cells: PayoffCells } {
   return {
     cells: {
       AA: [3, 3], // 둘 다 협력
@@ -72,7 +73,6 @@ export function prisonersDilemma(): { cells: PayoffCells; nash: CellKey } {
       WA: [5, 0], // 나만 배신 (유혹)
       WW: [1, 1], // 둘 다 배신
     },
-    nash: 'WW',
   };
 }
 
@@ -116,7 +116,7 @@ export function buildCascadeAgents(n: number, meanThreshold: number, seed: numbe
 }
 
 // 한 라운드 진행: p ≥ θ인 미채택자를 채택으로 전환. 다음 상태와 변화 여부 반환.
-export function cascadeStep(agents: CascadeAgent[], adopted: boolean[]) {
+function cascadeStep(agents: CascadeAgent[], adopted: boolean[]) {
   const p = adopted.filter(Boolean).length / agents.length;
   let changed = false;
   const next = adopted.map((a, i) => {
@@ -177,7 +177,7 @@ const START_PRICE = 100;
 const SELL_IMPACT = 0.5; // 한 라운드 전량 매도 시 -50%
 
 // 확신도 구간 이름. 캐스케이드의 개인·기업·국가와 같은 읽는 법을 준다.
-export function holderBand(conviction: number): HolderBand {
+function holderBand(conviction: number): HolderBand {
   return conviction < 0.4 ? '약한 손' : conviction < 0.7 ? '일반 보유자' : '다이아몬드손';
 }
 
@@ -197,7 +197,7 @@ export function buildHolders(n: number, meanConviction: number, seed: number): H
   }).sort((a, b) => a.conviction - b.conviction);
 }
 
-export function initialHodlState(n: number): HodlState {
+function initialHodlState(n: number): HodlState {
   return {
     price: START_PRICE,
     sold: Array(n).fill(false),
@@ -211,7 +211,7 @@ export function initialHodlState(n: number): HodlState {
 // 충격을 먼저 반영해 누적 낙폭을 갱신하고, 그 낙폭으로 매도를 판정한 뒤,
 // 매도 압력이 가격을 한 번 더 끌어내린다. 가격은 단조 하락이므로 누적 낙폭이
 // 곧 지금까지의 최대 낙폭이고, 매도 집합은 확신도 순으로 앞에서부터 늘어난다.
-export function hodlStep(state: HodlState, holders: Holder[], shock = 0): HodlState {
+function hodlStep(state: HodlState, holders: Holder[], shock = 0): HodlState {
   const n = holders.length;
   const shocked = state.price * (1 - shock);
   const drawdown = 1 - shocked / START_PRICE;
@@ -272,8 +272,9 @@ export type AttackInput = {
 };
 
 const J_PER_TH = 20; // 최신 ASIC 효율 ≈ 20 J/TH → 20 W per TH/s
-const BLOCK_REWARD = 3.125; // BTC (2024년 반감기 이후, 다음 반감기는 2028년)
-const BLOCKS_PER_HOUR = 6;
+// 지금 블록 보상 (BTC). 마지막으로 실제 일어난 반감기의 보상이라 다음 반감기가 오면 HALVINGS를 따라 바뀐다.
+const BLOCK_REWARD = HALVINGS.filter((h) => !h.estimated).at(-1)!.reward;
+const BLOCKS_PER_HOUR = 60 / TARGET_BLOCK_MINUTES;
 const HOURS_PER_YEAR = 24 * 365;
 const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불 규모(예시 상한)
 
@@ -291,17 +292,23 @@ export function attack51({ btcPrice, networkHashrate, attackHours, hardwareCostP
 
   const doubleSpendGain = DOUBLE_SPEND_BTC * btcPrice;
 
-  // 같은 장비로 정직하게 채굴할 때의 연 수익. 과반이라 블록의 절반을 가져간다.
+  // 같은 장비로 정직하게 채굴할 때의 연 매출. 과반이라 블록의 절반을 가져간다.
   // 수수료는 무시한다(보상의 몇 % 수준이라 결론을 바꾸지 않는다).
-  const honestYearly = BLOCK_REWARD * BLOCKS_PER_HOUR * HOURS_PER_YEAR * 0.5 * btcPrice;
-  const paybackYears = hardwareCost / honestYearly;
+  const honestRevenue = BLOCK_REWARD * BLOCKS_PER_HOUR * HOURS_PER_YEAR * 0.5 * btcPrice;
+  // 정직 채굴도 같은 장비를 1년 내내 돌리므로 전기비를 치른다. 장비값은 이 순현금흐름으로
+  // 회수하고, 순현금흐름이 0 이하이면 회수할 길이 없다(Infinity).
+  const honestPowerCost = powerKW * HOURS_PER_YEAR * electricity;
+  const honestNet = honestRevenue - honestPowerCost;
+  const paybackYears = honestNet > 0 ? hardwareCost / honestNet : Infinity;
 
   return {
     hardwareCost,
     energyCost,
     attackCost,
     doubleSpendGain,
-    honestYearly,
+    honestRevenue,
+    honestPowerCost,
+    honestNet,
     paybackYears,
   };
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { ArrowRight, Blend, Flame, Shuffle, Wallet } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
@@ -15,7 +14,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { cn } from '@/lib/utils';
+import { cn, formatPct } from '@/lib/utils';
 
 type Exit = 'kyc' | 'p2p' | 'hold';
 
@@ -37,7 +36,7 @@ const EXIT_PROFILE: Record<Exit, { label: string; identify: number; usable: stri
     label: '그냥 보유',
     identify: 0.03,
     usable: '없음',
-    note: '아무에게도 걸리지 않는다. 대신 그 돈은 쓸 수 없는 장부상 숫자로 남는다. 자금세탁의 목적 자체가 달성되지 않는다.',
+    note: '추적될 가능성은 낮다. 대신 그 돈은 쓸 수 없는 장부상 숫자로 남는다. 자금세탁의 목적 자체가 달성되지 않는다.',
   },
 };
 
@@ -97,7 +96,7 @@ export function LaunderingTrail() {
 
         <div>
           <span className='text-xs text-muted-foreground'>
-            자금 경로. 빨간 표시는 체인분석 업체가 붙인 오염 라벨이다.
+            자금 경로. 해킹 지갑과 뒤따르는 홉에는 체인분석 업체가 붙인 오염 라벨이 따라간다.
           </span>
           <div className='mt-2 flex items-center gap-1.5 overflow-x-auto pb-1'>
             <TrailNode icon={<Flame className='size-3.5' />} label='해킹 지갑' tone='origin' />
@@ -121,7 +120,7 @@ export function LaunderingTrail() {
           <Metric label='체인상 경로 보존' value='100%' tone='bad' sub='홉 수와 무관' />
           <Metric
             label='신원 특정 가능성'
-            value={`${Math.round(identify * 100)}%`}
+            value={formatPct(identify * 100, 0)}
             tone={identify > 0.5 ? 'bad' : 'accent'}
           />
           <Metric label='추적 소요 시간' value={`${Math.round(days)}일`} sub='홉·믹서가 늘리는 건 이것뿐' />
@@ -135,14 +134,11 @@ export function LaunderingTrail() {
         {mixer && (
           <StatusBanner>
             <span className='leading-relaxed font-normal'>
-              자금을 맡기고 다른 코인으로 돌려받는 커스터디 믹서든, 참여자들이 하나의 트랜잭션을 함께 만드는{' '}
-              <Link href='/privacy' className='underline underline-offset-2'>
-                CoinJoin
-              </Link>
-              이든, &#39;어느 출력이 누구 것인지&#39;는 흐려도 <b>그런 경로를 거쳤다는 사실 자체는 숨기지 못한다.</b>{' '}
-              입출력 구조가 특이해 체인에서 쉽게 식별되고 관련 주소는 공개적으로 태깅되기 때문이다. 거래소들은 이런
-              경로에서 직접 들어온 입금을 차단하거나 동결하는 경우가 많다. 세탁하려던 돈에 오히려 더 눈에 띄는 표식이
-              붙는 셈이다.
+              자금을 맡기고 다른 코인으로 돌려받는 커스터디 믹서든, 참여자들이 하나의 트랜잭션을 함께 만드는
+              CoinJoin이든, &#39;어느 출력이 누구 것인지&#39;는 흐려도{' '}
+              <b>그런 경로를 거쳤다는 사실 자체는 숨기지 못한다.</b> 입출력 구조가 특이해 체인에서 쉽게 식별되고 관련
+              주소는 공개적으로 태깅되기 때문이다. 거래소들은 이런 경로에서 직접 들어온 입금을 차단하거나 동결하는
+              경우가 많다. 세탁하려던 돈에 오히려 더 눈에 띄는 표식이 붙는 셈이다.
             </span>
           </StatusBanner>
         )}
@@ -207,9 +203,9 @@ function TrailNode({
     <div
       className={cn(
         'flex shrink-0 items-center gap-1 rounded-md border px-2 py-1.5 text-xs whitespace-nowrap',
-        tone === 'origin' && 'border-bad-surface/60 bg-bad-surface/10 text-bad',
-        tone === 'tainted' && 'border-bad-surface/30 bg-bad-surface/5',
-        tone === 'mixer' && 'border-warn-surface/40 bg-warn-surface/5 text-warn',
+        tone === 'origin' && 'border-series-2/60 bg-series-2/10 text-series-2',
+        tone === 'tainted' && 'border-series-2/30 bg-series-2/5',
+        tone === 'mixer' && 'border-series-3/40 bg-series-3/5 text-series-3',
         tone === 'exit' && 'bg-muted',
       )}
     >

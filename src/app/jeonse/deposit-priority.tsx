@@ -130,7 +130,7 @@ export function DepositPriority() {
           format={formatEok}
         />
         <ControlSlider
-          icon={<Landmark className='size-4 text-bad' />}
+          icon={<Landmark className='size-4 text-series-2' />}
           label='선순위 근저당 채권액'
           value={mortgage}
           onChange={setMortgage}
@@ -141,7 +141,7 @@ export function DepositPriority() {
           hint='등기부등본 을구에서 확인한다. 실제 대출 잔액이 아니라 채권최고액이 적혀 있다.'
         />
         <ControlSlider
-          icon={<Gavel className='size-4 text-warn' />}
+          icon={<Gavel className='size-4 text-series-3' />}
           label='경매 낙찰가'
           value={salePrice}
           onChange={setSalePrice}
@@ -173,15 +173,23 @@ export function DepositPriority() {
           label='임차인 배당'
           value={distributed}
           max={barMax}
-          className='bg-good-surface'
+          className='bg-series-1'
           format={formatEok}
-          sub={canClaim ? (tenantFirst ? '1순위' : '근저당 다음 순위') : '확정일자가 없어 배당에 못 낀다'}
+          sub={
+            canClaim
+              ? tenantFirst
+                ? '1순위'
+                : '근저당 다음 순위'
+              : !moveIn
+                ? '전입신고·점유가 없어 배당에 못 낀다'
+                : '확정일자가 없어 배당에 못 낀다'
+          }
         />
         <CostBar
           label='근저당권자 배당'
           value={bankPaid}
           max={barMax}
-          className='bg-bad-surface'
+          className='bg-series-2'
           format={formatEok}
           sub={`채권액 ${formatEok(mortgage)}`}
         />
@@ -189,7 +197,7 @@ export function DepositPriority() {
           label='낙찰자 인수'
           value={assumed}
           max={barMax}
-          className='bg-warn-surface'
+          className='bg-series-4'
           format={formatEok}
           sub={hasOpposing ? '낙찰자가 대신 갚아야 하는 금액' : '대항력이 없으면 인수되지 않는다'}
         />

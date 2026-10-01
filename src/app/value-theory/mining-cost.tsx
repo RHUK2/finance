@@ -27,7 +27,7 @@ export function MiningCost() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <ArrowDownToLine className='size-4 text-warn' />
+          <ArrowDownToLine className='size-4 text-series-3' />
           인과는 이 방향으로만 흐른다
         </span>
         <div className='flex flex-col gap-1'>
@@ -53,7 +53,7 @@ export function MiningCost() {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Zap className='size-4 text-bad' />
+          <Zap className='size-4 text-series-2' />
           반대로 뒤집으면 어디서 끊기나
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>

@@ -13,7 +13,8 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { cn, formatPct } from '@/lib/utils';
 
 // 거래 규모(회사 자산 대비 비중)에 따라 어느 기관까지 올라가야 하는지가 달라진다.
 // 상법상 이사회 결의 사항(중요한 자산의 처분·대규모 차재)과 주주총회 특별결의 사항(영업양도)을
@@ -116,7 +117,7 @@ export function Agency() {
           min={0.1}
           max={60}
           step={0.1}
-          format={(v) => `${v.toFixed(1)}%`}
+          format={(v) => formatPct(v, 1)}
           hint='사무용품을 사는 일과 공장을 통째로 넘기는 일에 같은 절차를 요구할 수는 없다. 규모가 커질수록 결정 권한은 대표 개인에게서 이사회로, 다시 소유자인 주주에게로 올라간다.'
         />
       </Panel>
@@ -175,14 +176,14 @@ export function Agency() {
         body={
           <>
             <p>
-              대표이사는 회사의 대리인이지 주인이 아니다. 회사 돈으로 위험을 감수하지만 손실의 대부분은 주주가 진다.
+              대표이사는 회사의 기관이지 주인이 아니다. 회사 돈으로 위험을 감수하지만 손실의 대부분은 주주가 진다.
               그러니 필요 이상으로 회사를 키우거나, 자기 임기 안에 성과가 나는 쪽으로 자원을 몰거나, 회사에 이익이 될
               위험조차 피하는 선택이 나올 수 있다. 경제학에서 대리인 문제라고 부르는 상황이다.
             </p>
             <p className='mt-2'>
-              그래서 회사법은 대리인을 붙잡아 둘 장치를 여럿 둔다. 이사회의 감시, 주주총회의 선임·해임권, 이사의 충실
-              의무와 손해배상책임, 회사가 소를 게을리할 때 주주가 대신 나서는 대표소송. 주식보상으로 경영자의 손익을
-              주주와 같은 방향으로 묶어 두는 것도 같은 목적의 처방이다.
+              그래서 회사법은 경영을 맡은 기관을 붙잡아 둘 장치를 여럿 둔다. 이사회의 감시, 주주총회의 선임·해임권,
+              이사의 충실 의무와 손해배상책임, 회사가 소를 게을리할 때 주주가 대신 나서는 대표소송. 주식보상으로
+              경영자의 손익을 주주와 같은 방향으로 묶어 두는 것도 같은 목적의 처방이다.
             </p>
           </>
         }
@@ -213,9 +214,10 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
         />
         <span className='font-semibold'>{organ.name}</span>
         <span className='text-xs text-muted-foreground'>{organ.role}</span>
-        <span
+        <Badge
+          variant='outline'
           className={cn(
-            'ml-auto shrink-0 rounded-full px-2 py-0.5 text-xs',
+            'ml-auto border-transparent',
             outside
               ? 'bg-series-2/15 text-series-2'
               : active
@@ -224,7 +226,7 @@ function OrganNode({ organ, active }: { organ: Organ; active: boolean }) {
           )}
         >
           {outside ? '회사 바깥' : active ? '거쳐야 함' : '불필요'}
-        </span>
+        </Badge>
       </div>
       <p className='text-xs/relaxed text-muted-foreground'>{organ.note}</p>
     </Panel>

@@ -62,9 +62,9 @@ export function TaxShield() {
 
   // 영업이익 150억이 세 곳으로 갈라진다. 부채 비중을 올리면 정부 몫이 줄어든다.
   const slices = [
-    { label: `채권자 (이자) ${formatEok(interest, 0)}`, value: interest, className: 'bg-bad-surface' },
+    { label: `채권자 (이자) ${formatEok(interest, 0)}`, value: interest, className: 'bg-series-2' },
     { label: `정부 (법인세) ${formatEok(tax, 0)}`, value: tax, className: 'bg-muted-foreground' },
-    { label: `주주 (순이익) ${formatEok(net, 0)}`, value: net, className: 'bg-good-surface' },
+    { label: `주주 (순이익) ${formatEok(net, 0)}`, value: net, className: 'bg-series-4' },
   ];
 
   return (
@@ -77,7 +77,7 @@ export function TaxShield() {
 
       <Panel className='gap-5'>
         <ControlSlider
-          icon={<Scale className='size-4 text-bad' />}
+          icon={<Scale className='size-4 text-series-2' />}
           label='부채 비중'
           value={debtRatio}
           onChange={setDebtRatio}
@@ -127,13 +127,15 @@ export function TaxShield() {
       <StatusBanner tone={annualShield > 0 ? 'good' : 'accent'} icon={<ShieldCheck className='size-4 shrink-0' />}>
         {annualShield > 0
           ? `이자를 비용으로 털어 낸 덕분에 올해 정부로 나갈 ${formatEok(annualShield, 0)}이 회사 안에 남았다. 채권자와 주주가 나눠 갖는 몫의 합이 그만큼 커진다.`
-          : '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 이때 자본구조는 파이를 자르는 방식일 뿐 파이의 크기를 바꾸지 못한다.'}
+          : taxRate === 0
+            ? '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 이때 자본구조는 파이를 자르는 방식일 뿐 파이의 크기를 바꾸지 못한다.'
+            : `빚이 없어 비용으로 털어 낼 이자도 없다. 정부가 영업이익의 ${taxRate}%를 그대로 걷는다. 부채 비중을 올리면 그 몫이 줄기 시작한다.`}
       </StatusBanner>
 
       <Panel className='gap-3'>
         <div className='flex flex-col gap-1'>
           <span className='flex items-center gap-1.5 text-sm font-semibold'>
-            <Building2 className='size-4 text-warn' />
+            <Building2 className='size-4 text-series-3' />
             그렇다면 빚을 최대한 내야 하는가
           </span>
           <span className='text-xs/relaxed text-muted-foreground'>
@@ -162,7 +164,7 @@ export function TaxShield() {
       </div>
 
       <ExplainCard
-        icon={<Landmark className='size-4 text-bad' />}
+        icon={<Landmark className='size-4 text-series-2' />}
         title='방패에는 대가가 따른다'
         preview='빚이 늘수록 세금은 줄지만, 망할 확률과 망했을 때 새는 돈이 함께 커진다.'
         body={
