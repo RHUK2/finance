@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { CircleCheck, CircleX } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
+import { Button } from '@/components/ui/button';
 import { ControlSlider, ExplainCard, Field, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import { illustrativePubKey } from '@/lib/script-concept';
@@ -13,6 +14,8 @@ const MAX_N = 5;
 function keyLabel(i: number) {
   return String.fromCharCode('A'.charCodeAt(0) + i); // 서명자 A, B, C ...
 }
+
+const SIGNER_GROUP_LABEL = '서명자별 서명 여부 (눌러서 토글)';
 
 export function MultisigLab() {
   const [n, setN] = useState(3);
@@ -68,22 +71,25 @@ export function MultisigLab() {
           format={(v) => `${v}개`}
         />
 
-        <Field label='서명자별 서명 여부 (눌러서 토글)'>
-          <div className='flex flex-wrap gap-2'>
+        <Field label={SIGNER_GROUP_LABEL}>
+          {/* Field의 라벨은 입력 하나에 붙는다. 버튼 묶음은 스스로 group 이름을 가진다. */}
+          <div role='group' aria-label={SIGNER_GROUP_LABEL} className='flex flex-wrap gap-2'>
             {Array.from({ length: n }, (_, i) => (
-              <button
+              <Button
                 key={i}
+                variant='choice'
+                size='card'
+                aria-pressed={signed[i]}
                 onClick={() => toggle(i)}
                 className={cn(
-                  'flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors',
                   signed[i]
-                    ? 'border-good-surface/40 bg-good-surface/10 text-good'
-                    : 'text-muted-foreground hover:bg-muted',
+                    ? 'border-good-surface/40 text-good aria-pressed:bg-good-surface/10'
+                    : 'text-muted-foreground',
                 )}
               >
                 {signed[i] ? <CircleCheck className='size-4' /> : <CircleX className='size-4' />}
-                서명자 {keyLabel(i)}
-              </button>
+                <span className='font-medium'>서명자 {keyLabel(i)}</span>
+              </Button>
             ))}
           </div>
         </Field>

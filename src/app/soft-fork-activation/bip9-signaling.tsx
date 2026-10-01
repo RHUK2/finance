@@ -4,17 +4,9 @@ import { useState } from 'react';
 import { Flag, Vote } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
-import {
-  ControlSlider,
-  ExplainCard,
-  IllustrativeDisclaimer,
-  Metric,
-  RoundControls,
-  SectionIntro,
-  StatusBanner,
-} from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro, StatusBanner } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
-import { cn, mulberry32 } from '@/lib/utils';
+import { cn, formatPct, mulberry32 } from '@/lib/utils';
 import {
   BIP9_STATE_LABEL,
   type Bip9State,
@@ -34,23 +26,22 @@ export function Bip9Signaling() {
   const [speedMs, setSpeedMs] = useState(700);
 
   const finished = state === 'ACTIVE' || state === 'FAILED';
+  const thresholdLabel = formatPct(SIGNAL_THRESHOLD * 100, 0);
 
+  // 한 스텝 = 한 기간. LOCKED_IN도 한 기간을 채운 뒤 ACTIVE가 되므로 멈추지 않고 진행한다.
+  // 전이 규칙은 nextBip9State 하나가 정한다.
   function step(): boolean {
     if (finished) return false;
-    if (state === 'LOCKED_IN') {
-      setState('ACTIVE');
-      return false;
-    }
-    const rng = mulberry32(seed * 7_919 + round);
-    const ratio = epochSignalRatio(supportPct / 100, rng);
+    // 신호 비율은 STARTED 기간에만 판정에 쓰인다. LOCKED_IN 기간은 기록 막대에 넣지 않는다.
+    const ratio = state === 'STARTED' ? epochSignalRatio(supportPct / 100, mulberry32(seed * 7_919 + round)) : null;
     const nextRound = round + 1;
-    const next = nextBip9State(state, ratio, nextRound);
+    const next = nextBip9State(state, ratio ?? 0, nextRound);
 
-    setHistory((h) => [...h, ratio]);
+    if (ratio !== null) setHistory((h) => [...h, ratio]);
     setRound(nextRound);
     setState(next);
 
-    return next === 'STARTED';
+    return next === 'STARTED' || next === 'LOCKED_IN';
   }
 
   const engine = useRoundEngine(step, speedMs);
@@ -67,14 +58,15 @@ export function Bip9Signaling() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='BIP9 시그널링: 채굴자 투표로 활성화 시점을 정한다'>
         새 소프트포크 규칙이 정해지면, 채굴자들은 블록 헤더의 버전 비트에 &#39;준비됐다&#39;는 신호를 실어 보낸다. 한
-        기간(2016블록, 약 2주) 동안 신호를 보낸 블록 비율이 임계값(여기서는{' '}
-        <b>{(SIGNAL_THRESHOLD * 100).toFixed(0)}%</b>)을 넘으면 확정(LOCKED_IN)되고, 그 다음 기간부터
-        활성화(ACTIVE)된다. {MAX_PERIODS}기간 안에 못 넘기면 이 시도는 실패(FAILED)한다.
+        기간(2016블록, 약 2주) 동안 신호를 보낸 블록 비율이 임계값(여기서는 <b>{thresholdLabel}</b>)을 넘으면
+        확정(LOCKED_IN)되고, 그 다음 기간부터 활성화(ACTIVE)된다. {MAX_PERIODS}기간 안에 못 넘기면 이 시도는
+        실패(FAILED)한다. 실제 타임아웃은 제안마다 다르고(최초 BIP9 설계는 약 1년) 여기서는 {MAX_PERIODS}기간으로 크게
+        줄였지만, 임계값과 상태 전이 규칙은 실제와 같다.
       </SectionIntro>
 
       <Panel>
         <ControlSlider
-          icon={<Vote className='size-4 text-warn' />}
+          icon={<Vote className='size-4 text-series-1' />}
           label='채굴자 지지율'
           value={supportPct}
           onChange={(v) => {
@@ -115,7 +107,7 @@ export function Bip9Signaling() {
                     />
                   )}
                 </div>
-                <span className='w-12 text-right tabular-nums'>{reached ? `${(ratio * 100).toFixed(0)}%` : '-'}</span>
+                <span className='w-12 text-right tabular-nums'>{reached ? formatPct(ratio * 100, 0) : '-'}</span>
               </div>
             );
           })}
@@ -139,23 +131,18 @@ export function Bip9Signaling() {
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3'>
-          <Metric label='경과 기간' value={`${round} / ${MAX_PERIODS}`} />
           <Metric
-            label='임계값'
-            value={`${(SIGNAL_THRESHOLD * 100).toFixed(0)}%`}
-            sub={`채굴자 지지율 ${supportPct}% 설정`}
+            label='신호 기간'
+            value={`${history.length} / ${MAX_PERIODS}`}
+            sub={`확정 대기 기간을 포함해 ${round}기간 경과`}
           />
+          <Metric label='임계값' value={thresholdLabel} sub={`채굴자 지지율 ${supportPct}% 설정`} />
         </div>
       </Panel>
 
-      <IllustrativeDisclaimer>
-        실제 기간은 2016블록(약 2주)이고 타임아웃도 프로젝트마다 다르다(예: 최초 BIP9 설계는 약 1년). 여기서는 여러
-        기간을 몇 초 안에 재생할 수 있도록 기간 수를 크게 줄였을 뿐, 임계값·상태 전이 규칙은 실제와 같다.
-      </IllustrativeDisclaimer>
-
       <ExplainCard
         title='지지율이 임계값에 살짝 못 미치면 무슨 일이 벌어질까'
-        preview='94%처럼 임계값에 아주 가까워도, 기간 안에 95%를 못 넘기면 이 시도는 그냥 실패로 끝난다.'
+        preview={`${formatPct(SIGNAL_THRESHOLD * 100 - 1, 0)}처럼 임계값에 아주 가까워도, 기간 안에 ${thresholdLabel}를 못 넘기면 이 시도는 그냥 실패로 끝난다.`}
         body={
           <>
             BIP9는 &#39;거의 다 왔다&#39;는 걸 봐주지 않는다. 정해진 기간 안에 정확히 임계값을 넘기지 못하면 그

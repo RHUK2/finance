@@ -23,6 +23,9 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
   const sig2 = useMemo(() => sign(d, z2, k), [d, z2, k]);
   const recovered = useMemo(() => recoverFromReuse(z, sig1.s, z2, sig2.s, sig1.r), [z, sig1.s, z2, sig2.s, sig1.r]);
   const sameZ = mod(z, N) === mod(z2, N);
+  // s가 0인 서명은 발행되지 않는다(models의 sign이 invalid로 돌려준다). 그런 쌍으로 복원을 보이면
+  // 실제로는 나올 수 없는 서명으로 공격이 성공하는 셈이라 복원 대신 안내를 띄운다.
+  const invalidSig = sig1.invalid ? 1 : sig2.invalid ? 2 : null;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -33,7 +36,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Search className='size-4 text-bad' />
+          <Search className='size-4 text-series-3' />
           공개키 {fmtPt(Q)}에서 개인키 찾기
         </span>
         <div className='grid grid-cols-3 gap-1.5 text-xs sm:grid-cols-5 lg:grid-cols-6'>
@@ -76,23 +79,31 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
           format={(v) => `${v}`}
         />
         <div className='grid grid-cols-2 gap-3'>
-          <Metric label='서명 1' value={`(${sig1.r}, ${sig1.s})`} sub={`z₁ = ${z}`} />
-          <Metric label='서명 2' value={`(${sig2.r}, ${sig2.s})`} sub={`z₂ = ${z2}`} />
+          <Metric label='서명 1' value={sig1.invalid ? '발행 안 됨' : `(${sig1.r}, ${sig1.s})`} sub={`z₁ = ${z}`} />
+          <Metric label='서명 2' value={sig2.invalid ? '발행 안 됨' : `(${sig2.r}, ${sig2.s})`} sub={`z₂ = ${z2}`} />
         </div>
-        <StatusBanner icon={<Search className='size-4' />} tone='accent'>
-          두 서명의 r이 {sig1.r}로 같다. k를 다시 썼다는 사실이 서명만 보고도 드러난다.
-        </StatusBanner>
+        {!invalidSig && (
+          <StatusBanner icon={<Search className='size-4' />} tone='accent'>
+            두 서명의 r이 {sig1.r}로 같다. k를 다시 썼다는 사실이 서명만 보고도 드러난다.
+          </StatusBanner>
+        )}
       </Panel>
 
       {sameZ ? (
         <StatusBanner icon={<Search className='size-4' />}>
           두 메시지 해시가 같으면 서명도 같아서 새로 얻는 정보가 없다. z₂를 다른 값으로 옮겨 보자.
         </StatusBanner>
+      ) : invalidSig ? (
+        <StatusBanner icon={<Search className='size-4' />}>
+          {invalidSig === 1
+            ? `z₁ = ${z}로는 s가 0이 되어 서명 1이 발행되지 않는다. 서명 만들기 탭에서 z를 옮겨 보자.`
+            : `z₂ = ${z2}로는 s가 0이 되어 서명 2가 발행되지 않는다. z₂를 옮겨 보자.`}
+        </StatusBanner>
       ) : (
         recovered && (
           <Panel className='gap-2'>
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
-              <Unlock className='size-4 text-bad' />두 식에서 미지수를 지운다
+              <Unlock className='size-4 text-series-3' />두 식에서 미지수를 지운다
             </span>
             <Line
               label='s₁ − s₂ = k⁻¹(z₁ − z₂)'
@@ -118,7 +129,7 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
 
       <Panel className='gap-2'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <History className='size-4 text-warn' />
+          <History className='size-4 text-series-1' />
           실제로 두 번 일어났다
         </span>
         <p className='text-sm/relaxed text-muted-foreground'>

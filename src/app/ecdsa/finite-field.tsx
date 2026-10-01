@@ -102,7 +102,7 @@ export function FiniteField() {
             y1={-(py + l * (lineFrom - px))}
             x2={lineTo * SX}
             y2={-(py + l * (lineTo - px))}
-            className='stroke-warn-surface'
+            className='stroke-series-2'
             strokeDasharray='0.18 0.14'
             strokeWidth={0.07}
           />
@@ -112,25 +112,20 @@ export function FiniteField() {
             y1={-thirdY}
             x2={rx * SX}
             y2={-sumY}
-            className='stroke-good-surface'
+            className='stroke-series-3'
             strokeDasharray='0.18 0.14'
             strokeWidth={0.07}
           />
 
           <RealDot x={px * SX} y={py} label='P' dx={-0.75} dy={0.75} className='fill-series-1' />
           <RealDot x={qx * SX} y={qy} label='Q' className='fill-series-1' />
-          <RealDot x={rx * SX} y={thirdY} label='세 번째 교점' dy={-0.55} className='fill-warn-surface' />
-          <RealDot x={rx * SX} y={sumY} label='P + Q' dy={tight ? 0.95 : -0.9} className='fill-good-surface' />
+          <RealDot x={rx * SX} y={thirdY} label='세 번째 교점' dy={-0.55} className='fill-series-3' />
+          <RealDot x={rx * SX} y={sumY} label='P + Q' dy={tight ? 0.95 : -0.9} className='fill-series-4' />
         </svg>
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
           <Metric label='기울기 λ' value={l.toFixed(3)} sub='(y_Q − y_P) ÷ (x_Q − x_P)' />
           <Metric label='세 번째 교점의 x' value={rx.toFixed(3)} sub='λ² − x_P − x_Q' />
-          <Metric
-            label='P + Q'
-            value={`(${rx.toFixed(2)}, ${sumY.toFixed(2)})`}
-            tone='good'
-            sub='세 번째 교점을 뒤집은 것'
-          />
+          <Metric label='P + Q' value={`(${rx.toFixed(2)}, ${sumY.toFixed(2)})`} sub='세 번째 교점을 뒤집은 것' />
         </div>
         <p className='text-xs/relaxed text-muted-foreground'>
           P와 Q를 어디로 옮겨도 직선을 긋고, 세 번째 교점을 찾고, x축에 대해 뒤집는 세 동작은 같다. 여기 쓰인 식 셋(λ,
@@ -173,7 +168,7 @@ export function FiniteField() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Grid3x3 className='size-4 text-good' />
+          <Grid3x3 className='size-4 text-series-2' />
           {SECP256K1.equation} mod {P}, 점 {CURVE_POINTS.length}개
         </span>
         <CurveGrid
@@ -182,7 +177,7 @@ export function FiniteField() {
       </Panel>
 
       <ExplainCard
-        icon={<Spline className='size-4 text-warn' />}
+        icon={<Spline className='size-4 text-series-1' />}
         title='실제 secp256k1은 얼마나 큰가'
         preview={`같은 식을 p = ${SECP256K1.p} 위에서 돌린다. 위수 n이 약 1.158 × 10⁷⁷이다.`}
         body={

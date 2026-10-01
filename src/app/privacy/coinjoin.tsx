@@ -4,9 +4,9 @@ import { useMemo, useState } from 'react';
 import { Shuffle } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
-import { ControlSlider, ExplainCard, IllustrativeDisclaimer, Metric, SectionIntro } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { anonymityChance } from '@/lib/privacy-concept';
-import { mulberry32 } from '@/lib/utils';
+import { formatPct, mulberry32 } from '@/lib/utils';
 
 export function CoinJoin() {
   const [participants, setParticipants] = useState(5);
@@ -29,12 +29,14 @@ export function CoinJoin() {
         앞 탭의 &#39;공통 입력 소유권&#39; 휴리스틱은 한 트랜잭션의 입력이 전부 같은 지갑 것이라고 가정한다. CoinJoin은
         이 가정 자체를 깨버린다. 서로 모르는 여러 참가자가{' '}
         <b>각자의 입력을 한 트랜잭션에 모으고, 똑같은 금액의 출력을 각자 하나씩</b> 받는다. 입력과 출력이 모두 뒤섞여,
-        어느 입력이 어느 출력으로 갔는지 외부에서는 알 수 없다.
+        어느 입력이 어느 출력으로 갔는지 외부에서는 알 수 없다. 실제 CoinJoin(JoinMarket, Wasabi, Whirlpool 등)은 참가자
+        조율, 라운드 실패 시 재시도, 출력 금액 표준화까지 갖춘 훨씬 복잡한 프로토콜이고, 여기서는 &#39;똑같은 출력을
+        여러 개 만들면 대응 관계가 조합적으로 모호해진다&#39;는 핵심 원리만 보여 준다.
       </SectionIntro>
 
       <Panel>
         <ControlSlider
-          icon={<Shuffle className='size-4 text-warn' />}
+          icon={<Shuffle className='size-4 text-series-1' />}
           label='CoinJoin 참가자 수'
           value={participants}
           onChange={setParticipants}
@@ -54,7 +56,13 @@ export function CoinJoin() {
             ))}
           </div>
 
-          <svg viewBox={`0 0 100 ${participants * 40}`} className='w-24 shrink-0' preserveAspectRatio='none'>
+          <svg
+            viewBox={`0 0 100 ${participants * 40}`}
+            className='w-24 shrink-0'
+            preserveAspectRatio='none'
+            role='img'
+            aria-label={`참가자 ${participants}명의 입력과 출력을 섞어 잇는 선`}
+          >
             {permutation.map((to, from) => {
               const y1 = 20 + from * 40;
               const y2 = 20 + to * 40;
@@ -65,7 +73,7 @@ export function CoinJoin() {
                   y1={y1}
                   x2={100}
                   y2={y2}
-                  className='stroke-warn-surface/50'
+                  className='stroke-series-1/50'
                   strokeWidth={1.5}
                   vectorEffect='non-scaling-stroke'
                 />
@@ -89,19 +97,13 @@ export function CoinJoin() {
               good/bad를 붙이면 2명(50%)까지 안전하다고 말하게 된다. 기준선만 sub에 적는다. */}
           <Metric
             label='특정 출력 주인 추측 확률'
-            value={`${(chance * 100).toFixed(0)}%`}
+            value={formatPct(chance * 100, 0)}
             tone='accent'
             sub='CoinJoin을 안 쓰면 100%'
           />
           <Metric label='가능한 대응 조합 수' value={`${factorial(participants).toLocaleString('ko-KR')}가지`} />
         </div>
       </Panel>
-
-      <IllustrativeDisclaimer>
-        실제 CoinJoin(JoinMarket, Wasabi, Whirlpool 등)은 참가자 조율, 라운드 실패 시 재시도, 출력 금액을 표준화하는
-        방식 등 훨씬 복잡한 프로토콜을 쓴다. 여기서는 &#39;똑같은 출력을 여러 개 만들면 대응 관계가 조합적으로
-        모호해진다&#39;는 핵심 원리만 보여준다.
-      </IllustrativeDisclaimer>
 
       <ExplainCard
         title='CoinJoin이 모든 걸 지워주진 않는다'

@@ -3,6 +3,7 @@
 import { Panel } from '@/components/panel';
 import { CostBar, SectionIntro } from '@/components/simulation';
 import { SCRIPT_ADDR_TYPES } from '@/lib/script-concept';
+import { addrMeta } from '@/lib/tx-concept';
 
 const maxSigBytes = Math.max(...SCRIPT_ADDR_TYPES.map((t) => t.sigBytes));
 
@@ -27,7 +28,15 @@ const ROWS: {
     cells: {
       legacy: '공개키의 해시 (20바이트)',
       native: '공개키의 해시 (20바이트)',
-      taproot: '공개키 원본 x-only (32바이트)',
+      taproot: '조정 공개키 x-only (32바이트)',
+    },
+  },
+  {
+    label: '공개키가 체인에 드러나는 때',
+    cells: {
+      legacy: '처음 지출할 때 (서명과 함께)',
+      native: '처음 지출할 때 (서명과 함께)',
+      taproot: '받는 순간 (출력이 공개키를 담음)',
     },
   },
   {
@@ -64,8 +73,8 @@ export function AddressScriptCompare() {
         </div>
         <p className='text-xs/relaxed text-muted-foreground'>
           ECDSA는 r·s 두 값을 DER로 감싸고 sighash flag 1바이트가 붙어 71~72 바이트, Schnorr는 R‖s 64바이트 고정이라 DER
-          포장이 없다. 트랜잭션 해부 페이지의 입력 vByte 차이(legacy 148 vs taproot 57.5)도 이 서명·검증 스크립트 크기
-          차이에서 나온다.
+          포장이 없다. 트랜잭션 해부 페이지의 입력 vByte 차이(legacy {addrMeta('legacy').inputVb} vs taproot{' '}
+          {addrMeta('taproot').inputVb})도 이 서명·검증 스크립트 크기 차이에서 나온다.
         </p>
       </Panel>
 

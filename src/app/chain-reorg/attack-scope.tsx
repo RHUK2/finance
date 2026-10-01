@@ -6,9 +6,9 @@ import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn } from '@/lib/utils';
-import { doubleSpendProbability, formatProbability } from '@/lib/chain-concept';
+import { formatProbability, reversalProbability } from '@/lib/chain-concept';
 
-const EVENTUALLY_Z = 200; // 유한한 확인 수로 "시간이 무한히 지나면"을 근사
+const EVENTUALLY_CONFIRMATIONS = 200; // 유한한 확인 수로 "시간이 무한히 지나면"을 근사
 
 const COMPARE_PRESETS = [10, 30, 45, 51, 60] as const;
 
@@ -17,8 +17,8 @@ export function AttackScope() {
   const q = attackPct / 100;
   const isMajority = q >= 0.5;
 
-  const atSix = doubleSpendProbability(q, 6);
-  const eventually = doubleSpendProbability(q, EVENTUALLY_Z);
+  const atSix = reversalProbability(q, 6);
+  const eventually = reversalProbability(q, EVENTUALLY_CONFIRMATIONS);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -55,9 +55,9 @@ export function AttackScope() {
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3'>
-          <Metric label='6확인 시 확률' value={formatProbability(atSix)} tone={atSix > 0.05 ? 'bad' : 'good'} />
+          <Metric label='확인 6개 시 확률' value={formatProbability(atSix)} tone={atSix > 0.05 ? 'bad' : 'good'} />
           <Metric
-            label={`${EVENTUALLY_Z}확인 시 확률 ("결국")`}
+            label={`확인 ${EVENTUALLY_CONFIRMATIONS}개 시 확률 ("결국")`}
             value={formatProbability(eventually)}
             tone={isMajority ? 'bad' : 'good'}
           />
@@ -69,12 +69,12 @@ export function AttackScope() {
         <div className='flex flex-col divide-y'>
           {COMPARE_PRESETS.map((pct) => {
             const pq = pct / 100;
-            const six = doubleSpendProbability(pq, 6);
-            const ev = doubleSpendProbability(pq, EVENTUALLY_Z);
+            const six = reversalProbability(pq, 6);
+            const ev = reversalProbability(pq, EVENTUALLY_CONFIRMATIONS);
             return (
               <div key={pct} className='flex items-center justify-between gap-3 py-2 text-sm'>
                 <span className={cn('w-14 font-medium', pct >= 51 && 'text-bad')}>{pct}%</span>
-                <span className='flex-1 text-muted-foreground'>6확인: {formatProbability(six)}</span>
+                <span className='flex-1 text-muted-foreground'>확인 6개: {formatProbability(six)}</span>
                 <span className={cn('w-32 text-right tabular-nums', pq >= 0.5 ? 'text-bad' : 'text-good')}>
                   결국: {formatProbability(ev)}
                 </span>
@@ -85,7 +85,7 @@ export function AttackScope() {
       </Panel>
 
       <ExplainCard
-        icon={<CircleX className='size-4 text-bad' />}
+        icon={<CircleX className='size-4 text-series-3' />}
         title='과반 공격자도 할 수 없는 것'
         preview='남의 서명을 위조하거나, 없는 코인을 만들거나, 아주 오래된 과거를 통째로 새로 쓸 수는 없다.'
         body={

@@ -14,6 +14,7 @@ import {
   HEADER_BYTES,
   headersBytes,
   TOTAL_BLOCKS_APPROX,
+  TOTAL_BLOCKS_AS_OF,
 } from '@/lib/p2p-concept';
 
 const HEADER_ROUNDS = 10; // 헤더 체인은 가볍기 때문에 빠르게 끝난다
@@ -45,11 +46,12 @@ export function IbdSync() {
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='헤더 먼저, 블록은 나중에 (Headers-First)'>
-        새 노드가 네트워크에 처음 참여하면 지금까지의 전체 체인(약 {TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개
-        블록)을 검증해야 한다. 블록 전체({formatBytes(AVG_BLOCK_BYTES)} 안팎)를 처음부터 순서대로 받으면 너무 느리니,
-        먼저 <b>80바이트짜리 헤더만 이어 붙여 작업량이 가장 많은 체인을 빠르게 확정</b>한 다음, 그 체인을 따라 블록
-        본문을 여러 피어에게서 병렬로 받는다. 헤더 {HEADER_ROUNDS}라운드·본문 {BLOCK_ROUNDS}라운드라는 눈금은 둘의 무게
-        차이를 보이기 위한 예시이고, 실제 동기화 시간은 대역폭과 피어 수에 따라 달라진다.
+        새 노드가 네트워크에 처음 참여하면 지금까지의 전체 체인({TOTAL_BLOCKS_AS_OF} 기준 약{' '}
+        {TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 블록)을 검증해야 한다. 블록 전체({formatBytes(AVG_BLOCK_BYTES)}{' '}
+        안팎)를 처음부터 순서대로 받으면 너무 느리니, 먼저{' '}
+        <b>80바이트짜리 헤더만 이어 붙여 작업량이 가장 많은 체인을 빠르게 확정</b>한 다음, 그 체인을 따라 블록 본문을
+        여러 피어에게서 병렬로 받는다. 헤더 {HEADER_ROUNDS}라운드·본문 {BLOCK_ROUNDS}라운드라는 눈금은 둘의 무게 차이를
+        보이기 위한 예시이고, 실제 동기화 시간은 대역폭과 피어 수에 따라 달라진다.
       </SectionIntro>
 
       <Panel>
@@ -68,18 +70,18 @@ export function IbdSync() {
         />
 
         <SyncBar
-          icon={<FileStack className='size-4 text-warn' />}
+          icon={<FileStack className='size-4 text-series-1' />}
           label='① 헤더 체인'
           pct={headersPct}
           detail={`${headersDownloaded.toLocaleString('ko-KR')} / ${TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 · ${formatBytes(headersBytes(headersDownloaded))}`}
-          tone='accent'
+          series='series-1'
         />
         <SyncBar
-          icon={<Download className='size-4 text-good' />}
+          icon={<Download className='size-4 text-series-2' />}
           label='② 블록 본문'
           pct={blocksPct}
           detail={`${blocksDownloaded.toLocaleString('ko-KR')} / ${TOTAL_BLOCKS_APPROX.toLocaleString('ko-KR')}개 · ${formatBytes(blocksBytes(blocksDownloaded))}`}
-          tone='good'
+          series='series-2'
         />
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -93,15 +95,15 @@ export function IbdSync() {
       </Panel>
 
       <ExplainCard
-        icon={<FileStack className='size-4 text-warn' />}
-        title='헤더만 봐도 "어느 체인이 진짜 최장 작업량 체인인지" 알 수 있는 이유'
+        icon={<FileStack className='size-4 text-series-1' />}
+        title='헤더만 봐도 "어느 체인이 누적 작업량이 가장 많은 체인인지" 알 수 있는 이유'
         preview='헤더에는 이전 헤더 해시·난이도 목표·nonce가 들어 있어, 누적 작업량을 계산하는 데 블록 본문이 필요 없다.'
         body={
           <>
             헤더 80바이트 안에는 이전 블록 해시, 난이도 목표(bits), nonce가 모두 들어 있다. 이 값들만으로 각 헤더가{' '}
             <b>목표 이하의 해시를 실제로 만족하는지</b>, 그리고 체인 전체의 <b>누적 작업량</b>이 얼마인지 계산할 수
             있다. 그래서 노드는 무거운 블록 본문(트랜잭션 전체)을 받기 전에 헤더만으로 먼저 &#39;어느 체인을 받을 가치가
-            있는지&#39;를 정하고, 그 체인의 블록만 받아 트랜잭션 서명·잔액을 검증한다.
+            있는지&#39;를 정하고, 그 체인의 블록만 받아 트랜잭션 서명과 UTXO를 검증한다.
           </>
         }
       />
@@ -114,13 +116,14 @@ function SyncBar({
   label,
   pct,
   detail,
-  tone,
+  series,
 }: {
   icon: React.ReactNode;
   label: string;
   pct: number;
   detail: string;
-  tone: 'accent' | 'good';
+  // 헤더·본문은 좋고 나쁨이 없는 두 갈래라 계열색으로 가른다.
+  series: 'series-1' | 'series-2';
 }) {
   return (
     <div className='flex flex-col gap-1.5'>
@@ -133,10 +136,7 @@ function SyncBar({
       </div>
       <div className='h-2.5 w-full overflow-hidden rounded-full bg-muted'>
         <div
-          className={cn(
-            'h-full rounded-full transition-all',
-            tone === 'accent' ? 'bg-warn-surface' : 'bg-good-surface',
-          )}
+          className={cn('h-full rounded-full transition-all', series === 'series-1' ? 'bg-series-1' : 'bg-series-2')}
           style={{ width: `${Math.max(pct > 0 ? 1 : 0, pct)}%` }}
         />
       </div>

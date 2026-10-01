@@ -10,9 +10,10 @@
 // (ADR 0009). 화면에 뜨는 지문은 전부 이 파일이 그 자리에서 만든 일회용 키의
 // 것이거나 형태만 보이는 자리표시자다.
 
-import { Building2, Cpu, HardDrive, KeyRound, Server, Store, type LucideIcon } from 'lucide-react';
-
-import type { MarkRow } from '@/components/simulation';
+// 표의 행은 데이터만 담는다. 아이콘과 표 컴포넌트의 타입은 화면 쪽(attacker.tsx·key-origin.tsx)이
+// 붙인다. 모델이 컴포넌트 모듈을 가리키지 않게 하려는 것이다.
+export type MarkState = 'yes' | 'no' | 'partial';
+export type MarkData<Id extends string = string> = { id: Id; label: string; sub?: string; marks: MarkState[] };
 
 /* ── 체크섬 ─────────────────────────────────────────────── */
 
@@ -93,29 +94,29 @@ export const ATTACK_HEADERS: [string, ...string[]] = [
   '재현 기록',
 ];
 
-export const ATTACK_ROWS: (MarkRow & { icon: LucideIcon })[] = [
+export type AttackId = 'web' | 'mirror' | 'key' | 'ci' | 'dev' | 'fake';
+
+export const ATTACK_ROWS: MarkData<AttackId>[] = [
   {
     id: 'web',
     label: '배포 웹서버',
     sub: '파일과 체크섬을 함께 교체',
-    icon: Server,
     marks: ['no', 'yes', 'yes', 'yes'],
   },
   {
     id: 'mirror',
     label: '미러·CDN',
     sub: '중간 배포처만 교체',
-    icon: HardDrive,
     marks: ['partial', 'yes', 'yes', 'yes'],
   },
-  { id: 'key', label: '개발자 개인키', sub: '유효한 서명을 붙인다', icon: KeyRound, marks: ['no', 'no', 'no', 'yes'] },
-  { id: 'ci', label: '빌드 서버', sub: '소스는 깨끗하고 산출물만 다르다', icon: Cpu, marks: ['no', 'no', 'no', 'yes'] },
-  { id: 'dev', label: '개발자 본인 PC', sub: '소스에 들어간다', icon: Building2, marks: ['no', 'no', 'no', 'no'] },
+  { id: 'key', label: '개발자 개인키', sub: '유효한 릴리스 서명을 붙인다', marks: ['no', 'no', 'no', 'yes'] },
+  { id: 'ci', label: '빌드 서버', sub: '소스는 깨끗하고 산출물만 다르다', marks: ['no', 'no', 'no', 'yes'] },
+  { id: 'dev', label: '개발자 본인 PC', sub: '소스에 들어간다', marks: ['no', 'no', 'no', 'no'] },
   {
     id: 'fake',
     label: '가짜 배포처',
     sub: '프로젝트가 배포하지 않는 곳',
-    icon: Store,
+
     marks: ['no', 'no', 'no', 'no'],
   },
 ];
@@ -123,19 +124,19 @@ export const ATTACK_ROWS: (MarkRow & { icon: LucideIcon })[] = [
 export const ATTACK_DETAIL: Record<string, { title: string; body: string }> = {
   web: {
     title: '체크섬만 대조하면 그대로 통과한다',
-    body: '체크섬 목록은 대개 바이너리 바로 옆에 놓인다. 서버를 쥔 쪽은 파일을 바꾸고 그 파일의 체크섬을 다시 계산해 목록도 같이 고쳐 둘 수 있다. 독자가 성실하게 대조해도 두 값은 완벽히 맞는다. 체크섬이 잡는 것은 전송 중에 깨진 비트이지, 양쪽을 다 만질 수 있는 상대가 아니다. 서명이 여기서부터 일을 시작한다.',
+    body: '체크섬 목록은 대개 바이너리 바로 옆에 놓인다. 서버를 쥔 쪽은 파일을 바꾸고 그 파일의 체크섬을 다시 계산해 목록도 같이 고쳐 둘 수 있다. 독자가 성실하게 대조해도 두 값은 완벽히 맞는다. 체크섬이 잡는 것은 전송 중에 깨진 비트이지, 양쪽을 다 만질 수 있는 상대가 아니다. 릴리스 서명이 여기서부터 일을 시작한다.',
   },
   mirror: {
     title: '체크섬을 어디서 받았는지가 갈린다',
     body: '바이너리는 미러에서, 체크섬 목록은 원 사이트에서 받았다면 이 공격은 체크섬 단계에서 걸린다. 둘 다 같은 미러에서 받았다면 앞 줄과 똑같아진다. 같은 검증 수단이 상황에 따라 막기도 하고 못 막기도 한다는 뜻이고, 그래서 이 표의 칸은 도구의 성능이 아니라 그 도구를 어떻게 쓰느냐를 잰다.',
   },
   key: {
-    title: '서명은 유효한데 파일은 가짜다',
-    body: '개인키를 쥔 쪽은 자기가 만든 파일에 진짜 서명을 붙일 수 있다. 검증은 통과하고, 지문을 아무리 여러 채널에서 대조해도 그 키가 맞는 키이므로 통과한다. 이 줄에서 서명과 채널 대조가 동시에 무너지는 것이 재현 가능한 빌드가 존재하는 이유다. 소스에 없는 것이 바이너리에 들어 있으면 독립 빌더가 만든 결과와 바이트가 어긋난다.',
+    title: '릴리스 서명은 유효한데 파일은 가짜다',
+    body: '개인키를 쥔 쪽은 자기가 만든 파일에 진짜 릴리스 서명을 붙일 수 있다. 검증은 통과하고, 지문을 아무리 여러 채널에서 대조해도 그 키가 맞는 키이므로 통과한다. 이 줄에서 릴리스 서명과 채널 대조가 동시에 무너지는 것이 재현 가능한 빌드가 존재하는 이유다. 소스에 없는 것이 바이너리에 들어 있으면 독립 빌더가 만든 결과와 바이트가 어긋난다.',
   },
   ci: {
     title: '앞 줄과 같은 자리에서 멈춘다',
-    body: '빌드 서버가 소스를 그대로 받아 오염된 산출물을 내놓으면 서명은 정상 절차로 붙는다. 앞 줄과 마크가 똑같은 것이 요점이다. 공격 경로가 달라도 방어선은 같은 곳에 서 있다. 다만 독립 빌더 전부가 감염된 같은 툴체인을 쓴다면 이 줄의 마지막 칸도 무너지므로, 재현 기록이 값하려면 빌더의 환경이 실제로 서로 달라야 한다.',
+    body: '빌드 서버가 소스를 그대로 받아 오염된 산출물을 내놓으면 릴리스 서명은 정상 절차로 붙는다. 앞 줄과 마크가 똑같은 것이 요점이다. 공격 경로가 달라도 방어선은 같은 곳에 서 있다. 다만 독립 빌더 전부가 감염된 같은 툴체인을 쓴다면 이 줄의 마지막 칸도 무너지므로, 재현 기록이 값하려면 빌더의 환경이 실제로 서로 달라야 한다.',
   },
   dev: {
     title: '여기서 검증은 끝난다',
@@ -156,7 +157,7 @@ export const CHANNEL_HEADERS: [string, ...string[]] = [
   '제3자가 본다',
 ];
 
-export const CHANNEL_ROWS: MarkRow[] = [
+export const CHANNEL_ROWS: MarkData[] = [
   { id: 'site', label: '다운로드 페이지', sub: '가장 흔한 경로', marks: ['no', 'no', 'no'] },
   { id: 'repo', label: '프로젝트 코드 저장소', sub: '저장소 안의 키 파일', marks: ['partial', 'yes', 'partial'] },
   { id: 'keyserver', label: '공개 키서버', sub: '누구나 조회 가능', marks: ['yes', 'yes', 'partial'] },

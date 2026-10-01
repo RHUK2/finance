@@ -8,13 +8,13 @@ import { cn } from '@/lib/utils';
 
 type Mode = 'legacy' | 'segwit';
 
-// 필드 한 칸. role별로 색을 달리해 잠금/해제를 구분한다. witness도 해제 열쇠이므로 scriptSig와 같은 색.
+// 필드 한 칸. role별로 색을 달리해 잠금/해제를 구분한다. 둘에 좋고 나쁨이 없으니 계열색이다. witness도 해제 열쇠이므로 scriptSig와 같은 색.
 type Role = 'plain' | 'lock' | 'unlock';
 
 const ROLE_CLASS: Record<Role, string> = {
   plain: 'bg-muted',
-  lock: 'border border-warn-surface/40 bg-warn-surface/5',
-  unlock: 'border border-good-surface/40 bg-good-surface/5',
+  lock: 'border border-series-1/40 bg-series-1/5',
+  unlock: 'border border-series-2/40 bg-series-2/5',
 };
 
 function FieldBox({ name, desc, role = 'plain' }: { name: string; desc: string; role?: Role }) {
@@ -63,7 +63,7 @@ export function TxStructure() {
         <div className='flex flex-col gap-1.5'>
           <FieldBox name='version' desc='트랜잭션 규칙 버전 (4바이트)' />
 
-          <Group title='입력 (쓸 동전 하나마다 반복)'>
+          <Group title='입력 (쓸 UTXO 하나마다 반복)'>
             <FieldBox name='txid + vout' desc='어느 이전 출력(UTXO)을 쓰는지 가리킴' />
             <FieldBox
               name='scriptSig'
@@ -96,8 +96,8 @@ export function TxStructure() {
         </div>
 
         <div className='flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-          <Legend className='bg-warn-surface/60' label='잠금 (scriptPubKey)' />
-          <Legend className='bg-good-surface/60' label='해제 (scriptSig · witness)' />
+          <Legend className='bg-series-1/60' label='잠금 (scriptPubKey)' />
+          <Legend className='bg-series-2/60' label='해제 (scriptSig · witness)' />
         </div>
       </Panel>
 

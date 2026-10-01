@@ -27,8 +27,8 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
   const marks: GridMark[] = [];
   if (p1) marks.push({ ...p1, label: `P = ${i}G`, color: 'series-1' });
   if (p2 && !samePt(p1, p2)) marks.push({ ...p2, label: `Q = ${j}G`, color: 'series-2' });
-  if (third) marks.push({ ...third, label: '세 번째 교점', color: 'warn' });
-  if (sum) marks.push({ ...sum, label: 'P + Q', color: 'good' });
+  if (third) marks.push({ ...third, label: '세 번째 교점', color: 'series-3' });
+  if (sum) marks.push({ ...sum, label: 'P + Q', color: 'series-4' });
 
   const dPoint = MULTIPLES_OF_G[d];
   const steps = useMemo(() => doubleAndAddSteps(d), [d]);
@@ -37,14 +37,15 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
     <div className='flex flex-col gap-4'>
       <SectionIntro title='같은 정의를 격자 위에서 실행한다'>
         실수에서 쓰던 식을 그대로 mod {P}로 옮긴다. 달라지는 건 직선의 생김새다. 유한체에서 직선은 격자를 감으며 {P}개
-        칸을 지나고, 그중 정확히 셋이 곡선 위의 점이다. 두 점을 고르면 그 감긴 직선을 흐린 점으로 찍어 준다. 직선이 P와
-        Q를 지나 세 번째 곡선 점에 닿는지 눈으로 확인해 보자.
+        칸을 지나고, 그중 곡선 위의 점은 P, Q, 세 번째 교점 셋이다(접선이거나 세 번째 교점이 P·Q와 겹치면 같은 점을 두
+        번 센다). 두 점을 고르면 그 감긴 직선을 흐린 점으로 찍어 준다. 직선이 P와 Q를 지나 세 번째 곡선 점에 닿는지
+        눈으로 확인해 보자.
       </SectionIntro>
 
       <Panel>
         <ControlSlider
           label='P 고르기'
-          hint='곡선 점 30개는 모두 G의 배수다. 몇 배 점인지로 고른다.'
+          hint={`곡선 점 ${N - 1}개는 모두 G의 배수다. 몇 배 점인지로 고른다.`}
           value={i}
           onChange={setI}
           min={1}
@@ -66,7 +67,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Plus className='size-4 text-good' />
+          <Plus className='size-4 text-series-2' />
           {i}G + {j}G = {mod(i + j, N) === 0 ? 'O' : `${mod(i + j, N)}G`}
         </span>
         <CurveGrid
@@ -75,7 +76,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           caption={
             lam === null
               ? `P와 Q의 x가 같고 y가 서로 뒤집힌 값이라 직선이 수직이다. 수직선은 곡선과 세 번째로 만나지 않으므로 합이 무한원점 O가 된다. 격자에는 O를 찍을 자리가 없다.`
-              : `주황 고리 ${P}개가 직선이 지나는 칸이다. 오른쪽 끝에 닿으면 왼쪽에서 다시 나온다. 그중 색점이 놓인 셋만 곡선 위의 점이고, 그게 P와 Q, 그리고 세 번째 교점이다.`
+              : `속 빈 고리 ${P}개가 직선이 지나는 칸이다. 오른쪽 끝에 닿으면 왼쪽에서 다시 나온다. 그중 색점이 놓인 칸만 곡선 위의 점이고, 그게 P와 Q, 그리고 세 번째 교점이다.`
           }
         />
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
@@ -94,17 +95,17 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
         </div>
         {lam !== null && sum && (
           <p className='text-xs/relaxed text-muted-foreground'>
-            x = λ² − x_P − x_Q = {lam}² − {p1!.x} − {p2!.x} = {lam * lam - p1!.x - p2!.x} ≡ {sum.x} (mod {P}), y = λ(x_P
-            − x) − y_P = {lam}({p1!.x} − {sum.x}) − {p1!.y} ≡ {mod(-sum.y, P)} (mod {P}). 마지막에 이 y를 뒤집어 {sum.y}
-            를 얻는다.
+            x = λ² − x_P − x_Q = {lam}² − {p1!.x} − {p2!.x} = {lam * lam - p1!.x - p2!.x} ≡ {sum.x} (mod {P}). 세 번째
+            교점의 y는 직선 위의 값이라 y₃ = λ(x − x_P) + y_P = {lam}({sum.x} − {p1!.x}) + {p1!.y} ≡ {mod(-sum.y, P)}{' '}
+            (mod {P})이다. 마지막에 이 y를 뒤집어 −y₃ ≡ {sum.y}를 얻는다.
           </p>
         )}
       </Panel>
 
       <SectionIntro title='같은 점을 반복해서 더하면 스칼라 곱이다'>
-        점 덧셈이 있으면 곱셈은 공짜로 따라온다. G를 d번 더한 것을 dG라 쓴다. 그런데 30번 더할 필요가 없다. G를 두 배
-        하고, 그걸 또 두 배 하는 식으로 가면 몇 단계 안에 닿는다. 실제 곡선에서 개인키가 78자리 수여도 계산이 순식간에
-        끝나는 이유가 이것이다.
+        점 덧셈이 있으면 스칼라 곱은 공짜로 따라온다. G를 d번 더한 것을 dG라 쓴다. 그런데 {N - 1}번 더할 필요가 없다.
+        G를 두 배 하고, 그걸 또 두 배 하는 식으로 가면 몇 단계 안에 닿는다. 실제 곡선에서 개인키가 78자리 수여도 계산이
+        순식간에 끝나는 이유가 이것이다.
       </SectionIntro>
 
       <Panel>
@@ -119,7 +120,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
           format={(v) => `${v}`}
         />
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-          <Metric label='공개키 Q = dG' value={fmtPt(dPoint)} tone='good' />
+          <Metric label='공개키 Q = dG' value={fmtPt(dPoint)} />
           <Metric label='d를 2진수로' value={mod(d, N).toString(2)} sub='이 자릿수만큼만 계산한다' />
           <Metric label='덧셈 횟수' value={`${steps.length}번`} sub={`${d}번 더하는 대신`} />
         </div>
@@ -147,7 +148,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
               key={k}
               className={cn(
                 'flex items-center justify-between rounded-md border px-2 py-1 tabular-nums',
-                k === d && 'border-good-surface/50 bg-good-surface/10',
+                k === d && 'border-series-2/50 bg-series-2/10',
               )}
             >
               <span className='text-muted-foreground'>{k}G</span>
@@ -166,9 +167,9 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
       </StatusBanner>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-warn' />}
+        icon={<KeyRound className='size-4 text-series-1' />}
         title='그럼 Q에서 d를 되찾을 수 있나'
-        preview='이 표를 보면 30번 훑어서 찾을 수 있다. 그게 이 곡선이 안전하지 않은 이유다.'
+        preview={`이 표를 보면 ${N - 1}번 훑어서 찾을 수 있다. 그게 이 곡선이 안전하지 않은 이유다.`}
         body={
           <>
             <p>

@@ -4,13 +4,7 @@ import { useState } from 'react';
 import { Link2, ScanEye } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
-import {
-  ExplainCard,
-  IllustrativeDisclaimer,
-  SectionIntro,
-  SegmentedControl,
-  StatusBanner,
-} from '@/components/simulation';
+import { ExplainCard, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
 import { shortHex } from '@/lib/utils';
 import { walletAddress } from '@/lib/privacy-concept';
 
@@ -75,10 +69,10 @@ export function AddressReuse() {
         </StatusBanner>
       </Panel>
 
-      <IllustrativeDisclaimer>
-        주소 문자열은 개념 시연용 가짜 값이다. 실제 HD 지갑은 결제마다 같은 시드에서 새 주소를 자동으로 파생해, 사용자가
-        신경 쓰지 않아도 기본적으로 &#39;결제마다 새 주소&#39; 방식으로 동작한다.
-      </IllustrativeDisclaimer>
+      <p className='text-sm/relaxed text-muted-foreground'>
+        실제 HD 지갑은 결제마다 같은 시드에서 새 주소를 자동으로 파생해, 사용자가 신경 쓰지 않아도 기본적으로
+        &#39;결제마다 새 주소&#39; 방식으로 동작한다.
+      </p>
 
       <ExplainCard
         title='그런데 주소를 나눠도 완전히 안전하진 않다'

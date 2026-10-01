@@ -3,19 +3,94 @@
 import { useState } from 'react';
 import { ArrowDown, Eye, Lock, RotateCcw, StepForward } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
+import { ExplainCard, Field, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 import { buildPath, COINS, illustrativeAddress, illustrativeHex, PURPOSES } from '@/lib/bip-concept';
 
 import { Pipeline, type PipeItem } from '@/components/pipeline';
 
-// 페이지 전반(하드닝 배지·파이프라인 tone)과 같은 규칙: 잠김·비밀 = amber, 열림·공유 가능 = emerald.
-const LOCK_COLOR = 'text-warn';
-const OPEN_COLOR = 'text-good';
+// 잠김·비밀과 열림·공유 가능은 좋고 나쁨이 아니라 두 범주라 계열색이다. 파이프라인 tone과 같은 배정:
+// 비밀 쪽 = series-1, 공개 쪽 = series-2.
+const LOCK_COLOR = 'text-series-1';
+const OPEN_COLOR = 'text-series-2';
+
+// 경로의 한 칸은 32비트 index다. 0 이상 2³¹ 미만이 일반 가지이고, 하드닝(')은 여기에 2³¹을
+// 더한 나머지 절반을 쓴다. 그래서 화면에서 고르는 번호는 하드닝 여부와 무관하게 이 범위다.
+const MAX_CHILD_INDEX = 2 ** 31 - 1;
+
+// 입력 문자열을 경로 번호로. 범위 밖이거나 정수가 아니면 null이라 경로에 반영하지 않는다.
+// 조용히 반올림하거나 잘라 넣으면 화면이 가르치는 index 공간 규칙과 다른 값이 경로에 들어간다.
+function parseChildIndex(text: string): number | null {
+  if (!/^\d+$/.test(text.trim())) return null;
+  const n = Number(text);
+  return n <= MAX_CHILD_INDEX ? n : null;
+}
+
+// 공개키에서 주소까지의 마지막 단계는 주소 타입마다 다르다. 해시를 담는 타입(P2PKH·P2SH-P2WPKH·P2WPKH)은
+// HASH160을 거치고, P2TR은 해시 없이 BIP-341로 조정한 x-only 공개키 32바이트를 그대로 Bech32m(BIP-350)으로 담는다.
+// 그래서 P2TR 출력은 받는 순간 공개키가 체인에 드러나고, 해시 타입은 처음 지출할 때 드러난다.
+function addressSteps(script: string, pub: string): PipeItem[] {
+  if (script === 'P2TR') {
+    return [
+      { kind: 'box', label: '내부 공개키 (x-only 32바이트)', value: pub.slice(2) },
+      { kind: 'op', label: 'BIP-341 키 조정(tweak) → 조정 공개키 32바이트를 그대로 Bech32m 인코딩 (해시 없음)' },
+    ];
+  }
+  const compressed: PipeItem = { kind: 'box', label: '공개키 (압축 33바이트)', value: pub };
+  if (script === 'P2SH-P2WPKH') {
+    return [
+      compressed,
+      { kind: 'op', label: 'HASH160 → 리딤 스크립트(0x0014 + 키 해시)를 다시 HASH160 → Base58Check 인코딩' },
+    ];
+  }
+  return [compressed, { kind: 'op', label: `HASH160 → ${script === 'P2WPKH' ? 'Bech32' : 'Base58Check'} 인코딩` }];
+}
+
+const CHANGE_OPTIONS: { value: '0' | '1'; label: string }[] = [
+  { value: '0', label: '0 · 수신' },
+  { value: '1', label: '1 · 잔돈' },
+];
+
+function IndexInput({ value, onValue }: { value: number; onValue: (n: number) => void }) {
+  const [text, setText] = useState(String(value));
+  // 형제 노드를 눌러 경로가 바뀌면 입력칸도 따라간다.
+  const [lastValue, setLastValue] = useState(value);
+  if (value !== lastValue) {
+    setLastValue(value);
+    setText(String(value));
+  }
+  const invalid = parseChildIndex(text) === null;
+  return (
+    <>
+      <Input
+        type='number'
+        min={0}
+        max={MAX_CHILD_INDEX}
+        step={1}
+        value={text}
+        aria-invalid={invalid}
+        onChange={(e) => {
+          setText(e.target.value);
+          const n = parseChildIndex(e.target.value);
+          if (n !== null) {
+            setLastValue(n);
+            onValue(n);
+          }
+        }}
+      />
+      {invalid && (
+        <p className='text-xs text-bad'>
+          0부터 {MAX_CHILD_INDEX.toLocaleString('ko-KR')}까지의 정수만 경로에 반영된다.
+        </p>
+      )}
+    </>
+  );
+}
 
 function NodeRow({
   val,
@@ -33,10 +108,12 @@ function NodeRow({
   onClick: () => void;
 }) {
   return (
-    <button
+    <Button
+      variant='choice'
+      size='card'
       onClick={onClick}
+      aria-current={current ? 'step' : undefined}
       className={cn(
-        'flex items-center gap-3 rounded-md border px-3 py-2 text-left transition-colors',
         current ? 'border-primary bg-primary/5' : 'border-transparent hover:bg-muted/50',
         !revealed && 'opacity-40',
       )}
@@ -50,7 +127,7 @@ function NodeRow({
       <span className='w-14 font-mono text-sm font-semibold'>{val}</span>
       <span className='w-16 text-xs text-muted-foreground'>{name}</span>
       <span className='truncate text-xs text-muted-foreground'>{hint}</span>
-    </button>
+    </Button>
   );
 }
 
@@ -117,7 +194,9 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
   // 마지막(index) 단계는 형제 노드를 함께 펼쳐 '가지가 갈라지는' 모습을 보여준다.
   // 같은 부모(change)에서 나온 형제들이 서로 다른 주소로 이어지는 게 요점.
-  const siblings = (index === 0 ? [0, 1, 2] : [index - 1, index, index + 1]).map((i) => ({
+  // 양 끝에서는 범위 안쪽으로 밀어 세 칸을 채운다. 2³¹ 이상은 일반 가지가 아니다.
+  const siblingStart = Math.min(Math.max(index - 1, 0), MAX_CHILD_INDEX - 2);
+  const siblings = [siblingStart, siblingStart + 1, siblingStart + 2].map((i) => ({
     index: i,
     address: addressAt(i),
   }));
@@ -169,7 +248,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               {
                 label: '마스터 체인코드 (오른쪽 32B)',
                 value: cur.cc,
-                tone: 'accent',
+                tone: 'series-1',
               },
             ],
           },
@@ -197,7 +276,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               {
                 label: '자식 체인코드 (오른쪽 32B)',
                 value: cur.cc,
-                tone: 'accent',
+                tone: 'series-1',
               },
             ],
           },
@@ -214,16 +293,12 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
   if (step === lastStep) {
     detailItems.push(
       { kind: 'op', label: 'secp256k1 (개인키 → 공개키, 단방향)' },
-      { kind: 'box', label: '공개키 (압축 33바이트)', value: cur.pub },
-      {
-        kind: 'op',
-        label: `HASH160 → ${meta.charset === 'bech32' ? 'Bech32' : 'Base58Check'} 인코딩`,
-      },
+      ...addressSteps(meta.addr, cur.pub),
       {
         kind: 'box',
         label: `주소 (${meta.addr})`,
         value: address,
-        tone: 'good',
+        tone: 'series-2',
       },
     );
   }
@@ -285,38 +360,19 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
         </Field>
 
         <Field label='account'>
-          <Input
-            type='number'
-            min={0}
-            value={account}
-            onChange={(e) => setAccount(Math.max(0, Number(e.target.value) || 0))}
-          />
+          <IndexInput value={account} onValue={setAccount} />
         </Field>
 
         <Field label='change (수신/잔돈)'>
-          <div className='flex overflow-hidden rounded-md border'>
-            {([0, 1] as const).map((c) => (
-              <button
-                key={c}
-                onClick={() => setChange(c)}
-                className={cn(
-                  'flex-1 px-2 py-1.5 text-sm transition-colors',
-                  change === c ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-                )}
-              >
-                {c === 0 ? '0 · 수신' : '1 · 잔돈'}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            options={CHANGE_OPTIONS}
+            value={change === 0 ? '0' : '1'}
+            onChange={(v) => setChange(v === '0' ? 0 : 1)}
+          />
         </Field>
 
         <Field label='address index'>
-          <Input
-            type='number'
-            min={0}
-            value={index}
-            onChange={(e) => setIndex(Math.max(0, Number(e.target.value) || 0))}
-          />
+          <IndexInput value={index} onValue={setIndex} />
         </Field>
       </Panel>
 
@@ -417,15 +473,16 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
               {node.name} · {node.hint}
             </span>
             {step > 0 && (
-              <span
+              <Badge
+                variant='secondary'
                 className={cn(
-                  'ml-auto flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium',
-                  node.hardened ? `bg-warn-surface/10 ${LOCK_COLOR}` : `bg-good-surface/10 ${OPEN_COLOR}`,
+                  'ml-auto',
+                  node.hardened ? `bg-series-1/10 ${LOCK_COLOR}` : `bg-series-2/10 ${OPEN_COLOR}`,
                 )}
               >
-                {node.hardened ? <Lock className='size-3 shrink-0' /> : <Eye className='size-3 shrink-0' />}
+                {node.hardened ? <Lock /> : <Eye />}
                 {node.hardened ? '하드닝 · 부모 개인키 필요' : '일반 · 부모 공개키로 충분'}
-              </span>
+              </Badge>
             )}
           </div>
 

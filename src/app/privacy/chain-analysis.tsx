@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { CircleCheck, CircleX, Users } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
+import { Button } from '@/components/ui/button';
 import { ExplainCard, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import { walletAddress } from '@/lib/privacy-concept';
@@ -15,12 +16,32 @@ const OUTPUT_CHANGE = walletAddress('철수-지갑-잔돈');
 const OUTPUT_PAYMENT = walletAddress('상점-taproot-주소', '86');
 
 const OUTPUTS = [
-  { id: 'left', address: OUTPUT_CHANGE, sats: 48_800, type: 'Native SegWit (bc1q...)', isChange: true },
-  { id: 'right', address: OUTPUT_PAYMENT, sats: 400_000, type: 'Taproot (bc1p...)', isChange: false },
+  {
+    id: 'change',
+    address: OUTPUT_CHANGE,
+    sats: 48_800,
+    type: 'Native SegWit (bc1q...)',
+    typeName: 'Native SegWit',
+    isChange: true,
+  },
+  {
+    id: 'payment',
+    address: OUTPUT_PAYMENT,
+    sats: 400_000,
+    type: 'Taproot (bc1p...)',
+    typeName: 'Taproot',
+    isChange: false,
+  },
 ] as const;
 
+// 정답 배너가 부르는 출력. 배치(좌우·위아래)는 화면 폭에 따라 바뀌므로 문구는 순서와 금액으로 가리킨다.
+const CHANGE_INDEX = OUTPUTS.findIndex((o) => o.isChange);
+const CHANGE_OUTPUT = OUTPUTS[CHANGE_INDEX];
+const PAYMENT_OUTPUT = OUTPUTS.find((o) => !o.isChange)!;
+const ORDINAL = ['첫 번째', '두 번째'];
+
 export function ChainAnalysis() {
-  const [guess, setGuess] = useState<'left' | 'right' | null>(null);
+  const [guess, setGuess] = useState<(typeof OUTPUTS)[number]['id'] | null>(null);
   const guessedOutput = OUTPUTS.find((o) => o.id === guess);
 
   return (
@@ -44,7 +65,7 @@ export function ChainAnalysis() {
         </div>
 
         <div className='flex items-center gap-2 rounded-md border p-3 text-sm'>
-          <Users className='size-4 shrink-0 text-warn' />
+          <Users className='size-4 shrink-0 text-series-1' />
           <span>
             <b>공통 입력 소유권 휴리스틱</b>: 두 입력을 한 트랜잭션에 함께 썼다는 건, 둘 다 같은 지갑의 개인키로
             서명했다는 뜻이다. 두 주소가 같은 사람 것이라는 사실이 이 순간 공개된다.
@@ -60,15 +81,21 @@ export function ChainAnalysis() {
               const showCorrect = revealed && o.isChange;
               const showWrong = revealed && isSelected && !o.isChange;
               return (
-                <button
+                // 공개 뒤에도 정답·오답 표시를 또렷이 보여야 해서 disabled(흐려짐) 대신 클릭 처리에서 막는다.
+                <Button
                   key={o.id}
-                  onClick={() => setGuess(o.id)}
-                  disabled={revealed}
+                  variant='choice'
+                  size='card'
+                  onClick={() => {
+                    if (!revealed) setGuess(o.id);
+                  }}
+                  aria-pressed={isSelected}
+                  aria-disabled={revealed || undefined}
                   className={cn(
-                    'flex flex-col gap-1 rounded-md border p-3 text-left text-sm transition-colors',
-                    !revealed && 'cursor-pointer hover:bg-muted',
-                    showCorrect && 'border-good-surface/40 bg-good-surface/5',
-                    showWrong && 'border-bad-surface/40 bg-bad-surface/5',
+                    'flex-col items-stretch',
+                    revealed && 'cursor-default hover:bg-transparent',
+                    showCorrect && 'border-good-surface/40 bg-good-surface/5 aria-pressed:bg-good-surface/5',
+                    showWrong && 'border-bad-surface/40 bg-bad-surface/5 aria-pressed:bg-bad-surface/5',
                   )}
                 >
                   <span className='flex items-center justify-between'>
@@ -78,7 +105,7 @@ export function ChainAnalysis() {
                   </span>
                   <span className='tabular-nums'>{o.sats.toLocaleString('ko-KR')} sat</span>
                   <span className='text-xs text-muted-foreground'>{o.type}</span>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -87,10 +114,11 @@ export function ChainAnalysis() {
         {guessedOutput && (
           <StatusBanner tone={guessedOutput.isChange ? 'good' : 'bad'}>
             <span className='leading-relaxed font-normal'>
-              {guessedOutput.isChange ? '맞다.' : '아쉽지만 틀렸다.'} 왼쪽(48,800 sat, Native SegWit)이 잔돈이다. 두
-              가지 단서가 겹친다. (1) 입력과 <b>같은 주소 타입</b>이다. 지갑 소프트웨어는 보통 잔돈을 자기 지갑의 기본
-              타입으로 만든다. (2) 금액이 <b>어중간한 leftover 값</b>이다. 반면 400,000 sat처럼 딱 떨어지는 금액은
-              사람이 의도한 결제일 가능성이 높다.
+              {guessedOutput.isChange ? '맞다.' : '아쉽지만 틀렸다.'} {ORDINAL[CHANGE_INDEX]} 출력(
+              {CHANGE_OUTPUT.sats.toLocaleString('ko-KR')} sat, {CHANGE_OUTPUT.typeName})이 잔돈이다. 두 가지 단서가
+              겹친다. (1) 입력과 <b>같은 주소 타입</b>이다. 지갑 소프트웨어는 보통 잔돈을 자기 지갑의 기본 타입으로
+              만든다. (2) 금액이 <b>어중간한 leftover 값</b>이다. 반면 {PAYMENT_OUTPUT.sats.toLocaleString('ko-KR')}{' '}
+              sat처럼 딱 떨어지는 금액은 사람이 의도한 결제일 가능성이 높다.
             </span>
           </StatusBanner>
         )}

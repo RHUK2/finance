@@ -5,7 +5,7 @@ import { CircleCheck, CircleX, RotateCcw, StepForward } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Panel } from '@/components/panel';
-import { ExplainCard, Field, SectionIntro, SegmentedControl } from '@/components/simulation';
+import { ExplainCard, Field, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import {
   scriptAddrMeta,
@@ -294,17 +294,18 @@ export function ScriptStack() {
         </div>
 
         {isTerminal && (
-          <div
-            className={cn(
-              'flex items-center gap-1.5 rounded-md border p-2.5 text-sm font-medium',
-              topTone === 'good'
-                ? 'border-good-surface/40 bg-good-surface/5 text-good'
-                : 'border-bad-surface/40 bg-bad-surface/5 text-bad',
-            )}
+          <StatusBanner
+            tone={topTone}
+            icon={
+              topTone === 'good' ? (
+                <CircleCheck className='size-4 shrink-0 text-good' />
+              ) : (
+                <CircleX className='size-4 shrink-0 text-bad' />
+              )
+            }
           >
-            {topTone === 'good' ? <CircleCheck className='size-4 shrink-0' /> : <CircleX className='size-4 shrink-0' />}
             {topTone === 'good' ? '스택에 참(true)만 남았다 → 지출 허용' : '검증 실패 → 지출 거부'}
-          </div>
+          </StatusBanner>
         )}
 
         <div className='flex flex-wrap items-center gap-2'>
@@ -332,10 +333,10 @@ export function ScriptStack() {
             해시(pubKeyHash)뿐이라, 진짜 공개키가 맞는지부터 확인해야 하기 때문이다.
             <br />
             <br />
-            Taproot 키 경로는 출력에 <b>공개키 원본(x-only)</b>을 그대로 담는다. 그래서 해시를 확인하는 절차 자체가 필요
-            없고, 서명 하나를 그 공개키로 직접 검증하는 <b>OP_CHECKSIG 한 번</b>으로 끝난다. 더 복잡한 조건(다중서명,
-            시간잠금 등)을 걸고 싶으면 &#39;스크립트 경로&#39;를 따로 쓰는데, 그 경로를 쓰지 않는 한 검증자는 이게 단순
-            지출인지 복잡한 조건부 지출인지조차 구분할 수 없다. 이게 프라이버시 이점이다.
+            Taproot 키 경로는 출력에 해시가 아니라 <b>공개키(x-only 조정 공개키)</b>를 그대로 담는다. 그래서 해시를
+            확인하는 절차 자체가 필요 없고, 서명 하나를 그 공개키로 직접 검증하는 <b>OP_CHECKSIG 한 번</b>으로 끝난다.
+            더 복잡한 조건(다중서명, 시간잠금 등)을 걸고 싶으면 &#39;스크립트 경로&#39;를 따로 쓰는데, 그 경로를 쓰지
+            않는 한 검증자는 이게 단순 지출인지 복잡한 조건부 지출인지조차 구분할 수 없다. 이게 프라이버시 이점이다.
           </>
         }
       />

@@ -14,7 +14,7 @@ const TABS = [
 export function MultisigTimelockView() {
   return (
     <ExplainerPage
-      title='서명 하나로는 부족하거나, 너무 이를 때'
+      title='서명 하나로 부족하거나 아직 이를 때 코인은 어떻게 잠기나'
       intro={
         <>
           스크립트·서명 검증에서 본 잠금은 &#39;키 하나, 언제든&#39;이 기본값이었다. 하지만 실전에서는 &#39;키 여러 개

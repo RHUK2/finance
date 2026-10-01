@@ -40,7 +40,7 @@ export function SignatureLab() {
             kind: 'box',
             label: '다이제스트 (32바이트)',
             value: digest,
-            tone: 'accent',
+            tone: 'series-1',
           },
           { kind: 'op', label: 'ECDSA 서명(다이제스트, 개인키, 일회용 비밀값 k)' },
           {
@@ -58,7 +58,7 @@ export function SignatureLab() {
             kind: 'box',
             label: '서명 (약 71~72바이트)',
             value: `30… ∥ r(${shortHex(ecdsaSig.r)}) ∥ s(${shortHex(ecdsaSig.s)}) ∥ 0x${ecdsaSig.sighashFlag}(SIGHASH_ALL)`,
-            tone: 'good',
+            tone: 'series-2',
           },
         ]
       : [
@@ -69,14 +69,14 @@ export function SignatureLab() {
             kind: 'box',
             label: '다이제스트 (32바이트)',
             value: digest,
-            tone: 'accent',
+            tone: 'series-1',
           },
           { kind: 'op', label: 'Schnorr 서명(다이제스트, 개인키, 결정적 일회용 비밀값)' },
           {
             kind: 'box',
             label: '서명 (64바이트)',
             value: schnorrSig,
-            tone: 'good',
+            tone: 'series-2',
           },
         ];
 
@@ -106,12 +106,12 @@ export function SignatureLab() {
 
         <div className='flex flex-col gap-1 rounded-md border bg-muted/30 p-3 text-xs'>
           <span className='flex items-center gap-1.5 text-muted-foreground'>
-            <Lock className='size-3.5 shrink-0 text-warn' />
+            <Lock className='size-3.5 shrink-0 text-series-1' />
             개인키 (비밀, 서명에만 쓰임)
           </span>
           <code className='font-mono break-all'>{priv}</code>
           <span className='mt-1.5 flex items-center gap-1.5 text-muted-foreground'>
-            <Eye className='size-3.5 shrink-0 text-good' />
+            <Eye className='size-3.5 shrink-0 text-series-2' />
             공개키 (검증자에게 공개)
           </span>
           <code className='font-mono break-all'>

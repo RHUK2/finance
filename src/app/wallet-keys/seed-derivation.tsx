@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 import { Cog, Lock } from 'lucide-react';
 
 import { Pipeline } from '@/components/pipeline';
@@ -18,6 +20,7 @@ export function SeedDerivation({
   onPassphrase: (v: string) => void;
   seedHex: string;
 }) {
+  const passphraseId = useId();
   const extraWordPosition = mnemonic.split(' ').length + 1;
 
   return (
@@ -41,11 +44,12 @@ export function SeedDerivation({
       />
 
       <Panel className='gap-1.5'>
-        <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <Lock className='size-4 text-warn' />
+        <label htmlFor={passphraseId} className='flex items-center gap-1.5 text-sm font-medium'>
+          <Lock className='size-4 text-series-1' />
           passphrase (선택, {extraWordPosition}번째 단어)
-        </span>
+        </label>
         <Input
+          id={passphraseId}
           value={passphrase}
           onChange={(e) => onPassphrase(e.target.value)}
           placeholder='비워 두어도 됨 · 한 글자 바꿔 보자'
@@ -77,7 +81,7 @@ export function SeedDerivation({
               kind: 'box',
               label: '시드 (512비트, hex 128자)',
               value: seedHex,
-              tone: 'good',
+              tone: 'series-2',
             },
           ]}
         />

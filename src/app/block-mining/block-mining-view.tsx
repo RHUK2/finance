@@ -31,7 +31,7 @@ export function BlockMiningView() {
     >
       <IllustrativeDisclaimer>
         여기서 계산되는 블록 해시는 흐름을 보여주기 위한 <b>그럴듯한 가짜 값</b>이다(실제 SHA-256d 대신 결정적 시드 함수
-        사용). 헤더 구조, 목표 비교 규칙, 난이도 조정 공식, 최장 체인 규칙은 실제와 같다.
+        사용). 헤더 구조, 목표 비교 규칙, 난이도 조정 공식, 누적 작업량이 가장 많은 체인을 따르는 규칙은 실제와 같다.
       </IllustrativeDisclaimer>
 
       <SimTabs tabs={TABS} defaultValue='header' />

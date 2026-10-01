@@ -4,7 +4,8 @@ import { CalendarCheck, Users } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
 import { Legend, SectionIntro } from '@/components/simulation';
-import { cn } from '@/lib/utils';
+import { SIGNAL_THRESHOLD } from '@/lib/soft-fork-concept';
+import { cn, formatPct } from '@/lib/utils';
 
 const TIMELINE = [
   { date: '2018', label: 'Taproot(BIP340-342) 제안', tone: 'muted' as const },
@@ -32,11 +33,11 @@ export function Bip8Taproot() {
           <div className='rounded-md border p-3'>
             <p className='text-sm font-medium'>BIP9 (LOT 없음)</p>
             <p className='mt-1 text-sm/relaxed text-muted-foreground'>
-              타임아웃까지 95%를 못 넘기면 그냥 <b>FAILED</b>. 채굴자 다수가 반대(혹은 무관심)하면 활성화 자체가
-              무산된다.
+              타임아웃까지 {formatPct(SIGNAL_THRESHOLD * 100, 0)}를 못 넘기면 그냥 <b>FAILED</b>. 채굴자 다수가
+              반대(혹은 무관심)하면 활성화 자체가 무산된다.
             </p>
           </div>
-          <div className={cn('rounded-md border p-3', 'border-good-surface/40 bg-good-surface/5')}>
+          <div className='rounded-md border p-3'>
             <p className='text-sm font-medium'>BIP8 (LOT=true)</p>
             <p className='mt-1 text-sm/relaxed text-muted-foreground'>
               타임아웃 시점에 강제로 <b>LOCKED_IN</b>. 이 규칙을 지키지 않는 채굴자의 블록은 노드가 거부하므로, 결국
@@ -48,7 +49,7 @@ export function Bip8Taproot() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <CalendarCheck className='size-4 text-warn' />
+          <CalendarCheck className='size-4 text-series-1' />
           실제 사례: Taproot 활성화 타임라인
         </span>
         <div className='flex flex-col gap-2'>

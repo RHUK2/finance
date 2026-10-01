@@ -7,6 +7,7 @@ import { Copy, ShieldCheck, ShieldOff } from 'lucide-react';
 import {
   ExplainCard,
   Field,
+  Metric,
   SectionIntro,
   SegmentedControl,
   StatCard,
@@ -24,10 +25,13 @@ export function ReplayAttack() {
   const [protection, setProtection] = useState(false);
   const [step, setStep] = useState(0);
 
-  const stages = useMemo(() => replayStages(kind, protection), [kind, protection]);
-  const stage = stages[step];
   const canProtect = protectionAvailable(kind);
-  const replayed = replayPossible(kind, protection);
+  // 소프트포크 분기에서는 보호를 넣을 수 없으므로 적용 상태는 늘 '없음'이다. 사용자가
+  // 하드포크에서 고른 값은 protection에 남겨 두어 다시 하드포크로 가면 살아난다.
+  const applied = canProtect && protection;
+  const stages = useMemo(() => replayStages(kind, applied), [kind, applied]);
+  const stage = stages[step];
+  const replayed = replayPossible(kind, applied);
 
   // 분기가 나기 전에는 갈라진 체인이 없으므로 잔고 카드를 비워 둔다.
   const forked = step === 0 ? null : stage.forked;
@@ -55,7 +59,7 @@ export function ReplayAttack() {
         </Field>
         <Field label='리플레이 보호'>
           <SegmentedControl
-            value={protection}
+            value={applied}
             onChange={(v) => {
               setProtection(v);
               setStep(0);
@@ -83,11 +87,7 @@ export function ReplayAttack() {
           sub={step >= 2 ? `${SEND_AMOUNT} BTC를 직접 보냈다` : '내가 원래 쥔 잔고'}
         />
         {forked === null ? (
-          <Panel className='gap-1'>
-            <span className='text-xs text-muted-foreground'>분기 체인 잔고</span>
-            <span className='text-xl font-semibold text-muted-foreground sm:text-2xl'>—</span>
-            <span className='text-xs text-muted-foreground'>아직 분기 전이다</span>
-          </Panel>
+          <Metric label='분기 체인 잔고' value={null} sub='아직 분기 전이다' />
         ) : (
           <StatCard
             label='분기 체인 잔고'
@@ -126,7 +126,7 @@ export function ReplayAttack() {
       )}
 
       <ExplainCard
-        icon={<Copy className='size-4 text-bad' />}
+        icon={<Copy className='size-4 text-series-3' />}
         title='왜 복사한 트랜잭션이 그대로 통하는가'
         preview='서명은 트랜잭션 내용에 대한 것이지, 어느 체인에 실릴지에 대한 것이 아니다'
         body={

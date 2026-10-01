@@ -4,9 +4,9 @@ import { useState } from 'react';
 
 import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
-import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
-import { cn } from '@/lib/utils';
-import { ADDR_TYPES, feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
+import { CostBar, ExplainCard, Field, SectionIntro } from '@/components/simulation';
+import { formatPct } from '@/lib/utils';
+import { ADDR_TYPES, addrMeta, feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
 
 import { FeeRateControl } from './fee-rate-control';
 
@@ -18,17 +18,25 @@ export function AddressCompare() {
   const legacyVb = txVBytes('legacy', numIn, numOut);
   const legacyFee = feeSats(legacyVb, feeRate);
 
-  const rows = ADDR_TYPES.map((t) => {
+  // 비교 기준(Legacy)과 막대 폭의 기준(가장 큰 행)을 따로 둔다. 출력이 많으면 Taproot가
+  // Legacy보다 커져서, Legacy로 폭을 재면 100%를 넘어 잘린다. 폭은 CostBar가 value ÷ max로 잰다.
+  const sized = ADDR_TYPES.map((t) => {
     const vb = txVBytes(t.value, numIn, numOut);
-    const fee = feeSats(vb, feeRate);
-    return {
-      ...t,
-      vb,
-      fee,
-      saving: t.value === 'legacy' ? 0 : 1 - fee / legacyFee,
-      width: (vb / legacyVb) * 100,
-    };
+    return { ...t, vb, fee: feeSats(vb, feeRate) };
   });
+  const maxVb = Math.max(...sized.map((r) => r.vb));
+  const maxFee = Math.max(...sized.map((r) => r.fee));
+  const rows = sized.map((r) => ({
+    ...r,
+    saving: r.value === 'legacy' ? 0 : 1 - r.fee / legacyFee,
+    largest: r.vb === maxVb,
+  }));
+
+  // 설명 카드가 부르는 크기. VBYTES가 단일 출처라 문구에 숫자를 다시 적지 않는다.
+  const taproot = addrMeta('taproot');
+  const native = addrMeta('native');
+  const defaultTaprootVb = txVBytes('taproot', 2, 2);
+  const defaultNativeVb = txVBytes('native', 2, 2);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -45,7 +53,7 @@ export function AddressCompare() {
               type='number'
               min={1}
               value={numIn}
-              onChange={(e) => setNumIn(Math.max(1, Number(e.target.value) || 1))}
+              onChange={(e) => setNumIn(Math.max(1, Math.floor(Number(e.target.value)) || 1))}
             />
           </Field>
           <Field label='출력 개수'>
@@ -53,7 +61,7 @@ export function AddressCompare() {
               type='number'
               min={1}
               value={numOut}
-              onChange={(e) => setNumOut(Math.max(1, Number(e.target.value) || 1))}
+              onChange={(e) => setNumOut(Math.max(1, Math.floor(Number(e.target.value)) || 1))}
             />
           </Field>
         </div>
@@ -67,29 +75,24 @@ export function AddressCompare() {
         <span className='text-sm font-semibold'>타입별 크기·수수료 (Legacy 기준 비교)</span>
         <div className='flex flex-col gap-3'>
           {rows.map((r) => (
-            <div key={r.value} className='flex flex-col gap-1'>
-              <div className='flex items-baseline justify-between text-sm'>
-                <span className='font-medium'>
-                  <span className='font-mono text-xs text-muted-foreground'>{r.purpose} </span>
-                  {r.label}
-                </span>
-                <span className='text-xs text-muted-foreground tabular-nums'>{r.vb} vB</span>
-              </div>
-              <div className='h-7 w-full overflow-hidden rounded-md bg-muted'>
-                <div
-                  className={cn(
-                    'flex h-full items-center justify-end rounded-md px-2 transition-all',
-                    r.value === 'legacy' ? 'bg-muted-foreground/40' : 'bg-primary',
-                  )}
-                  style={{ width: `${r.width}%` }}
-                >
-                  <span className='text-xs text-primary-foreground tabular-nums'>{formatSats(r.fee)}</span>
-                </div>
-              </div>
-              <span className='text-xs text-muted-foreground'>
-                {r.value === 'legacy' ? '기준 (가장 큼)' : `Legacy 대비 ${(r.saving * 100).toFixed(0)}% 절감`}
-              </span>
-            </div>
+            <CostBar
+              key={r.value}
+              label={`${r.purpose} ${r.label}`}
+              value={r.fee}
+              max={maxFee}
+              className={r.value === 'legacy' ? 'bg-muted-foreground/40' : 'bg-primary'}
+              format={formatSats}
+              aside={`· ${r.vb} vB`}
+              sub={
+                r.value === 'legacy'
+                  ? r.largest
+                    ? '기준 (가장 큼)'
+                    : '기준'
+                  : r.saving >= 0
+                    ? `Legacy 대비 ${formatPct(r.saving * 100, 0)} 절감`
+                    : `Legacy보다 ${formatPct(-r.saving * 100, 0)} 큼`
+              }
+            />
           ))}
         </div>
       </Panel>
@@ -99,13 +102,14 @@ export function AddressCompare() {
         preview='Taproot는 입력이 가장 작지만 출력이 가장 크다. 그래서 입력 개수에 따라 순위가 뒤집힌다.'
         body={
           <>
-            크기가 수수료다 탭에서 본 <b>witness 할인</b>이 여기서 타입별 차이로 나타난다. 서명이 witness로 빠진
+            크기와 수수료 탭에서 본 <b>witness 할인</b>이 여기서 타입별 차이로 나타난다. 서명이 witness로 빠진
             SegWit·Taproot 입력은 Legacy보다 훨씬 작다.
             <br />
             <br />
-            그런데 위 막대를 보면 기본값(입력 2·출력 2)에서 Taproot(211.5 vB)이 Native SegWit(208.5 vB)보다{' '}
-            <b>오히려 크다</b>. Taproot는 입력이 가장 작지만(57.5 vB, SegWit은 68 vB) <b>출력이 가장 크기</b>{' '}
-            때문이다(43 vB, SegWit은 31 vB). 주소에 20바이트 해시 대신 32바이트 공개키를 그대로 담아서다.
+            그런데 위 막대를 보면 기본값(입력 2·출력 2)에서 Taproot({defaultTaprootVb} vB)이 Native SegWit(
+            {defaultNativeVb} vB)보다 <b>오히려 크다</b>. Taproot는 입력이 가장 작지만({taproot.inputVb} vB, SegWit은{' '}
+            {native.inputVb} vB) <b>출력이 가장 크기</b> 때문이다({taproot.outputVb} vB, SegWit은 {native.outputVb} vB).
+            출력에 20바이트 공개키 해시 대신 32바이트 공개키(x-only 조정 공개키)를 그대로 담아서다.
             <br />
             <br />
             그래서 순위가 <b>입력 개수에 따라 뒤집힌다</b>. 입력이 늘수록 입력 쪽 이득이 출력 쪽 손해를 넘어선다. 위

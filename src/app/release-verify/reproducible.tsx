@@ -44,13 +44,15 @@ export function Reproducible() {
     return i === 0 ? evil : base;
   };
   const caught = c === 'ci';
+  // 판정은 하나로 둔다. 아이콘과 tone이 따로 조건을 가지면 둘이 반대를 말하게 된다.
+  const verdict = c === 'source' ? 'bad' : 'good';
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='개발자를 믿지 않고도 확인하는 방법'>
         앞 탭까지의 검증은 전부 배포자가 정직하다는 전제 위에 있다. 개인키를 쥔 쪽은 자기가 만든 어떤 파일에도 진짜
-        서명을 붙일 수 있기 때문이다. 재현 가능한 빌드는 그 전제를 치운다. 같은 소스에서 누가 빌드해도 바이트 단위로
-        같은 결과가 나온다면, 소스에 없는 것이 바이너리에 들어 있는지를 제3자가 잡아낼 수 있다.
+        릴리스 서명을 붙일 수 있기 때문이다. 재현 가능한 빌드는 그 전제를 치운다. 같은 소스에서 누가 빌드해도 바이트
+        단위로 같은 결과가 나온다면, 소스에 없는 것이 바이너리에 들어 있는지를 제3자가 잡아낼 수 있다.
       </SectionIntro>
 
       <Panel className='gap-3'>
@@ -81,8 +83,8 @@ export function Reproducible() {
       </Panel>
 
       <StatusBanner
-        icon={caught ? <CheckCircle2 className='size-4' /> : <XCircle className='size-4' />}
-        tone={c === 'clean' ? 'good' : caught ? 'good' : 'bad'}
+        icon={verdict === 'good' ? <CheckCircle2 className='size-4' /> : <XCircle className='size-4' />}
+        tone={verdict}
       >
         {c === 'clean'
           ? '넷이 일치한다. 배포된 바이너리가 이 소스에서 나왔다'
@@ -92,7 +94,7 @@ export function Reproducible() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Boxes className='size-4 text-warn' />}
+        icon={<Boxes className='size-4 text-series-1' />}
         title='재현이 가능하다는 말과 남이 해 봤다는 말은 다르다'
         preview='지켜 주는 것은 후자다'
         body={
@@ -104,8 +106,8 @@ export function Reproducible() {
             </p>
             <p className='mt-2'>
               그래서 실제로 갈리는 축은 독립 재현 기록이다. 서로 다른 사람이 각자 빌드해 같은 바이트를 얻었다는 사실이
-              서명과 함께 공개된 곳에 회차마다 쌓이는가. 그런 기록이 없으면 재현은 각자 해 보고 각자 확인하는 일로
-              남는다.
+              릴리스 서명과 함께 공개된 곳에 회차마다 쌓이는가. 그런 기록이 없으면 재현은 각자 해 보고 각자 확인하는
+              일로 남는다.
             </p>
             <p className='mt-2'>
               세 번째 경우도 정직하게 보아야 한다. 백도어가 소스에 들어가면 재현 가능한 빌드는 통과한다. 그게 정확히

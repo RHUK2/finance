@@ -83,7 +83,7 @@ export function HtlcRouting() {
       </IllustrativeDisclaimer>
 
       <ExplainCard
-        icon={<KeyRound className='size-4 text-warn' />}
+        icon={<KeyRound className='size-4 text-series-1' />}
         title='타임락은 왜 필요할까'
         preview='Bob이 끝내 R을 공개하지 않으면, 정해진 시간 뒤 각 홉은 걸어둔 돈을 자동으로 돌려받는다.'
         body={

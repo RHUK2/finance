@@ -7,7 +7,7 @@ import { Panel } from '@/components/panel';
 import { Pipeline } from '@/components/pipeline';
 import { ControlSlider, ExplainCard, SectionIntro } from '@/components/simulation';
 import { blockHeaderPrefix, hashWithNonce, SAMPLE_HEADER, type BlockHeader } from '@/lib/block-concept';
-import { shortHex } from '@/lib/utils';
+import { cn, shortHex } from '@/lib/utils';
 
 // SAMPLE_HEADER는 상수라 접두어도 한 번만 계산해 두면 된다.
 const HEADER_PREFIX = blockHeaderPrefix(SAMPLE_HEADER);
@@ -17,7 +17,12 @@ export function BlockHeaderView() {
 
   const header: BlockHeader = { ...SAMPLE_HEADER, nonce };
   const hash = hashWithNonce(HEADER_PREFIX, nonce);
-  const prevHash = hashWithNonce(HEADER_PREFIX, nonce - 1);
+  // nonce는 4바이트 부호 없는 정수라 −1이 없다. 0에서는 바로 다음 값과 비교한다.
+  const neighbor = nonce === 0 ? 1 : nonce - 1;
+  const compared = [
+    { n: neighbor, hash: hashWithNonce(HEADER_PREFIX, neighbor), current: false },
+    { n: nonce, hash, current: true },
+  ].sort((a, b) => a.n - b.n);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -29,7 +34,7 @@ export function BlockHeaderView() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Hash className='size-4 text-warn' />
+          <Hash className='size-4 text-series-1' />
           헤더 필드 → 블록 해시
         </span>
         <p className='text-xs text-muted-foreground'>4 + 32 + 32 + 4 + 4 + 4 = 80바이트. 이 여섯 필드가 전부다.</p>
@@ -59,7 +64,7 @@ export function BlockHeaderView() {
               kind: 'split',
               boxes: [
                 { label: 'bits (난이도 목표) · 4B', value: header.bits },
-                { label: 'nonce · 4B', value: header.nonce, tone: 'accent' },
+                { label: 'nonce · 4B', value: header.nonce, tone: 'series-1' },
               ],
             },
             { kind: 'op', label: 'SHA-256을 두 번 (SHA-256d)' },
@@ -67,7 +72,7 @@ export function BlockHeaderView() {
               kind: 'box',
               label: '블록 해시',
               value: shortHex(hash, 24),
-              tone: 'good',
+              tone: 'series-2',
             },
           ]}
         />
@@ -86,14 +91,15 @@ export function BlockHeaderView() {
         </div>
 
         <div className='grid grid-cols-1 gap-1.5 sm:grid-cols-2'>
-          <div className='flex flex-col gap-1 rounded-md bg-muted p-3'>
-            <span className='text-xs text-muted-foreground'>nonce {nonce - 1} → 해시</span>
-            <code className='font-mono text-xs break-all'>{shortHex(prevHash, 20)}</code>
-          </div>
-          <div className='flex flex-col gap-1 rounded-md border border-warn-surface/40 bg-muted p-3'>
-            <span className='text-xs text-muted-foreground'>nonce {nonce} → 해시</span>
-            <code className='font-mono text-xs break-all'>{shortHex(hash, 20)}</code>
-          </div>
+          {compared.map((c) => (
+            <div
+              key={c.n}
+              className={cn('flex flex-col gap-1 rounded-md bg-muted p-3', c.current && 'border border-series-1/40')}
+            >
+              <span className='text-xs text-muted-foreground'>nonce {c.n} → 해시</span>
+              <code className='font-mono text-xs break-all'>{shortHex(c.hash, 20)}</code>
+            </div>
+          ))}
         </div>
       </Panel>
 

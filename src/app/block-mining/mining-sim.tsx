@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Pickaxe, Target } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
-import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro } from '@/components/simulation';
+import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro, StatusBanner } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
 import { cn, shortHex } from '@/lib/utils';
 import { blockHeaderPrefix, expectedTries, hashWithNonce, meetsTarget, SAMPLE_HEADER } from '@/lib/block-concept';
@@ -35,7 +35,7 @@ export function MiningSim() {
 
       <Panel>
         <ControlSlider
-          icon={<Target className='size-4 text-warn' />}
+          icon={<Target className='size-4 text-series-1' />}
           label='목표 난이도 (해시 앞자리 0 개수)'
           hint={`평균 ${expectedTries(difficulty).toLocaleString('ko-KR')}번 시도해야 한 번 나오는 목표. 목표 패턴: ${'0'.repeat(difficulty)}…`}
           value={difficulty}
@@ -77,12 +77,13 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
   const [hash, setHash] = useState(() => hashWithNonce(HEADER_PREFIX, 0));
   const [found, setFound] = useState(false);
 
-  function step(): boolean {
+  // 자동 재생은 한 틱에 batch번 해시하고, 수동 스텝 버튼("한 회 시도")은 정확히 한 번만 해시한다.
+  function advance(size: number): boolean {
     if (found) return false;
     let n = nonce;
     let h = hash;
     let tries = 0;
-    for (let i = 0; i < batch; i++) {
+    for (let i = 0; i < size; i++) {
       n += 1;
       h = hashWithNonce(HEADER_PREFIX, n);
       tries += 1;
@@ -98,14 +99,14 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
     return true;
   }
 
-  const engine = useRoundEngine(step, speedMs);
+  const engine = useRoundEngine(() => advance(batch), speedMs);
 
   return (
     <Panel className='gap-3'>
       <RoundControls
         playing={engine.playing}
         onToggle={engine.toggle}
-        onStep={step}
+        onStep={() => advance(1)}
         onReset={() => {
           engine.pause();
           setNonce(0);
@@ -120,18 +121,13 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
         unit='회 시도'
       />
 
-      <div
-        className={cn(
-          'flex flex-col gap-1 rounded-md border p-3',
-          found ? 'border-good-surface/40 bg-good-surface/5' : 'border-transparent bg-muted',
-        )}
+      <StatusBanner
+        tone={found ? 'good' : undefined}
+        icon={<Pickaxe className={cn('size-4', found ? 'text-good' : 'text-muted-foreground')} />}
+        detail={<code className='font-mono text-xs break-all'>{shortHex(hash, 24)}</code>}
       >
-        <span className='flex items-center gap-1.5 text-sm font-medium'>
-          <Pickaxe className={cn('size-4', found ? 'text-good' : 'text-muted-foreground')} />
-          {found ? `nonce ${nonce}에서 목표를 찾았다!` : `nonce ${nonce} 시도 중…`}
-        </span>
-        <code className='font-mono text-xs break-all'>{shortHex(hash, 24)}</code>
-      </div>
+        {found ? `nonce ${nonce}에서 목표를 찾았다!` : `nonce ${nonce} 시도 중…`}
+      </StatusBanner>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric label='시도 횟수' value={attempts.toLocaleString('ko-KR')} tone='accent' />

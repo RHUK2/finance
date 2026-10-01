@@ -35,7 +35,7 @@ export function MempoolPolicy() {
 
       <Panel tone='accent' className='gap-1.5'>
         <ControlSlider
-          icon={<Gauge className='size-4 text-warn' />}
+          icon={<Gauge className='size-4 text-series-1' />}
           label='이 노드의 최소 릴레이 수수료율 (아래 두 시연 공통)'
           hint='기본값 1 sat/vB. 멤풀이 꽉 차면 노드가 이 값을 스스로 더 올리기도 한다.'
           value={minRelayRate}
@@ -85,7 +85,7 @@ export function MempoolPolicy() {
       </Panel>
 
       <SectionIntro title='RBF: 멈춰 있는 tx를 수수료로 밀어내기'>
-        낮은 수수료로 보낸 tx가 멤풀에서 오래 멈춰 있으면, <b>같은 동전을 쓰되 수수료만 올린 새 tx</b>로 원본을 대체할
+        낮은 수수료로 보낸 tx가 멤풀에서 오래 멈춰 있으면, <b>같은 UTXO를 쓰되 수수료만 올린 새 tx</b>로 원본을 대체할
         수 있다(Replace-By-Fee, BIP125). 단, 아무 금액이나 올리면 되는 게 아니라 늘어난 수수료가 최소 릴레이
         수수료율만큼은 더 내야 한다. 그래야 다시 퍼뜨리는 대역폭 비용을 낸 셈이 된다.
       </SectionIntro>
@@ -107,7 +107,7 @@ export function MempoolPolicy() {
           format={(v) => `${v} sat/vB`}
         />
         <ControlSlider
-          icon={<Repeat className='size-4 text-warn' />}
+          icon={<Repeat className='size-4 text-series-1' />}
           label='대체 tx 수수료율'
           value={newFeeRate}
           onChange={setNewFeeRate}

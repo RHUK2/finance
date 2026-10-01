@@ -20,7 +20,7 @@ const TABS = [
 export function ScriptVerifyView() {
   return (
     <ExplainerPage
-      title='동전은 어떻게 잠기고, 서명은 어떻게 그 잠금을 풀까'
+      title='UTXO는 어떻게 잠기고, 서명은 어떻게 그 잠금을 풀까'
       intro={
         <>
           트랜잭션 해부에서 본 UTXO는 아무나 못 쓰게 스크립트로 <b>잠겨</b> 있다. 그 잠금을 푸는 열쇠가 개인키로 만든{' '}

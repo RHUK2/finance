@@ -1,7 +1,7 @@
 'use client';
 
 import { ExplainerPage } from '@/components/explainer-page';
-import { IllustrativeDisclaimer, SimTabs } from '@/components/simulation';
+import { SimTabs } from '@/components/simulation';
 
 import { GossipSim } from './gossip-sim';
 import { IbdSync } from './ibd-sync';
@@ -26,11 +26,6 @@ export function P2pNetworkView() {
         </>
       }
     >
-      <IllustrativeDisclaimer>
-        세 시뮬레이션 모두 시간을 라운드 단위로 끊어 보여준다. 실제로는 전파도 동기화도 네트워크 대역폭과 지연에 따라
-        연속으로 일어난다.
-      </IllustrativeDisclaimer>
-
       <SimTabs tabs={TABS} defaultValue='gossip' />
     </ExplainerPage>
   );

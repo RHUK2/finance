@@ -50,7 +50,7 @@ export function CoinSeparation() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Usb className='size-4 text-warn' />}
+        icon={<Usb className='size-4 text-series-1' />}
         title='하드웨어 지갑 사용자가 특히 위험한 이유'
         preview='분기 코인을 받으려고 시드를 다른 지갑에 넣는 순간 두 위험이 겹친다'
         body={

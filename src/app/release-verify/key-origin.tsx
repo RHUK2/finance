@@ -68,7 +68,7 @@ export function KeyOrigin() {
 
       <MarkTable
         title='공개키를 어디서 받는가'
-        icon={<Route className='size-4 text-good' />}
+        icon={<Route className='size-4 text-series-2' />}
         headers={CHANNEL_HEADERS}
         rows={CHANNEL_ROWS}
         selected={selected}
@@ -85,7 +85,7 @@ export function KeyOrigin() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<Repeat className='size-4 text-warn' />}
+        icon={<Repeat className='size-4 text-series-1' />}
         title='힘든 것은 첫 한 번뿐이다'
         preview='최초 신뢰를 세우고 나면 다음부터는 이미 믿는 것이 대신 검증해 준다'
         body={
@@ -93,12 +93,12 @@ export function KeyOrigin() {
             <p>
               공개키를 처음 받아들이는 판단을 최초 신뢰라 부른다. 사람이 여러 독립 채널을 대조해야 하는 것은 이 한
               번뿐이다. 여기서 잘못 믿으면 그 뒤의 모든 검증이 조용히 통과한다. 절차는 완벽하게 돌아가고 결과는 계속
-              초록색인데 처음부터 남의 키를 믿고 있는 상태다.
+              통과로 뜨는데 처음부터 남의 키를 믿고 있는 상태다.
             </p>
             <p className='mt-2'>
               대신 두 번째부터는 값이 싸진다. 이미 믿고 있는 것이 다음 것을 검증해 주기 때문이다. 이미 설치된 구버전이
-              새 릴리스의 서명을 확인해 주고, 이미 깔린 펌웨어가 다음 펌웨어의 서명을 확인해 준다. 둘은 서로 다른 사례가
-              아니라 같은 구조이고, 이것을 신뢰 이월이라 부른다.
+              새 버전의 릴리스 서명을 확인해 주고, 이미 깔린 펌웨어가 다음 펌웨어의 릴리스 서명을 확인해 준다. 둘은 서로
+              다른 사례가 아니라 같은 구조이고, 이것을 신뢰 이월이라 부른다.
             </p>
             <p className='mt-2'>
               그래서 사슬의 안전은 첫 칸을 넘지 못한다. 이월이 편리해질수록 첫 칸의 무게가 커지는데, 정작 그 첫 칸은

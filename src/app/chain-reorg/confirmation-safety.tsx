@@ -5,26 +5,36 @@ import { ShieldCheck, TriangleAlert } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { cn } from '@/lib/utils';
-import { CONFIRMATION_PRESETS, doubleSpendProbability, formatProbability } from '@/lib/chain-concept';
+import { cn, formatPct } from '@/lib/utils';
+import { CONFIRMATION_PRESETS, formatProbability, reversalProbability } from '@/lib/chain-concept';
+
+// 백서가 예시로 든 공격자 비중. 설명 카드의 수치는 이 값에서 계산해 문구와 모델이 갈리지 않게 한다.
+const PAPER_Q = 0.1;
+// 확인 수 기준이다. 확인 2개 = 백서 z = 1, 확인 6개 = z = 5.
+const PAPER_P2 = reversalProbability(PAPER_Q, 2);
+const PAPER_P6 = reversalProbability(PAPER_Q, 6);
+
+// 1% 경계는 아래 StatusBanner와 같다. 확률이 커지면 Metric도 함께 나빠진다.
+const probabilityTone = (p: number) => (p >= 0.01 ? 'bad' : 'good');
 
 export function ConfirmationSafety() {
   const [attackPct, setAttackPct] = useState(10);
   const q = attackPct / 100;
 
-  const current = useMemo(() => doubleSpendProbability(q, 1), [q]);
-  const presetRows = useMemo(() => CONFIRMATION_PRESETS.map((z) => ({ z, p: doubleSpendProbability(q, z) })), [q]);
+  const atOne = reversalProbability(q, 1);
+  const atSix = reversalProbability(q, 6);
+  const presetRows = useMemo(() => CONFIRMATION_PRESETS.map((n) => ({ n, p: reversalProbability(q, n) })), [q]);
 
   const [confirmations, setConfirmations] = useState(6);
-  const selectedProbability = doubleSpendProbability(q, confirmations);
+  const selectedProbability = reversalProbability(q, confirmations);
   const reversalLikely = selectedProbability >= 0.01;
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='확인 수가 안전의 척도인 이유: 정확한 확률'>
         비트코인 백서 11장의 공식을 그대로 계산한다. 공격자 해시레이트 비중과 확인 수만 정하면, 공격자가 언젠가 정직한
-        체인을 따라잡아 그 트랜잭션을 되돌릴 확률이 정확히 나온다. (1블록일 때의 확률: {formatProbability(current)},
-        공격자 비중 {attackPct}% 기준)
+        체인을 따라잡아 그 트랜잭션을 되돌릴 확률이 정확히 나온다. 트랜잭션이 담긴 블록을 확인 1개로 세고, 백서 공식의
+        z는 그 뒤에 이어진 블록 수라 확인 수 − 1이다.
       </SectionIntro>
 
       <Panel>
@@ -68,9 +78,9 @@ export function ConfirmationSafety() {
       <Panel className='gap-2'>
         <span className='text-sm font-medium'>확인 수별 이중지불 성공 확률 (공격자 비중 {attackPct}%)</span>
         <div className='flex flex-col divide-y'>
-          {presetRows.map(({ z, p }) => (
-            <div key={z} className='flex items-center justify-between py-2 text-sm'>
-              <span className='text-muted-foreground'>확인 {z}개</span>
+          {presetRows.map(({ n, p }) => (
+            <div key={n} className='flex items-center justify-between py-2 text-sm'>
+              <span className='text-muted-foreground'>확인 {n}개</span>
               <div className='flex flex-1 items-center gap-2 px-3'>
                 <div className='h-2 w-full overflow-hidden rounded-full bg-muted'>
                   <div
@@ -89,19 +99,25 @@ export function ConfirmationSafety() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='0확인 (미확정)' value='100%' tone='bad' sub='아직 어느 블록에도 없음' />
-        <Metric label='1확인' value={formatProbability(doubleSpendProbability(q, 1))} tone='accent' />
-        <Metric label='6확인 (관행)' value={formatProbability(doubleSpendProbability(q, 6))} tone='good' />
+        <Metric label='확인 0개 (미확정)' value='100%' tone='bad' sub='아직 어느 블록에도 없음' />
+        <Metric
+          label='확인 1개'
+          value={formatProbability(atOne)}
+          tone={probabilityTone(atOne)}
+          sub='z = 0. 담긴 블록 뒤에 쌓인 블록이 없다'
+        />
+        <Metric label='확인 6개 (관행)' value={formatProbability(atSix)} tone={probabilityTone(atSix)} sub='z = 5' />
       </div>
 
       <ExplainCard
-        title="왜 하필 '6확인'이 관행이 됐을까"
-        preview='공격자 비중이 10% 정도로 가정해도 6확인이면 확률이 0.02% 밑으로 떨어진다.'
+        title='왜 하필 확인 6개가 관행이 됐을까'
+        preview={`공격자 비중을 ${formatPct(PAPER_Q * 100, 0)}로 가정하면 확인 6개에서 확률이 약 ${formatPct(PAPER_P6 * 100, 3)}(${formatProbability(PAPER_P6)})로 떨어진다.`}
         body={
           <>
-            사토시가 백서에서 예시로 든 공격자 비중 10% 기준, 확인 수를 늘릴수록 확률이 1확인 20.5% → 6확인 0.02%로 뚝
-            떨어진다. 거래소나 대형 결제처럼 되돌렸을 때 손해가 큰 곳은 더 많은 확인을 요구하고, 소액 결제는
-            0~1확인만으로도 실무적으로 받아들여진다. &#39;안전&#39;은 고정된 숫자가 아니라{' '}
+            사토시가 백서에서 예시로 든 공격자 비중 {formatPct(PAPER_Q * 100, 0)} 기준, 확인 수를 늘릴수록 확률이 확인
+            2개 {formatProbability(PAPER_P2)} → 확인 6개 약 {formatPct(PAPER_P6 * 100, 3)}로 뚝 떨어진다. 거래소나 대형
+            결제처럼 되돌렸을 때 손해가 큰 곳은 더 많은 확인을 요구하고, 소액 결제는 확인 0~1개만으로도 실무적으로
+            받아들여진다. &#39;안전&#39;은 고정된 숫자가 아니라{' '}
             <b>거래 금액과 공격자가 가질 법한 해시레이트를 놓고 계산하는 확률</b>이다.
           </>
         }

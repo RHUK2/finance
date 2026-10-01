@@ -8,7 +8,7 @@ import { Field, Metric, SectionIntro, SegmentedControl, StatusBanner } from '@/c
 import { Panel } from '@/components/panel';
 
 import { CurveGrid, type GridMark } from './curve-grid';
-import { MULTIPLES_OF_G, N, fmtPt, mod, mulPt, sign, verify } from './models';
+import { MULTIPLES_OF_G, N, type Pt, fmtPt, mod, mulPt, samePt, sign, verify } from './models';
 
 type Tamper = 'none' | 'z' | 's';
 
@@ -28,14 +28,6 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
   const zSeen = tamper === 'z' ? mod(z + 1, N) : z;
   const sSeen = tamper === 's' ? mod(sig.s + 1, N) : sig.s;
   const res = useMemo(() => verify(Q, zSeen, sig.r, sSeen), [Q, zSeen, sig.r, sSeen]);
-
-  const u1G = mulPt(res.u1, MULTIPLES_OF_G[1]);
-  const u2Q = mulPt(res.u2, Q);
-
-  const marks: GridMark[] = [];
-  if (u1G) marks.push({ ...u1G, label: `u₁G`, color: 'series-1' });
-  if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, color: 'series-2' });
-  if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', color: res.ok ? 'good' : 'bad' });
 
   return (
     <div className='flex flex-col gap-4'>
@@ -66,6 +58,65 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
         </Field>
       </Panel>
 
+      {sig.invalid ? (
+        <StatusBanner icon={<XCircle className='size-4' />}>
+          서명 만들기 탭의 서명이 무효({sig.invalid === 's0' ? 's = 0' : 'r = 0'})라 검증할 것이 없다. 실제 ECDSA라면
+          서명자가 다른 k로 다시 서명한다. 서명 만들기 탭에서 z나 k를 옮겨 보자.
+        </StatusBanner>
+      ) : res.rejected ? (
+        <StatusBanner icon={<XCircle className='size-4' />} tone='bad'>
+          s = {sSeen}은 1 이상 {N - 1} 이하가 아니라 검증을 시작하기 전에 거부된다. 0에는 역원이 없어서 w = s⁻¹부터
+          계산할 수 없다.
+        </StatusBanner>
+      ) : (
+        <VerifySteps Q={Q} zSeen={zSeen} sSeen={sSeen} r={sig.r} R={sig.R} tamper={tamper} res={res} />
+      )}
+
+      <p className='text-sm/relaxed text-muted-foreground'>
+        여기까지가 ECDSA 전부다. 곡선 위의 덧셈 하나로 키를 만들고, 일회용 비밀값으로 점 하나를 만들어 서명하고, 그 점을
+        개인키 없이 되살려 검증한다. 남은 질문은 하나다. 이걸 왜 깨뜨릴 수 없는가, 그리고 언제 깨지는가.
+      </p>
+    </div>
+  );
+}
+
+type Checked = Extract<ReturnType<typeof verify>, { rejected: false }>;
+
+function VerifySteps({
+  Q,
+  zSeen,
+  sSeen,
+  r,
+  R,
+  tamper,
+  res,
+}: {
+  Q: Pt;
+  zSeen: number;
+  sSeen: number;
+  r: number;
+  R: Pt;
+  tamper: Tamper;
+  res: Checked;
+}) {
+  const u1G = mulPt(res.u1, MULTIPLES_OF_G[1]);
+  const u2Q = mulPt(res.u2, Q);
+
+  const marks: GridMark[] = [];
+  if (u1G) marks.push({ ...u1G, label: `u₁G`, color: 'series-1' });
+  if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, color: 'series-2' });
+  if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', color: res.ok ? 'good' : 'bad' });
+
+  // 통과는 x(X) mod n = r만 본다. p > n이라 x가 접히고 (r, s)와 (r, n − s)는 R과 −R을 주므로,
+  // 통과해도 X가 R이 아닐 수 있다. 캡션은 실제로 같은 점인지를 따로 확인해 적는다.
+  const caption = !res.ok
+    ? '복원된 X가 엉뚱한 자리에 떨어졌다. 재료 하나만 어긋나도 전혀 다른 점이 나온다.'
+    : samePt(res.X, R)
+      ? '복원된 X가 서명할 때 만들었던 R과 같은 점이다. 검증자는 R을 본 적이 없는데도 같은 자리에 닿았다.'
+      : `복원된 X ${fmtPt(res.X)}는 R ${fmtPt(R)}이 아니지만, x좌표를 n으로 접은 값이 r과 같아 통과한다. 곡선이 작아 x좌표가 접히는 곳에서 생기는 일이다.`;
+
+  return (
+    <>
       <Panel className='gap-2'>
         <span className='text-sm font-semibold'>네 단계</span>
         <Line
@@ -74,28 +125,21 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
           note={`검산: ${sSeen} × ${res.w} = ${sSeen * res.w} ≡ ${mod(sSeen * res.w, N)}`}
         />
         <Line label='u₁ = z·w mod n' value={`${zSeen} × ${res.w} mod ${N} = ${res.u1}`} note='메시지 몫' />
-        <Line label='u₂ = r·w mod n' value={`${sig.r} × ${res.w} mod ${N} = ${res.u2}`} note='공개키 몫' />
+        <Line label='u₂ = r·w mod n' value={`${r} × ${res.w} mod ${N} = ${res.u2}`} note='공개키 몫' />
         <Line
           label='X = u₁G + u₂Q'
           value={`${fmtPt(u1G)} + ${fmtPt(u2Q)} = ${fmtPt(res.X)}`}
           note={
             res.X === null
               ? '무한원점이 나오면 그 자리에서 검증 실패다'
-              : `x좌표 ${res.X.x}를 n으로 나눈 나머지는 ${res.xModN}, 서명의 r은 ${sig.r}`
+              : `x좌표 ${res.X.x}를 n으로 나눈 나머지는 ${res.xModN}, 서명의 r은 ${r}`
           }
         />
       </Panel>
 
       <Panel className='gap-3'>
         <span className='text-sm font-semibold'>격자에서 두 점을 더해 X를 얻는다</span>
-        <CurveGrid
-          marks={marks}
-          caption={
-            res.ok
-              ? '복원된 X가 서명할 때 만들었던 R과 같은 점이다. 검증자는 R을 본 적이 없는데도 같은 자리에 닿았다.'
-              : '복원된 X가 엉뚱한 자리에 떨어졌다. 재료 하나만 어긋나도 전혀 다른 점이 나온다.'
-          }
-        />
+        <CurveGrid marks={marks} caption={caption} />
       </Panel>
 
       {res.ok ? (
@@ -104,18 +148,13 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
         </StatusBanner>
       ) : (
         <StatusBanner icon={<XCircle className='size-4' />} tone='bad'>
-          x(X) mod n = {res.xModN ?? '없음'} ≠ r = {sig.r}. 검증 실패다.
+          x(X) mod n = {res.xModN ?? '없음'} ≠ r = {r}. 검증 실패다.
           {tamper === 'z' &&
             ' 서명은 손대지 않았는데도 메시지가 바뀌자 무효가 됐다. 서명이 메시지에 묶여 있다는 뜻이다.'}
           {tamper === 's' && ' 서명 숫자 하나를 1 바꿨을 뿐인데 무효가 됐다. 그럴듯한 서명을 지어낼 수 없다는 뜻이다.'}
         </StatusBanner>
       )}
-
-      <p className='text-sm/relaxed text-muted-foreground'>
-        여기까지가 ECDSA 전부다. 곡선 위의 덧셈 하나로 키를 만들고, 일회용 비밀값으로 점 하나를 만들어 서명하고, 그 점을
-        개인키 없이 되살려 검증한다. 남은 질문은 하나다. 이걸 왜 깨뜨릴 수 없는가, 그리고 언제 깨지는가.
-      </p>
-    </div>
+    </>
   );
 }
 

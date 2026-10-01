@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import { FileCheck2, TriangleAlert } from 'lucide-react';
 
@@ -16,7 +16,7 @@ const ORIGINAL = '설치 파일 v1.0.0';
 /** 16진수를 네 글자씩 끊어 보이면서, 기준값과 다른 자리만 칠한다. */
 function HexView({ hex, diff }: { hex: string; diff?: boolean[] }) {
   return (
-    <span className='font-mono text-2xs/relaxed break-all sm:text-xs' aria-label={hex}>
+    <span role='img' className='font-mono text-2xs/relaxed break-all sm:text-xs' aria-label={hex}>
       {Array.from(hex, (ch, i) => (
         <span key={i} aria-hidden className={cn(diff?.[i] && 'text-bad', i % 4 === 0 && i > 0 && 'ml-1')}>
           {ch}
@@ -27,6 +27,7 @@ function HexView({ hex, diff }: { hex: string; diff?: boolean[] }) {
 }
 
 export function Checksum() {
+  const inputId = useId();
   const [text, setText] = useState(ORIGINAL);
   const [base, setBase] = useState('');
   const [now, setNow] = useState('');
@@ -51,8 +52,10 @@ export function Checksum() {
       </SectionIntro>
 
       <Panel className='gap-3'>
-        <span className='text-sm font-medium'>파일 대신 한 줄</span>
-        <Input value={text} onChange={(e) => setText(e.target.value)} className='font-mono text-sm' />
+        <label htmlFor={inputId} className='text-sm font-medium'>
+          파일 대신 한 줄
+        </label>
+        <Input id={inputId} value={text} onChange={(e) => setText(e.target.value)} className='font-mono text-sm' />
         <div className='flex flex-col gap-1'>
           <span className='text-xs text-muted-foreground'>SHA-256</span>
           <HexView hex={now} diff={diff} />
@@ -86,7 +89,7 @@ export function Checksum() {
       </StatusBanner>
 
       <ExplainCard
-        icon={<FileCheck2 className='size-4 text-warn' />}
+        icon={<FileCheck2 className='size-4 text-series-1' />}
         title='공격자는 파일과 체크섬을 같이 바꾼다'
         preview='체크섬 목록은 대개 바이너리 바로 옆에 놓여 있다'
         body={

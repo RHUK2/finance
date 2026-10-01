@@ -11,6 +11,7 @@ import {
   Metric,
   SectionIntro,
   SegmentedControl,
+  StackedBar,
   StatusBanner,
 } from '@/components/simulation';
 import { formatSats } from '@/lib/tx-concept';
@@ -24,10 +25,11 @@ export function PaymentChannel() {
   const [amount, setAmount] = useState(50_000);
   const [closed, setClosed] = useState(false);
 
-  const alicePct = (state.aliceSats / FUNDING_SATS) * 100;
+  const senderSats = direction === 'toBob' ? state.aliceSats : state.bobSats;
+  const insufficient = amount > senderSats;
 
   function pay() {
-    if (closed) return;
+    if (closed || insufficient) return;
     setState((s) => payOffchain(s, direction === 'toBob', amount));
   }
 
@@ -50,27 +52,21 @@ export function PaymentChannel() {
           <span className='text-muted-foreground'>업데이트 {state.updateCount}회</span>
         </div>
 
-        <div className='flex h-8 w-full overflow-hidden rounded-md bg-muted'>
-          <div
-            className='flex items-center justify-end bg-warn-surface pr-2 text-xs font-medium text-white transition-all duration-300'
-            style={{ width: `${alicePct}%` }}
-          >
-            {alicePct > 15 && 'Alice'}
-          </div>
-          {/* Bob 구간은 배경이 bg-muted라 흰 글자를 쓰면 라이트 모드에서 안 보인다. */}
-          <div className='flex flex-1 items-center pl-2 text-xs font-medium text-foreground transition-all duration-300'>
-            {100 - alicePct > 15 && 'Bob'}
-          </div>
-        </div>
-        <div className='flex justify-between text-xs'>
-          <span>{formatSats(state.aliceSats)}</span>
-          <span>{formatSats(state.bobSats)}</span>
-        </div>
+        {/* 한쪽이 0이 되어도 그 사람의 이름과 잔액은 범례에 남긴다(keepEmpty). 라벨이 key라 금액을 붙인다. */}
+        <StackedBar
+          keepEmpty
+          total={FUNDING_SATS}
+          segments={[
+            { label: `Alice ${formatSats(state.aliceSats)}`, value: state.aliceSats, className: 'bg-series-1' },
+            { label: `Bob ${formatSats(state.bobSats)}`, value: state.bobSats, className: 'bg-series-2' },
+          ]}
+        />
 
         {/*
           채널을 닫아도 컨트롤을 숨기지 않고 disabled로 둔다. 닫힌 뒤 오프체인 송금이
           불가능해진다는 것이 이 탭의 논지인데, 컨트롤이 사라져 버리면 무엇이 막혔는지
-          대비가 남지 않는다(CLAUDE.md P5).
+          대비가 남지 않는다(CLAUDE.md 「지금 조건에서 결과를 못 바꾸는 컨트롤」). 잔액이
+          모자랄 때 송금 버튼을 막는 것도 같은 이유다.
         */}
         <div className='grid grid-cols-2 gap-3'>
           <SegmentedControl
@@ -82,7 +78,7 @@ export function PaymentChannel() {
             onChange={setDirection}
             disabled={closed}
           />
-          <Button onClick={pay} disabled={closed}>
+          <Button onClick={pay} disabled={closed || insufficient}>
             <ArrowLeftRight className='size-4' />
             오프체인 송금
           </Button>
@@ -96,7 +92,13 @@ export function PaymentChannel() {
           step={10_000}
           format={formatSats}
           disabled={closed}
-          hint={closed ? '채널이 닫혀 더 이상 오프체인으로 옮길 수 없다. 새 채널을 열면 다시 살아난다.' : undefined}
+          hint={
+            closed
+              ? '채널이 닫혀 더 이상 오프체인으로 옮길 수 없다. 새 채널을 열면 다시 살아난다.'
+              : insufficient
+                ? `잔액 부족: ${direction === 'toBob' ? 'Alice' : 'Bob'}가 보낼 수 있는 최대는 ${formatSats(senderSats)}다. 채널에 예치한 금액을 넘어서는 잔액은 보낼 수 없다.`
+                : undefined
+          }
         />
 
         <div className='flex gap-2 border-t pt-3'>
@@ -119,11 +121,10 @@ export function PaymentChannel() {
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-          <Metric label='오프체인 업데이트' value={`${state.updateCount}회`} tone='accent' />
+          <Metric label='오프체인 업데이트' value={`${state.updateCount}회`} />
           <Metric
             label='온체인 트랜잭션'
             value={closed ? '2건' : '1건'}
-            tone='good'
             sub={closed ? '열기 · 닫기' : '열기. 닫을 때 한 건 더'}
           />
           <Metric label='채널 상태' value={closed ? '닫힘' : '열림'} tone={closed ? undefined : 'good'} />

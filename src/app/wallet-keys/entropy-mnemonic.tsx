@@ -5,7 +5,7 @@ import { Dices, KeyRound, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Panel } from '@/components/panel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ExplainCard, Metric, SectionIntro } from '@/components/simulation';
+import { ExplainCard, Field, Metric, SectionIntro } from '@/components/simulation';
 import {
   ENTROPY_OPTIONS,
   entropyBreakdown,
@@ -15,6 +15,7 @@ import {
   type MnemonicWord,
 } from '@/lib/bip-concept';
 
+import { Badge } from '@/components/ui/badge';
 import { Pipeline } from '@/components/pipeline';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +29,7 @@ function NibbleHexGrid({ bits, className }: { bits: string; className?: string }
         <span key={i} className='flex flex-col items-center gap-1'>
           <span className='tracking-widest text-muted-foreground'>{g}</span>
           {g.length === 4 ? (
-            <span className='w-full rounded-sm bg-warn-surface/15 text-center font-semibold text-warn'>
+            <span className='w-full rounded-sm bg-series-1/15 text-center font-semibold text-series-1'>
               {parseInt(g, 2).toString(16)}
             </span>
           ) : (
@@ -39,6 +40,10 @@ function NibbleHexGrid({ bits, className }: { bits: string; className?: string }
     </span>
   );
 }
+
+// 공정한 6면 주사위 한 번의 정보량과, 256비트를 넘기는 데 필요한 최소 횟수.
+const DIE_BITS = Math.log2(6);
+const DICE_FOR_256 = Math.ceil(256 / DIE_BITS);
 
 export function EntropyMnemonic({
   bits,
@@ -71,8 +76,7 @@ export function EntropyMnemonic({
 
       <Panel>
         <div className='flex flex-wrap items-end justify-between gap-3'>
-          <div className='flex flex-col gap-1.5'>
-            <span className='text-sm font-medium'>엔트로피 강도</span>
+          <Field label='엔트로피 강도'>
             <Select
               items={entropyItems}
               value={String(bits)}
@@ -89,7 +93,7 @@ export function EntropyMnemonic({
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
           <Button variant='outline' onClick={onRegen}>
             <Dices className='size-4 text-series-1' />
             새로 뽑기
@@ -120,22 +124,22 @@ export function EntropyMnemonic({
             보이고, 실제로 난수 결함 때문에 지갑이 통째로 털린 사례도 있다. 반면 인터넷에 연결된 적 없는 곳에서{' '}
             <b>동전이나 주사위를 직접 던져</b> 뽑은 무작위성은 그 순간 그 자리에 있던 사람 외엔 아무도 알 수 없고, 어떤
             소프트웨어도 개입할 수 없다. 동전 한 번이 1비트(앞 1, 뒤 0)라 128비트 지갑은 동전 128번이면 되고, 주사위는
-            한 번에 약 2.58비트라 256비트도 99번이면 충분하다(콜드카드 방식). 하드웨어 지갑들이 주사위 입력 모드를
-            지원하는 이유가 바로 이것이다.
+            한 번에 약 {DIE_BITS.toFixed(2)}비트라 99번이면 약 {(99 * DIE_BITS).toFixed(1)}비트, {DICE_FOR_256}번이면
+            256비트를 넘는다. 하드웨어 지갑들이 주사위 입력 모드를 지원하는 이유가 바로 이것이다.
           </>
         }
       />
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
         <Metric label='엔트로피 (ENT)' value={`${bd.entropy} bit`} />
-        <Metric label='체크섬 (CS)' value={`${bd.checksum} bit`} sub='ENT ÷ 32' tone='accent' />
+        <Metric label='체크섬 (CS)' value={`${bd.checksum} bit`} sub='ENT ÷ 32' />
         <Metric label='총 비트' value={`${bd.total} bit`} sub='ENT + CS' />
-        <Metric label='단어 수' value={`${bd.words}개`} sub='총 ÷ 11' tone='good' />
+        <Metric label='단어 수' value={`${bd.words}개`} sub='총 ÷ 11' />
       </div>
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <ShieldCheck className='size-4 text-good' />
+          <ShieldCheck className='size-4 text-series-2' />
           체크섬은 이렇게 만들어진다 (SHA-256)
         </span>
         <Pipeline
@@ -152,11 +156,10 @@ export function EntropyMnemonic({
               kind: 'box',
               label: `체크섬 (${bd.checksum}비트) → 마지막 단어 뒤에 붙음`,
               value: <NibbleHexGrid bits={hexToBits(hash).slice(0, bd.checksum)} />,
-              tone: 'accent',
+              tone: 'series-1',
             },
           ]}
         />
-        <p className='text-xs text-muted-foreground'>이 데모의 해시·체크섬은 흐름을 보여주기 위한 가짜 값이다.</p>
       </Panel>
 
       <ExplainCard
@@ -176,7 +179,7 @@ export function EntropyMnemonic({
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <KeyRound className='size-4 text-warn' />
+          <KeyRound className='size-4 text-series-1' />
           니모닉 단어
         </span>
         <div className='grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4'>
@@ -185,12 +188,16 @@ export function EntropyMnemonic({
               key={w.position}
               className={cn(
                 'flex flex-col gap-0.5 rounded-md border p-2',
-                w.isChecksum && 'border-warn-surface/50 bg-warn-surface/5',
+                w.isChecksum && 'border-series-1/50 bg-series-1/5',
               )}
             >
               <span className='flex items-center justify-between'>
                 <span className='font-mono text-3xs text-muted-foreground'>#{w.position}</span>
-                {w.isChecksum && <span className='rounded-sm border px-1 text-3xs text-muted-foreground'>체크섬</span>}
+                {w.isChecksum && (
+                  <Badge variant='outline' className='text-muted-foreground'>
+                    체크섬
+                  </Badge>
+                )}
               </span>
               <span className='font-mono text-sm font-medium'>{w.word}</span>
               <span className='font-mono text-3xs text-muted-foreground tabular-nums'>

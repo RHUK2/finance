@@ -4,7 +4,9 @@ import { cn } from '@/lib/utils';
 
 import { CURVE_POINTS, P } from './models';
 
-export type MarkColor = 'series-1' | 'series-2' | 'warn' | 'good' | 'bad';
+// 점의 종류(P, Q, 세 번째 교점, 합…)는 좋고 나쁨의 뜻이 없으니 계열색을 쓴다.
+// good·bad는 검증 통과·실패처럼 판정을 칠하는 자리에서만 쓴다.
+export type MarkColor = 'series-1' | 'series-2' | 'series-3' | 'series-4' | 'good' | 'bad';
 export type GridMark = { x: number; y: number; label?: string; color: MarkColor };
 
 // 색은 키로 받아 여기서 클래스로 바꾼다. 호출부가 'fill-series-1' 같은 문자열을 넘기면 십자선에 쓸
@@ -12,14 +14,16 @@ export type GridMark = { x: number; y: number; label?: string; color: MarkColor 
 const MARK_FILL: Record<MarkColor, string> = {
   'series-1': 'fill-series-1',
   'series-2': 'fill-series-2',
-  warn: 'fill-warn-surface',
+  'series-3': 'fill-series-3',
+  'series-4': 'fill-series-4',
   good: 'fill-good-surface',
   bad: 'fill-bad-surface',
 };
 const MARK_STROKE: Record<MarkColor, string> = {
   'series-1': 'stroke-series-1',
   'series-2': 'stroke-series-2',
-  warn: 'stroke-warn-surface',
+  'series-3': 'stroke-series-3',
+  'series-4': 'stroke-series-4',
   good: 'stroke-good-surface',
   bad: 'stroke-bad-surface',
 };
@@ -103,7 +107,7 @@ export function CurveGrid({
             cx={c.x}
             cy={flip(c.y)}
             r={R_CELL}
-            className='fill-none stroke-warn-surface/70'
+            className='fill-none stroke-foreground/45'
             strokeWidth={0.14}
           />
         ))}

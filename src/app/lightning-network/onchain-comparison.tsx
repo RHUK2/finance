@@ -22,6 +22,9 @@ export function OnchainComparison() {
   }, [paymentCount, feeRate]);
 
   const max = Math.max(onchainFee, lightningFee);
+  // 결제가 한두 번이면 채널을 여닫는 두 건이 오히려 같거나 더 비싸다. 색은 실제 비교 결과를 따른다.
+  const onchainTone = onchainFee > lightningFee ? 'bad' : onchainFee < lightningFee ? 'good' : undefined;
+  const lightningTone = lightningFee > onchainFee ? 'bad' : lightningFee < onchainFee ? 'good' : undefined;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -57,22 +60,22 @@ export function OnchainComparison() {
           label={`온체인으로 ${paymentCount.toLocaleString('ko-KR')}번 보냈다면`}
           value={onchainFee}
           max={max}
-          className='bg-bad-surface'
+          className='bg-series-1'
           format={formatSats}
         />
         <CostBar
           label='라이트닝 채널 (열기 1건 + 닫기 1건)'
           value={lightningFee}
           max={max}
-          className='bg-good-surface'
+          className='bg-series-2'
           format={formatSats}
         />
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='온체인 수수료 총합' value={formatSats(onchainFee)} tone='bad' />
+        <Metric label='온체인 수수료 총합' value={formatSats(onchainFee)} tone={onchainTone} />
         {/* 채널 안 결제에는 중계 노드 라우팅 수수료가 따로 붙는다. 여기서 비교하는 건 온체인 수수료뿐이다. */}
-        <Metric label='라이트닝 온체인 수수료' value={formatSats(lightningFee)} tone='good' />
+        <Metric label='라이트닝 온체인 수수료' value={formatSats(lightningFee)} tone={lightningTone} />
         <Metric label='절약액' value={formatSats(Math.max(0, savings))} tone='accent' />
       </div>
 
@@ -95,7 +98,7 @@ export function OnchainComparison() {
       />
 
       <ExplainCard
-        icon={<Zap className='size-4 text-warn' />}
+        icon={<Zap className='size-4 text-series-1' />}
         title='온체인은 사라지지 않는다, 역할이 나뉠 뿐'
         preview='온체인은 채널을 여닫는 결제, 라이트닝은 그 사이 오가는 소액·잦은 결제를 맡는다.'
         body={

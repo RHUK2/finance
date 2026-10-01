@@ -25,12 +25,12 @@ export function FeeCalc() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='크기가 수수료다 (vByte × sat/vB)'>
         수수료는 <b>보내는 금액과 아무 상관이 없다</b>. 트랜잭션이 블록에서 차지하는 공간, 즉 <b>vByte 크기</b>에만
-        매겨진다. 입력이 많을수록(동전을 여러 개 쓸수록) 커지고, 그만큼 비싸진다. 입력·출력 개수와 수수료율을 바꿔 보자.
+        매겨진다. 입력이 많을수록(UTXO를 여러 개 쓸수록) 커지고, 그만큼 비싸진다. 입력·출력 개수와 수수료율을 바꿔 보자.
       </SectionIntro>
 
       <Panel>
         <div className='grid grid-cols-2 gap-4 sm:grid-cols-3'>
-          <Field label='입력 개수 (쓸 동전 수)'>
+          <Field label='입력 개수 (쓸 UTXO 수)'>
             <Input
               type='number'
               min={1}
@@ -81,14 +81,14 @@ export function FeeCalc() {
               kind: 'box',
               label: '총 크기',
               value: `${vbytes} vByte`,
-              tone: 'accent',
+              tone: 'series-1',
             },
             { kind: 'op', label: `× 수수료율 ${feeRate} sat/vB` },
             {
               kind: 'box',
               label: '수수료',
               value: formatSats(fee),
-              tone: 'good',
+              tone: 'series-2',
             },
           ]}
         />

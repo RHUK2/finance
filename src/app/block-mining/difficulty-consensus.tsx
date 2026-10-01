@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { cn } from '@/lib/utils';
-import { RETARGET_INTERVAL } from '@/lib/bitcoin-models';
-import { retargetMultiplier, TARGET_RETARGET_DAYS } from '@/lib/block-concept';
+import { RETARGET_INTERVAL, TARGET_BLOCK_MINUTES, TARGET_RETARGET_DAYS } from '@/lib/bitcoin-models';
+import { retargetMultiplier } from '@/lib/block-concept';
 
 const FORK_POINT = 4; // 두 체인이 갈라지기 전 공통 블록 수
 
@@ -39,13 +39,15 @@ export function DifficultyConsensus() {
 
       <Panel>
         <ControlSlider
-          icon={<Gauge className='size-4 text-warn' />}
+          icon={<Gauge className='size-4 text-series-1' />}
           label='지난 2,016블록이 실제로 걸린 기간'
-          hint={`목표 기간은 ${TARGET_RETARGET_DAYS}일(2,016블록 × 10분). 더 빨리 끝났으면 해시레이트가 늘어난 것, 더 걸렸으면 줄어든 것이다.`}
+          hint={`목표 기간은 ${TARGET_RETARGET_DAYS}일(${RETARGET_INTERVAL.toLocaleString('ko-KR')}블록 × ${TARGET_BLOCK_MINUTES}분). 더 빨리 끝났으면 해시레이트가 늘어난 것, 더 걸렸으면 줄어든 것이다.`}
           value={actualDays}
           onChange={setActualDays}
-          min={4}
-          max={40}
+          // 양 끝이 조정 폭 제한(±4배)을 넘도록 잡는다. 14 ÷ 3.5일 = 4배, 14 ÷ 56일 = 0.25배라
+          // 2~70일이면 슬라이더 양 끝에서 아래 상하한 안내가 뜬다.
+          min={2}
+          max={70}
           step={1}
           format={(v) => `${v}일`}
         />
@@ -80,8 +82,8 @@ export function DifficultyConsensus() {
         }
       />
 
-      <SectionIntro title='합의: 가장 긴(작업량이 가장 많은) 체인이 이긴다'>
-        두 채굴자가 거의 동시에 다른 블록을 찾으면 체인이 잠깐 갈라질 수 있다(포크). 노드들은 어느 쪽이 &#39;맞는지&#39;
+      <SectionIntro title='합의: 누적 작업량이 가장 많은 체인이 이긴다'>
+        두 채굴자가 거의 동시에 다른 블록을 찾으면 체인이 잠깐 갈라질 수 있다. 노드들은 어느 쪽이 &#39;맞는지&#39;
         투표하지 않는다. 그냥 각자 먼저 본 체인을 따르다가, 한쪽이 다음 블록으로 더 길어지는 순간 전부 그쪽으로
         갈아탄다. 아래에서 양쪽 체인에 블록을 추가하며 확인해 보자.
       </SectionIntro>

@@ -14,12 +14,12 @@
 // 일어나는데, 이건 secp256k1에서도 똑같이 벌어지므로 단순화가 아니라 충실함이다.
 
 export const P = 43;
-export const B = 7;
+const B = 7;
 export const N = 31;
 
 export type Pt = { x: number; y: number } | null; // null = 무한원점
 
-export const G: Pt = { x: 2, y: 12 };
+const G: Pt = { x: 2, y: 12 };
 
 export const mod = (a: number, m: number) => ((a % m) + m) % m;
 
@@ -100,7 +100,7 @@ export function lineCells(p1: Pt, p2: Pt): { x: number; y: number }[] {
   return Array.from({ length: P }, (_, x) => ({ x, y: mod(l * (x - p1.x) + p1.y, P) }));
 }
 
-// 스칼라 곱을 이중화-덧셈으로 풀어 쓴 자취. 30번 더하는 대신 다섯 번 안에 끝나는
+// 스칼라 곱을 이중화-덧셈으로 풀어 쓴 자취. 30번 더하는 대신 몇 단계 안에 끝나는
 // 것을 보이는 용도라, 실제 계산이 아니라 그 계산의 기록이다.
 export function doubleAndAddSteps(k: number): { bit: number; acc: Pt; note: string }[] {
   const bits = mod(k, N).toString(2).split('').map(Number);
@@ -132,16 +132,21 @@ export function sign(d: number, z: number, k: number): Signature {
   return { R, r, s, invalid: null };
 }
 
-export type Verification = { w: number; u1: number; u2: number; X: Pt; xModN: number | null; ok: boolean };
+export type Verification =
+  | { rejected: true; ok: false }
+  | { rejected: false; w: number; u1: number; u2: number; X: Pt; xModN: number | null; ok: boolean };
 
 // 검증자가 쓰는 값은 공개키 Q, 해시 z, 서명 (r, s) 넷뿐이다. 개인키는 여기 없다.
+// 실제 ECDSA처럼 r과 s가 1 이상 n−1 이하인지부터 본다. 0에는 역원이 없어서(inv는
+// 페르마 소정리라 0을 넣으면 0을 돌려준다) 범위 밖이면 w를 계산하기 전에 거부한다.
 export function verify(Q: Pt, z: number, r: number, s: number): Verification {
+  if (r < 1 || r > N - 1 || s < 1 || s > N - 1) return { rejected: true, ok: false };
   const w = inv(s, N);
   const u1 = mod(z * w, N);
   const u2 = mod(r * w, N);
   const X = addPt(mulPt(u1, G), mulPt(u2, Q));
   const xModN = X === null ? null : mod(X.x, N);
-  return { w, u1, u2, X, xModN, ok: xModN !== null && xModN === r };
+  return { rejected: false, w, u1, u2, X, xModN, ok: xModN !== null && xModN === r };
 }
 
 // 같은 일회용 비밀값으로 만든 두 서명에서 k와 개인키를 되찾는다.

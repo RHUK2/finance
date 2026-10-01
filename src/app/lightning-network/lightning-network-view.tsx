@@ -16,7 +16,7 @@ const TABS = [
 export function LightningNetworkView() {
   return (
     <ExplainerPage
-      title='온체인 다음: 오프체인에서 결제하기'
+      title='매번 온체인에 쓰지 않고도 어떻게 결제할 수 있나'
       intro={
         <>
           지금까지의 기술 트랙은 트랜잭션 하나가 온체인에서 확정되기까지의 과정을 다뤘다. 그런데 매번 온체인 트랜잭션을

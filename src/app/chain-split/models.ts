@@ -4,12 +4,15 @@
 // 있는지를 오직 두 체인의 규칙 집합이 어떻게 겹치는지로만 결정한다. 서명 알고리즘
 // 차이·체인 ID·SIGHASH 플래그는 모델에 넣지 않는다(docs/adr/0005 참조).
 
-import { RETARGET_INTERVAL } from '@/lib/bitcoin-models';
-import { clamp } from '@/lib/utils';
+import { RETARGET_INTERVAL, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
+import type { Fact } from '@/lib/fact';
+import { clamp, formatPct } from '@/lib/utils';
 
 // 화면에 쓰는 사건 수치는 값과 기준 시점을 한 객체에 묶어 단일 출처로 둔다.
 // 기준 없는 수치는 몇 달 뒤 조용히 틀린 문서가 된다.
-export type Fact = { value: number; label: string; asOf: string; source: string };
+
+// 신호율은 신호한 블록 수를 조정 주기로 나눈 값이라 블록 수에서 파생한다.
+const SIGNALING_BLOCKS = 51;
 
 export const FACTS = {
   signalingHeight: {
@@ -18,8 +21,14 @@ export const FACTS = {
     asOf: '2026년 8월 7일',
     source: 'BIP-110 배포 파라미터',
   },
+  signalingBlocks: {
+    value: SIGNALING_BLOCKS,
+    label: '개시 직전 2,016블록 중 BIP-110을 신호한 블록 수',
+    asOf: '2026년 8월 7일',
+    source: '블록 헤더 집계',
+  },
   signalingShare: {
-    value: 0.0253,
+    value: SIGNALING_BLOCKS / RETARGET_INTERVAL,
     label: '개시 직전 2,016블록의 BIP-110 신호 비율',
     asOf: '2026년 8월 7일',
     source: '블록 헤더 집계 (51 / 2,016)',
@@ -47,8 +56,21 @@ export const FACTS = {
 // 기준일. 화면에 그대로 박아 이 페이지가 언제의 사실을 말하는지 남긴다.
 export const AS_OF = '2026년 8월 25일';
 
+// 두 탭이 같은 비율을 같은 문자열로 찍도록 표기도 여기서 한 번만 만든다.
+export const SIGNAL_PCT_LABEL = formatPct(FACTS.signalingShare.value * 100, 2);
+export const LOCK_IN_PCT_LABEL = formatPct(FACTS.lockInThreshold.value * 100, 0);
+
+// BIP-110 규칙 한도. 화면 두 곳(사례 탭, 코인 분리 탭)이 같은 값을 부른다.
+export const BIP110_RULES = {
+  outputScriptBytes: 34,
+  opReturnBytes: 83,
+  dataPushBytes: 256,
+  durationYears: 1,
+  source: 'BIP-110 명세',
+} as const;
+
 // ─────────────────────────────────────────────────────────────
-// 탭 1. 왜 두 체인이 남는가
+// 탭 1. 두 체인이 남는 이유
 //
 // 소프트포크는 규칙을 좁히므로 구버전 노드가 신버전 블록을 계속 받아들인다.
 // 그런데도 체인이 갈린 이유는 mandatory signaling에 있다. 신호하지 않는 블록을
@@ -59,12 +81,6 @@ export const AS_OF = '2026년 8월 25일';
 // 해시레이트로 캐야 한다. 아래 계산은 가상 눈금이 아니라 프로토콜 상수에서
 // 그대로 나오는 값이다.
 // ─────────────────────────────────────────────────────────────
-
-export const TARGET_BLOCK_MINUTES = 10;
-
-// 난이도 조정 주기는 프로토콜 상수라 bitcoin-models가 단일 출처다. 이 페이지의
-// 화면 문구가 블록 수를 직접 부르므로 이름만 여기서 다시 내보낸다.
-export { RETARGET_INTERVAL as RETARGET_BLOCKS };
 
 // 해시레이트 비중(0~1)을 가진 체인의 평균 블록 간격(분).
 export function blockIntervalMinutes(hashShare: number): number {
@@ -77,9 +93,13 @@ export function daysToRetarget(hashShare: number): number {
   return (blockIntervalMinutes(hashShare) * RETARGET_INTERVAL) / (60 * 24);
 }
 
+// 구간은 반올림한 값으로 고른다. 반올림 전 값으로 고르면 89.6분이 `90분`으로 찍혀
+// 바로 위 구간(`1.5시간`)과 표기가 갈린다.
 export function formatDuration(minutes: number): string {
-  if (minutes < 90) return `${Math.round(minutes)}분`;
-  if (minutes < 60 * 48) return `${(minutes / 60).toFixed(1)}시간`;
+  const wholeMinutes = Math.round(minutes);
+  if (wholeMinutes < 90) return `${wholeMinutes}분`;
+  const hours = Math.round(minutes / 6) / 10;
+  if (hours < 48) return `${hours.toFixed(1)}시간`;
   return `${(minutes / (60 * 24)).toFixed(1)}일`;
 }
 
@@ -128,7 +148,7 @@ export type ReplayStage = {
   forked: number;
 };
 
-export const START_BALANCE = 1;
+const START_BALANCE = 1;
 export const SEND_AMOUNT = 0.3;
 
 // 5단계 워크스루. 잔고는 단계마다 크게 점프하므로 화면에서는 StatCard로 그린다.
@@ -219,7 +239,7 @@ export const SEPARATION_METHODS: SeparationMethod[] = [
     label: '한쪽 규칙만 위반하는 요소 붙이기',
     sub: '좁은 쪽이 거부할 데이터를 일부러 넣는다',
     marks: ['yes', 'partial', 'no'],
-    body: 'BIP-110 체인은 OP_RETURN을 83바이트로 묶고 특정 데이터 푸시를 256바이트로 제한한다. 그 한도를 넘는 출력을 붙인 트랜잭션은 넓은 쪽 체인에서만 유효하다. 소프트포크 분기의 포함 관계가 여기서 처음으로 쓸모를 갖는다. 포함 관계는 리플레이를 막아 주지 않고, 어느 방향으로 분리할 수 있는지만 정해 준다. 좁은 쪽에서 넓은 쪽으로만 가능하고 반대는 안 된다. 하드포크 분기에서는 두 규칙이 서로를 포함하지 않아 양방향으로 가능해 보이지만, 실제로 쓰려면 두 구현체의 규칙 차이를 정확히 알아야 한다. 개인이 직접 하기는 어렵다. 지갑 소프트웨어가 만들어 주지 않는 모양의 트랜잭션을 손으로 조립해야 하고, 한 번 틀리면 되돌릴 수 없다.',
+    body: `BIP-110 체인은 OP_RETURN을 ${BIP110_RULES.opReturnBytes}바이트로 묶고 특정 데이터 푸시를 ${BIP110_RULES.dataPushBytes}바이트로 제한한다. 그 한도를 넘는 출력을 붙인 트랜잭션은 넓은 쪽 체인에서만 유효하다. 소프트포크 분기의 포함 관계가 여기서 처음으로 쓸모를 갖는다. 포함 관계는 리플레이를 막아 주지 않고, 어느 방향으로 분리할 수 있는지만 정해 준다. 좁은 쪽에서 넓은 쪽으로만 가능하고 반대는 안 된다. 하드포크 분기에서는 두 규칙이 서로를 포함하지 않아 양방향으로 가능해 보이지만, 실제로 쓰려면 두 구현체의 규칙 차이를 정확히 알아야 한다. 개인이 직접 하기는 어렵다. 지갑 소프트웨어가 만들어 주지 않는 모양의 트랜잭션을 손으로 조립해야 하고, 한 번 틀리면 되돌릴 수 없다.`,
   },
   {
     id: 'protection',

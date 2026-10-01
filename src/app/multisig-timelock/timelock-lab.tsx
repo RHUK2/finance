@@ -12,17 +12,22 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
+import { TOTAL_BLOCKS_APPROX } from '@/lib/p2p-concept';
 
 type LockType = 'cltv' | 'csv';
 
 const fmtBlocks = (v: number) => `${v.toLocaleString('ko-KR')}블록`;
 
+// CLTV 슬라이더는 지금 높이 근처에서 움직인다. 지금 높이의 근사값은 p2p-concept가 단일 출처다.
+const CLTV_NOW = TOTAL_BLOCKS_APPROX;
+const CLTV_RANGE = { min: CLTV_NOW - 3_000, max: CLTV_NOW + 3_000 };
+
 export function TimelockLab() {
   const [type, setType] = useState<LockType>('cltv');
 
-  // CLTV: 절대 블록 높이 기준. 기본값은 대략의 현재 높이(2026년 중반)에 맞춰 둔다.
-  const [currentHeight, setCurrentHeight] = useState(960_000);
-  const [unlockHeight, setUnlockHeight] = useState(962_000);
+  // CLTV: 절대 블록 높이 기준. 기본값은 대략의 현재 높이에 맞추고, 해제 높이는 그보다 뒤에 둔다.
+  const [currentHeight, setCurrentHeight] = useState(CLTV_NOW);
+  const [unlockHeight, setUnlockHeight] = useState(CLTV_NOW + 2_000);
 
   // CSV: 이 UTXO가 생성된 시점부터 상대적으로 경과한 블록 수 기준.
   const [elapsedBlocks, setElapsedBlocks] = useState(100);
@@ -61,8 +66,8 @@ export function TimelockLab() {
               label='현재 블록 높이'
               value={currentHeight}
               onChange={setCurrentHeight}
-              min={960_000}
-              max={964_000}
+              min={CLTV_RANGE.min}
+              max={CLTV_RANGE.max}
               step={100}
               format={fmtBlocks}
             />
@@ -70,8 +75,8 @@ export function TimelockLab() {
               label='잠금 해제 높이 (locktime)'
               value={unlockHeight}
               onChange={setUnlockHeight}
-              min={960_000}
-              max={964_000}
+              min={CLTV_RANGE.min}
+              max={CLTV_RANGE.max}
               step={100}
               format={fmtBlocks}
             />
