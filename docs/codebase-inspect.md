@@ -47,17 +47,17 @@
 4. 부모 에이전트는 교차 영역과 검증 실행을 조율하고, 결과를 합칠 때 중복과 오탐을 직접 확인한다.
 5. 결과 파일을 작성하고 Git 상태를 시작 시점과 비교한다.
 
-| 담당 영역      | 범위                                                                                                                                                                               |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 문서           | `AGENTS.md`·`CLAUDE.md`·`CONTEXT.md`, `docs/adr/`, `docs/agents/`, `docs/fact-check-log.md`                                                                                        |
-| 데이터 계층    | `src/app/api/`, `src/lib/cache*.ts`·`fred.ts`·`yahoo.ts`·`series.ts`·`prefetch.ts`, `src/hooks/use-*.ts` 중 데이터 훅                                                              |
-| 모델           | `src/lib/*-models.ts`·`*-concept.ts`·`bcra.ts`·`address-types.ts`, `src/app/<page>/models.ts`                                                                                      |
-| 화면           | `src/app/**`의 페이지·컴포넌트, `src/components/`(`ui/` 제외), 차트·재생 훅(`use-chart.ts`·`use-round-engine.ts` 등)                                                               |
-| 루트 실행 환경 | `package.json`, `pnpm-workspace.yaml`, `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, 포맷 설정, `.husky/`, `scripts/`, `link-worktree-files.sh`, `.mcp.json`, `.vscode/` |
+| 담당 영역      | 범위                                                                                                                                                                                                                                                |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 문서           | `AGENTS.md`·`CLAUDE.md`·`CONTEXT.md`, `docs/adr/`, `docs/agents/`, `docs/fact-check-log.md`, `docs/codebase-inspect.md` 자신, `docs/reference/` 인용 대조                                                                                           |
+| 데이터 계층    | `src/app/api/`, `src/lib/loaders/`, `src/lib/cache*.ts`·`fred.ts`·`yahoo.ts`·`series.ts`·`prefetch.ts`, `src/hooks/use-*.ts` 중 데이터 훅                                                                                                           |
+| 모델           | `src/lib/*-models.ts`·`*-concept.ts`·`bcra.ts`·`address-types.ts`, `src/app/<page>/models.ts`                                                                                                                                                       |
+| 화면           | `src/app/**`의 페이지·컴포넌트, `src/components/`(`ui/` 제외), 차트·재생 훅(`use-chart.ts`·`use-round-engine.ts` 등)                                                                                                                                |
+| 루트 실행 환경 | `package.json`, `pnpm-workspace.yaml`, `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `components.json`, `postcss.config.mjs`, `.nvmrc`, `.gitignore`, 포맷 설정, `.husky/`, `scripts/`, `link-worktree-files.sh`, `.mcp.json`, `.vscode/` |
 
 각 서브에이전트는 담당 영역에 해당하는 한 아래 「조사 항목」의 모든 항목을 점검한다. 실제 오류와 명시된 규약 위반을 먼저 보고, 나머지 항목은 표본 조사가 되면 그 범위를 기록한다.
 
-「외부 API와 캐시」는 데이터 계층 담당이, 「수치와 규제 값」은 모델 담당이, 「화면 규약」·「shadcn primitive 미사용」·「접근성과 화면 상태」는 화면 담당이 본다. 「의존성」과 「보안 취약점」의 의존성 항목은 루트 실행 환경 담당이 본다. 레지스트리에 접속하는 `pnpm deps:check`·`pnpm run audit`는 부모 에이전트가 「의존성 점검」대로 한 번만 실행해 결과를 나눠 준다.
+「외부 API와 캐시」는 데이터 계층 담당이, 「수치와 규제 값」은 모델 담당이, 「화면 규약」·「shadcn primitive 미사용」·「접근성과 화면 상태」는 화면 담당이 본다. 「의존성」과 「보안 취약점」의 의존성 항목은 루트 실행 환경 담당이 본다. 「API 키와 민감 정보」와 「보안 취약점」의 입력 처리는 데이터 계층 담당이, 응답 헤더(`next.config.ts`)는 루트 실행 환경 담당이 본다. 레지스트리에 접속하는 `pnpm deps:check`·`pnpm run audit`는 부모 에이전트가 「의존성 점검」대로 한 번만 실행해 결과를 나눠 준다.
 
 파일별로 직접 읽음·정적 검색·미점검을 구분한다. 일부만 읽은 파일은 읽은 구간을 기록한다. 정적 검색은 사용한 패턴과 범위를 남긴다. 표본 조사한 부분을 전수 확인한 것으로 표현하지 않는다. `SimTabs`·`ExplainCard`는 접힌 내용을 DOM에 두지 않으므로 무엇이 쓰였는지는 소스로 센다.
 
@@ -169,12 +169,12 @@
 
 ### 테스트 코드
 
-이 레포의 테스트는 `scripts/*.test.mjs`(`node:test`) 하나뿐이다. `src/`에는 테스트가 없고 E2E도 없다.
+이 레포의 테스트는 두 벌이다. `scripts/*.test.mjs`는 `node:test`(`pnpm test:scripts`)로, `src/**/*.test.ts`는 Vitest(`pnpm test`, 설정은 `vitest.config.ts`)로 돈다. Vitest 쪽은 순수 계산 모델과 표기 함수의 회귀 테스트이고 node 환경이라 화면(DOM)은 띄우지 않는다. E2E는 없다.
 
 - 기존 테스트: 대상 스크립트의 현재 동작과 맞는지, 항상 성공하는 단언이나 방치된 `skip`·`todo`가 있는지
-- 테스트 공백: 순수 계산 모델(`src/lib/*-models.ts`·`*-concept.ts`, `src/app/<page>/models.ts`)과 `src/lib/utils.ts`의 표기 함수 중 틀리면 화면 수치가 조용히 틀리는 것. `docs/fact-check-log.md`에 대조 결과가 있는 값은 회귀 테스트로 옮기기 좋은 후보다
+- 테스트 공백: 순수 계산 모델(`src/lib/*-models.ts`·`*-concept.ts`, `src/app/<page>/models.ts`)과 `src/lib/utils.ts`의 표기 함수 중 테스트 파일이 없거나, 틀리면 화면 수치가 조용히 틀리는데 단언이 없는 것. `docs/fact-check-log.md`에 대조 결과가 있는데 테스트로 옮기지 않은 값도 공백이다. 화면 파일(`.tsx`) 안에만 있는 계산은 모델로 옮겨야 테스트할 수 있다
 
-테스트 도입은 제안으로만 남긴다. 러너 선택처럼 새 도구가 필요한 것은 별도 항목으로 분리한다.
+새 테스트는 제안으로만 남긴다. 테스트 러너는 위 두 벌로 정해져 있으니 새 도구가 필요한 제안은 별도 항목으로 분리한다.
 
 ### 외부 API와 캐시
 
@@ -290,10 +290,10 @@
 
 ### 기본 검증
 
-레포 루트에서 다음을 실행해 현재 검증 상태를 확보한다. `pnpm inspect`의 lint는 `.eslintcache`를 쓰므로 캐시 없이 따로 돌린다. 셋 다 소스를 수정하지 않는다.
+레포 루트에서 다음을 실행해 현재 검증 상태를 확보한다. `pnpm inspect`의 lint는 `.eslintcache`를 쓰므로 캐시 없이 따로 돌린다. 넷 다 소스를 수정하지 않는다.
 
 ```bash
-pnpm type && pnpm exec eslint . --no-cache && pnpm test:scripts
+pnpm type && pnpm exec eslint . --no-cache && pnpm test:scripts && pnpm test
 ```
 
 이어서 `pnpm build`를 실행한다. `inspect`가 잡지 못하는 서버·클라이언트 경계 위반과 빌드 단계 오류를 여기서 본다. `.next`를 덮어쓰므로 같은 체크아웃에서 dev 서버가 돌고 있으면 실행하지 않고 그 사실을 기록한다. 빌드가 환경변수 부재로 실패하면 환경 문제로 분류한다.

@@ -1,5 +1,7 @@
 # Radix를 버리고 Base UI로 간다
 
+상태: 채택 (2026-09-26)
+
 지금 Radix가 막고 있는 것은 없었다. 이 전환은 선제적 정합성 맞추기다. Base UI는 Radix를 만든 사람들이 Floating UI·Material UI 팀과 함께 만든 후계 성격의 라이브러리이고, shadcn CLI가 `init --base radix|base`로 양쪽을 1급 지원하면서 레지스트리의 새 컴포넌트가 Base UI 쪽으로 먼저 간다. 미루면 우리 `ui/`가 레지스트리에서 점점 멀어지고, 그때는 컴포넌트 하나를 받을 때마다 손으로 번역해야 한다.
 
 `components.json`의 `style`을 `radix-vega`에서 `base-vega`로 바꾸고 16개를 `add --overwrite`로 다시 받았다. 테마 토큰은 두 style이 완전히 동일해서 `globals.css`는 건드리지 않았다. 차이는 의존성 하나(`radix-ui` → `@base-ui/react`)뿐이다.
@@ -18,7 +20,7 @@ codemod. `asChild` → `render`가 단순 rename이 아니라(자식이 prop으�
 
 데이터 속성 이름이 바뀐다. Radix의 `data-state="open"`이 Base UI에서는 `data-open`·`data-closed`다. 타입 체크도 빌드도 통과하지만 CSS 선택자는 조용히 죽으므로, 앱 코드에서 `group-data-[state=open]/…`을 쓰던 세 곳(사이드바 그룹 화살표, `ExplainCard`의 미리보기 숨김과 화살표 회전)을 `group-data-open/…`으로 고쳤다. 이런 종류는 `grep`으로 찾아야 하고 테스트가 잡아 주지 않는다.
 
-`vaul`이 사라진다. Q4를 정할 때 "Base UI에는 drawer 대응물이 없으니 vaul을 남긴다"고 봤는데 틀렸다. `base-vega`의 `drawer`는 `@base-ui/react/drawer`를 쓴다. 그래서 재설치가 vaul 래퍼를 갈아 놓았고, 아무도 안 쓰게 된 `vaul`을 지웠다. 그 결과 `@radix-ui/*`가 lockfile에서 완전히 사라졌다. vaul이 `@radix-ui/react-dialog`를 끌고 있었기 때문에, 원래 계획은 "직접 의존만 제거, lockfile에는 남는다"였는데 실제로는 흔적 없이 끝났다.
+`vaul`이 사라진다. 전환 계획을 세울 때 "Base UI에는 drawer 대응물이 없으니 vaul을 남긴다"고 봤는데 틀렸다. `base-vega`의 `drawer`는 `@base-ui/react/drawer`를 쓴다. 그래서 재설치가 vaul 래퍼를 갈아 놓았고, 아무도 안 쓰게 된 `vaul`을 지웠다. 그 결과 `@radix-ui/*`가 lockfile에서 완전히 사라졌다. vaul이 `@radix-ui/react-dialog`를 끌고 있었기 때문에, 원래 계획은 "직접 의존만 제거, lockfile에는 남는다"였는데 실제로는 흔적 없이 끝났다.
 
 `Select.Value`가 라벨이 아니라 값을 그린다. Radix에서는 선택된 `SelectItem`의 children을 그렸는데 Base UI는 값 자체를 그리고, 라벨을 보이려면 `Select.Root`에 `items`를 준다. 다섯 곳 모두 트리거가 `native`·`256` 같은 원시 값을 보이고 있었다. 앞의 데이터 속성과 함께, 타입도 빌드도 SSR HTML도 통과하는데 눌러 봐야 드러나는 부류다. 이 전환에서 브라우저 검증이 선택이 아닌 이유다.
 
@@ -28,4 +30,4 @@ codemod. `asChild` → `render`가 단순 rename이 아니라(자식이 prop으�
 
 드리프트 감사는 `src/components/ui/`만 보면 부족하다. 재설치가 `src/hooks/use-mobile.ts`도 덮었는데, 우리 것은 `useSyncExternalStore`로 다시 쓴 버전이었다(레지스트리 버전은 effect 안에서 `setState`를 불러 `react-hooks/set-state-in-effect`에 걸린다). 다음에 재설치할 때는 `shadcn add`가 건드리는 파일 전체를 `git status`로 보고 시작한다.
 
-ADR 0010의 드리프트 표는 그대로 유효하다. `button.tsx`(`shape` 변형·`sm` gap)·`card.tsx`(`CardTitle` 타이포그래피·`CardContent` `bleed`)·`sidebar.tsx`(`SidebarHeader` 여백·`isMobile` 타입)·`tabs.tsx`(루트 gap·트리거 세로 여백)를 재적용했다. 여기에 `use-mobile.ts`를 더한다.
+ADR 0010의 드리프트 표는 그대로 유효하다. `button.tsx`(`shape` 변형·`sm` gap)·`card.tsx`(`CardTitle` 타이포그래피·`CardContent` `bleed`)·`sidebar.tsx`(`SidebarHeader` 여백·`isMobile` 타입)·`tabs.tsx`(루트 gap·트리거 세로 여백)를 재적용했다. 여기에 `use-mobile.ts`를 더했고, 그 행은 재적용 목록을 한 곳에 두려고 ADR 0010 표로 옮겼다. 그 뒤 `sidebar.tsx`와 `use-mobile.ts`는 소비처가 없어 지웠고, 두 행은 ADR 0010 표에서 닫힘으로 남는다. 재설치가 다시 끌어오면 재적용하지 않고 지운다.
