@@ -4,13 +4,13 @@ import { useMemo } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard, ScoreHeadline, type IndicatorStatus } from '@/components/indicator-card';
-import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
+import { CHART_SERIES, CHART_TONE, LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
 import { dailyIssuanceBtc, movingAverage } from '@/lib/bitcoin-models';
 
 const ZONE_LINES = [
-  { price: 4, label: '고평가', color: '#ef4444' },
-  { price: 0.5, label: '저평가', color: '#22c55e' },
+  { price: 4, label: '고평가', color: CHART_TONE.bad },
+  { price: 0.5, label: '저평가', color: CHART_TONE.good },
 ];
 
 function getPuellStatus(value: number): IndicatorStatus {
@@ -24,9 +24,11 @@ type Props = {
   data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
+  /** 첫 데이터 없이 요청이 실패했다(IndicatorCard의 error) */
+  error?: boolean;
 };
 
-export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
+export function PuellMultipleChart({ data, resetRef, updatedLabel, error }: Props) {
   const puell = useMemo(() => {
     if (!data) return [];
     const issuanceUsd = data.history.map((p) => ({
@@ -44,7 +46,7 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
-        color: '#f59e0b',
+        color: CHART_SERIES[0],
         lineWidth: 2,
         priceLineVisible: false,
       });
@@ -62,6 +64,7 @@ export function PuellMultipleChart({ data, resetRef, updatedLabel }: Props) {
       title='Puell Multiple'
       updatedLabel={updatedLabel}
       ready={!!data}
+      error={error}
       headline={current != null && <ScoreHeadline value={current} status={getPuellStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}

@@ -4,13 +4,13 @@ import { useMemo } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard, ScoreHeadline, type IndicatorStatus } from '@/components/indicator-card';
-import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
+import { CHART_SERIES, CHART_TONE, LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
 import { movingAverage } from '@/lib/bitcoin-models';
 
 const ZONE_LINES = [
-  { price: 2.4, label: '과열', color: '#ef4444' },
-  { price: 1, label: '저평가', color: '#22c55e' },
+  { price: 2.4, label: '과열', color: CHART_TONE.bad },
+  { price: 1, label: '저평가', color: CHART_TONE.good },
 ];
 
 function getMayerStatus(value: number): IndicatorStatus {
@@ -24,9 +24,11 @@ type Props = {
   data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
+  /** 첫 데이터 없이 요청이 실패했다(IndicatorCard의 error) */
+  error?: boolean;
 };
 
-export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
+export function MayerMultipleChart({ data, resetRef, updatedLabel, error }: Props) {
   const mayer = useMemo(() => {
     if (!data) return [];
     const sma = movingAverage(data.history, 200);
@@ -40,7 +42,7 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       const lineSeries = chart.addSeries(LineSeries, {
-        color: '#a78bfa',
+        color: CHART_SERIES[1],
         lineWidth: 2,
         priceLineVisible: false,
       });
@@ -58,10 +60,11 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel }: Props) {
       title='Mayer Multiple'
       updatedLabel={updatedLabel}
       ready={!!data}
+      error={error}
       headline={current != null && <ScoreHeadline value={current} status={getMayerStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
-      description='현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 1 미만이면 장기 추세 아래의 저평가, 2.4 이상이면 추세를 크게 벗어난 단기 과열로 보고 사이클 내 진입·청산 타이밍을 가늠합니다.'
+      description='현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 1 미만이면 장기 추세 아래의 저평가, 2.4 이상이면 추세를 크게 벗어난 단기 과열로 보고 사이클 내 진입·매도 시점을 가늠합니다.'
     />
   );
 }

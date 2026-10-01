@@ -1,6 +1,6 @@
 import { pctChange } from './utils';
 
-// 라우트 핸들러 응답과 클라이언트 훅이 공유하는 시계열 요약 형태.
+// 로더(src/lib/loaders/) 응답과 클라이언트 훅이 공유하는 시계열 요약 형태.
 export type MacroSeries = {
   history: { time: string; value: number }[];
   current: number | null;

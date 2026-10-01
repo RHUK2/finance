@@ -1,18 +1,10 @@
 'use client';
 
 import { useEndpoint } from '@/hooks/use-endpoint';
-import type { MacroSeries } from '@/lib/series';
+import type { InflationData } from '@/lib/loaders/inflation';
 
-export type InflationData = {
-  fetchedAt: string;
-  available: boolean;
-  cpi?: MacroSeries;
-  m2?: MacroSeries;
-  deposit?: MacroSeries;
-  stock?: MacroSeries;
-  house?: MacroSeries;
-  fx?: MacroSeries; // 원/달러 환율(월별). USD 자산을 원화로 환산할 때 사용(한국만 제공)
-};
+// 응답 타입은 로더(src/lib/loaders/)가 정본이다. 미국·한국 두 키가 같은 모양을 준다.
+export type { InflationData };
 
 export const useInflationData = () => useEndpoint<InflationData>('inflation-data');
 export const useInflationDataKr = () => useEndpoint<InflationData>('inflation-data-kr');

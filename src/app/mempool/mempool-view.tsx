@@ -15,17 +15,30 @@ import {
 } from '@/hooks/use-mempool';
 import { formatRelativeTime, useMinuteTick } from '@/hooks/use-relative-time';
 import { BLOCKS_PER_HALVING, RETARGET_INTERVAL } from '@/lib/bitcoin-models';
-import { BTC_COLOR, cn } from '@/lib/utils';
+import { BTC_COLOR, cn, formatPct } from '@/lib/utils';
 
-import { BlockTimeline, PoolShareBar, ProgressPanel, SectionHeading } from './components';
+import { BlockTimeline, LoadFailed, PoolShareBar, ProgressPanel, SectionHeading } from './components';
 
 export function MempoolView() {
-  const { data: mempool } = useMempoolStats();
-  const { data: mining } = useMiningStats();
-  const { data: mempoolBlocks } = useMempoolBlocks();
-  const { data: recentBlocks } = useRecentBlocks();
-  const { data: hashrate } = useHashrateHistory();
-  const { data: pools } = useMiningPools();
+  const mempoolQuery = useMempoolStats();
+  const miningQuery = useMiningStats();
+  const mempoolBlocksQuery = useMempoolBlocks();
+  const recentBlocksQuery = useRecentBlocks();
+  const hashrateQuery = useHashrateHistory();
+  const poolsQuery = useMiningPools();
+  const mempool = mempoolQuery.data;
+  const mining = miningQuery.data;
+  const mempoolBlocks = mempoolBlocksQuery.data;
+  const recentBlocks = recentBlocksQuery.data;
+  const hashrate = hashrateQuery.data;
+  const pools = poolsQuery.data;
+
+  // 첫 데이터 없이 요청이 실패한 쿼리가 구획 안에 하나라도 있으면 그 구획은 실패 문구를 보인다.
+  // 이전 데이터가 있으면(재조회 실패) 옛 값을 그대로 보인다.
+  const failed = (...qs: { isError: boolean; data: unknown }[]) => qs.some((q) => q.isError && !q.data);
+  const timelineFailed = failed(mempoolQuery, mempoolBlocksQuery, recentBlocksQuery);
+  const miningFailed = failed(miningQuery, hashrateQuery);
+  const poolsFailed = failed(poolsQuery);
 
   // 상대시간 라벨을 타이머 하나로 갱신
   useMinuteTick();
@@ -53,7 +66,12 @@ export function MempoolView() {
             <SectionHeading aside={timelineTime && `${timelineTime} 기준`}>
               블록 시간축 · 확정된 블록에서 대기 중인 블록까지
             </SectionHeading>
-            <BlockTimeline mempool={mempool} pending={mempoolBlocks?.blocks} confirmed={recentBlocks?.blocks} />
+            <BlockTimeline
+              mempool={mempool}
+              pending={mempoolBlocks?.blocks}
+              confirmed={recentBlocks?.blocks}
+              error={timelineFailed}
+            />
             <p className='mt-2 text-xs text-muted-foreground'>
               왼쪽이 이미 확정된 블록, 가운데가 아직 블록에 담기지 않은 대기 물량, 오른쪽이 그 물량이 몇 번째 블록에서
               처리될지 예측한 값입니다. 오른쪽으로 갈수록 수수료가 낮은 트랜잭션이 밀려 있습니다. 미확인 거래가 많고
@@ -67,7 +85,11 @@ export function MempoolView() {
               이 축을 미는 힘 · 해시레이트와 난이도
             </SectionHeading>
             {!mining || !hashrate ? (
-              <Skeleton className='h-[300px] w-full' />
+              miningFailed ? (
+                <LoadFailed className='h-[300px]' />
+              ) : (
+                <Skeleton className='h-[300px] w-full' />
+              )
             ) : (
               <div className='grid gap-4 lg:grid-cols-[2fr_1fr]'>
                 <Panel bleed>
@@ -76,8 +98,7 @@ export function MempoolView() {
                     <span
                       className={cn('text-xs tabular-nums', mining.hashrateChangePct >= 0 ? 'text-good' : 'text-bad')}
                     >
-                      1주 전 대비 {mining.hashrateChangePct >= 0 ? '+' : ''}
-                      {mining.hashrateChangePct.toFixed(2)}%
+                      1주 전 대비 {formatPct(mining.hashrateChangePct, 2, { plus: true })}
                     </span>
                   </div>
                   <HashrateChart data={hashrate} />
@@ -86,10 +107,9 @@ export function MempoolView() {
                   <ProgressPanel
                     title='다음 난이도 조정'
                     headline={`${mining.difficultyChangePct > 0 ? '+' : ''}${mining.difficultyChangePct}%`}
-                    headlineClassName={mining.difficultyChangePct >= 0 ? 'text-good' : 'text-bad'}
                     progress={difficultyProgress}
                     rows={[
-                      ['남은 블록', mining.remainingBlocks.toLocaleString()],
+                      ['남은 블록', mining.remainingBlocks.toLocaleString('ko-KR')],
                       ['예상일', mining.estimatedRetargetDate],
                     ]}
                   />
@@ -99,7 +119,7 @@ export function MempoolView() {
                     progress={halvingProgress}
                     color={BTC_COLOR}
                     rows={[
-                      ['남은 블록', mining.remainingHalvingBlocks.toLocaleString()],
+                      ['남은 블록', mining.remainingHalvingBlocks.toLocaleString('ko-KR')],
                       ['예상일', mining.estimatedHalvingDate],
                     ]}
                   />
@@ -116,10 +136,10 @@ export function MempoolView() {
 
           {/* 채굴풀 */}
           <section>
-            <SectionHeading aside={pools && `최근 ${pools.totalBlocks.toLocaleString()} 블록`}>
+            <SectionHeading aside={pools && `최근 ${pools.totalBlocks.toLocaleString('ko-KR')} 블록`}>
               누가 이 블록들을 만들었나 · 채굴풀 점유율 (1주)
             </SectionHeading>
-            <PoolShareBar pools={pools?.pools} />
+            <PoolShareBar pools={pools?.pools} error={poolsFailed} />
             <p className='mt-3 text-xs text-muted-foreground'>
               채굴풀별 블록 점유율은 네트워크 탈중앙화 지표로 활용됩니다. 한 풀이 과반을 오래 유지하면 체인 재구성
               위험이 커집니다. 다만 풀의 해시레이트는 독립 채굴자들이 빌려준 것이라 언제든 다른 풀로 옮겨갈 수 있고,

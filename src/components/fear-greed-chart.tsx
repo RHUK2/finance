@@ -2,7 +2,7 @@
 
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard } from '@/components/indicator-card';
-import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
+import { CHART_SERIES, LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { FearGreedData } from '@/hooks/use-crypto';
 import { cn } from '@/lib/utils';
 
@@ -25,14 +25,16 @@ type Props = {
   data?: FearGreedData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
+  /** 첫 데이터 없이 요청이 실패했다(IndicatorCard의 error) */
+  error?: boolean;
 };
 
-export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
+export function FearGreedChart({ data, resetRef, updatedLabel, error }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       if (!data) return;
       const lineSeries = chart.addSeries(LineSeries, {
-        color: '#a78bfa',
+        color: CHART_SERIES[1],
         lineWidth: 2,
         priceLineVisible: false,
       });
@@ -55,6 +57,7 @@ export function FearGreedChart({ data, resetRef, updatedLabel }: Props) {
       title='공포 & 탐욕 지수'
       updatedLabel={updatedLabel}
       ready={!!data}
+      error={error}
       headline={
         data &&
         info && (

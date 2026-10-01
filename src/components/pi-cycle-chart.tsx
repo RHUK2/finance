@@ -5,14 +5,25 @@ import { useMemo } from 'react';
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard, type IndicatorStatus } from '@/components/indicator-card';
 import { Badge } from '@/components/ui/badge';
-import { LineSeries, createSeriesMarkers, useChart, type Time } from '@/hooks/use-chart';
+import {
+  CHART_MUTED,
+  CHART_SERIES,
+  CHART_TONE,
+  LineSeries,
+  createSeriesMarkers,
+  useChart,
+  type Time,
+} from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
 import { movingAverage } from '@/lib/bitcoin-models';
+import { formatPct } from '@/lib/utils';
 
 type Props = {
   data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
+  /** 첫 데이터 없이 요청이 실패했다(IndicatorCard의 error) */
+  error?: boolean;
 };
 
 function getPiCycleStatus(ratio: number): IndicatorStatus {
@@ -21,7 +32,7 @@ function getPiCycleStatus(ratio: number): IndicatorStatus {
   return { label: '정상', variant: 'outline' };
 }
 
-export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
+export function PiCycleChart({ data, resetRef, updatedLabel, error }: Props) {
   const { sma111, sma350x2, crossovers } = useMemo(() => {
     if (!data) return { sma111: [], sma350x2: [], crossovers: [] };
     const sma111 = movingAverage(data.history, 111);
@@ -47,7 +58,7 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
     (chart) => {
       if (!data) return;
       const priceSeries = chart.addSeries(LineSeries, {
-        color: '#6b7280',
+        color: CHART_MUTED,
         lineWidth: 1,
         priceLineVisible: false,
         lastValueVisible: false,
@@ -56,7 +67,8 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
       priceSeries.setData(data.history);
 
       const longSeries = chart.addSeries(LineSeries, {
-        color: '#ef4444',
+        // 두 이동평균선은 구분만 하면 되는 계열이다. 판정색을 쓰면 한쪽이 나쁜 선으로 읽힌다.
+        color: CHART_SERIES[2],
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: false,
@@ -65,7 +77,7 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
       longSeries.setData(sma350x2);
 
       const shortSeries = chart.addSeries(LineSeries, {
-        color: '#22c55e',
+        color: CHART_SERIES[0],
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: false,
@@ -79,7 +91,7 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
           crossovers.map((c) => ({
             time: c.time as Time,
             position: 'aboveBar' as const,
-            color: '#ef4444',
+            color: CHART_TONE.bad,
             shape: 'arrowDown' as const,
             text: '천장',
           })),
@@ -100,12 +112,13 @@ export function PiCycleChart({ data, resetRef, updatedLabel }: Props) {
       title='Pi Cycle Top'
       updatedLabel={updatedLabel}
       ready={!!data}
+      error={error}
       headlineSkeletonClass='h-5 w-24'
       headline={
         ratio != null &&
         status && (
           <div className='flex items-end gap-2'>
-            <span className='text-sm font-semibold'>천장선 도달 {(ratio * 100).toFixed(0)}%</span>
+            <span className='text-sm font-semibold'>천장선 도달 {formatPct(ratio * 100, 0)}</span>
             <Badge variant={status.variant} className='mb-0.5'>
               {status.label}
             </Badge>

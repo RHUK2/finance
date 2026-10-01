@@ -1,42 +1,9 @@
-import { NextResponse } from 'next/server';
-
-import { cached } from '@/lib/cache';
-import { dedupeByTime } from '@/lib/series';
+import { loadHashrateHistory } from '@/lib/loaders/hashrate-history';
+import { serveEndpoint } from '@/lib/loaders/serve';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  try {
-    const data = await cached('hashrate-history', async () => {
-      const res = await fetch('https://mempool.space/api/v1/mining/hashrate/1y', {
-        cache: 'no-store',
-      });
-      if (!res.ok) throw new Error(`hashrate history error: ${res.status}`);
-
-      const json = await res.json();
-      const hashrates = json.hashrates as {
-        timestamp: number;
-        avgHashrate: number;
-      }[];
-
-      const history = dedupeByTime(
-        hashrates.map((h) => ({
-          time: new Date(h.timestamp * 1000).toISOString().slice(0, 10),
-          value: Number((h.avgHashrate / 1e18).toFixed(2)),
-        })),
-      );
-
-      return {
-        fetchedAt: new Date().toISOString(),
-        history,
-        currentHashrateEHs: Number((json.currentHashrate / 1e18).toFixed(2)),
-        currentDifficultyT: Number((json.currentDifficulty / 1e12).toFixed(2)),
-      };
-    });
-
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('hashrate-history fetch error:', error);
-    return NextResponse.json({ error: 'Failed to fetch hashrate history' }, { status: 500 });
-  }
+// 본문은 src/lib/loaders/hashrate-history.ts에 있다. 서버 prefetch(src/lib/prefetch.ts)도 같은 로더를 부른다.
+export function GET() {
+  return serveEndpoint('hashrate-history', loadHashrateHistory, 'Failed to fetch hashrate history');
 }

@@ -13,7 +13,7 @@ import {
 } from 'lightweight-charts';
 
 // 차트 컴포넌트가 lightweight-charts를 직접 import하지 않도록 여기서 재수출한다 (단일 관문).
-export { AreaSeries, LineSeries, LineStyle, createSeriesMarkers, type Time } from 'lightweight-charts';
+export { AreaSeries, LineSeries, LineStyle, createSeriesMarkers, type IChartApi, type Time } from 'lightweight-charts';
 
 // 차트는 canvas에 그려져 CSS 변수(--border 등)가 통하지 않는다. 테마별 색을 값으로 들고 있다가
 // resolvedTheme에 따라 골라 쓴다. 마운트 전에는 resolvedTheme이 undefined이므로 다크로 시작한다.
@@ -22,9 +22,43 @@ const CHART_CHROME = {
   light: { text: '#6b7280', grid: '#e5e7eb', border: '#d1d5db', crosshair: '#9ca3af' },
 } as const;
 
+/*
+ * 차트 선·기준선 팔레트. 캔버스가 CSS 변수를 못 받아서, 색 두 축(CLAUDE.md 「색은 두 축」)의 토큰을
+ * 같은 값의 hex로 들고 있다. 정본은 globals.css의 oklch 토큰이고 이 표는 손으로 맞춘 사본이라,
+ * 토큰을 바꾸면 여기도 함께 바꾼다(oklch → sRGB 변환값. 지금 값은 Tailwind v4 팔레트와 같다).
+ * 차트 컴포넌트는 hex를 직접 적지 않고 여기서 고른다. 고르는 기준은 DOM과 같다.
+ *
+ * - 판정(CHART_TONE): 좋고 나쁨의 뜻이 있는 자리. 기준선의 "고평가·저평가", 천장 신호 표식.
+ *   모드와 무관한 `--*-surface` 값을 쓴다. 기준선 표를 모듈 상수로 둘 수 있고, 중간 명도라 두 배경에서 다 보인다.
+ * - 계열(CHART_SERIES): 여럿을 구분하거나 주제를 칠할 뿐 뜻이 없는 자리. 한 차트 안의 여러 선,
+ *   카드마다 다른 선 색. 판정색을 여기에 쓰면 선이 "나쁜 선·좋은 선"으로 읽힌다. 넷을 넘으면 되풀이한다.
+ *
+ * 둘 밖의 색: BTC 브랜드 색은 `BTC_COLOR`(src/lib/utils.ts), 무지개 밴드와 공포·탐욕 척도는
+ * 판정도 계열도 아닌 척도라 각자의 표(bitcoin-models.ts의 RAINBOW_BANDS, fear-greed-chart.tsx)에 둔다.
+ */
+export const CHART_TONE = {
+  good: '#00bc7d', // --good-surface
+  bad: '#ff2056', // --bad-surface
+  warn: '#fe9a00', // --warn-surface
+} as const;
+
+export const CHART_SERIES = [
+  '#00a6f4', // --series-1
+  '#8e51ff', // --series-2
+  '#e12afb', // --series-3
+  '#2b7fff', // --series-4
+] as const;
+
+/** 지표를 얹을 바탕이 되는 무채색 선(지표 차트 뒤의 가격선). 테마와 무관하게 두 배경에서 다 보이는 회색. */
+export const CHART_MUTED = '#6b7280';
+
+/** 여러 색 위에 겹치는 선(무지개 밴드 위의 가격선). 배경과 가장 먼 무채색이라 테마마다 다르다. */
+export const chartInk = (isDark: boolean) => (isDark ? '#ffffff' : '#111827');
+
 /**
  * 차트 시리즈 색을 테마에 맞춰 고를 때 쓴다(밝은 배경에서 안 보이는 흰 선 등).
- * 이 값을 쓰는 컴포넌트는 useChart의 deps에도 넣어 테마 전환 시 다시 그려지게 할 것.
+ * useChart가 isDark를 자기 deps에 이미 넣으므로 테마가 바뀌면 차트가 다시 만들어진다.
+ * 이 값을 쓰는 컴포넌트가 useChart의 deps에 따로 넣지 않아도 된다.
  */
 export function useIsDarkChart(): boolean {
   const { resolvedTheme } = useTheme();

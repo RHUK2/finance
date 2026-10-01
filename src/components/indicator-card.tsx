@@ -28,6 +28,12 @@ type Props = {
   updatedLabel?: string;
   /** 데이터 도착 여부. false면 헤드라인·차트 자리를 스켈레톤으로 채운다. */
   ready: boolean;
+  /**
+   * 첫 데이터가 없는 채로 요청이 실패했다. ready가 false일 때만 본다. 스켈레톤을 두면 끝나지 않는
+   * 로딩으로 읽혀 장애인지 느린 것인지 가를 수 없다. 이전 데이터가 있으면(재조회 실패) 호출부가
+   * 넘기지 않는다. 옛 값을 그대로 보이는 쪽이 낫다.
+   */
+  error?: boolean;
   /** 현재값·상태 배지 등. ready여도 계산이 불가하면 null을 넘길 수 있다. */
   headline?: React.ReactNode;
   /** 제목 줄 오른쪽 컨트롤(기간 탭 등). 갱신시각 자리를 대신 쓴다. */
@@ -42,6 +48,7 @@ export function IndicatorCard({
   title,
   updatedLabel,
   ready,
+  error,
   headline,
   action,
   headlineSkeletonClass = 'h-9 w-20',
@@ -53,16 +60,40 @@ export function IndicatorCard({
     <Card>
       <CardHeader>
         <div className='flex items-center justify-between gap-2'>
-          <CardTitle>{title}</CardTitle>
-          {action ?? (updatedLabel && <span className='text-xs text-muted-foreground'>{updatedLabel}</span>)}
+          {/* 대시보드에는 h1이 없어 카드 제목이 페이지의 제목 단계다. CardTitle은 div라
+              제목 의미가 없으므로 안에 h2를 둔다(preflight가 크기·굵기를 inherit로 되돌려 모양은 같다) */}
+          <CardTitle>
+            <h2>{title}</h2>
+          </CardTitle>
+          {action ??
+            (updatedLabel && (
+              // 상대시간은 서버 렌더와 하이드레이션 사이에 분이 넘어가면 텍스트가 어긋난다.
+              <span className='text-xs text-muted-foreground' suppressHydrationWarning>
+                {updatedLabel}
+              </span>
+            ))}
         </div>
-        {ready ? headline : <Skeleton className={headlineSkeletonClass} />}
+        {ready ? headline : error ? null : <Skeleton className={headlineSkeletonClass} />}
       </CardHeader>
       <CardContent bleed>
-        {ready ? chart : <Skeleton className={`w-full rounded-none ${SKELETON_HEIGHT[height]}`} />}
+        {ready ? (
+          chart
+        ) : error ? (
+          <div
+            role='status'
+            className={`flex w-full items-center justify-center border-y px-6 text-center text-xs text-muted-foreground ${SKELETON_HEIGHT[height]}`}
+          >
+            데이터를 받지 못했습니다. 잠시 뒤 다시 시도합니다.
+          </div>
+        ) : (
+          <Skeleton className={`w-full rounded-none ${SKELETON_HEIGHT[height]}`} />
+        )}
         {description ? (
           <Collapsible>
-            <CollapsibleTrigger className='group/desc flex items-center gap-1 px-6 pt-3 pb-4 text-xs text-muted-foreground hover:text-foreground'>
+            <CollapsibleTrigger
+              aria-label={`${title} 설명`}
+              className='group/desc flex items-center gap-1 px-6 pt-3 pb-4 text-xs text-muted-foreground hover:text-foreground'
+            >
               <Info className='size-3' />
               설명
               <ChevronDown className='size-3 transition-transform group-data-panel-open/desc:rotate-180' />

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard } from '@/components/indicator-card';
-import { AreaSeries, LineSeries, useChart, useIsDarkChart } from '@/hooks/use-chart';
+import { AreaSeries, LineSeries, chartInk, useChart, useIsDarkChart } from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
 import { RAINBOW_BANDS, daysSinceGenesis, generateModelDates, powerLawPrice } from '@/lib/bitcoin-models';
 
@@ -21,9 +21,11 @@ type Props = {
   data?: BitcoinHistoricalData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
+  /** 첫 데이터 없이 요청이 실패했다(IndicatorCard의 error) */
+  error?: boolean;
 };
 
-export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
+export function RainbowChart({ data, resetRef, updatedLabel, error }: Props) {
   const isDark = useIsDarkChart();
   const { containerRef, resetView } = useChart(
     (chart) => {
@@ -43,7 +45,7 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
       }
       const priceSeries = chart.addSeries(LineSeries, {
         // 9색 밴드 위에 겹치는 선이라 밴드 색과 겹치지 않는 무채색을 쓴다.
-        color: isDark ? '#ffffff' : '#111827',
+        color: chartInk(isDark),
         lineWidth: 2,
         priceLineVisible: false,
         lastValueVisible: true,
@@ -66,6 +68,7 @@ export function RainbowChart({ data, resetRef, updatedLabel }: Props) {
       title='레인보우 차트'
       updatedLabel={updatedLabel}
       ready={!!data}
+      error={error}
       headlineSkeletonClass='h-5 w-24'
       headline={
         currentBand && (

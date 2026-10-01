@@ -1,8 +1,11 @@
 import { HydrationBoundary } from '@tanstack/react-query';
 
+import { pageMetadata } from '@/lib/nav';
 import { prefetchEndpoints } from '@/lib/prefetch';
 
 import { MempoolView } from './mempool-view';
+
+export const metadata = pageMetadata('/mempool');
 
 export default async function MempoolPage() {
   const state = await prefetchEndpoints([

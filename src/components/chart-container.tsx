@@ -51,6 +51,7 @@ export function ChartContainer({ containerRef, onReset }: Props) {
         <Button
           variant='ghost'
           size='icon'
+          aria-label='차트 스케일 초기화'
           className='absolute top-2 left-2 z-10 size-6 bg-background/60 backdrop-blur-sm hover:bg-background/80'
           onClick={onReset}
         >
@@ -58,7 +59,10 @@ export function ChartContainer({ containerRef, onReset }: Props) {
         </Button>
       )}
       {!active && (
+        // 포인터 전용 가드다. 캔버스에 키보드 조작이 없어 키보드로 깨워도 할 수 있는 것이 없으므로
+        // 탭 정지로 만들지 않고, 누를 수 없는 안내 문구를 보조기술이 읽지 않게 숨긴다.
         <div
+          aria-hidden='true'
           className='absolute inset-0 z-10 flex cursor-pointer items-center justify-center bg-black/20 backdrop-blur-[1px] transition-opacity'
           onClick={() => setActive(true)}
         >

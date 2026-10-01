@@ -18,6 +18,24 @@ const SERIES = ['bg-series-1', 'bg-series-2', 'bg-series-3', 'bg-series-4'];
 const fillPct = (vMB: number) => `${Math.min((vMB / MAX_BLOCK_MB) * 100, 100)}%`;
 
 /**
+ * 첫 데이터 없이 요청이 실패했을 때 스켈레톤 자리에 둔다. 스켈레톤을 남기면 끝나지 않는
+ * 로딩으로 읽혀 장애인지 느린 것인지 가를 수 없다. 높이는 대신하는 스켈레톤과 같게 넘긴다.
+ */
+export function LoadFailed({ className }: { className: string }) {
+  return (
+    <div
+      role='status'
+      className={cn(
+        'flex w-full items-center justify-center rounded-md border border-dashed px-4 text-center text-xs text-muted-foreground',
+        className,
+      )}
+    >
+      데이터를 받지 못했습니다. 잠시 뒤 다시 시도합니다.
+    </div>
+  );
+}
+
+/**
  * 이 페이지는 카드 격자가 아니라 구획 셋으로 나뉜다. 제목이 상자 밖에 있어서
  * `CardHeader`를 쓰지 않으므로 상자는 `Card`가 아니라 `Panel`이다(ADR 0010).
  */
@@ -41,13 +59,13 @@ function ConfirmedBlock({ block }: { block: RecentBlocksData['blocks'][number] }
       <span className='text-3xs text-muted-foreground' suppressHydrationWarning>
         {formatRelativeTime(block.timestamp * 1000)}
       </span>
-      <span className='text-sm font-bold tabular-nums'>#{block.height.toLocaleString()}</span>
+      <span className='text-sm font-bold tabular-nums'>#{block.height.toLocaleString('ko-KR')}</span>
       <div className='h-1 w-full overflow-hidden rounded-full bg-muted'>
         <div className='h-full rounded-full bg-series-4/60' style={{ width: fillPct(block.vMB) }} />
       </div>
       <span className='truncate text-3xs text-muted-foreground'>{block.poolName}</span>
       <span className='text-3xs text-muted-foreground tabular-nums'>
-        {block.txCount.toLocaleString()} tx · {block.medianFee} sat/vB
+        {block.txCount.toLocaleString('ko-KR')} tx · {block.medianFee} sat/vB
       </span>
     </div>
   );
@@ -64,7 +82,7 @@ function PendingBlock({ block, offset }: { block: MempoolBlocksData['blocks'][nu
       <span className='text-3xs text-muted-foreground tabular-nums'>
         {block.feeMin}~{block.feeMax}
       </span>
-      <span className='text-3xs text-muted-foreground tabular-nums'>{block.nTx.toLocaleString()} tx</span>
+      <span className='text-3xs text-muted-foreground tabular-nums'>{block.nTx.toLocaleString('ko-KR')} tx</span>
     </div>
   );
 }
@@ -82,8 +100,10 @@ function NowCard({ mempool, nowRef }: { mempool: MempoolStatsData; nowRef: React
       className='flex w-47 flex-col gap-2 rounded-md bg-warn-surface/10 p-3 ring-2 ring-warn-surface/50'
     >
       <span className='text-3xs font-semibold text-warn'>지금 · 멤풀</span>
-      <span className='text-2xl leading-none font-bold tabular-nums'>{mempool.pendingTxCount.toLocaleString()}</span>
-      <span className='text-3xs text-muted-foreground'>미확인 트랜잭션 · {mempool.mempoolSizeMB} MB</span>
+      <span className='text-2xl leading-none font-bold tabular-nums'>
+        {mempool.pendingTxCount.toLocaleString('ko-KR')}
+      </span>
+      <span className='text-3xs text-muted-foreground'>미확인 트랜잭션 · {mempool.mempoolVMB} vMB</span>
       <div className='mt-1 grid grid-cols-3 gap-1 text-center'>
         {fees.map((f) => (
           <div key={f.label} className='rounded-sm bg-background/60 py-1'>
@@ -105,10 +125,13 @@ export function BlockTimeline({
   mempool,
   pending,
   confirmed,
+  error,
 }: {
   mempool?: MempoolStatsData;
   pending?: MempoolBlocksData['blocks'];
   confirmed?: RecentBlocksData['blocks'];
+  /** 셋 중 비어 있는 것이 요청 실패로 비었다 */
+  error?: boolean;
 }) {
   const { ref, handlers, maskStyle } = useScrollDrag();
 
@@ -122,7 +145,9 @@ export function BlockTimeline({
     nowRef.current.scrollIntoView({ block: 'nearest', inline: 'center' });
   }, [mempool]);
 
-  if (!mempool || !pending || !confirmed) return <Skeleton className='h-[188px] w-full' />;
+  if (!mempool || !pending || !confirmed) {
+    return error ? <LoadFailed className='h-[188px]' /> : <Skeleton className='h-[188px] w-full' />;
+  }
 
   // 시간 순으로 읽히도록 최신 블록이 오른쪽(= "지금" 쪽)에 오게 뒤집는다.
   const past = [...confirmed].slice(0, 5).reverse();
@@ -190,10 +215,11 @@ export function ProgressPanel({
 
 /**
  * 총량 하나(최근 블록 전부)가 풀별 몫으로 갈리는 그림이라 누적막대를 쓴다.
- * 도넛과 달리 과반선을 눈으로 재기 쉽다.
+ * 도넛과 달리 과반선을 눈으로 재기 쉽다. 로더가 상위 3개 + 기타로 조각을 넷 이하로 주므로
+ * 계열색 넷이 조각과 범례를 하나씩 잇는다(src/lib/loaders/mining-pools.ts).
  */
-export function PoolShareBar({ pools }: { pools?: MiningPoolsData['pools'] }) {
-  if (!pools) return <Skeleton className='h-[120px] w-full' />;
+export function PoolShareBar({ pools, error }: { pools?: MiningPoolsData['pools']; error?: boolean }) {
+  if (!pools) return error ? <LoadFailed className='h-[120px]' /> : <Skeleton className='h-[120px] w-full' />;
 
   return (
     <>

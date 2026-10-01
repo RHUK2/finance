@@ -2,12 +2,12 @@
 
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard, ScoreHeadline, type IndicatorStatus } from '@/components/indicator-card';
-import { LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
+import { CHART_SERIES, CHART_TONE, LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { MvrvData } from '@/hooks/use-crypto';
 
 const ZONE_LINES = [
-  { price: 7, label: '천장 위험', color: '#ef4444' },
-  { price: 0.1, label: '바닥 기회', color: '#22c55e' },
+  { price: 7, label: '천장 위험', color: CHART_TONE.bad },
+  { price: 0.1, label: '바닥 기회', color: CHART_TONE.good },
 ];
 
 function getZScoreStatus(value: number): IndicatorStatus {
@@ -21,14 +21,16 @@ type Props = {
   data?: MvrvData;
   resetRef?: React.RefObject<(() => void) | null>;
   updatedLabel?: string;
+  /** 첫 데이터 없이 요청이 실패했다(IndicatorCard의 error) */
+  error?: boolean;
 };
 
-export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
+export function MvrvZScoreChart({ data, resetRef, updatedLabel, error }: Props) {
   const { containerRef, resetView } = useChart(
     (chart) => {
       if (!data) return;
       const lineSeries = chart.addSeries(LineSeries, {
-        color: '#3b82f6',
+        color: CHART_SERIES[3],
         lineWidth: 2,
         priceLineVisible: false,
       });
@@ -46,6 +48,7 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel }: Props) {
       title='MVRV Z-Score'
       updatedLabel={updatedLabel}
       ready={!!data}
+      error={error}
       headline={current != null && <ScoreHeadline value={current} status={getZScoreStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
