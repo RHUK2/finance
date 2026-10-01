@@ -21,23 +21,24 @@ const eslintConfig = defineConfig([
       },
     },
   },
-  // 디자인 시스템 규약. 룰 여섯 중 넷을 끈 이유를 함께 둔다. 켜고 끄는 판단이 이 파일 밖에 있으면
+  // 디자인 시스템 규약. 룰 여섯 중 셋을 끈 이유를 함께 둔다. 켜고 끄는 판단이 이 파일 밖에 있으면
   // 다음 사람이 "왜 안 켰지" 하고 다시 켰다가 소음만 얻는다.
   //
   //   no-unknown-classes    better-tailwindcss/correctness와 중복이라 끈다.
-  //   no-inline-styles      이 레포의 인라인 스타일 33곳 중 31곳이 모델이 내놓은 색·기하다
+  //   no-inline-styles      이 레포의 인라인 스타일은 거의 다 모델이 내놓은 색·기하다
   //                         (BTC_COLOR, width: `${pct}%`, gridTemplateRows). Tailwind로 표현할
   //                         수 있는 대상이 아니라서 켜면 정당한 코드를 막는다.
-  //   require-static-classes  걸리는 4곳이 전부 룩업 테이블(TAG_STYLE[tag])이다. 그게 동적 클래스의
-  //                         권장 패턴이라 "고치면" 호출부에 분기가 인라인된다.
+  //   require-static-classes  걸리는 자리가 룩업 테이블(TAG_STYLE[tag])이거나 그 값을 prop으로 넘기는
+  //                         자리다. 그게 동적 클래스의 권장 패턴이라 "고치면" 호출부에 분기가 인라인된다.
   //
-  // no-raw-colors와 no-arbitrary-values는 도입할 때 위반이 665건이라 eslint-suppressions.json에
+  // no-raw-colors와 no-arbitrary-values는 도입할 때 위반이 수백 건이라 eslint-suppressions.json에
   // 동결해 두고 시작했는데, 지금은 다 갚아서 동결 파일이 없다. 남은 빚이 0이라는 사실이 파일의
   // 부재로 드러나는 상태가 정상이다.
   //
   // 다시 동결할 일이 생기면 `eslint --suppress-rule <룰>`로 만들고, 갚은 뒤에는 반드시
-  // `pnpm lint:prune`을 돌린다. 동결은 파일·룰별 건수로 세므로 고치기만 하고 카운트를 줄이지 않으면
-  // 그 파일은 남은 예산만큼 새 위반을 조용히 통과시킨다.
+  // `pnpm lint:prune`을 돌린다. 동결은 파일·룰별 건수로 센다. 위반이 동결 수보다 줄면 lint가 미사용
+  // 동결로 실패하므로 대개 드러나지만, 고침과 새 위반이 한 번의 lint 실행 사이에 겹치면 남은 예산만큼
+  // 새 위반이 조용히 통과한다.
   //
   // no-restyle의 정책은 한 문장이다: 컴포넌트는 자기 상자(패딩·모양·기본 표면)를 소유하고,
   // 호출부는 배치와 그 인스턴스의 강조(색·그림자·전환)를 소유한다. 그래서 전역 allow가
@@ -48,13 +49,15 @@ const eslintConfig = defineConfig([
     rules: {
       // 색은 두 축이다. 판정(good·bad·warn)과 계열(series-1~4). globals.css가 정본이고,
       // 어느 쪽인지는 "좋고 나쁨의 뜻이 있는가"로 가른다.
-      // fill-none·stroke-none은 색이 아니라 none인데 룰이 색 이름으로 읽는다.
+      // fill-none·stroke-none은 색이 아니라 none인데 룰이 색 이름으로 읽는다. 지금 쓰이지 않는 쪽도
+      // 같은 부류라 함께 연다.
       // scanAllStrings를 켜는 것은 이 레포가 클래스를 상수·룩업 테이블에 자주 담기 때문이다.
       // 켜지 않으면 TAG_STYLE·CLASSIFICATIONS 같은 객체 안의 색을 룰이 아예 못 본다.
       'shadcn/no-raw-colors': ['error', { scanAllStrings: true, allow: ['fill-none', 'stroke-none'] }],
       // 스케일이 있는 것(간격·모양·글자 크기)만 본다. 아래는 스케일이 없는 값이라 정확한 수치를
       // 쓰는 것이 정상이다: 격자 템플릿, 콘텐츠 상자 크기(차트 캔버스 높이·가로 스크롤 최소폭),
       // 계산된 위치 보정, 4px부터 시작하는 블러 스케일이 표현 못 하는 1px, 임의 속성과 CSS 변수 선언.
+      // 목록은 실측이 아니라 이 부류 단위다. 지금 걸리는 곳이 없는 항목(grid-rows·max-w)도 남긴다.
       'shadcn/no-arbitrary-values': [
         'error',
         {
@@ -85,7 +88,7 @@ const eslintConfig = defineConfig([
               pattern: '^Panel$',
               allow: ['layout', 'color', 'effects', 'motion', 'typography', 'gap-*', 'ring-*', 'border-*'],
             },
-            // 이 둘은 Radix 프리미티브를 그대로 흘려보내는 껍데기라 base 클래스가 하나도 없다.
+            // 이 둘은 Base UI 프리미티브를 그대로 흘려보내는 껍데기라 base 클래스가 하나도 없다.
             // 소유한 것이 없으므로 침범할 것도 없다.
             {
               pattern: '^(CollapsibleTrigger|DrawerTrigger)$',
@@ -101,22 +104,14 @@ const eslintConfig = defineConfig([
     },
   },
   // 공포·탐욕 지수의 5단계 척도. 판정도 계열도 아닌 세 번째 축(척도)이고 이 레포에 하나뿐이다.
-  // 같은 5색을 lightweight-charts가 hex로도 받아야 해서 팔레트가 차트와 함께 있어야 한다.
+  // 같은 척도를 lightweight-charts가 hex로도 받아야 해서 팔레트가 차트와 함께 있어야 한다.
   {
     files: ['src/components/fear-greed-chart.tsx'],
     rules: { 'shadcn/no-raw-colors': 'off' },
   },
-  // mempool.space의 보라 블록 생김새를 따라 그린 삽화다. 네 단계 명도가 서로 묶여 있어
-  // 토큰 하나로 못 바꾸고, 토큰으로 올리면 "우리 팔레트에 보라 4단계가 있다"는 거짓말이 된다.
-  // 디자인 시스템 색이 아니므로 이 파일만 연다.
-  {
-    files: ['src/app/mempool/components.tsx'],
-    rules: { 'shadcn/no-raw-colors': 'off' },
-  },
   // shadcn 등 vendored 컴포넌트는 lint에서 뺀다. 원본과 다른 표기를 강제하면 diff/update 시
   // 노이즈만 커진다. 다만 "upstream 원본 그대로"는 더 이상 참이 아니다. 호출부가 기본값을
-  // 덮고 있던 넷(card·button·sidebar·tabs)은 기본값 쪽을 고쳤다. 재설치 시 재적용할 목록은
-  // ADR 0010에 있다.
+  // 덮고 있던 파일은 기본값 쪽을 고쳤다. 고친 파일과 재설치 시 재적용할 목록은 ADR 0010 표에 있다.
   {
     ignores: ['src/components/ui/**'],
   },
