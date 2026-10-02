@@ -8,7 +8,7 @@ import { clamp01, mulberry32 } from '@/lib/utils';
 // 합리적 약탈자는 탈취 이득(value) > 탈취 비용일 때 공격한다.
 //  - 추상 권력: 탈취 비용 = abstractDefense (위계·신뢰 매수 비용). 자산 가치에
 //    비례해 오르지 않고 낮게 고정 → 고가치 자산일수록 BCRA가 커져 늘 노출된다.
-//  - 물리 권력: 탈취 비용 = physicalWall (부과한 와트 = 실제 에너지 벽).
+//  - 물리 권력: 탈취 비용 = physicalWall (부과한 와트를 달러로 환산한 에너지 비용).
 //    벽을 자산 가치 위로 올리면 BCRA<1이 되어 탈취가 비합리가 된다.
 export type PowerCaptureInput = {
   value: number; // 자원 가치 (USD)

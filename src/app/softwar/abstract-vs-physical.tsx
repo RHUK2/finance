@@ -54,7 +54,7 @@ export function AbstractVsPhysical() {
         />
         <ControlSlider
           icon={<Zap className='size-4 text-series-3' />}
-          label='물리 권력 벽 (부과한 와트)'
+          label='물리 권력 벽 (에너지 비용)'
           hint='탈취하려면 쏟아야 하는 실제 에너지 비용. 자산 가치 위로 올리면 공격이 비합리가 된다.'
           value={physicalWall}
           onChange={setPhysicalWall}

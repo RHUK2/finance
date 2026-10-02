@@ -12,7 +12,7 @@ const TABS = [
   { value: 'limit', label: 'LTV·DSR 한도', node: <Limit /> },
   { value: 'repayment', label: '상환 방식', node: <Repayment /> },
   { value: 'stress', label: '금리 스트레스', node: <RateStress /> },
-  { value: 'compare', label: '사느냐 빌리느냐', node: <BuyOrRent /> },
+  { value: 'compare', label: '매수와 임차', node: <BuyOrRent /> },
 ];
 
 export function MortgageView() {

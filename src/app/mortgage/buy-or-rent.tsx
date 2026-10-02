@@ -76,7 +76,7 @@ export function BuyOrRent() {
 
   return (
     <div className='flex flex-col gap-4'>
-      <SectionIntro title='사느냐 빌리느냐'>
+      <SectionIntro title='매수와 임차'>
         셋 다 같은 집에 사는 방법이지만 돈이 나가는 자리가 다르다. 매수는 이자와 세금을 내고 집값 변동을 떠안는다.
         전세는 목돈을 묶어 두는 대신 그 돈이 벌 수 있었던 이자를 포기한다. 월세는 묶는 돈이 적은 대신 매달 임대료를
         낸다. 같은 기간 동안 실제로 사라지는 돈이 얼마인지 나란히 놓고 보자.
@@ -172,7 +172,8 @@ export function BuyOrRent() {
         <span className='text-xs/relaxed text-muted-foreground'>
           {years}년 동안 실제로 사라지는 돈. 음수는 집값 상승분이 비용을 넘어 이득이 남았다는 뜻이다. 세금은 취득세{' '}
           {formatPct(acqRate, 2)}({ACQUISITION_TAX_NOTE}, {ACQUISITION_TAX_BRACKET_NOTE})와 보유세 연 {HOLDING_TAX_RATE}
-          %로 잡았다. 보유세율은 {HOLDING_TAX_NOTE}이다
+          %로 잡았다. 보유세율은 {HOLDING_TAX_NOTE}이다. 매수의 자기 돈과 전세·월세 보증금이 묶여서 잃는
+          이자(기회비용)는 예금 금리 연 {DEPOSIT_RATE}%로 셈한다.
         </span>
         {options.map((o) => (
           <CostBar

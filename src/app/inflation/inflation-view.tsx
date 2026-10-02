@@ -19,8 +19,23 @@ import type { Currency } from './components';
 type Country = 'US' | 'KR';
 
 // 시작연도 슬라이더의 상한이자 "오늘 최저임금"을 고를 기준연도. 해마다 손으로 올리면
-// 반드시 뒤처지므로 현재 연도에서 구한다(연도 단위라 서버·클라이언트 값이 갈리지 않는다).
-const CURRENT_YEAR = new Date().getFullYear();
+// 반드시 뒤처지므로 현재 연도에서 구한다. 시간대를 서울로 고정한다. 기기 시간대를 따르면
+// 1월 1일 0~9시(KST)에 서버(UTC)와 브라우저가 서로 다른 해를 그려 하이드레이션이 어긋난다.
+// 모듈 상수로 두지 않는 것도 같은 이유다. 오래 떠 있는 서버 인스턴스는 해가 바뀌어도 옛 값을 쥔다.
+const SEOUL_YEAR = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', year: 'numeric' });
+
+function currentYear(): number {
+  return Number(SEOUL_YEAR.format(new Date()));
+}
+
+// 나라별 시작연도 슬라이더 상한
+function maxYearFor(country: Country): number {
+  const year = currentYear();
+  // 한국은 시작 연도 슬라이더와 기준 시급 조회를 최저임금 표가 커버하는 해까지로 묶는다. 표를
+  // 갱신하지 않은 해에는 표의 마지막 해 시급이 쓰이므로, 화면이 그 연도를 함께 적는다.
+  // 미국 연방 최저임금은 2009년 이후 그대로라 표의 마지막 해를 넘겨도 값이 유효하다.
+  return country === 'KR' ? Math.min(year, KR_WAGE_LAST_YEAR) : year;
+}
 
 const CONFIG: Record<
   Country,
@@ -28,7 +43,6 @@ const CONFIG: Record<
     label: string;
     currency: Currency;
     minYear: number;
-    maxYear: number;
     principal: number;
     gapBaseYear: number;
     raceBaseYear: number;
@@ -43,9 +57,6 @@ const CONFIG: Record<
     // M2 신계열(161Y006)은 2003년 10월에 시작한다. 기준점은 그 해 1월 이후 첫 관측이라 2003년이면
     // CPI는 1월, M2는 10월이 100이 되어 9개월 어긋난다. 두 선이 같은 달에서 출발하는 첫 해로 둔다.
     minYear: 2004,
-    // 시작 연도 슬라이더와 기준 시급 조회를 최저임금 표가 커버하는 해까지로 묶는다. 표를
-    // 갱신하지 않은 해에는 표의 마지막 해 시급이 쓰이므로, 화면이 그 연도를 함께 적는다.
-    maxYear: Math.min(CURRENT_YEAR, KR_WAGE_LAST_YEAR),
     principal: 1_000_000,
     gapBaseYear: 2004,
     raceBaseYear: 2000,
@@ -57,8 +68,6 @@ const CONFIG: Record<
     label: '미국',
     currency: '$',
     minYear: 1971,
-    // 연방 최저임금은 2009년 이후 그대로라 표의 마지막 해를 넘겨도 값이 유효하다.
-    maxYear: CURRENT_YEAR,
     principal: 10_000,
     gapBaseYear: 1971,
     raceBaseYear: 2015,
@@ -143,6 +152,7 @@ function Devices({
   btc?: { time: string; value: number }[];
 }) {
   const updatedLabel = useRelativeTime(data.fetchedAt);
+  const maxYear = maxYearFor(country);
   const tabs = [
     {
       value: 'collapse',
@@ -154,7 +164,7 @@ function Devices({
             btc={btc}
             currency={cfg.currency}
             minYear={cfg.minYear}
-            maxYear={cfg.maxYear}
+            maxYear={maxYear}
             amount={cfg.principal}
             stockLabel={cfg.stockLabel}
           />
@@ -172,7 +182,7 @@ function Devices({
             btc={btc}
             currency={cfg.currency}
             minYear={cfg.minYear}
-            maxYear={cfg.maxYear}
+            maxYear={maxYear}
             wageTable={cfg.wageTable}
             stockLabel={cfg.stockLabel}
           />

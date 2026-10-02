@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { crackResult, type CrackHedge, FUTURES_PRICE, hedgeLedger, PRODUCER_BARRELS, REFINER_BARRELS } from './models';
+import {
+  crackResult,
+  type CrackHedge,
+  fundingCost,
+  FUTURES_PRICE,
+  hedgeLedger,
+  PRODUCER_BARRELS,
+  REFINER_BARRELS,
+} from './models';
 
 // 티켓 26: 헤지 장부 배너는 잠근 선물가(effectiveFutures)를 기준으로 갈라야 모델과 맞는다.
 describe('hedgeLedger', () => {
@@ -82,5 +90,20 @@ describe('crackResult', () => {
   it('원유만 잠그면 원유 가격에 노출되지 않는다', () => {
     expect(crackResult(60, 100, 'crude').margin).toBe(crackResult(120, 100, 'crude').margin);
     expect(crackResult(60, 100, 'crude').exposedTo).toBe('gasoline');
+  });
+});
+
+// 펀딩비는 명목가 × 요율의 단순 합이다. 복리로 쌓으면 슬라이더 끝(롱 90%·90일)에서 원금의 102%가 빠진다고 나왔다.
+describe('fundingCost', () => {
+  it('누적 잠식률은 회당 요율 × 횟수다', () => {
+    const f = fundingCost(0.7, 30);
+    expect(f.charges).toBe(90);
+    expect(f.cumulative).toBeCloseTo(f.perCharge * 90, 12);
+  });
+
+  it('슬라이더 끝에서도 원금을 넘지 않는다', () => {
+    const f = fundingCost(0.9, 90);
+    expect(f.cumulative).toBeCloseTo(0.0026 * 270, 10);
+    expect(f.cumulative).toBeLessThan(1);
   });
 });

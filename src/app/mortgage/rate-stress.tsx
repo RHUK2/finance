@@ -69,7 +69,7 @@ export function RateStress() {
           ? {
               tone: 'accent' as const,
               icon: <TrendingUp className='size-4 shrink-0' />,
-              text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${formatPct(jumpPct, 0)} 늘었다. 이자만이 아니라 남은 원금을 더 짧아진 기간에 갚아야 하기 때문이다.`,
+              text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${formatPct(jumpPct, 0)} 늘었다. 거의 줄지 않은 잔액 전체에 새 금리가 붙고, 상환액의 대부분이 이자라서다.`,
             }
           : {
               tone: 'good' as const,
@@ -80,9 +80,9 @@ export function RateStress() {
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='금리가 오르면 무슨 일이 생기는가'>
-        변동금리는 지금 싼 대신 나중을 약속하지 않는다. 금리가 오르면 남은 원금에 새 금리가 붙고, 남은 기간 안에 다
-        갚아야 하므로 월 상환액이 그만큼 뛴다. 이미 갚은 기간이 짧을수록 잔액이 크게 남아 있어 충격도 크다. 몇 년 뒤
-        금리가 움직인다고 보고 그 폭을 조절해 보자.
+        변동금리는 지금 싼 대신 나중을 약속하지 않는다. 금리가 오르면 남은 원금 전체에 새 금리가 붙어 월 상환액이 다시
+        계산된다. 이미 갚은 기간이 짧을수록 잔액이 크게 남아 있고 상환액에서 이자가 차지하는 몫도 커서 충격이 크다. 몇
+        년 뒤 금리가 움직인다고 보고 그 폭을 조절해 보자.
       </SectionIntro>
 
       <Panel className='gap-5'>
@@ -176,7 +176,7 @@ export function RateStress() {
           max={barMax}
           className='bg-series-3'
           format={formatMan}
-          sub='남은 기간에 잔액을 다 갚아야 하므로 인상폭보다 크게 뛴다'
+          sub='남은 잔액에 오른 금리를 붙여 남은 기간으로 다시 나눈 금액'
         />
         <CostBar
           label={`고정금리 (+${FIXED_PREMIUM}%p)`}
@@ -214,13 +214,14 @@ export function RateStress() {
       <ExplainCard
         icon={<TrendingUp className='size-4 text-series-2' />}
         title='금리 인상폭보다 상환액 인상폭이 큰 이유'
-        preview='남은 원금은 그대로인데 갚을 기간만 짧아져 있기 때문이다.'
+        preview='상환액의 대부분이 이자인 시기에 금리가 오르기 때문이다.'
         body={
           <>
             <p>
-              금리가 2%p 올랐다고 상환액이 2% 오르는 것이 아니다. 월 상환액은 남은 잔액을 남은 기간에 나눠 갚도록 다시
-              계산된다. 처음 몇 년은 원금이 거의 줄지 않으므로 잔액은 여전히 원금에 가까운데 기간만 줄어 있다. 늘어난
-              이자와 짧아진 기간이 겹치면서 상환액은 금리 인상폭보다 훨씬 크게 뛴다.
+              금리가 2%p 올랐다고 상환액이 2% 오르는 것이 아니다. 3.5%가 5.5%가 되면 금리 자체는 절반 넘게 오른 것이고,
+              월 상환액 가운데 이자 몫이 그 비율로 커진다. 장기 대출의 처음 몇 년은 원금이 거의 줄지 않아 잔액이 원금에
+              가깝고 상환액의 대부분이 이자라서, 상환액도 %p 숫자보다 훨씬 크게 뛴다. 남은 기간이 짧을수록 원금 몫이
+              커져 같은 인상폭이라도 충격이 작다.
             </p>
             <p className='mt-2'>
               고정금리는 이 위험을 은행이 대신 지는 대가로 처음부터 조금 높은 금리를 받는다. 위 두 총이자를 비교하면

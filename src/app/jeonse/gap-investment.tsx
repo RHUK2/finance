@@ -29,7 +29,7 @@ export function GapInvestment() {
       ? {
           tone: 'good' as const,
           icon: <ArrowUpRight className='size-4 shrink-0' />,
-          text: `집값이 ${formatPct(change)} 오르는 동안 자기 돈 ${formatEok(gap)}은 ${formatPct(roe)} 불었다. 보증금이 이자도 만기도 없는 레버리지로 작동해 수익률을 ${leverage.toFixed(1)}배로 키운다.`,
+          text: `집값이 ${formatPct(change)} 오르는 동안 자기 돈 ${formatEok(gap)}은 ${formatPct(roe)} 불었다. 보증금이 이자도 분할 상환도 없는 레버리지로 작동해 수익률을 ${leverage.toFixed(1)}배로 키운다.`,
         }
       : {
           tone: 'bad' as const,
@@ -41,8 +41,8 @@ export function GapInvestment() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='보증금을 지렛대로 쓰면'>
         보증금이 무이자 대출이라면, 그 돈으로 집을 사는 사람이 나오는 것은 자연스러운 귀결이다. 매매가에서 전세보증금을
-        뺀 차액만 있으면 소유권이 넘어온다. 이 차액이 갭이고, 갭만 넣어 집을 사는 것이 갭투자다. 이자도 만기 상환도 없는
-        대신, 시세가 어떻든 보증금은 전액 그대로 돌려줘야 한다.
+        뺀 차액만 있으면 소유권이 넘어온다. 이 차액이 갭이고, 갭만 넣어 집을 사는 것이 갭투자다. 이자도 중간 상환도 없는
+        대신, 계약이 끝나면 시세가 어떻든 보증금을 전액 그대로 돌려줘야 한다.
       </SectionIntro>
 
       <Panel className='gap-5'>

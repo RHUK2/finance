@@ -139,8 +139,8 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
             sub={`누적 낙폭 ${formatPct(state.drawdown * 100, 0)}`}
             tone={state.price < 60 ? 'bad' : state.price >= 95 ? 'good' : undefined}
           />
-          <Metric label='매도자' value={`${soldCount}`} tone='bad' />
-          <Metric label='버티는 손' value={`${holding}`} tone='good' />
+          <Metric label='매도자' value={`${soldCount}`} tone={soldCount > 0 ? 'bad' : undefined} />
+          <Metric label='버티는 손' value={`${holding}`} tone={holding > 0 ? 'good' : undefined} />
         </>
       }
       outcome={

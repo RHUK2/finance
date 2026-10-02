@@ -108,7 +108,10 @@ export function minWageAt(table: { year: number; wage: number }[], year: number)
 // 쓰게 된다. 그래서 한국은 표가 커버하는 마지막 해(아래 KR_WAGE_LAST_YEAR)까지만 조회한다.
 // 조회 상한은 낡은 값을 막지 못하고 마지막 해 값을 돌려줄 뿐이라, 화면이 그 연도를 함께 적는다.
 
-/** 미국 연방 최저임금 ($/시간). 주요 인상 시점만 기록(이하 최댓값 룩업). */
+/**
+ * 미국 연방 최저임금 ($/시간). 1968년 이후 인상 시점을 빠짐없이 기록한다. 이하 최댓값
+ * 룩업이라 하나라도 빠지면 그 해 값이 틀린다. `year`는 인상이 시행된 해다(1990-04 등 연중 시행 포함).
+ */
 export const US_MIN_WAGE: { year: number; wage: number }[] = [
   { year: 1968, wage: 1.6 },
   { year: 1974, wage: 2.0 },

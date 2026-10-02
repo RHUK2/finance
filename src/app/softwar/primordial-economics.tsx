@@ -149,8 +149,12 @@ function PredationSim({
       curve={{ values: curve, cursor: round, label: '생존 곡선', className: 'text-series-4', min: 0, max: 1 }}
       metrics={
         <>
-          <Metric label='생존 개체' value={`${aliveCount} / ${organisms.length}`} tone='good' />
-          <Metric label='도태 개체' value={`${dead}`} tone='bad' />
+          <Metric
+            label='생존 개체'
+            value={`${aliveCount} / ${organisms.length}`}
+            tone={aliveCount > 0 ? 'good' : undefined}
+          />
+          <Metric label='도태 개체' value={`${dead}`} tone={dead > 0 ? 'bad' : undefined} />
           <Metric label='생존자 평균 투사력' value={formatPct(survivorAvg * 100, 0)} tone='accent' />
         </>
       }
