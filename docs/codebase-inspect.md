@@ -368,7 +368,7 @@ pnpm run audit   # pnpm audit --audit-level=high
 - 라우트·ENDPOINTS·훅은 한 벌로 고쳐. 키를 읽는 라우트는 키가 없을 때 available: false를 돌려주게 해. 응답 모양을 바꾸면 캐시에 남은 옛 응답이 어떻게 읽히는지 적어.
 - 수치를 고칠 때는 원문과 대조하고, 맞은 결과를 docs/fact-check-log.md에 남겨. 규제·세율 값은 기준과 함께 한 객체에 둬.
 - 설정 파일은 실재하는 경로와 현재 도구 버전에 맞춰 고치고 효력 없는 설정은 지워. .env* 파일은 열지 마.
-- 의존성 갱신은 수정 묶음이 정한 범위(patch·minor·major)만 해. pnpm deps:update는 build까지 돌리니 갱신 뒤 pnpm inspect와 build 결과를 함께 적어. major는 마이그레이션 가이드를 읽고 하나씩 올려. 고정 버전 쌍(next·eslint-config-next)은 함께 올려. pnpm-workspace.yaml의 overrides는 선택한 티켓에서 불필요하다고 확인한 항목만 제거해.
+- 의존성 갱신은 수정 묶음이 정한 범위(patch·minor·major)만 해. pnpm deps:update는 update 뒤 inspect·build까지 돌리니 그 두 결과를 함께 적어. major는 마이그레이션 가이드를 읽고 하나씩 올려. 고정 버전 쌍(next·eslint-config-next)은 함께 올려. pnpm-workspace.yaml의 overrides는 선택한 티켓에서 불필요하다고 확인한 항목만 제거해.
 - 보안 취약점은 수정 버전으로 올리거나 overrides로 막아. 외부 확인이 필요한 건은 고치지 말고 후보로 남겨.
 - shadcn primitive 교체는 선택한 티켓의 후보만 하고 기존 동작(포커스·키보드·aria)과 화면을 보존해. 맞는 variant가 없으면 소비처에서 덮지 말고 primitive 기본값이나 eslint.config.mjs의 no-restyle contract를 고쳐. src/components/ui/*를 바꾸면 ADR 0010의 재설치 시 재적용 목록도 갱신해. 새 primitive 추가는 티켓이 정한 것만 해.
 - 수정 중 발견한 별개 문제는 issues/에 새 티켓으로 추가해.
