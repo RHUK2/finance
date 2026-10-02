@@ -143,3 +143,17 @@ test('다른 곳을 가리키는 링크도 --force면 기준으로 바꾸고 원
   assert.equal(readlinkSync(join(wt, '.scratch')), join(base, '.scratch'));
   assert.equal(readFileSync(join(stale, '.scratch', 'marker'), 'utf8'), 'stale');
 });
+
+test('경로 표기만 다르고 같은 기준을 가리키는 링크는 이미 링크로 본다', (t) => {
+  const root = sandbox(t);
+  const base = repo(join(root, 'finance'), 'base');
+  const wt = worktree(base, join(root, 'finance-topic'));
+  // 손으로 건 상대 경로 링크. 문자열로 비교하면 "다른 곳을 가리키는 링크"로 오판한다.
+  symlinkSync('../finance/.scratch', join(wt, '.scratch'));
+
+  const run = link(wt);
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /\.scratch\s+이미 링크/);
+  assert.equal(readlinkSync(join(wt, '.scratch')), '../finance/.scratch');
+});
