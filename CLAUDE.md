@@ -41,7 +41,7 @@ bash link-worktree-files.sh
 
 ## 환경변수
 
-배포 환경의 값은 Vercel 프로젝트(`rhuk2s-projects/finance`)가 갖고, 로컬 값은 기준 체크아웃의 `.env` 하나가 갖는다(워크트리의 것은 그 링크, 위 `ITEMS`). 둘을 자동으로 맞추지 않는다. Vercel의 값이 전부 Sensitive라 되읽을 수 없어서 `vercel env pull`이 자리표시자만 내려주기 때문이다. `.vercel` 링크 정보는 워크트리끼리 공유하므로(위 `ITEMS`) 워크트리마다 다시 `vercel link`를 하지 않는다.
+배포 환경의 값은 Vercel 프로젝트(`rhuk2s-projects/finance`)의 Production 환경에만 둔다. Preview·Development에는 두지 않는다. 로컬 값은 기준 체크아웃의 `.env.development.local` 하나가 갖고(워크트리의 것은 그 링크, 위 `ITEMS`), 각 제공처 콘솔(Upstash·FRED·ECOS)에서 복사해 손으로 적는다. Next는 이 파일을 `next dev`에서만 읽고, 그때 다른 환경 파일보다 먼저 읽는다. 둘을 자동으로 맞추지 않는다. Vercel의 값이 전부 Sensitive라 되읽을 수 없어서 `vercel env pull`이 자리표시자만 내려주기 때문이다. 그래서 `vercel env pull`을 돌리지 않는다. `.vercel` 링크 정보는 워크트리끼리 공유하므로(위 `ITEMS`) 워크트리마다 다시 `vercel link`를 하지 않는다.
 
 읽는 값은 넷이다. Upstash는 Vercel 통합이 심어 주는 `KV_*` 이름으로 오고, `Redis.fromEnv()`가 `UPSTASH_REDIS_REST_URL` 다음 순위로 `KV_REST_API_URL`을 보기 때문에 그대로 동작한다(`src/lib/cache.ts`).
 
@@ -51,11 +51,11 @@ bash link-worktree-files.sh
 | `FRED_API_KEY`                        | `fred`·`inflation-data`가 `available: false` |
 | `ECOS_API_KEY`                        | `inflation-data-kr`가 `available: false`     |
 
-새 변수를 넣을 때는 양쪽에 다 넣는다. 배포 쪽은 `vercel env add <NAME> production`, 로컬 쪽은 기준 체크아웃의 `.env`에 직접 적는다. `vercel --prod`는 `.gitignore`를 읽지 않으므로 로컬 `.env`·`.scratch` 등이 배포 소스로 올라가지 않게 `.vercelignore`가 막는다. 로컬 전용 파일을 새로 두면 거기에도 적는다.
+새 변수를 넣을 때는 양쪽에 다 넣는다. 배포 쪽은 `vercel env add <NAME> production`, 로컬 쪽은 기준 체크아웃의 `.env.development.local`에 직접 적는다. `vercel --prod`는 `.gitignore`를 읽지 않으므로 로컬 환경 파일·`.scratch` 등이 배포 소스로 올라가지 않게 `.vercelignore`가 막는다. 로컬 전용 파일을 새로 두면 거기에도 적는다.
 
 응답 보안 헤더(`nosniff`·`X-Frame-Options`·`Referrer-Policy`, `poweredByHeader: false`)는 `next.config.ts`가 갖는다. HSTS는 Vercel이 붙인다.
 
-로컬이 프로덕션 캐시를 건드리지 않게 Upstash 데이터베이스는 로컬용을 따로 판다. 캐시 키가 `cache:<key>`·`lock:<key>`라 환경 구분이 없어서(`src/lib/cache.ts`), 한 데이터베이스를 나눠 쓰면 로컬에서 바꾼 응답 형태가 그대로 프로덕션이 내보내는 값이 된다.
+로컬도 프로덕션 Upstash 데이터베이스를 그대로 쓴다. 사용자가 한 명뿐인 사이트라 데이터베이스를 나눠 관리할 값어치가 없다. 대신 캐시 키가 `cache:<key>`·`lock:<key>`라 환경 구분이 없어서(`src/lib/cache.ts`), 로컬에서 응답 형태를 바꾸고 그 키의 `shape`를 올리지 않으면 로컬이 쓴 값을 프로덕션이 그대로 내보낸다. 응답 형태를 건드리는 작업은 dev 서버를 띄우기 전에 `shape`부터 올린다. 버전이 다르면 서로를 miss로 보고 덮어쓸 뿐 깨지지 않는다.
 
 ## 아키텍처
 

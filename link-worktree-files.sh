@@ -35,7 +35,7 @@ ITEMS=(
   .claude/settings.local.json
   .scratch
   .vercel
-  .env
+  .env.development.local
 )
 
 force=0
