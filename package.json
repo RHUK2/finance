@@ -18,7 +18,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,mjs,css,md,json,yaml,yml}\"",
     "audit": "pnpm audit --audit-level=high",
     "deps:check": "pnpm -r outdated",
-    "deps:update": "pnpm -r update && pnpm build",
+    "deps:update": "pnpm -r update && pnpm inspect && pnpm build",
     "deps:update:major": "pnpm -r up -iL",
     "prepare": "husky"
   },

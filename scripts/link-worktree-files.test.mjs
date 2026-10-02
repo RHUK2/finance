@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, readlinkSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readlinkSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -37,10 +46,10 @@ function worktree(base, path) {
 }
 
 /** 기준 체크아웃 cwd가 아니라 fixture 워크트리 안에서만 부른다. */
-function link(cwd, env = {}) {
+function link(cwd, env = {}, args = []) {
   const inherited = { ...process.env };
   delete inherited.WORKTREE_LINK_BASE;
-  return spawnSync('/bin/bash', [SCRIPT], { cwd, encoding: 'utf8', env: { ...inherited, ...env } });
+  return spawnSync('/bin/bash', [SCRIPT, ...args], { cwd, encoding: 'utf8', env: { ...inherited, ...env } });
 }
 
 test('공백 없는 기준 체크아웃의 공유 항목을 링크한다', (t) => {
@@ -105,4 +114,32 @@ test('사본이 기준과 다르면 건드리지 않고 2로 끝난다', (t) => 
 
   assert.equal(run.status, 2, run.stderr);
   assert.equal(readFileSync(join(wt, '.scratch', 'marker'), 'utf8'), 'local');
+});
+
+test('다른 곳을 가리키는 링크는 이미 링크로 넘기지 않고 2로 끝난다', (t) => {
+  const root = sandbox(t);
+  const base = repo(join(root, 'finance'), 'base');
+  const stale = repo(join(root, 'finance-old'), 'stale');
+  const wt = worktree(base, join(root, 'finance-topic'));
+  symlinkSync(join(stale, '.scratch'), join(wt, '.scratch'));
+
+  const run = link(wt);
+
+  assert.equal(run.status, 2, run.stderr);
+  assert.match(run.stdout, /\.scratch\s+다른 곳을 가리키는 링크/);
+  assert.equal(readlinkSync(join(wt, '.scratch')), join(stale, '.scratch'));
+});
+
+test('다른 곳을 가리키는 링크도 --force면 기준으로 바꾸고 원래 대상은 지우지 않는다', (t) => {
+  const root = sandbox(t);
+  const base = repo(join(root, 'finance'), 'base');
+  const stale = repo(join(root, 'finance-old'), 'stale');
+  const wt = worktree(base, join(root, 'finance-topic'));
+  symlinkSync(join(stale, '.scratch'), join(wt, '.scratch'));
+
+  const run = link(wt, {}, ['--force']);
+
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(readlinkSync(join(wt, '.scratch')), join(base, '.scratch'));
+  assert.equal(readFileSync(join(stale, '.scratch', 'marker'), 'utf8'), 'stale');
 });

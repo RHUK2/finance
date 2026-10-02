@@ -64,7 +64,7 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel, error }: Prop
       headline={current != null && <ScoreHeadline value={current} status={getMayerStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
-      description='현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 1 미만이면 장기 추세 아래의 저평가, 2.4 이상이면 추세를 크게 벗어난 단기 과열로 보고 사이클 내 진입·매도 시점을 가늠합니다.'
+      description='현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 보통 1 미만은 장기 추세 아래의 저평가, 2.4 이상은 추세를 크게 벗어난 단기 과열로 읽힙니다.'
     />
   );
 }

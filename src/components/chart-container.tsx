@@ -32,17 +32,18 @@ export function ChartContainer({ containerRef, onReset }: Props) {
   useEffect(() => {
     if (!active) return;
 
-    const eventType = isTouch ? 'touchstart' : 'mousedown';
-
+    // 바깥 누름은 pointerdown 하나로 받는다. 입력 종류를 마운트 때 한 번 골라 touchstart나
+    // mousedown만 들으면, 마우스나 트랙패드를 붙인 태블릿(주 포인터가 coarse)에서 바깥을 클릭해도
+    // touchstart가 나지 않아 차트가 다시 잠기지 않는다. pointerdown은 터치·마우스·펜 모두에서 난다.
     function handleOutside(e: Event) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setActive(false);
       }
     }
 
-    document.addEventListener(eventType, handleOutside, { passive: true });
-    return () => document.removeEventListener(eventType, handleOutside);
-  }, [active, isTouch]);
+    document.addEventListener('pointerdown', handleOutside, { passive: true });
+    return () => document.removeEventListener('pointerdown', handleOutside);
+  }, [active]);
 
   return (
     <div ref={wrapperRef} className='relative overflow-hidden border-y'>

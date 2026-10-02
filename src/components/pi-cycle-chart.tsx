@@ -43,12 +43,14 @@ export function PiCycleChart({ data, resetRef, updatedLabel, error }: Props) {
     // 111일 MA가 350일 MA×2를 상향 돌파한 지점이 사이클 천장 신호
     const longMap = new Map(sma350x2.map((p) => [p.time, p.value]));
     const crossovers: { time: string }[] = [];
-    let prevBelow = true;
+    // 첫 비교점은 앞 점이 없어 교차로 세지 않는다. 그 점이 이미 위에 있으면 돌파가 아니라 시작이 위인 것이다
+    // (지금 데이터는 2016-07-03에 아래서 시작해 해당하지 않는다).
+    let prevBelow: boolean | null = null;
     for (const p of sma111) {
       const long = longMap.get(p.time);
       if (long == null) continue;
       const below = p.value < long;
-      if (prevBelow && !below) crossovers.push({ time: p.time });
+      if (prevBelow === true && !below) crossovers.push({ time: p.time });
       prevBelow = below;
     }
     return { sma111, sma350x2, crossovers };
@@ -127,7 +129,7 @@ export function PiCycleChart({ data, resetRef, updatedLabel, error }: Props) {
       }
       height={320}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
-      description='111일 이동평균과 350일 이동평균×2의 교차로 읽습니다. 111일선이 350일선×2를 위로 돌파하는 순간이 사이클 천장 신호로, 과거 고점과 며칠 안쪽으로 맞아떨어져 단기 고점 경계 신호로 활용됩니다.'
+      description='111일 이동평균과 350일 이동평균×2의 교차로 읽습니다. 111일선이 350일선×2를 위로 돌파하는 순간이 보통 사이클 천장 신호로 읽힙니다. 지난 두 사이클(2017년 12월, 2021년 4월)에는 고점과 며칠 안쪽으로 맞았습니다.'
     />
   );
 }

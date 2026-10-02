@@ -76,8 +76,18 @@ for f in "${ITEMS[@]}"; do
   fi
 
   if [ -L "$dst" ]; then
-    printf '  %-30s 이미 링크\n' "$f"
-    continue
+    if [ "$(readlink "$dst")" = "$src" ]; then
+      printf '  %-30s 이미 링크\n' "$f"
+      continue
+    fi
+    # 다른 곳을 가리키는 링크다. 일부러 둔 개인 설정일 수도, 옮겨진 기준을 가리키는 낡은 링크일 수도
+    # 있어 어느 쪽인지는 사람이 정한다. "이미 링크"로 넘기면 엉뚱한 실체를 쓰는 채로 성공처럼 끝난다.
+    if [ "$force" -eq 0 ]; then
+      printf '  %-30s 다른 곳을 가리키는 링크(%s). 건너뜀 (확인 뒤 --force)\n' "$f" "$(readlink "$dst")"
+      diverged+=("$f")
+      skipped=$((skipped + 1))
+      continue
+    fi
   fi
 
   if [ -e "$dst" ] && ! diff -rq "$src" "$dst" >/dev/null 2>&1; then
@@ -103,7 +113,7 @@ echo "링크 ${linked}개, 건너뜀 ${skipped}개, 기준에 없음 ${missing}�
 
 if [ ${#diverged[@]} -gt 0 ]; then
   echo
-  echo "다음 항목은 사본이 기준과 달라 그대로 두었다. 내용을 확인해 합친 뒤 --force로 다시 실행한다."
+  echo "다음 항목은 사본이 기준과 다르거나 링크가 다른 곳을 가리켜 그대로 두었다. 내용을 확인해 합친 뒤 --force로 다시 실행한다."
   for f in "${diverged[@]}"; do
     echo "  diff -ru \"$base/$f\" \"$here/$f\""
   done

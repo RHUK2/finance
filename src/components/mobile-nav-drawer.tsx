@@ -43,14 +43,20 @@ function useScrollProgress() {
 //
 // 진행 막대는 바의 윗 테두리 자리에 겹쳐 그린다. 새 층을 만들지 않으므로 화면에 더해지는
 // 높이가 0이다.
-export function MobileNavDrawer() {
+//
+// 바의 높이는 줄(h-12)에 안전 영역 인셋을 더한 값이다. 높이를 h-12로만 두고 pb-safe-bottom을 주면
+// 인셋이 생기는 기기에서 패딩이 높이 안에서 잘려 줄이 홈 인디케이터 위로 내려앉는다. 본문 여백
+// (page-main.tsx의 4rem + 인셋)과 워크스루 알약(3.5rem + 인셋)도 같은 높이를 전제한다.
+//
+// label은 nav.ts에 없는 화면(없는 경로, 오류)만 넘긴다. 목록에 있는 페이지의 이름은 경로로 끌어온다.
+export function MobileNavDrawer({ label }: { label?: string } = {}) {
   const pathname = usePathname();
-  const currentLabel = navLabel(pathname) ?? '';
+  const currentLabel = label ?? navLabel(pathname) ?? '';
   const [open, setOpen] = useState(false);
   const { progress, scrolled } = useScrollProgress();
 
   return (
-    <footer className='fixed inset-x-0 bottom-0 z-30 h-12 border-t bg-sidebar pb-safe-bottom md:hidden dark:bg-background'>
+    <footer className='fixed inset-x-0 bottom-0 z-30 h-[calc(3rem+var(--spacing-safe-bottom))] border-t bg-sidebar pb-safe-bottom md:hidden dark:bg-background'>
       <div className='absolute inset-x-0 top-0 h-0.5 bg-primary' style={{ width: `${progress * 100}%` }} />
 
       <div className='flex h-12 items-center gap-2 px-4'>

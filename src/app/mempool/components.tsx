@@ -88,18 +88,17 @@ function PendingBlock({ block, offset }: { block: MempoolBlocksData['blocks'][nu
 }
 
 function NowCard({ mempool, nowRef }: { mempool: MempoolStatsData; nowRef: React.RefObject<HTMLDivElement | null> }) {
+  // 세 값은 확인 시간별 등급이지 좋고 나쁨이 아니라 판정 색을 쓰지 않는다. 카드 강조도 "지금"이라는
+  // 위치 표시라 계열색이다(예상 블록 series-3, 확정 블록 막대 series-4와 다른 series-1).
   const fees = [
-    { label: '10분', value: mempool.fastFee, tone: 'text-bad' },
-    { label: '30분', value: mempool.halfHourFee, tone: 'text-warn' },
-    { label: '1시간', value: mempool.hourFee, tone: 'text-good' },
+    { label: '10분', value: mempool.fastFee },
+    { label: '30분', value: mempool.halfHourFee },
+    { label: '1시간', value: mempool.hourFee },
   ];
 
   return (
-    <div
-      ref={nowRef}
-      className='flex w-47 flex-col gap-2 rounded-md bg-warn-surface/10 p-3 ring-2 ring-warn-surface/50'
-    >
-      <span className='text-3xs font-semibold text-warn'>지금 · 멤풀</span>
+    <div ref={nowRef} className='flex w-47 flex-col gap-2 rounded-md bg-series-1/10 p-3 ring-2 ring-series-1/50'>
+      <span className='text-3xs font-semibold text-series-1'>지금 · 멤풀</span>
       <span className='text-2xl leading-none font-bold tabular-nums'>
         {mempool.pendingTxCount.toLocaleString('ko-KR')}
       </span>
@@ -107,7 +106,7 @@ function NowCard({ mempool, nowRef }: { mempool: MempoolStatsData; nowRef: React
       <div className='mt-1 grid grid-cols-3 gap-1 text-center'>
         {fees.map((f) => (
           <div key={f.label} className='rounded-sm bg-background/60 py-1'>
-            <p className={cn('text-sm font-bold tabular-nums', f.tone)}>{f.value}</p>
+            <p className='text-sm font-bold tabular-nums'>{f.value}</p>
             <p className='text-3xs text-muted-foreground'>{f.label}</p>
           </div>
         ))}
@@ -143,7 +142,9 @@ export function BlockTimeline({
     if (centered.current || !nowRef.current) return;
     centered.current = true;
     nowRef.current.scrollIntoView({ block: 'nearest', inline: 'center' });
-  }, [mempool]);
+    // "지금" 칸은 셋이 다 와야 그려진다. mempool만 보면 다른 둘이 늦게 온 경우 그 칸이 생긴 뒤에
+    // effect가 돌지 않고, 다음 폴링에서야 뒤늦게 밀려 사용자가 옮겨 둔 위치를 빼앗는다.
+  }, [mempool, pending, confirmed]);
 
   if (!mempool || !pending || !confirmed) {
     return error ? <LoadFailed className='h-[188px]' /> : <Skeleton className='h-[188px] w-full' />;

@@ -9,6 +9,13 @@ export type MvrvData = {
   zScore: { time: string; value: number }[];
 };
 
+// Z-Score의 분모(시가총액 표준편차)는 첫 관측부터 누적한다. 천장 7·바닥 0.1 기준선은 2010년부터
+// 전체 역사로 잰 값이라 시작을 늦추면 표준편차가 달라져 같은 날의 값이 낮아진다. 2015년부터 재면
+// 2021년 2월 고점이 7.15가 아니라 6.12로 나와 천장 기준선에 닿지 않는다(2026-10 CoinMetrics로 대조).
+// 그래서 받는 것은 CoinMetrics의 첫 관측(2010-07)부터이고, 화면에 내보내는 구간만 예전처럼 둔다.
+const FETCH_START = '2010-01-01';
+const DISPLAY_START = '2016-01-01';
+
 async function fetchMvrv(): Promise<MvrvData> {
   type Row = { time: string; CapMVRVCur: string; CapMrktCurUSD: string };
   const rows: Row[] = [];
@@ -20,7 +27,7 @@ async function fetchMvrv(): Promise<MvrvData> {
       metrics: 'CapMVRVCur,CapMrktCurUSD',
       frequency: '1d',
       page_size: '2000',
-      start_time: '2015-01-01',
+      start_time: FETCH_START,
     });
     if (nextPageToken) params.set('next_page_token', nextPageToken);
 
@@ -48,7 +55,7 @@ async function fetchMvrv(): Promise<MvrvData> {
 
   // 화면(MVRV Z-Score 차트)은 zScore만 읽는다. MVRV 원시 시계열은 `/` HTML에 dehydrate돼
   // 실리므로 소비처 없이 내보내지 않는다.
-  const zScore = mvrvZScore(merged);
+  const zScore = mvrvZScore(merged).filter((p) => p.time >= DISPLAY_START);
   if (zScore.length === 0) throw new Error('No MVRV Z-Score data');
 
   return {

@@ -15,9 +15,16 @@ import {
 } from '@/hooks/use-mempool';
 import { formatRelativeTime, useMinuteTick } from '@/hooks/use-relative-time';
 import { BLOCKS_PER_HALVING, RETARGET_INTERVAL } from '@/lib/bitcoin-models';
-import { BTC_COLOR, cn, formatPct } from '@/lib/utils';
+import { BTC_COLOR, formatPct } from '@/lib/utils';
 
 import { BlockTimeline, LoadFailed, PoolShareBar, ProgressPanel, SectionHeading } from './components';
+
+// 1주 전 대비 해시레이트 변화. 방향은 화살표가 말하므로 크기만 적고, 찍히는 크기가 0이면 보합이다.
+function hashrateChangeText(pct: number): string {
+  const text = formatPct(Math.abs(pct), 2);
+  if (!/[1-9]/.test(text)) return '보합';
+  return `${pct > 0 ? '▲' : '▼'} ${text}`;
+}
 
 export function MempoolView() {
   const mempoolQuery = useMempoolStats();
@@ -95,10 +102,9 @@ export function MempoolView() {
                 <Panel bleed>
                   <div className='flex items-baseline justify-between gap-3 px-4 py-3'>
                     <span className='text-xl font-bold tabular-nums'>{mining.hashrateEHs} EH/s</span>
-                    <span
-                      className={cn('text-xs tabular-nums', mining.hashrateChangePct >= 0 ? 'text-good' : 'text-bad')}
-                    >
-                      1주 전 대비 {formatPct(mining.hashrateChangePct, 2, { plus: true })}
+                    {/* 방향에 판정 색을 쓰지 않는다(macro-chart.tsx와 같은 규칙). 0이면 화살표 없이 보합 */}
+                    <span className='text-xs text-muted-foreground tabular-nums'>
+                      1주 전 대비 {hashrateChangeText(mining.hashrateChangePct)}
                     </span>
                   </div>
                   <HashrateChart data={hashrate} />

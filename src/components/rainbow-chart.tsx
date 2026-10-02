@@ -82,8 +82,8 @@ export function RainbowChart({ data, resetRef, updatedLabel, error }: Props) {
       description={
         <>
           Power Law 회귀 기반의 9단계 밸류에이션 밴드. 가격 자체가 아니라 &lsquo;지금 어느 색 밴드에 있는지&rsquo;로
-          읽습니다. 한색(파랑) 구간은 저평가 매집권, 난색(빨강) 구간은 고평가 과열권으로 장기 사이클 위치를 직관적으로
-          가늠합니다.
+          읽습니다. 보통 한색(파랑) 구간은 저평가권, 난색(빨강) 구간은 고평가 과열권으로 읽혀 장기 사이클의 위치를
+          가늠하는 데 쓰입니다.
         </>
       }
     />

@@ -12,6 +12,25 @@ export const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 const SUBUNIT_SCALE: Record<string, number> = { USX: 0.01 };
 
 /**
+ * 일봉 타임스탬프를 날짜(YYYY-MM-DD)로 바꾼다. 야후는 일봉에 거래소 현지 자정이나 개장 시각을 찍는다.
+ * UTC보다 동쪽인 거래소(서머타임 중인 런던의 `USDKRW=X`, 서울)는 현지 자정이 UTC로 전날이라
+ * UTC로 자르면 하루 당겨진다. 서쪽(뉴욕·시카고)은 현지 자정·개장이 UTC로 같은 날이지만,
+ * 선물의 마지막 진행 중 봉은 저녁 세션(다음 거래일)이라 현지 날짜로 자르면 전날 봉과 겹친다.
+ * 그래서 현지 날짜와 UTC 날짜 중 늦은 쪽을 쓴다. 동쪽에서는 현지, 서쪽에서는 UTC가 된다.
+ */
+export function barDate(date: Date, timeZone: string): string {
+  const utc = date.toISOString().slice(0, 10);
+  // en-CA는 YYYY-MM-DD로 찍는다.
+  const local = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+  return local > utc ? local : utc;
+}
+
+/**
  * 심볼 목록의 일봉 종가를 받아 key → MacroSeries 매핑으로 반환. 기간은 최근 `years`년이거나
  * 고정 시작일 `start`(YYYY-MM-DD)부터 오늘까지다.
  * 부분 통화 단위(센트) 호가는 주 통화 단위(달러)로 바꿔 돌려준다(`SUBUNIT_SCALE`).
@@ -45,7 +64,7 @@ export async function fetchYahooSeries<K extends string>(
       const history = res.quotes
         .filter((q) => q.close != null)
         .map((q) => ({
-          time: q.date.toISOString().slice(0, 10),
+          time: barDate(q.date, res.meta.exchangeTimezoneName),
           value: Number(((q.close as number) * scale).toFixed(digits)),
         }));
       if (history.length === 0) throw new Error(`Yahoo ${symbol}: 빈 시계열`);

@@ -23,6 +23,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  // 화면을 노치·홈 인디케이터 아래까지 펼친다. 이게 없으면 iOS가 env(safe-area-inset-*)를 0으로 줘서
+  // 하단 바(mobile-nav-drawer.tsx)·본문 여백·워크스루 알약이 쓰는 --spacing-safe-bottom이 늘 0이다.
+  viewportFit: 'cover',
   // 모바일 브라우저 크롬 색. globals.css의 --background(라이트 oklch(1 0 0) = 흰색, 다크
   // oklch(0.148 0.004 228.8) = 거의 검정)를 sRGB hex로 옮긴 값이다. 메타 태그는 CSS 변수를 읽지
   // 못해 값을 따로 적으므로 --background를 바꾸면 여기도 함께 바꾼다. 미디어 쿼리로만 갈리므로

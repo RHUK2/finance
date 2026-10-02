@@ -63,6 +63,8 @@ function RangeTabs({
   frequency: MacroFrequency;
 }) {
   const ranges = frequency === 'monthly' ? RANGES.filter((r) => !MONTHLY_HIDDEN.includes(r.value)) : RANGES;
+  // 버튼 높이 24px(py-1)는 WCAG 2.5.8 최소 대상 크기다. py-0.5(20px)였을 때 360px 폭에서 탭 넷이
+  // 2px 간격으로 붙어 손끝으로 옆 탭을 누르기 쉬웠다.
   return (
     <div className='flex shrink-0 gap-0.5 rounded-md bg-muted p-0.5'>
       {ranges.map((r) => (
@@ -72,7 +74,7 @@ function RangeTabs({
           aria-pressed={value === r.value}
           onClick={() => onChange(r.value)}
           className={cn(
-            'rounded px-2 py-0.5 text-3xs transition-colors',
+            'rounded px-2 py-1 text-3xs transition-colors',
             value === r.value ? 'bg-background font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground',
           )}
         >
@@ -176,6 +178,16 @@ export function MacroChart({
   const diffDigits = changeDiff?.digits ?? 2;
   // 방향은 화살표가 말하므로 크기만 적는다.
   const changeText = (v: number) => (changeDiff ? `${Math.abs(v).toFixed(diffDigits)}%p` : `${Math.abs(v)}%`);
+  // 방향에는 판정 색을 쓰지 않는다. 오르는 것이 좋은지는 자산마다 다르다(VIX·달러/원이 오르면 대개 나쁜
+  // 소식이다). 방향은 화살표와 부호가 말하고 글자는 기본색이다. 찍히는 크기가 0이면(연준 기준금리가 동결된
+  // 달 등) 화살표 없이 '보합'으로 적고 흐리게 둔다. 반올림해 0이 된 값도 같다.
+  const changeTone = (text: string) => (!/[1-9]/.test(text) ? 'text-muted-foreground' : undefined);
+  const rangeText =
+    rangeChange == null
+      ? null
+      : changeDiff
+        ? formatPp(rangeChange, diffDigits)
+        : formatPct(rangeChange, 1, { plus: true });
   // 좁힌 탭에 관측값이 하나도 없다(갱신이 멈춘 일봉 등). 빈 차트만 두면 고장으로 읽힌다.
   const emptyRange = range !== 'all' && !!shown?.[0] && shown[0].data.length === 0;
 
@@ -192,14 +204,14 @@ export function MacroChart({
           <div className='flex items-end gap-2'>
             <span className='text-2xl font-bold tabular-nums'>{headlineValue}</span>
             {change != null && (
-              <span className={cn('mb-1 text-sm font-semibold', change >= 0 ? 'text-good' : 'text-bad')}>
-                {frequency === 'monthly' ? '전월' : '전일'} {change >= 0 ? '▲' : '▼'} {changeText(change)}
+              <span className={cn('mb-1 text-sm font-semibold', changeTone(changeText(change)))}>
+                {frequency === 'monthly' ? '전월' : '전일'}{' '}
+                {/[1-9]/.test(changeText(change)) ? `${change > 0 ? '▲' : '▼'} ${changeText(change)}` : '보합'}
               </span>
             )}
-            {rangeChange != null && (
-              <span className={cn('mb-1 text-sm', rangeChange >= 0 ? 'text-good' : 'text-bad')}>
-                {rangeLabel}{' '}
-                {changeDiff ? formatPp(rangeChange, diffDigits) : formatPct(rangeChange, 1, { plus: true })}
+            {rangeText != null && (
+              <span className={cn('mb-1 text-sm', changeTone(rangeText))}>
+                {rangeLabel} {rangeText}
               </span>
             )}
           </div>

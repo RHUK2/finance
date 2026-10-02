@@ -166,6 +166,12 @@ export function BitcoinView() {
             resetRef={piCycleReset}
             updatedLabel={historicalRelTime ?? undefined}
           />
+          {/* 지표 설명이 과열·바닥 같은 해석을 담고 있어 매매 신호로 오독되지 않게 한 번만 적는다(실데이터
+              페이지라 IllustrativeDisclaimer가 아니라 자체 문단이다) */}
+          <p className='text-xs/relaxed text-muted-foreground'>
+            이 화면의 지표와 해석은 과거 데이터에서 흔히 쓰이는 읽는 법을 소개한 것이며 투자 조언이 아닙니다. 같은
+            신호가 다음 사이클에도 맞는다는 보장은 없습니다.
+          </p>
         </div>
       </PageMain>
     </>

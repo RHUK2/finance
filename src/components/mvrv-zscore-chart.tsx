@@ -52,7 +52,7 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel, error }: Props) 
       headline={current != null && <ScoreHeadline value={current} status={getZScoreStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
-      description='시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 이렇게 읽습니다. 7 이상이면 평균 대비 극단적 고평가(사이클 천장 경계), 0.1 미만이면 실현가치에 근접하거나 밑도는 역사적 바닥권(장기 매집 구간)으로 해석합니다.'
+      description='시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 보통 7 이상은 평균 대비 극단적 고평가(사이클 천장권), 0.1 미만은 시장가치가 실현가치에 근접하거나 밑도는 역사적 바닥권으로 읽힙니다.'
     />
   );
 }
