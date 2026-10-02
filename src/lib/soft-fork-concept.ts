@@ -1,7 +1,9 @@
 // 소프트포크 활성화(BIP9/BIP8) 개념 계산.
 // ⚠️ 실제 신호 기간은 2016블록(약 2주)이고 타임아웃도 수개월~수년 단위다. 여기서는 여러 기간을
 // 몇 초 만에 재생할 수 있도록 기간 수·신호 표본을 크게 단순화했다. 임계값(95%)과 상태 전이 규칙
-// (STARTED → LOCKED_IN → ACTIVE, 또는 타임아웃 시 FAILED)은 BIP9 실제 규칙 그대로다.
+// (STARTED → LOCKED_IN → ACTIVE, 또는 타임아웃 시 FAILED)은 Bitcoin Core 구현(versionbits.cpp)과 같다.
+// 마지막 기간에 임계값을 넘으면 타임아웃보다 확정이 먼저다. BIP9 원문의 의사코드는 타임아웃을 먼저 봐서
+// 이 경우 FAILED가 되지만, 지금 Core는 신호 수를 먼저 센다.
 
 export type Bip9State = 'STARTED' | 'LOCKED_IN' | 'ACTIVE' | 'FAILED';
 

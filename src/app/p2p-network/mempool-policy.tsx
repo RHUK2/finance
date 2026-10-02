@@ -87,7 +87,8 @@ export function MempoolPolicy() {
       <SectionIntro title='RBF: 멈춰 있는 tx를 수수료로 밀어내기'>
         낮은 수수료로 보낸 tx가 멤풀에서 오래 멈춰 있으면, <b>같은 UTXO를 쓰되 수수료만 올린 새 tx</b>로 원본을 대체할
         수 있다(Replace-By-Fee, BIP125). 단, 아무 금액이나 올리면 되는 게 아니라 늘어난 수수료가 최소 릴레이
-        수수료율만큼은 더 내야 한다. 그래야 다시 퍼뜨리는 대역폭 비용을 낸 셈이 된다.
+        수수료율만큼은 더 내야 한다. 그래야 다시 퍼뜨리는 대역폭 비용을 낸 셈이 된다. 실제 노드는 이 증분 문턱을 최소
+        릴레이 수수료율과 따로 둔다(incrementalrelayfee, 기본값은 같은 0.1 sat/vB). 여기서는 둘을 한 값으로 묶었다.
       </SectionIntro>
 
       <Panel>

@@ -17,6 +17,7 @@ import { TOTAL_BLOCKS_APPROX } from '@/lib/p2p-concept';
 type LockType = 'cltv' | 'csv';
 
 const fmtBlocks = (v: number) => `${v.toLocaleString('ko-KR')}블록`;
+const fmtConfirmations = (v: number) => `확인 ${v.toLocaleString('ko-KR')}개`;
 
 // CLTV 슬라이더는 지금 높이 근처에서 움직인다. 지금 높이의 근사값은 p2p-concept가 단일 출처다.
 const CLTV_NOW = TOTAL_BLOCKS_APPROX;
@@ -29,11 +30,13 @@ export function TimelockLab() {
   const [currentHeight, setCurrentHeight] = useState(CLTV_NOW);
   const [unlockHeight, setUnlockHeight] = useState(CLTV_NOW + 2_000);
 
-  // CSV: 이 UTXO가 생성된 시점부터 상대적으로 경과한 블록 수 기준.
-  const [elapsedBlocks, setElapsedBlocks] = useState(100);
+  // CSV: 이 UTXO의 확인 수 기준(담긴 블록이 1확인). BIP68은 코인 높이 + 요구 블록 수 이상인 블록에 지출을
+  // 싣게 하므로, 확인 수가 요구치에 닿으면 다음 블록에 실을 수 있다. CLTV도 지금 높이(팁)가 해제 높이에
+  // 닿으면 다음 블록에 실을 수 있어(nLockTime < 블록 높이) 두 판정 모두 "다음 블록에 실을 수 있는가"다.
+  const [confirmations, setConfirmations] = useState(100);
   const [requiredBlocks, setRequiredBlocks] = useState(144); // 약 하루치 블록 수
 
-  const unlocked = type === 'cltv' ? currentHeight >= unlockHeight : elapsedBlocks >= requiredBlocks;
+  const unlocked = type === 'cltv' ? currentHeight >= unlockHeight : confirmations >= requiredBlocks;
 
   const scriptPubKey =
     type === 'cltv'
@@ -84,21 +87,21 @@ export function TimelockLab() {
         ) : (
           <>
             <ControlSlider
-              label='이 UTXO 생성 후 경과한 블록 수'
-              value={elapsedBlocks}
-              onChange={setElapsedBlocks}
+              label='이 UTXO의 확인 수'
+              value={confirmations}
+              onChange={setConfirmations}
               min={0}
               max={300}
-              step={10}
-              format={fmtBlocks}
+              step={1}
+              format={fmtConfirmations}
             />
             <ControlSlider
-              label='요구되는 경과 블록 수 (sequence)'
+              label='요구되는 블록 수 (sequence)'
               value={requiredBlocks}
               onChange={setRequiredBlocks}
               min={0}
               max={300}
-              step={10}
+              step={1}
               format={fmtBlocks}
               hint='약 144블록 ≈ 하루'
             />
@@ -112,8 +115,8 @@ export function TimelockLab() {
             ? `현재 높이 ${fmtBlocks(currentHeight)} ≥ 해제 높이 ${fmtBlocks(unlockHeight)} → 지출 허용`
             : `현재 높이 ${fmtBlocks(currentHeight)} < 해제 높이 ${fmtBlocks(unlockHeight)} → 지출 거부`
           : unlocked
-            ? `경과 ${fmtBlocks(elapsedBlocks)} ≥ 요구 ${fmtBlocks(requiredBlocks)} → 지출 허용`
-            : `경과 ${fmtBlocks(elapsedBlocks)} < 요구 ${fmtBlocks(requiredBlocks)} → 지출 거부`}
+            ? `${fmtConfirmations(confirmations)} ≥ 요구 ${fmtBlocks(requiredBlocks)} → 지출 허용`
+            : `${fmtConfirmations(confirmations)} < 요구 ${fmtBlocks(requiredBlocks)} → 지출 거부`}
       </StatusBanner>
 
       <div className='grid grid-cols-2 gap-3'>
@@ -123,7 +126,7 @@ export function TimelockLab() {
           value={
             type === 'cltv'
               ? fmtBlocks(Math.max(0, unlockHeight - currentHeight))
-              : fmtBlocks(Math.max(0, requiredBlocks - elapsedBlocks))
+              : fmtBlocks(Math.max(0, requiredBlocks - confirmations))
           }
         />
       </div>
@@ -136,7 +139,7 @@ export function TimelockLab() {
       <ExplainCard
         title='절대 시간(CLTV) vs 상대 시간(CSV), 뭐가 다를까'
         preview='CLTV는 "몇 번째 블록부터" 풀리고, CSV는 "이 UTXO가 생기고 몇 블록 뒤"에 풀린다.'
-        body='CLTV는 블록체인 전체의 절대 높이(또는 절대 시각)를 기준으로 삼는다. 그래서 UTXO가 언제 만들어졌든 상관없이 지정된 높이가 되어야 풀린다. CSV는 그 UTXO 자신이 블록에 확정된 시점을 기준점 0으로 놓고, 거기서부터 몇 블록이 더 지나야 하는지를 센다. 같은 스크립트를 여러 UTXO에 재사용해도 "생성 후 30일" 같은 상대적 유예 기간을 각자 독립적으로 적용할 수 있다는 점이 CSV의 강점이다.'
+        body='CLTV는 블록체인 전체의 절대 높이(또는 절대 시각)를 기준으로 삼는다. 그래서 UTXO가 언제 만들어졌든 상관없이 지정된 높이가 되어야 풀린다. CSV는 그 UTXO 자신이 담긴 블록을 기준으로, 거기서부터 블록이 몇 개 쌓여야 하는지를 센다(위 슬라이더는 담긴 블록을 1로 치는 확인 수다). 같은 스크립트를 여러 UTXO에 재사용해도 "생성 후 30일" 같은 상대적 유예 기간을 각자 독립적으로 적용할 수 있다는 점이 CSV의 강점이다.'
       />
       <ExplainCard
         title='실전에서는 이렇게 쓰인다'

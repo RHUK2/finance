@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { ControlSlider, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 
+import { CalcLine } from './calc-line';
 import { MULTIPLES_OF_G, N, bruteForce, fmtPt, inv, mod, recoverFromReuse, sign } from './models';
 
 export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
@@ -105,17 +106,17 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
             <span className='flex items-center gap-1.5 text-sm font-semibold'>
               <Unlock className='size-4 text-series-3' />두 식에서 미지수를 지운다
             </span>
-            <Line
+            <CalcLine
               label='s₁ − s₂ = k⁻¹(z₁ − z₂)'
               value={`${sig1.s} − ${sig2.s} ≡ ${mod(sig1.s - sig2.s, N)}, ${z} − ${z2} ≡ ${mod(z - z2, N)}`}
               note='두 식을 빼면 개인키 d가 사라진다. 남은 미지수는 k 하나뿐이다.'
             />
-            <Line
+            <CalcLine
               label='k = (z₁ − z₂)(s₁ − s₂)⁻¹ mod n'
               value={`${mod(z - z2, N)} × ${inv(mod(sig1.s - sig2.s, N), N)} mod ${N} = ${recovered.k}`}
               note={`실제로 쓴 k는 ${k}였다.`}
             />
-            <Line
+            <CalcLine
               label='d = (s₁·k − z₁)·r⁻¹ mod n'
               value={`(${sig1.s} × ${recovered.k} − ${z}) × ${inv(sig1.r, N)} mod ${N} = ${recovered.d}`}
               note={`k를 서명식에 되넣으면 개인키가 떨어진다. 실제 개인키는 ${d}였다.`}
@@ -146,18 +147,6 @@ export function BreakLab({ d, z, k }: { d: number; z: number; k: number }) {
           해시에서 결정론적으로 만들어 낸다(RFC 6979). 난수의 품질에 안전을 걸지 않기로 한 것이다.
         </p>
       </Panel>
-    </div>
-  );
-}
-
-function Line({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className='flex flex-col rounded-md border px-3 py-2'>
-      <div className='flex flex-wrap items-baseline justify-between gap-x-3'>
-        <span className='text-sm font-medium'>{label}</span>
-        <span className='text-sm tabular-nums'>{value}</span>
-      </div>
-      <span className='text-xs text-muted-foreground'>{note}</span>
     </div>
   );
 }

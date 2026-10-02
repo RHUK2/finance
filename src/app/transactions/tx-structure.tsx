@@ -69,7 +69,7 @@ export function TxStructure() {
               name='scriptSig'
               desc={
                 isSegwit
-                  ? '해제 스크립트. SegWit에선 비어 있음 (서명이 아래 witness로 이동)'
+                  ? '해제 스크립트. Native SegWit에선 비어 있음 (서명이 아래 witness로 이동. Nested SegWit은 리딤 스크립트만 남음)'
                   : '해제 스크립트. 여기에 서명·공개키가 통째로 들어감'
               }
               role={isSegwit ? 'plain' : 'unlock'}

@@ -10,7 +10,16 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ExplainCard, Field, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { cn } from '@/lib/utils';
-import { buildPath, COINS, illustrativeAddress, illustrativeHex, PURPOSES } from '@/lib/bip-concept';
+import {
+  buildPath,
+  COINS,
+  illustrativeAddress,
+  illustrativeHex,
+  MAX_CHILD_INDEX,
+  parseChildIndex,
+  PURPOSES,
+  siblingIndices,
+} from '@/lib/bip-concept';
 
 import { Pipeline, type PipeItem } from '@/components/pipeline';
 
@@ -18,18 +27,6 @@ import { Pipeline, type PipeItem } from '@/components/pipeline';
 // 비밀 쪽 = series-1, 공개 쪽 = series-2.
 const LOCK_COLOR = 'text-series-1';
 const OPEN_COLOR = 'text-series-2';
-
-// 경로의 한 칸은 32비트 index다. 0 이상 2³¹ 미만이 일반 가지이고, 하드닝(')은 여기에 2³¹을
-// 더한 나머지 절반을 쓴다. 그래서 화면에서 고르는 번호는 하드닝 여부와 무관하게 이 범위다.
-const MAX_CHILD_INDEX = 2 ** 31 - 1;
-
-// 입력 문자열을 경로 번호로. 범위 밖이거나 정수가 아니면 null이라 경로에 반영하지 않는다.
-// 조용히 반올림하거나 잘라 넣으면 화면이 가르치는 index 공간 규칙과 다른 값이 경로에 들어간다.
-function parseChildIndex(text: string): number | null {
-  if (!/^\d+$/.test(text.trim())) return null;
-  const n = Number(text);
-  return n <= MAX_CHILD_INDEX ? n : null;
-}
 
 // 공개키에서 주소까지의 마지막 단계는 주소 타입마다 다르다. 해시를 담는 타입(P2PKH·P2SH-P2WPKH·P2WPKH)은
 // HASH160을 거치고, P2TR은 해시 없이 BIP-341로 조정한 x-only 공개키 32바이트를 그대로 Bech32m(BIP-350)으로 담는다.
@@ -141,7 +138,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
   const meta = PURPOSES.find((p) => p.value === purpose) ?? PURPOSES[0];
   const addressAt = (i: number) =>
-    illustrativeAddress(seedHex, buildPath({ purpose, coin, account, change, index: i }), purpose);
+    illustrativeAddress(seedHex, buildPath({ purpose, coin, account, change, index: i }), purpose, coin);
   const address = addressAt(index);
 
   // idx = 경로에 적히는 번호. 실제 CKD에 들어가는 직렬화 index는 하드닝이면 2^31 + idx다.
@@ -194,9 +191,7 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
 
   // 마지막(index) 단계는 형제 노드를 함께 펼쳐 '가지가 갈라지는' 모습을 보여준다.
   // 같은 부모(change)에서 나온 형제들이 서로 다른 주소로 이어지는 게 요점.
-  // 양 끝에서는 범위 안쪽으로 밀어 세 칸을 채운다. 2³¹ 이상은 일반 가지가 아니다.
-  const siblingStart = Math.min(Math.max(index - 1, 0), MAX_CHILD_INDEX - 2);
-  const siblings = [siblingStart, siblingStart + 1, siblingStart + 2].map((i) => ({
+  const siblings = siblingIndices(index).map((i) => ({
     index: i,
     address: addressAt(i),
   }));
@@ -596,8 +591,8 @@ export function KeyTree({ seedHex }: { seedHex: string }) {
             index는 그냥 고르는 번호다. 즉 <b>xpub을 가진 사람은 IL을 직접 계산할 수 있다.</b> 그럼 이런 일이 벌어진다.
             그 사람이 자식 개인키 하나를 어쩌다 손에 넣으면, 식을 뒤집어{' '}
             <span className='font-mono'>부모 개인키 = (자식 개인키 − IL) mod n</span>
-            으로 부모를 복원한다. 부모가 뚫리면 그 아래 형제 전부가 함께 뚫린다. 주소 하나가 샜을 뿐인데 계정 전체를
-            잃는 것이다.
+            으로 부모를 복원한다. 부모가 뚫리면 그 아래 형제 전부가 함께 뚫린다. 주소 하나의 개인키가 샜을 뿐인데 계정
+            전체를 잃는 것이다.
             <br />
             <br />
             하드닝은 이 고리를 끊는다. IL을 만들 때 부모 공개키 대신 <b>부모 개인키</b>를 넣기 때문에, xpub만 가진

@@ -30,6 +30,16 @@ export function txVBytes(type: AddrType, numIn: number, numOut: number): number 
   return TX_OVERHEAD_VB + numIn * m.inputVb + numOut * m.outputVb;
 }
 
+// 입력·출력 개수 칸의 계약: 1 이상 MAX_TX_PARTS 이하의 정수. 소수는 내리고, 빈칸·0·음수는 1, 넘치면 상한.
+// 상한은 표준 트랜잭션 한도에서 역산한 값이 아니라 표기가 깨지지 않게 넉넉히 잡은 선이다.
+export const MAX_TX_PARTS = 1_000;
+
+export function parseTxCount(text: string): number {
+  const n = Math.floor(Number(text));
+  if (!Number.isFinite(n) || n < 1) return 1;
+  return Math.min(MAX_TX_PARTS, n);
+}
+
 export function feeSats(vbytes: number, feeRate: number): number {
   return Math.ceil(vbytes * feeRate);
 }

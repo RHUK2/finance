@@ -7,7 +7,17 @@ import { ExplainCard, Field, SectionIntro } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addrMeta, ADDR_TYPES, type AddrType, feeSats, formatSats, TX_OVERHEAD_VB, txVBytes } from '@/lib/tx-concept';
+import {
+  addrMeta,
+  ADDR_TYPES,
+  type AddrType,
+  feeSats,
+  formatSats,
+  MAX_TX_PARTS,
+  parseTxCount,
+  TX_OVERHEAD_VB,
+  txVBytes,
+} from '@/lib/tx-concept';
 
 import { FeeRateControl } from './fee-rate-control';
 
@@ -34,16 +44,20 @@ export function FeeCalc() {
             <Input
               type='number'
               min={1}
+              max={MAX_TX_PARTS}
+              step={1}
               value={numIn}
-              onChange={(e) => setNumIn(Math.max(1, Number(e.target.value) || 1))}
+              onChange={(e) => setNumIn(parseTxCount(e.target.value))}
             />
           </Field>
           <Field label='출력 개수 (받는 사람+잔돈)'>
             <Input
               type='number'
               min={1}
+              max={MAX_TX_PARTS}
+              step={1}
               value={numOut}
-              onChange={(e) => setNumOut(Math.max(1, Number(e.target.value) || 1))}
+              onChange={(e) => setNumOut(parseTxCount(e.target.value))}
             />
           </Field>
           <Field label='주소 타입'>
@@ -115,12 +129,12 @@ export function FeeCalc() {
       />
 
       <ExplainCard
-        title='SegWit 할인: 서명만 1/4로 센다'
-        preview='서명은 블록 한도에 1/4만 계산된다. 물리적 크기는 그대로고, 계산되는 크기만 준다.'
+        title='SegWit 할인: witness만 1/4로 센다'
+        preview='서명이 담기는 witness는 블록 한도에 1/4만 계산된다. 물리적 크기는 그대로고, 계산되는 크기만 준다.'
         body={
           <>
-            규칙은 딱 한 줄이다: <b>서명(witness) 데이터는 블록 한도에 1/4만 계산한다</b>. 나머지(입력·출력의 일반
-            필드)는 바이트 그대로다.
+            규칙은 딱 한 줄이다: <b>witness 데이터(서명과 공개키)는 블록 한도에 1/4만 계산한다</b>. 나머지(입력·출력의
+            일반 필드)는 바이트 그대로다.
             <br />
             <br />
             여기서 &lsquo;크기&rsquo;는 두 가지다.
@@ -132,9 +146,9 @@ export function FeeCalc() {
             두고 벌이는 경매에서 <b>얼마를 차지한 걸로 칠지</b>다. 수수료는 이 &lsquo;계산되는 크기&rsquo;에 붙으므로,
             서명이 무거운 트랜잭션일수록 할인폭이 커진다.
             <br />
-            <br />왜 하필 서명만 깎아줄까. 자원 비용이 다르기 때문이다. <b>출력(UTXO)</b>은 모든 노드가 영원히 메모리에
-            들고 있어야 하는 비싼 자원이라 할인이 없다. 반면 <b>서명</b>은 검증이 끝나면 버려도 되는(가지치기 가능) 싼
-            자원이라 1/4만 매긴다. 임의의 숫자가 아니라 자원 비용에 맞춘 가격이다.
+            <br />왜 하필 서명만 깎아줄까. 자원 비용이 다르기 때문이다. <b>출력(UTXO)</b>은 쓰일 때까지 모든 노드가 UTXO
+            집합에 들고 있으며 검증할 때마다 찾아봐야 하는 비싼 자원이라 할인이 없다. 반면 <b>서명</b>은 검증이 끝나면
+            버려도 되는(가지치기 가능) 싼 자원이라 1/4만 매긴다. 임의의 숫자가 아니라 자원 비용에 맞춘 가격이다.
             <br />
             <br />
             같은 송금인데 Legacy 입력이 <b>148 vB</b>, Native SegWit이 <b>68 vB</b>인 이유가 이거다. 트랜잭션 구조

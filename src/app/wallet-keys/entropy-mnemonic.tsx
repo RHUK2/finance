@@ -7,6 +7,9 @@ import { Panel } from '@/components/panel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ExplainCard, Field, Metric, SectionIntro } from '@/components/simulation';
 import {
+  DICE_FOR_256,
+  DIE_BITS,
+  diceEntropyBits,
   ENTROPY_OPTIONS,
   entropyBreakdown,
   hexToBits,
@@ -40,10 +43,6 @@ function NibbleHexGrid({ bits, className }: { bits: string; className?: string }
     </span>
   );
 }
-
-// 공정한 6면 주사위 한 번의 정보량과, 256비트를 넘기는 데 필요한 최소 횟수.
-const DIE_BITS = Math.log2(6);
-const DICE_FOR_256 = Math.ceil(256 / DIE_BITS);
 
 export function EntropyMnemonic({
   bits,
@@ -124,8 +123,8 @@ export function EntropyMnemonic({
             보이고, 실제로 난수 결함 때문에 지갑이 통째로 털린 사례도 있다. 반면 인터넷에 연결된 적 없는 곳에서{' '}
             <b>동전이나 주사위를 직접 던져</b> 뽑은 무작위성은 그 순간 그 자리에 있던 사람 외엔 아무도 알 수 없고, 어떤
             소프트웨어도 개입할 수 없다. 동전 한 번이 1비트(앞 1, 뒤 0)라 128비트 지갑은 동전 128번이면 되고, 주사위는
-            한 번에 약 {DIE_BITS.toFixed(2)}비트라 99번이면 약 {(99 * DIE_BITS).toFixed(1)}비트, {DICE_FOR_256}번이면
-            256비트를 넘는다. 하드웨어 지갑들이 주사위 입력 모드를 지원하는 이유가 바로 이것이다.
+            한 번에 약 {DIE_BITS.toFixed(2)}비트라 99번이면 약 {diceEntropyBits(99).toFixed(1)}비트, {DICE_FOR_256}
+            번이면 256비트를 넘는다. 하드웨어 지갑들이 주사위 입력 모드를 지원하는 이유가 바로 이것이다.
           </>
         }
       />
@@ -171,7 +170,7 @@ export function EntropyMnemonic({
             <code className='font-mono'>엔트로피 + 체크섬</code>이 11로 정확히 나눠떨어져야 한다. 엔트로피는 항상 32의
             배수(128·160·192·224·256)로 정하는데, 체크섬을 <code className='font-mono'>ENT ÷ 32</code>로 잡으면 총비트가{' '}
             <code className='font-mono'>ENT × 33/32</code>가 되어 언제나 11의 배수가 된다(예: 128 → 132 = 11×12단어, 256
-            → 264 = 11×24단어). 즉 ÷32는 <b>남는 비트 없이 단어가 딱 떨어지게</b> 만드는 유일한 선택이고, 덤으로
+            → 264 = 11×24단어). 즉 ÷32는 <b>남는 비트 없이 단어가 딱 떨어지게</b> 만드는 가장 짧은 체크섬이고, 덤으로
             엔트로피가 길수록 체크섬도 비례해 길어져 오타 검출력이 좋아진다.
           </>
         }

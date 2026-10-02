@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ADDR_TYPES, addrMeta, feeSats, TX_OVERHEAD_VB, txVBytes } from './tx-concept';
+import { ADDR_TYPES, addrMeta, feeSats, MAX_TX_PARTS, parseTxCount, TX_OVERHEAD_VB, txVBytes } from './tx-concept';
 
 // 기대값은 docs/fact-check-log.md 「트랜잭션·수수료」다.
 describe('vByte 대표값', () => {
@@ -51,5 +51,17 @@ describe('주소 타입 비교의 최댓값', () => {
     const s = sizes(1, 20);
     expect(Math.round((s.taproot / s.legacy - 1) * 100)).toBe(11);
     expect((s.legacy / Math.max(...Object.values(s))) * 100).toBeCloseTo(90.4, 1);
+  });
+});
+
+describe('입력·출력 개수 칸', () => {
+  it('1 이상 1,000 이하의 정수로 맞춘다', () => {
+    expect(MAX_TX_PARTS).toBe(1_000);
+    expect(parseTxCount('3')).toBe(3);
+    expect(parseTxCount('2.7')).toBe(2);
+    expect(parseTxCount('1000')).toBe(1_000);
+    expect(parseTxCount('1001')).toBe(1_000);
+    expect(parseTxCount('1e9')).toBe(1_000);
+    for (const low of ['', '0', '0.5', '-3', 'abc']) expect(parseTxCount(low)).toBe(1);
   });
 });

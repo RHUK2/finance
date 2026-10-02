@@ -6,7 +6,7 @@ import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { CostBar, ExplainCard, Field, SectionIntro } from '@/components/simulation';
 import { formatPct } from '@/lib/utils';
-import { ADDR_TYPES, addrMeta, feeSats, formatSats, txVBytes } from '@/lib/tx-concept';
+import { ADDR_TYPES, addrMeta, feeSats, formatSats, MAX_TX_PARTS, parseTxCount, txVBytes } from '@/lib/tx-concept';
 
 import { FeeRateControl } from './fee-rate-control';
 
@@ -52,16 +52,20 @@ export function AddressCompare() {
             <Input
               type='number'
               min={1}
+              max={MAX_TX_PARTS}
+              step={1}
               value={numIn}
-              onChange={(e) => setNumIn(Math.max(1, Math.floor(Number(e.target.value)) || 1))}
+              onChange={(e) => setNumIn(parseTxCount(e.target.value))}
             />
           </Field>
           <Field label='출력 개수'>
             <Input
               type='number'
               min={1}
+              max={MAX_TX_PARTS}
+              step={1}
               value={numOut}
-              onChange={(e) => setNumOut(Math.max(1, Math.floor(Number(e.target.value)) || 1))}
+              onChange={(e) => setNumOut(parseTxCount(e.target.value))}
             />
           </Field>
         </div>

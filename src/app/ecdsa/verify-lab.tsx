@@ -7,6 +7,7 @@ import { CheckCircle2, Eye, XCircle } from 'lucide-react';
 import { Field, Metric, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 
+import { CalcLine } from './calc-line';
 import { CurveGrid, type GridMark } from './curve-grid';
 import { MULTIPLES_OF_G, N, type Pt, fmtPt, mod, mulPt, samePt, sign, verify } from './models';
 
@@ -119,14 +120,14 @@ function VerifySteps({
     <>
       <Panel className='gap-2'>
         <span className='text-sm font-semibold'>네 단계</span>
-        <Line
+        <CalcLine
           label='w = s⁻¹ mod n'
           value={`${sSeen}⁻¹ mod ${N} = ${res.w}`}
           note={`검산: ${sSeen} × ${res.w} = ${sSeen * res.w} ≡ ${mod(sSeen * res.w, N)}`}
         />
-        <Line label='u₁ = z·w mod n' value={`${zSeen} × ${res.w} mod ${N} = ${res.u1}`} note='메시지 몫' />
-        <Line label='u₂ = r·w mod n' value={`${r} × ${res.w} mod ${N} = ${res.u2}`} note='공개키 몫' />
-        <Line
+        <CalcLine label='u₁ = z·w mod n' value={`${zSeen} × ${res.w} mod ${N} = ${res.u1}`} note='메시지 몫' />
+        <CalcLine label='u₂ = r·w mod n' value={`${r} × ${res.w} mod ${N} = ${res.u2}`} note='공개키 몫' />
+        <CalcLine
           label='X = u₁G + u₂Q'
           value={`${fmtPt(u1G)} + ${fmtPt(u2Q)} = ${fmtPt(res.X)}`}
           note={
@@ -155,17 +156,5 @@ function VerifySteps({
         </StatusBanner>
       )}
     </>
-  );
-}
-
-function Line({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className='flex flex-col rounded-md border px-3 py-2'>
-      <div className='flex flex-wrap items-baseline justify-between gap-x-3'>
-        <span className='text-sm font-medium'>{label}</span>
-        <span className='text-sm tabular-nums'>{value}</span>
-      </div>
-      <span className='text-xs text-muted-foreground'>{note}</span>
-    </div>
   );
 }

@@ -47,7 +47,8 @@ export function illustrativeXOnlyPubKey(seed: string): string {
   return illustrativeHex('xonly:' + seed, 64);
 }
 
-// 트랜잭션을 두 번 해시(SHA-256d)해서 얻는 서명 대상 다이제스트 32바이트.
+// 서명 대상 다이제스트 32바이트. Legacy·SegWit v0은 트랜잭션을 SHA-256 두 번(SHA-256d)으로,
+// Taproot는 BIP-341 태그 해시(TapSighash, SHA-256 한 번)로 만든다. 여기서는 둘 다 같은 가짜 값 생성기를 쓴다.
 export function illustrativeSighash(message: string): string {
   return illustrativeHex('sighash:' + message, 64);
 }

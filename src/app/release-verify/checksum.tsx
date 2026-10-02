@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from 'react';
 
-import { FileCheck2, TriangleAlert } from 'lucide-react';
+import { CircleCheck, CircleX, FileCheck2 } from 'lucide-react';
 
 import { ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
@@ -32,11 +32,25 @@ export function Checksum() {
   const [base, setBase] = useState('');
   const [now, setNow] = useState('');
 
+  // 해시는 비동기라 빨리 친 글자의 결과가 늦게 도착할 수 있다. cleanup에서 live를 내려
+  // 지나간 입력의 결과가 지금 입력의 값을 덮지 않게 한다.
   useEffect(() => {
-    void sha256Hex(ORIGINAL).then(setBase);
+    let live = true;
+    void sha256Hex(ORIGINAL).then((h) => {
+      if (live) setBase(h);
+    });
+    return () => {
+      live = false;
+    };
   }, []);
   useEffect(() => {
-    void sha256Hex(text).then(setNow);
+    let live = true;
+    void sha256Hex(text).then((h) => {
+      if (live) setNow(h);
+    });
+    return () => {
+      live = false;
+    };
   }, [text]);
 
   const changed = text !== ORIGINAL;
@@ -68,7 +82,7 @@ export function Checksum() {
         )}
       </Panel>
 
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+      <div className='grid grid-cols-2 gap-3'>
         <Metric label='바뀐 글자' value={changed ? '1자 이상' : '없음'} tone={changed ? 'accent' : undefined} />
         <Metric
           label='달라진 자리'
@@ -76,16 +90,14 @@ export function Checksum() {
           tone={diffCount > 0 ? 'bad' : 'good'}
           sub='16진수 한 자리 단위'
         />
-        <Metric
-          label='체크섬 대조'
-          value={changed ? '불일치' : '일치'}
-          tone={changed ? 'bad' : 'good'}
-          sub='원본 값과 비교'
-        />
       </div>
 
-      <StatusBanner icon={<TriangleAlert className='size-4' />} tone='accent'>
-        그런데 여기서 대조한 원본 값은 어디서 받았나
+      <StatusBanner
+        icon={changed ? <CircleX className='size-4 text-bad' /> : <CircleCheck className='size-4 text-good' />}
+        tone={changed ? 'bad' : 'good'}
+        detail='그런데 여기서 대조한 원본 값은 어디서 받았나'
+      >
+        {changed ? '체크섬 불일치. 원본 값과 다르다.' : '체크섬 일치. 원본 값과 같다.'}
       </StatusBanner>
 
       <ExplainCard
