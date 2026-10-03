@@ -31,6 +31,16 @@ export function barDate(date: Date, timeZone: string): string {
 }
 
 /**
+ * 날짜가 같은 봉이 이어지면 뒤의 것 하나만 남긴다. 야후는 장이 닫힌 뒤 마지막 시세를 일봉과 따로 한 점 더
+ * 붙여 주는데, 런던 외환(`USDKRW=X`)은 그 점의 현지 날짜가 그날 일봉과 같다(2026-10-02: 23:00Z 일봉 1360.59,
+ * 21:18Z 시세 1342.51). 같은 날짜가 두 번 실리면 lightweight-charts가 `setData`에서 예외를 던져 그 페이지가
+ * 통째로 오류 화면이 된다. 뒤의 점이 더 늦은 관측이라 그쪽을 그날 값으로 쓴다.
+ */
+export function keepLastPerDate<T extends { time: string }>(rows: T[]): T[] {
+  return rows.filter((row, i) => rows[i + 1]?.time !== row.time);
+}
+
+/**
  * 심볼 목록의 일봉 종가를 받아 key → MacroSeries 매핑으로 반환. 기간은 최근 `years`년이거나
  * 고정 시작일 `start`(YYYY-MM-DD)부터 오늘까지다.
  * 부분 통화 단위(센트) 호가는 주 통화 단위(달러)로 바꿔 돌려준다(`SUBUNIT_SCALE`).
@@ -61,12 +71,14 @@ export async function fetchYahooSeries<K extends string>(
       const scale = SUBUNIT_SCALE[res.meta.currency] ?? 1;
       // 센트를 달러로 바꾼 값은 둘째 자리에서 자르면 원래 호가의 자릿수를 잃는다.
       const digits = scale === 1 ? 2 : 4;
-      const history = res.quotes
-        .filter((q) => q.close != null)
-        .map((q) => ({
-          time: barDate(q.date, res.meta.exchangeTimezoneName),
-          value: Number(((q.close as number) * scale).toFixed(digits)),
-        }));
+      const history = keepLastPerDate(
+        res.quotes
+          .filter((q) => q.close != null)
+          .map((q) => ({
+            time: barDate(q.date, res.meta.exchangeTimezoneName),
+            value: Number(((q.close as number) * scale).toFixed(digits)),
+          })),
+      );
       if (history.length === 0) throw new Error(`Yahoo ${symbol}: 빈 시계열`);
       return [key, toMacroSeries(history)] as const;
     }),

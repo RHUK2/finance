@@ -27,7 +27,7 @@ export const ENDPOINTS = {
   'recent-blocks': { ttl: 300, shape: 0 },
   'hashrate-history': { ttl: 86400, shape: 0 },
   'mempool-blocks': { ttl: 300, shape: 0 },
-  economy: { ttl: 86400, shape: 0 },
+  economy: { ttl: 86400, shape: 1 },
   commodities: { ttl: 86400, shape: 1 },
   fred: { ttl: 86400, shape: 1 },
   'fear-greed': { ttl: 86400, shape: 0 },
