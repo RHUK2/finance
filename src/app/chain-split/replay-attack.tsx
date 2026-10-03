@@ -12,7 +12,7 @@ import {
   SegmentedControl,
   StatCard,
   StatusBanner,
-  StepPanel,
+  StepCard,
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 
@@ -78,52 +78,65 @@ export function ReplayAttack() {
         </Field>
       </Panel>
 
-      <div className='grid grid-cols-2 gap-3'>
-        <StatCard
-          label='다수 체인 잔고'
-          value={stage.main}
-          format={btc}
-          tone={step >= 2 ? 'accent' : undefined}
-          sub={step >= 2 ? `${SEND_AMOUNT} BTC를 직접 보냈다` : '내가 원래 쥔 잔고'}
-        />
-        {forked === null ? (
-          <Metric label='분기 체인 잔고' value={null} sub='아직 분기 전이다' />
-        ) : (
+      <StepCard
+        step={step}
+        total={stages.length}
+        title={stage.title}
+        narration={stage.narration}
+        onPrev={() => setStep((s) => Math.max(0, s - 1))}
+        onNext={() => setStep((s) => Math.min(stages.length - 1, s + 1))}
+        onReset={() => setStep(0)}
+        onJump={setStep}
+      >
+        <div className='grid grid-cols-2 gap-4'>
           <StatCard
-            label='분기 체인 잔고'
-            value={forked}
+            bare
+            label='다수 체인 잔고'
+            value={stage.main}
             format={btc}
-            tone={settled ? (replayed ? 'bad' : 'good') : undefined}
-            sub={
-              settled
-                ? replayed
-                  ? '보낸 적 없는데 같이 나갔다'
-                  : '보호가 복사 전송을 막았다'
-                : '같은 개인키가 지배한다'
-            }
+            tone={step >= 2 ? 'accent' : undefined}
+            sub={step >= 2 ? `${SEND_AMOUNT} BTC를 직접 보냈다` : '내가 원래 쥔 잔고'}
           />
-        )}
-      </div>
+          {forked === null ? (
+            <Metric bare label='분기 체인 잔고' value={null} sub='아직 분기 전이다' />
+          ) : (
+            <StatCard
+              bare
+              label='분기 체인 잔고'
+              value={forked}
+              format={btc}
+              tone={settled ? (replayed ? 'bad' : 'good') : undefined}
+              sub={
+                settled
+                  ? replayed
+                    ? '보낸 적 없는데 같이 나갔다'
+                    : '보호가 복사 전송을 막았다'
+                  : '같은 개인키가 지배한다'
+              }
+            />
+          )}
+        </div>
 
-      {settled && (
-        <StatusBanner
-          tone={replayed ? 'bad' : 'good'}
-          icon={replayed ? <ShieldOff className='size-5 shrink-0' /> : <ShieldCheck className='size-5 shrink-0' />}
-        >
-          <div>
-            <p className='font-semibold'>
-              {replayed
-                ? `한 번 서명했는데 합쳐서 ${(SEND_AMOUNT * 2).toFixed(1)} BTC가 나갔다`
-                : `보낸 쪽에서만 ${SEND_AMOUNT} BTC가 나갔다`}
-            </p>
-            <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
-              {replayed
-                ? '지갑도 노드도 정상 동작했고 개인키도 안전하다. 두 체인이 같은 트랜잭션을 똑같이 유효하다고 판단했을 뿐이다.'
-                : '보유자가 분기를 몰랐어도 결과가 같다. 그래서 리플레이 보호는 보유자의 주의가 아니라 분기 설계자의 책임이다.'}
-            </p>
-          </div>
-        </StatusBanner>
-      )}
+        {settled && (
+          <StatusBanner
+            tone={replayed ? 'bad' : 'good'}
+            icon={replayed ? <ShieldOff className='size-5 shrink-0' /> : <ShieldCheck className='size-5 shrink-0' />}
+          >
+            <div>
+              <p className='font-semibold'>
+                {replayed
+                  ? `한 번 서명했는데 합쳐서 ${(SEND_AMOUNT * 2).toFixed(1)} BTC가 나갔다`
+                  : `보낸 쪽에서만 ${SEND_AMOUNT} BTC가 나갔다`}
+              </p>
+              <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
+                {replayed
+                  ? '지갑도 노드도 정상 동작했고 개인키도 안전하다. 두 체인이 같은 트랜잭션을 똑같이 유효하다고 판단했을 뿐이다.'
+                  : '보유자가 분기를 몰랐어도 결과가 같다. 그래서 리플레이 보호는 보유자의 주의가 아니라 분기 설계자의 책임이다.'}
+              </p>
+            </div>
+          </StatusBanner>
+        )}
+      </StepCard>
 
       <ExplainCard
         icon={<Copy className='size-4 text-series-3' />}
@@ -148,17 +161,6 @@ export function ReplayAttack() {
             </p>
           </div>
         }
-      />
-
-      <StepPanel
-        step={step}
-        total={stages.length}
-        title={stage.title}
-        narration={stage.narration}
-        onPrev={() => setStep((s) => Math.max(0, s - 1))}
-        onNext={() => setStep((s) => Math.min(stages.length - 1, s + 1))}
-        onReset={() => setStep(0)}
-        onJump={setStep}
       />
     </div>
   );

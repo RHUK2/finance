@@ -46,32 +46,46 @@ export function MoneyCreationView() {
       }
     >
       <SectionIntro title='네 주체의 장부를 동시에 본다'>
-        맨 아래 단계 패널을 한 걸음씩 밀면 정부·연준·시중은행·국민의 대차대조표가 함께 바뀐다. 어느 칸이 무에서 새로
+        화면 아래 단계 막대로 한 걸음씩 밀면 정부·연준·시중은행·국민의 대차대조표가 함께 바뀐다. 어느 칸이 무에서 새로
         생긴 돈이고 어느 칸이 기존 돈의 이동인지를 색으로 갈라 두었다.
       </SectionIntro>
 
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <StatCard label='본원통화 (M0)' value={metrics.m0} format={formatSigned} tone='accent' />
-        <StatCard label='광의통화 (M2)' value={metrics.m2} format={formatSigned} tone='accent' />
-        <StatCard label='통화승수' value={metrics.multiplier} format={(n) => `${n.toFixed(1)}배`} />
-      </div>
+      {/* 독은 이 섹션이 보이는 동안만 뜬다. 아래 등식·신뢰 이야기까지 덮지 않게 장부만 감싼다 */}
+      <section className='flex flex-col gap-4'>
+        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+          <StatCard label='본원통화 (M0)' value={metrics.m0} format={formatSigned} tone='accent' />
+          <StatCard label='광의통화 (M2)' value={metrics.m2} format={formatSigned} tone='accent' />
+          <StatCard label='통화승수' value={metrics.multiplier} format={(n) => `${n.toFixed(1)}배`} />
+        </div>
 
-      <div className='flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
-        <Legend
-          className='border border-series-3/70 bg-series-3/15 ring-1 ring-series-3/60'
-          label='무(無)에서 새로 창조'
-        />
-        <Legend
-          className='border border-series-1/70 bg-series-1/15 ring-1 ring-series-1/60'
-          label='기존 돈이 이동·변환'
-        />
-      </div>
+        <div className='flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground'>
+          <Legend
+            className='border border-series-3/70 bg-series-3/15 ring-1 ring-series-3/60'
+            label='무(無)에서 새로 창조'
+          />
+          <Legend
+            className='border border-series-1/70 bg-series-1/15 ring-1 ring-series-1/60'
+            label='기존 돈이 이동·변환'
+          />
+        </div>
 
-      <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
-        {ENTITIES.map((e) => (
-          <BalanceSheet key={e.id} name={e.name} sub={e.sub} sheet={sheets[e.id]} />
-        ))}
-      </div>
+        <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
+          {ENTITIES.map((e) => (
+            <BalanceSheet key={e.id} name={e.name} sub={e.sub} sheet={sheets[e.id]} />
+          ))}
+        </div>
+        <StepPanel
+          step={step}
+          total={steps.length}
+          title={current.title}
+          narration={current.narration}
+          onPrev={() => setStep((s) => Math.max(0, s - 1))}
+          onNext={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+          onReset={() => setStep(0)}
+          onJump={setStep}
+          slider={sliderNode}
+        />
+      </section>
 
       <AssetEquationCard />
 
@@ -80,18 +94,6 @@ export function MoneyCreationView() {
       </SectionIntro>
 
       <TrustSection />
-
-      <StepPanel
-        step={step}
-        total={steps.length}
-        title={current.title}
-        narration={current.narration}
-        onPrev={() => setStep((s) => Math.max(0, s - 1))}
-        onNext={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
-        onReset={() => setStep(0)}
-        onJump={setStep}
-        slider={sliderNode}
-      />
     </ExplainerPage>
   );
 }

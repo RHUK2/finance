@@ -12,8 +12,8 @@ type Props = {
 
 // 맨 위로 버튼은 데스크탑에만 뜬다. 모바일에서는 하단 바가 같은 버튼을 자기 안에 갖는다
 // (mobile-nav-drawer.tsx). 예전에는 모바일에서도 오른쪽 아래에 떠 있었는데 워크스루의
-// 이전·다음 알약과 겹쳐서, 그 페이지들이 버튼을 끄는 prop을 켜고 있었다. 데스크탑은
-// 알약이 화면 가운데, 버튼이 오른쪽이라 겹치지 않는다.
+// 이전·다음 알약과 겹쳐서, 그 페이지들이 버튼을 끄는 prop을 켜고 있었다. 데스크탑에서
+// 화면 아래에 뜨는 워크스루 독(simulation.tsx StepDock)은 이 버튼 자리를 비워 둔다.
 export function PageMain({ children }: Props) {
   const [visible, setVisible] = useState(false);
 

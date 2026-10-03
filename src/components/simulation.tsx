@@ -310,19 +310,23 @@ const EMPTY_VALUE = '-';
 
 // 지표 카드. value가 null이면 값 자리에 흐린 자리표시를 찍고 tone은 무시한다. 칸을 지우지 않고
 // 남겨 두는 것은 격자의 자리가 단계마다 같아야 어느 칸이 무엇인지 따라 읽을 수 있어서다.
+// bare는 상자 없이 글자만 그린다. 이미 상자인 곳(StepCard) 안에 넣을 때 쓴다.
 export function Metric({
   label,
   value,
   tone,
   sub,
+  bare = false,
 }: {
   label: string;
   value: string | null;
   tone?: Tone;
   sub?: string;
+  bare?: boolean;
 }) {
+  const Box = bare ? 'div' : Panel;
   return (
-    <Panel className='gap-1'>
+    <Box className='flex flex-col gap-1'>
       <span className='text-xs text-muted-foreground'>{label}</span>
       <span
         className={cn(
@@ -333,7 +337,7 @@ export function Metric({
         {value ?? EMPTY_VALUE}
       </span>
       {sub && <span className='text-xs text-muted-foreground'>{sub}</span>}
-    </Panel>
+    </Box>
   );
 }
 
@@ -387,15 +391,17 @@ export function StatCard({
   format,
   tone,
   sub,
+  bare,
 }: {
   label: string;
   value: number;
   format: (n: number) => string;
   tone?: Tone;
   sub?: string;
+  bare?: boolean;
 }) {
   const animated = useCountUp(value);
-  return <Metric label={label} value={format(animated)} tone={tone} sub={sub} />;
+  return <Metric label={label} value={format(animated)} tone={tone} sub={sub} bare={bare} />;
 }
 
 // 색 견본 + 라벨 범례 항목.
@@ -918,93 +924,20 @@ function Mark({ state, header }: { state: MarkState; header: string }) {
   );
 }
 
-// 서사형 워크스루의 단계 컨트롤. 현재 단계의 제목·해설과 이동 버튼을 함께 들고
-// 있다. RoundControls가 자동 재생·속도 조절이 달린 시뮬레이션용인
-// 반면 이쪽은 사용자가 직접 넘기는 정해진 수의 단계를 위한 것이다.
-// 신용창조와 달러 패권이 함께 쓴다.
-function StepControls({
-  step,
-  total,
-  onPrev,
-  onNext,
-  onReset,
-  onJump,
-}: {
-  step: number;
-  total: number;
-  onPrev: () => void;
-  onNext: () => void;
-  onReset: () => void;
-  onJump: (i: number) => void;
-}) {
-  return (
-    <div className='flex flex-wrap items-center gap-2'>
-      <Button variant='outline' size='sm' onClick={onPrev} disabled={step === 0}>
-        <ChevronLeft className='size-4' /> 이전
-      </Button>
-      <Button size='sm' onClick={onNext} disabled={step === total - 1}>
-        다음 단계 <ChevronRight className='size-4' />
-      </Button>
-      <Button variant='ghost' size='sm' onClick={onReset} disabled={step === 0}>
-        <RotateCcw className='size-4' /> 리셋
-      </Button>
-      <div className='ml-auto flex items-center gap-1.5'>
-        {Array.from({ length: total }, (_, i) => (
-          <button
-            key={i}
-            type='button'
-            aria-label={`${i}단계로 이동`}
-            aria-current={i === step ? 'step' : undefined}
-            onClick={() => onJump(i)}
-            className={cn(
-              'size-2.5 rounded-full transition-colors',
-              i === step ? 'bg-primary' : 'bg-muted hover:bg-muted-foreground/40',
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/** 요소가 화면에 조금이라도 걸쳐 있는가. 처음에는 false라 서버 렌더와 어긋나지 않는다. */
-function useInView(ref: RefObject<Element | null>, of: (el: Element) => Element | null = (el) => el) {
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current && of(ref.current);
-    if (!el) return;
-    // 한 번에 여러 항목이 오면 뒤가 최신이다. 첫 항목만 읽으면 레이아웃이 연달아 바뀔 때 낡은 값에 멈춘다.
-    const io = new IntersectionObserver((entries) => setInView(entries[entries.length - 1].isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-    // of는 호출부마다 고정된 화살표 함수라 의존성에서 뺀다
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref]);
-  return inView;
-}
-
-// 해설 패널은 본문 속 제자리에 두고 아무것도 고정하지 않는다. 대신 패널이 화면 밖으로
-// 나갔는데 워크스루 섹션(패널의 부모)은 아직 보일 때만, 이전·다음 알약을 화면 아래에 띄운다.
+// 서사형 워크스루. 사용자가 직접 넘기는 정해진 수의 단계를 위한 것이고, 자동 재생·속도 조절이 달린
+// 시뮬레이션은 RoundControls를 쓴다. 형태는 단계마다 바뀌는 화면의 길이로 고른다.
+// - StepCard: 바뀌는 화면이 짧을 때(달러 패권 수요원의 교체·체인 분기 리플레이). 해설·결과·이동을 카드
+//   하나에 담아 카드째 넘긴다. 카드의 테두리가 곧 한 단계의 범위라, 누르면 어디까지 바뀌는지가 보인다.
+// - StepPanel: 바뀌는 화면이 길어 넘기는 버튼이 시야에서 사라질 때(신용창조의 장부 넷). 본문에는 아무것도
+//   두지 않고, 워크스루 섹션(이 패널의 부모)이 보이는 동안 해설·진행 막대·이동을 화면 아래 독으로 띄운다.
+//   부모를 바뀌는 화면만 감싼 요소로 두어야 섹션 밖에서 독이 뜨지 않는다.
 //
-// 예전에는 패널 전체를 sticky로 하단에 붙였다. sticky는 부모 윗변보다 위로 못 올라가서
-// 부모가 화면 아래쪽에서 시작하면 패널이 고정선보다 밀려 내려가 모바일 하단 네비를
-// 덮었고, 펼친 해설이 본문을 계속 가렸다. 워크스루 내내 필요한 것은 해설 전체가 아니라
-// 다음 단계 버튼이라 고정하는 것을 한 줄로 줄였다.
+// 예전에는 패널을 섹션 끝에 두고 화면 밖으로 나가면 이전·다음 알약을 띄웠다. 해설이 설명하는 숫자와 멀리
+// 떨어져 읽고 → 올라가 보고 → 내려와 누르는 왕복이 생겨서 둘로 갈랐다.
 //
-// 알약은 모바일에서 화면 아래 가운데에 뜬다. 예전에는 오른쪽 아래에 떠 있던 맨 위로
-// 버튼과 겹쳐서 이 패널을 쓰는 페이지가 그 버튼을 껐는데, 지금은 그 버튼이 하단 바
-// 안으로 들어가(mobile-nav-drawer.tsx) 겹칠 면이 없다.
-export function StepPanel({
-  step,
-  total,
-  title,
-  narration,
-  onPrev,
-  onNext,
-  onReset,
-  onJump,
-  slider,
-}: {
+// 둘은 진행 막대와 버튼을 같이 쓴다. 단계 번호는 1부터 센다. 진행 막대의 칸 하나가 곧 그 단계로 가는
+// 버튼이라 칸 높이를 24px로 둔다(WCAG 2.5.8 최소 대상 크기). 마지막 단계에서는 다음 자리에 처음부터가 온다.
+type StepPanelProps = {
   step: number;
   total: number;
   title: string;
@@ -1014,65 +947,160 @@ export function StepPanel({
   onReset: () => void;
   onJump: (i: number) => void;
   slider?: ReactNode;
+};
+
+function StepProgress({
+  step,
+  total,
+  onJump,
+  className,
+}: {
+  step: number;
+  total: number;
+  onJump: (i: number) => void;
+  className?: string;
 }) {
-  const panel = useRef<HTMLDivElement>(null);
-  const panelInView = useInView(panel);
-  const sectionInView = useInView(panel, (el) => el.parentElement);
-  const showPill = sectionInView && !panelInView;
+  return (
+    <div className={cn('flex gap-1', className)}>
+      {Array.from({ length: total }, (_, i) => (
+        <button
+          key={i}
+          type='button'
+          onClick={() => onJump(i)}
+          aria-label={`${i + 1}단계로 이동`}
+          aria-current={i === step ? 'step' : undefined}
+          className='group flex h-6 flex-1 items-center'
+        >
+          <span
+            className={cn(
+              'h-1.5 w-full rounded-full transition-colors',
+              i <= step ? 'bg-primary' : 'bg-muted group-hover:bg-muted-foreground/40',
+            )}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function StepNextButton({ last, onNext, onReset }: { last: boolean; onNext: () => void; onReset: () => void }) {
+  return last ? (
+    <Button size='sm' onClick={onReset}>
+      <RotateCcw className='size-4' /> 처음부터
+    </Button>
+  ) : (
+    <Button size='sm' onClick={onNext}>
+      다음 <ChevronRight className='size-4' />
+    </Button>
+  );
+}
+
+/** 요소가 화면 높이의 `from`~`to`(0~1) 띠에 걸쳐 있는가. 처음에는 false라 서버 렌더와 어긋나지 않는다. */
+function useInBand(ref: RefObject<Element | null>, from: number, to: number) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // 한 번에 여러 항목이 오면 뒤가 최신이다. 첫 항목만 읽으면 레이아웃이 연달아 바뀔 때 낡은 값에 멈춘다.
+    const io = new IntersectionObserver((entries) => setInView(entries[entries.length - 1].isIntersecting), {
+      rootMargin: `-${Math.round(from * 100)}% 0px -${Math.round((1 - to) * 100)}% 0px`,
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, from, to]);
+  return inView;
+}
+
+/**
+ * 해설과 그 단계의 결과(children)를 카드 하나에 담는다. 카드 안의 값 칸은 `Metric`·`StatCard`에 `bare`를
+ * 넘겨 상자 없이 그린다. 상자 안에 상자가 겹치면 어느 테두리가 단계의 범위인지 흐려진다.
+ */
+export function StepCard({
+  step,
+  total,
+  title,
+  narration,
+  onPrev,
+  onNext,
+  onReset,
+  onJump,
+  children,
+}: Omit<StepPanelProps, 'slider'> & { children: ReactNode }) {
+  return (
+    <Panel bleed>
+      <StepProgress step={step} total={total} onJump={onJump} className='px-3 pt-1' />
+      <div className='flex flex-col gap-2 px-4 pt-1 pb-4'>
+        <p className='flex items-baseline gap-2'>
+          <span className='text-xs text-muted-foreground tabular-nums'>
+            {step + 1}/{total}
+          </span>
+          <span className='font-semibold'>{title}</span>
+        </p>
+        <p className='text-sm/relaxed text-muted-foreground'>{narration}</p>
+      </div>
+      <div className='flex flex-col gap-4 border-t p-4'>{children}</div>
+      <div className='flex justify-end gap-2 border-t px-4 py-3'>
+        <Button variant='outline' size='sm' onClick={onPrev} disabled={step === 0}>
+          <ChevronLeft className='size-4' /> 이전
+        </Button>
+        <StepNextButton last={step === total - 1} onNext={onNext} onReset={onReset} />
+      </div>
+    </Panel>
+  );
+}
+
+export function StepPanel({ step, total, title, narration, onPrev, onNext, onReset, onJump, slider }: StepPanelProps) {
+  const anchor = useRef<HTMLSpanElement>(null);
+  const section = useRef<Element | null>(null);
+  // useInBand의 관찰보다 먼저 돌아야 하므로 그 위에 둔다(effect는 선언 순서대로 돈다).
+  useEffect(() => {
+    section.current = anchor.current?.parentElement ?? null;
+  }, []);
+  // 섹션이 화면 높이 55~60% 띠에 걸쳐 있는 동안만 띄운다. 섹션 윗변이 60% 선까지 올라와야 뜨고, 아랫변이
+  // 55% 선 위로 올라가면 내린다. 아랫변 기준이 화면 위쪽이면 섹션 뒤가 짧은 페이지(신용창조, 데스크탑에서
+  // 끝까지 내려도 아랫변이 50%에 머문다)에서 독이 내려가지 않고 그 뒤 내용을 덮는다.
+  const inView = useInBand(section, 0.55, 0.6);
+  const [open, setOpen] = useState(true);
 
   return (
     <>
-      <div ref={panel}>
-        <Panel bleed>
-          <div className='flex items-center gap-2 px-3 py-2'>
-            <span className='flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs leading-none font-semibold text-primary-foreground'>
-              <span className='translate-y-px'>{step}</span>
-            </span>
-            <span className='flex-1 truncate font-semibold'>{title}</span>
-          </div>
-          <div className='flex flex-col gap-3 border-t p-3'>
-            <p className='text-sm/relaxed text-muted-foreground'>{narration}</p>
-            {slider}
-            <StepControls step={step} total={total} onPrev={onPrev} onNext={onNext} onReset={onReset} onJump={onJump} />
-          </div>
-        </Panel>
-      </div>
-      {showPill &&
+      <span ref={anchor} hidden />
+      {inView &&
         createPortal(
-          // 하단 네비(h-12, z-30) 바로 위. 네비와 겹치지 않으므로 z는 본문 위이기만 하면 된다.
-          <div className='fixed bottom-[calc(3.5rem+var(--spacing-safe-bottom))] left-1/2 z-20 -translate-x-1/2 md:bottom-4'>
-            <div className='flex items-center gap-1 rounded-full border bg-card p-1 shadow-xl'>
-              <Button
-                variant='ghost'
-                size='icon'
-                shape='pill'
-                onClick={onPrev}
-                disabled={step === 0}
-                aria-label='이전 단계'
-              >
-                <ChevronLeft className='size-4' />
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                shape='pill'
-                onClick={() => panel.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                className='max-w-48'
-              >
-                <span className='truncate'>
-                  {step}/{total - 1} · {title}
-                </span>
-              </Button>
-              <Button
-                variant='ghost'
-                size='icon'
-                shape='pill'
-                onClick={onNext}
-                disabled={step === total - 1}
-                aria-label='다음 단계'
-              >
-                <ChevronRight className='size-4' />
-              </Button>
+          // 모바일은 하단 바(h-12, z-30) 바로 위. 데스크탑은 사이드바(w-60)를 비켜 본문 가운데에 두고,
+          // 오른쪽 아래 맨 위로 버튼(page-main.tsx) 자리를 비운다.
+          <div className='fixed inset-x-0 bottom-[calc(3.5rem+var(--spacing-safe-bottom))] z-20 px-2 md:right-20 md:bottom-4 md:left-60'>
+            <div className='mx-auto flex max-w-xl flex-col rounded-2xl border bg-card shadow-2xl'>
+              <StepProgress step={step} total={total} onJump={onJump} className='px-3 pt-1' />
+              {open && (
+                <div className='flex max-h-[30svh] flex-col gap-3 overflow-y-auto px-4 pt-1 pb-2'>
+                  <p className='text-sm/relaxed text-muted-foreground'>{narration}</p>
+                  {slider}
+                </div>
+              )}
+              <div className='flex items-center gap-1 border-t p-1.5'>
+                <Button variant='ghost' size='icon' onClick={onPrev} disabled={step === 0} aria-label='이전 단계'>
+                  <ChevronLeft className='size-5' />
+                </Button>
+                <button
+                  type='button'
+                  onClick={() => setOpen((o) => !o)}
+                  aria-expanded={open}
+                  className='flex min-w-0 flex-1 items-center gap-1.5 rounded-md px-2 py-1.5 text-left hover:bg-muted'
+                >
+                  <span className='text-xs text-muted-foreground tabular-nums'>
+                    {step + 1}/{total}
+                  </span>
+                  <span className='truncate text-sm font-semibold'>{title}</span>
+                  <ChevronDown
+                    className={cn(
+                      'ml-auto size-4 shrink-0 text-muted-foreground transition-transform',
+                      !open && 'rotate-180',
+                    )}
+                  />
+                </button>
+                <StepNextButton last={step === total - 1} onNext={onNext} onReset={onReset} />
+              </div>
             </div>
           </div>,
           document.body,

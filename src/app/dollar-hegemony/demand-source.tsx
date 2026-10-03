@@ -4,8 +4,7 @@ import { Landmark, Link2Off, ShieldQuestion } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { ExplainCard, Metric, SectionIntro, StatusBanner, StepPanel } from '@/components/simulation';
-import { Panel } from '@/components/panel';
+import { ExplainCard, Metric, SectionIntro, StatusBanner, StepCard } from '@/components/simulation';
 
 import { DEMAND_STAGES } from './models';
 
@@ -21,27 +20,38 @@ export function DemandSource() {
         통화를 구해야만 하게 만드는 조건이다. 아래 세 단계에서 갈리는 지점이 어디인지 따라가 보자.
       </SectionIntro>
 
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='시기' value={stage.era} />
-        <Metric label='달러를 받는 이유' value={stage.anchor} />
-        <Metric label='그 이유의 성격' value={stage.kind} tone={stage.kind === '담보' ? 'accent' : undefined} />
-      </div>
-
-      <StatusBanner
-        icon={stage.claimable ? <Landmark className='size-4 shrink-0' /> : <Link2Off className='size-4 shrink-0' />}
-        tone={stage.claimable ? 'good' : 'accent'}
+      <StepCard
+        step={step}
+        total={DEMAND_STAGES.length}
+        title={stage.title}
+        narration={stage.narration}
+        onPrev={() => setStep((s) => Math.max(0, s - 1))}
+        onNext={() => setStep((s) => Math.min(DEMAND_STAGES.length - 1, s + 1))}
+        onReset={() => setStep(0)}
+        onJump={setStep}
       >
-        {stage.claimable ? '태환 청구권이 있다. ' : '태환 청구권이 없다. '}
-        {stage.claimNote}
-      </StatusBanner>
+        <div className='grid grid-cols-2 gap-4 sm:grid-cols-3'>
+          <Metric bare label='시기' value={stage.era} />
+          <Metric bare label='달러를 받는 이유' value={stage.anchor} />
+          <Metric bare label='그 이유의 성격' value={stage.kind} tone={stage.kind === '담보' ? 'accent' : undefined} />
+        </div>
 
-      <Panel className='gap-1.5'>
-        <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <ShieldQuestion className='size-4 text-muted-foreground' />
-          무엇이 이 단계를 끝냈나
-        </span>
-        <p className='text-sm/relaxed text-muted-foreground'>{stage.broke}</p>
-      </Panel>
+        <StatusBanner
+          icon={stage.claimable ? <Landmark className='size-4 shrink-0' /> : <Link2Off className='size-4 shrink-0' />}
+          tone={stage.claimable ? 'good' : 'accent'}
+        >
+          {stage.claimable ? '태환 청구권이 있다. ' : '태환 청구권이 없다. '}
+          {stage.claimNote}
+        </StatusBanner>
+
+        <div className='flex flex-col gap-1.5'>
+          <span className='flex items-center gap-1.5 text-sm font-semibold'>
+            <ShieldQuestion className='size-4 text-muted-foreground' />
+            무엇이 이 단계를 끝냈나
+          </span>
+          <p className='text-sm/relaxed text-muted-foreground'>{stage.broke}</p>
+        </div>
+      </StepCard>
 
       <ExplainCard
         title='왜 석유를 담보라고 부르면 안 되는가'
@@ -64,17 +74,6 @@ export function DemandSource() {
             </p>
           </div>
         }
-      />
-
-      <StepPanel
-        step={step}
-        total={DEMAND_STAGES.length}
-        title={stage.title}
-        narration={stage.narration}
-        onPrev={() => setStep((s) => Math.max(0, s - 1))}
-        onNext={() => setStep((s) => Math.min(DEMAND_STAGES.length - 1, s + 1))}
-        onReset={() => setStep(0)}
-        onJump={setStep}
       />
     </div>
   );
