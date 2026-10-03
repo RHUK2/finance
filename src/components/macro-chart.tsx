@@ -209,10 +209,12 @@ export function MacroChart({
   const diffDigits = changeDiff?.digits ?? 2;
   // 방향은 화살표가 말하므로 크기만 적는다.
   const changeText = (v: number) => (changeDiff ? `${Math.abs(v).toFixed(diffDigits)}%p` : `${Math.abs(v)}%`);
-  // 방향에는 판정 색을 쓰지 않는다. 오르는 것이 좋은지는 자산마다 다르다(VIX·달러/원이 오르면 대개 나쁜
-  // 소식이다). 방향은 화살표와 부호가 말하고 글자는 기본색이다. 찍히는 크기가 0이면(연준 기준금리가 동결된
-  // 달 등) 화살표 없이 '보합'으로 적고 흐리게 둔다. 반올림해 0이 된 값도 같다.
-  const changeTone = (text: string) => (!/[1-9]/.test(text) ? 'text-muted-foreground' : undefined);
+  // 오르면 빨강(`text-up`), 내리면 파랑(`text-down`)이다. 이 색은 좋고 나쁨이 아니라 방향만 뜻한다
+  // (globals.css 등락 색). 오르는 것이 좋은지는 자산마다 달라서(VIX·달러/원) 판정 색(good/bad)은 쓰지 않는다.
+  // 찍히는 크기가 0이면(연준 기준금리가 동결된 달 등) 화살표 없이 '보합'으로 적고 흐리게 둔다.
+  // 반올림해 0이 된 값도 같다.
+  const changeTone = (text: string, value: number) =>
+    !/[1-9]/.test(text) ? 'text-muted-foreground' : value > 0 ? 'text-up' : 'text-down';
   const rangeText =
     rangeChange == null
       ? null
@@ -235,13 +237,13 @@ export function MacroChart({
           <div className='flex items-end gap-2'>
             <span className='text-2xl font-bold tabular-nums'>{headlineValue}</span>
             {change != null && (
-              <span className={cn('mb-1 text-sm font-semibold', changeTone(changeText(change)))}>
+              <span className={cn('mb-1 text-sm font-semibold', changeTone(changeText(change), change))}>
                 {frequency === 'monthly' ? '전월' : '전일'}{' '}
                 {/[1-9]/.test(changeText(change)) ? `${change > 0 ? '▲' : '▼'} ${changeText(change)}` : '보합'}
               </span>
             )}
             {rangeText != null && (
-              <span className={cn('mb-1 text-sm', changeTone(rangeText))}>
+              <span className={cn('mb-1 text-sm', changeTone(rangeText, rangeChange ?? 0))}>
                 {rangeLabel} {rangeText}
               </span>
             )}

@@ -79,6 +79,14 @@
   --color-warn-surface: var(--warn-surface);
 }
 
+/* 등락 색(direction). 시세가 오르면 빨강, 내리면 파랑인 한국 시세 관례다. 좋고 나쁨이 아니라 방향만
+   뜻하므로 판정(good/bad)과 축이 다르다. VIX·달러/원처럼 오르면 대개 나쁜 소식인 자산도 오르면 빨강이다.
+   본문 글자용이라 명도가 모드마다 다르다(Tailwind red·blue의 600/400). 차트 캔버스에서는 쓰지 않는다. */
+@theme inline {
+  --color-up: var(--up);
+  --color-down: var(--down);
+}
+
 :root {
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.148 0.004 228.8);
@@ -110,6 +118,8 @@
   --series-2: oklch(60.6% 0.25 292.717);
   --series-3: oklch(66.7% 0.295 322.15);
   --series-4: oklch(62.3% 0.214 259.815);
+  --up: oklch(57.7% 0.245 27.325);
+  --down: oklch(54.6% 0.245 262.881);
 }
 
 .dark {
@@ -135,6 +145,8 @@
   --good: oklch(76.5% 0.177 163.223);
   --bad: oklch(71.2% 0.194 13.428);
   --warn: oklch(82.8% 0.189 84.429);
+  --up: oklch(70.4% 0.191 22.216);
+  --down: oklch(70.7% 0.165 254.624);
 }
 
 @layer base {

@@ -232,6 +232,7 @@ bash link-worktree-files.sh
 - 색은 두 축: 생색(`emerald-500` 등)을 직접 쓰지 않는다. 어느 축인지는 "좋고 나쁨의 뜻이 있는가"로 가른다
   - 판정: `good`·`bad`·`warn`. 글자·아이콘은 `text-good`(모드별 명도), 면은 `bg-good-surface`·`ring-good-surface`(고정 채도). `tone` prop의 `accent`가 `warn` 토큰을 보는 것은 shadcn의 `--color-accent`와 이름이 겹쳐서다
   - 계열: `series-1`~`4`. 여럿을 구분하려고 쓰는 색이라 좋고 나쁨의 뜻이 없다. 스파크라인·비용막대·누적막대·SVG 점과 선, 주제를 나타내는 아이콘이 여기서 고른다. 주제에 비용·위험 같은 뜻이 붙어 있어도 주제 아이콘은 계열이다. 값에 따라 모양·색이 바뀌는 아이콘은 판정을 따른다
+  - 등락: `up`(빨강)·`down`(파랑). 두 축의 예외로, 시세 헤드라인의 전일 대비·구간 수익률(`MacroChart`)에만 쓴다. 한국 시세 관례라 방향만 뜻하고 좋고 나쁨은 뜻하지 않는다. 판정 색을 쓰지 않는 것은 VIX·달러/원처럼 오르면 대개 나쁜 소식인 자산이 있어서다
   - tone → 토큰 클래스 표는 `src/components/tone.ts` 한 곳이다(`TONE_TEXT`·`TONE_RING_SURFACE`·`TONE_BORDER_SURFACE`). 페이지에서 tone으로 글자를 칠할 때도 로컬 표를 만들지 않고 여기서 고른다
 - 통화·비율 표기: `src/lib/utils.ts`의 `formatMan`·`formatWon`·`formatEok`·`formatEokFromMan`·`formatEokFromWon`·`formatPct`, 시세는 `formatUsdPrice`·`formatKrwPrice`(기호 접두, 천 단위 구분자, 소수 자릿수 고정)를 쓴다. `formatUsd`는 `$1.2K`처럼 줄여 찍는 다른 함수다. 로컬에 `fmtEok` 같은 걸 다시 만들지 않는다. 억으로 찍는 함수가 셋인 것은 입력 단위가 페이지마다 다르기 때문이고, 이름 뒤 `From`이 입력 단위다. 자릿수만 다르면 인자로 넘긴다
 - 커밋 메시지: `{type}: {한국어 설명}` 형식 (`feat` / `fix` / `refactor` / `chore` 등)
