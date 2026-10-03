@@ -8,8 +8,10 @@ import { MacroChart } from '@/components/macro-chart';
 import { PageMain } from '@/components/page-main';
 import { Button } from '@/components/ui/button';
 import { CHART_SERIES } from '@/hooks/use-chart';
+import { useMarket } from '@/hooks/use-market';
 import { useRelativeTime } from '@/hooks/use-relative-time';
 import { useStocks, type StockKey, type StocksData } from '@/hooks/use-stocks';
+import { withLive } from '@/lib/series';
 import { formatKrwPrice, formatUsdPrice } from '@/lib/utils';
 
 // 종목이 열둘이라 차트마다 ref·useMemo를 손으로 늘어놓지 않고 이 표 하나에서 파생시킨다.
@@ -128,6 +130,7 @@ function formatPrice(value: number, currency: 'USD' | 'KRW'): string {
 
 export function StocksView() {
   const { data, isError } = useStocks();
+  const quotes = useMarket().data;
   // 첫 데이터 없이 요청이 실패한 상태. 이전 데이터가 있으면 옛 값을 그대로 보인다.
   const failed = isError && !data;
 
@@ -147,6 +150,7 @@ export function StocksView() {
   }
 
   const relTime = useRelativeTime(data?.fetchedAt);
+  const quotesRelTime = useRelativeTime(quotes?.fetchedAt);
 
   // lines 배열의 참조를 고정해 useChart가 리렌더마다 차트를 재생성하지 않게 한다
   // (useRelativeTime이 매분 리렌더를 일으키므로 인라인 배열이면 줌 상태까지 초기화된다).
@@ -158,7 +162,10 @@ export function StocksView() {
     >;
   }, [data]);
 
-  const series = (key: StockKey) => (data ? (data[key as keyof StocksData] as StocksData['tsla']) : undefined);
+  // 헤드라인은 히스토리 끝에 실시간 시세를 얹은 값이다. 차트에는 히스토리(`chartLines`)와 시세(`live`)를
+  // 따로 넘겨, 시세가 바뀌어도 차트를 다시 만들지 않는다.
+  const series = (key: StockKey) =>
+    data ? withLive(data[key as keyof StocksData] as StocksData['tsla'], quotes?.quotes[key]) : undefined;
 
   return (
     <>
@@ -175,15 +182,17 @@ export function StocksView() {
               가는 동안 앞 종목이 화면에서 사라져 비교가 기억에 기대게 된다 */}
           <div className='grid gap-3 xl:grid-cols-2'>
             {STOCKS.map((stock) => {
-              const current = series(stock.key)?.current;
+              const s = series(stock.key);
+              const live = quotes?.quotes[stock.key];
               return (
                 <MacroChart
                   key={stock.key}
                   title={stock.title}
-                  currentLabel={current != null ? formatPrice(current, stock.currency) : '-'}
-                  changePercent={series(stock.key)?.changePercent ?? null}
+                  currentLabel={s?.current != null ? formatPrice(s.current, stock.currency) : '-'}
+                  changePercent={s?.changePercent ?? null}
                   lines={chartLines?.[stock.key]}
-                  updatedLabel={relTime ?? undefined}
+                  live={live}
+                  updatedLabel={(live ? quotesRelTime : relTime) ?? undefined}
                   error={failed}
                   resetRef={resetRefs[stock.key]}
                   description={stock.description}

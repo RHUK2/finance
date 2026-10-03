@@ -8,7 +8,7 @@ import { StocksView } from './stocks-view';
 export const metadata = pageMetadata('/stocks');
 
 export default async function StocksPage() {
-  const state = await prefetchEndpoints(['stocks']);
+  const state = await prefetchEndpoints(['stocks', 'market']);
 
   return (
     <HydrationBoundary state={state}>

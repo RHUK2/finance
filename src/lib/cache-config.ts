@@ -18,7 +18,7 @@
  * 버전이 없던 시절의 항목은 0으로 읽는다.
  */
 export const ENDPOINTS = {
-  market: { ttl: 300, shape: 1 },
+  market: { ttl: 300, shape: 2 },
   stocks: { ttl: 86400, shape: 0 },
   strategy: { ttl: 86400, shape: 0 },
   'mempool-stats': { ttl: 300, shape: 1 },

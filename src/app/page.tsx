@@ -8,7 +8,7 @@ import { BitcoinView } from './bitcoin-view';
 export const metadata = pageMetadata('/');
 
 export default async function BitcoinPage() {
-  const state = await prefetchEndpoints(['fear-greed', 'mvrv', 'bitcoin-historical', 'strategy']);
+  const state = await prefetchEndpoints(['fear-greed', 'mvrv', 'bitcoin-historical', 'strategy', 'market']);
 
   return (
     <HydrationBoundary state={state}>

@@ -19,12 +19,6 @@ export function regimeImpliedPrice(p: number, winCapUsd: number) {
   return { winPrice, implied: p * winPrice };
 }
 
-// 위 식을 거꾸로 푼 것. 실제 시세를 넣으면 시장이 지금 매기고 있는 성공 확률이 나온다.
-// 이 페이지의 논지("가격은 곧 확률이다")를 실제 숫자로 확인하는 데 쓴다.
-export function impliedProbability(price: number, winCapUsd: number) {
-  return price / (winCapUsd / SUPPLY);
-}
-
 // 성공 확률이 1%포인트 오를 때 가격이 몇 % 오르는가. 가격 = p × 성공가이므로
 // 상대 변화율은 (0.01/p)로 성공가와 무관하고, p가 작을수록 폭발적으로 커진다.
 // "작은 확률 변화에 가격이 크게 뛴다"는 이 페이지의 핵심 주장이 이 식이다.

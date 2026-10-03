@@ -8,7 +8,7 @@ import { fetchYahooSeries } from '@/lib/yahoo';
 // 증권이라 일반 주식(`stocks`)과 키를 갈랐다. BTC 가격은 여기 없다. 같은 화면의
 // 나머지 차트가 쓰는 `bitcoin-historical`에서 온다. 한 화면에 BTC 출처를 둘 두면
 // 같은 이름의 두 숫자가 서로 다른 값을 가리킨다.
-const SYMBOLS = [
+export const SYMBOLS = [
   { key: 'mstr', symbol: 'MSTR' },
   { key: 'strc', symbol: 'STRC' },
 ] as const;

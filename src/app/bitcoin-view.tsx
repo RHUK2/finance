@@ -15,9 +15,10 @@ import { RainbowChart } from '@/components/rainbow-chart';
 import { Button } from '@/components/ui/button';
 import { CHART_SERIES } from '@/hooks/use-chart';
 import { useBitcoinHistorical, useFearGreed, useMvrv } from '@/hooks/use-crypto';
+import { useMarket } from '@/hooks/use-market';
 import { useStrategy } from '@/hooks/use-stocks';
 import { useRelativeTime } from '@/hooks/use-relative-time';
-import { toMacroSeries } from '@/lib/series';
+import { toMacroSeries, withLive } from '@/lib/series';
 import { BTC_COLOR, formatUsdPrice } from '@/lib/utils';
 
 const MSTR_COLOR = CHART_SERIES[0];
@@ -28,6 +29,7 @@ export function BitcoinView() {
   const mvrvQuery = useMvrv();
   const historicalQuery = useBitcoinHistorical();
   const strategyQuery = useStrategy();
+  const quotes = useMarket().data;
   const fearGreed = fearGreedQuery.data;
   const mvrv = mvrvQuery.data;
   const historical = historicalQuery.data;
@@ -69,14 +71,27 @@ export function BitcoinView() {
   const mvrvRelTime = useRelativeTime(mvrv?.fetchedAt);
   const historicalRelTime = useRelativeTime(historical?.fetchedAt);
   const strategyRelTime = useRelativeTime(strategy?.fetchedAt);
+  const quotesRelTime = useRelativeTime(quotes?.fetchedAt);
 
   // BTC 가격은 아래 네 지표(메이어·푸엘·레인보우·파이사이클)가 이미 쓰는 시계열에서
-  // 끌어온다. 시세용 소스를 따로 붙이면 같은 화면에서 BTC 가격이 둘로 갈린다.
-  const btc = useMemo(() => (historical ? toMacroSeries(historical.history) : undefined), [historical]);
+  // 끌어오고, 끝점만 같은 거래소(Coinbase)의 실시간 시세로 바꾼다. 네 지표는 일봉 지표라
+  // 끝점을 바꾸지 않는다. 차트에는 히스토리를 그대로 넘기고(`lines`) 시세는 `live`로 따로 준다.
+  const btcLive = quotes?.quotes.btc;
+  const mstrLive = quotes?.quotes.mstr;
+  const strcLive = quotes?.quotes.strc;
+  const btc = useMemo(
+    () => (historical ? withLive(toMacroSeries(historical.history), btcLive) : undefined),
+    [historical, btcLive],
+  );
+  const mstr = useMemo(() => (strategy ? withLive(strategy.mstr, mstrLive) : undefined), [strategy, mstrLive]);
+  const strc = useMemo(() => (strategy ? withLive(strategy.strc, strcLive) : undefined), [strategy, strcLive]);
 
   // lines 배열의 참조를 고정해 useChart가 리렌더마다 차트를 재생성하지 않게 한다
   // (useRelativeTime이 매분 리렌더를 일으키므로 인라인 배열이면 줌 상태까지 초기화된다).
-  const btcLines = useMemo(() => (btc ? [{ data: btc.history, color: BTC_COLOR }] : undefined), [btc]);
+  const btcLines = useMemo(
+    () => (historical ? [{ data: historical.history, color: BTC_COLOR }] : undefined),
+    [historical],
+  );
   const mstrLines = useMemo(
     () => (strategy ? [{ data: strategy.mstr.history, color: MSTR_COLOR }] : undefined),
     [strategy],
@@ -103,29 +118,32 @@ export function BitcoinView() {
             formatValue={(v) => formatUsdPrice(v, 0)}
             changePercent={btc?.changePercent ?? null}
             lines={btcLines}
-            updatedLabel={historicalRelTime ?? undefined}
+            live={btcLive}
+            updatedLabel={(btcLive ? quotesRelTime : historicalRelTime) ?? undefined}
             error={historicalFailed}
             resetRef={btcReset}
             description='달러 기준 비트코인 가격. 아래 메이어 배수·푸엘 배수·레인보우·파이사이클이 모두 이 시계열에서 계산됩니다.'
           />
           <MacroChart
             title='스트래티지 (MSTR)'
-            currentLabel={strategy?.mstr.current != null ? formatUsdPrice(strategy.mstr.current) : '-'}
+            currentLabel={mstr?.current != null ? formatUsdPrice(mstr.current) : '-'}
             formatValue={(v) => formatUsdPrice(v)}
-            changePercent={strategy?.mstr.changePercent ?? null}
+            changePercent={mstr?.changePercent ?? null}
             lines={mstrLines}
-            updatedLabel={strategyRelTime ?? undefined}
+            live={mstrLive}
+            updatedLabel={(mstrLive ? quotesRelTime : strategyRelTime) ?? undefined}
             error={strategyFailed}
             resetRef={mstrReset}
             description='비트코인을 대차대조표에 쌓아 온 회사의 보통주. 주가에는 보유 비트코인의 가치 외에 자금 조달 여력과 그에 대한 시장의 기대가 함께 반영되어, 비트코인보다 크게 움직이는 구간이 많습니다.'
           />
           <MacroChart
             title='스트래티지 우선주 (STRC)'
-            currentLabel={strategy?.strc.current != null ? formatUsdPrice(strategy.strc.current) : '-'}
+            currentLabel={strc?.current != null ? formatUsdPrice(strc.current) : '-'}
             formatValue={(v) => formatUsdPrice(v)}
-            changePercent={strategy?.strc.changePercent ?? null}
+            changePercent={strc?.changePercent ?? null}
             lines={strcLines}
-            updatedLabel={strategyRelTime ?? undefined}
+            live={strcLive}
+            updatedLabel={(strcLive ? quotesRelTime : strategyRelTime) ?? undefined}
             error={strategyFailed}
             resetRef={strcReset}
             description='같은 회사가 발행한 우선주. 배당이 먼저 지급되는 대신 주가 상승에 참여하는 몫이 제한되어, 보통주보다 비트코인 가격에 덜 붙어 움직입니다. 2025년 상장이라 히스토리가 보통주보다 짧습니다.'

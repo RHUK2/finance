@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard } from '@/components/indicator-card';
-import { LineSeries, useChart, type IChartApi } from '@/hooks/use-chart';
+import { LineSeries, useChart, type IChartApi, type ISeriesApi } from '@/hooks/use-chart';
+import { withLivePoint, type LivePoint } from '@/lib/series';
 import { cn, formatPct } from '@/lib/utils';
 
 export type MacroLine = {
@@ -101,6 +102,12 @@ type Props = {
   /** 첫 데이터가 없는 채로 요청이 실패했다. 스켈레톤 대신 실패 문구를 보인다. */
   error?: boolean;
   lines?: MacroLine[];
+  /**
+   * 첫 선의 끝에 얹을 실시간 시세(`withLivePoint`). `lines`는 하루 한 번 바뀌는 히스토리 그대로 넘긴다.
+   * 시세가 바뀌면 차트를 다시 만들지 않고 끝점만 옮겨서, 확대·이동해 둔 화면이 5분마다 풀리지 않는다.
+   * 헤드라인 값(`currentLabel`·`changePercent`)은 호출부가 같은 점을 얹어(`withLive`) 계산한다.
+   */
+  live?: LivePoint | null;
   updatedLabel?: string;
   resetRef?: React.RefObject<(() => void) | null>;
   description?: string;
@@ -119,6 +126,7 @@ export function MacroChart({
   frequency = 'daily',
   error,
   lines,
+  live,
   updatedLabel,
   resetRef,
   description,
@@ -127,16 +135,28 @@ export function MacroChart({
   const [range, setRange] = useState<RangeKey>('all');
   const [hover, setHover] = useState<{ time: string; value: number } | null>(null);
 
-  const shown = useMemo(() => lines?.map((l) => ({ ...l, data: sliceRange(l.data, range) })), [lines, range]);
+  // 차트를 만드는 기준은 히스토리(`base`)뿐이다. 시세까지 넣으면 5분마다 차트가 새로 만들어진다.
+  const base = useMemo(() => lines?.map((l) => ({ ...l, data: sliceRange(l.data, range) })), [lines, range]);
+  // 화면에 실제로 그려진 모양. 커서 값·구간 수익률·빈 구간 판정은 시세를 얹은 이쪽을 읽는다.
+  const shown = useMemo(
+    () => base?.map((l, i) => (i === 0 && live ? { ...l, data: withLivePoint(l.data, live) } : l)),
+    [base, live],
+  );
 
   // 커서 값은 첫 번째 선에서만 읽는다. 선이 여럿인 차트(국채 10Y·2Y·30Y, WTI·브렌트)는
   // 헤드라인이 가리키는 선을 첫 선으로 넘긴다. 그래야 둘이 어긋나지 않는다.
-  const primary = useMemo(() => new Map(shown?.[0]?.data.map((p) => [p.time, p.value])), [shown]);
+  // 구독은 차트를 만들 때 한 번 걸리므로, 끝점이 바뀐 뒤에도 최신 표를 읽게 ref로 둔다.
+  const primaryRef = useRef(new Map<string, number>());
+  useEffect(() => {
+    primaryRef.current = new Map(shown?.[0]?.data.map((p) => [p.time, p.value]));
+  }, [shown]);
+  const primarySeries = useRef<ISeriesApi<'Line'> | null>(null);
 
   const setup = useCallback(
     (chart: IChartApi) => {
+      primarySeries.current = null;
       if (!shown) return;
-      shown.forEach((line) => {
+      shown.forEach((line, i) => {
         const series = chart.addSeries(LineSeries, {
           color: line.color,
           lineWidth: 2,
@@ -145,19 +165,30 @@ export function MacroChart({
           ...(line.label ? { title: line.label } : {}),
         });
         series.setData(line.data);
+        if (i === 0) primarySeries.current = series;
       });
 
       if (!formatValue) return;
       chart.subscribeCrosshairMove((param) => {
         const time = typeof param.time === 'string' ? param.time : null;
-        const value = time != null ? primary.get(time) : undefined;
+        const value = time != null ? primaryRef.current.get(time) : undefined;
         setHover(time != null && value != null ? { time, value } : null);
       });
     },
-    [shown, primary, formatValue],
+    [shown, formatValue],
   );
 
-  const { containerRef, resetView } = useChart(setup, [shown], { height: 240, resetRef });
+  const { containerRef, resetView } = useChart(setup, [base], { height: 240, resetRef });
+
+  // 시세만 바뀌었으면 끝점 하나를 옮긴다. `withLivePoint`가 버리는 이른 시세는 여기서도 건너뛴다
+  // (update는 마지막 봉보다 이른 시각을 받으면 예외를 던진다). 차트를 새로 만든 직후에는 setup이
+  // 이미 얹어 그렸으므로 같은 점을 한 번 더 넣는 것이라 무해하다.
+  useEffect(() => {
+    const series = primarySeries.current;
+    const last = base?.[0]?.data.at(-1);
+    if (!series || !live || (last && live.time < last.time)) return;
+    series.update(live);
+  }, [base, live]);
 
   // 구간 수익률은 좁혔을 때만 보인다. '전체'에서는 헤드라인 옆 숫자가 예전처럼 전일 대비
   // 하나뿐이라, 탭을 건드리지 않은 화면은 이전과 같은 것을 말한다.

@@ -6,27 +6,20 @@ import { Coins, TrendingUp } from 'lucide-react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { useMarket } from '@/hooks/use-market';
 import { cn, formatPct, formatUsd } from '@/lib/utils';
 
-import { GOLD_CAP, GOLD_CAP_AS_OF, SUPPLY, impliedProbability, pricePerPointOfP, regimeImpliedPrice } from './models';
+import { GOLD_CAP, GOLD_CAP_AS_OF, SUPPLY, pricePerPointOfP, regimeImpliedPrice } from './models';
 
 // 민감도 대비용 기준점. 저확률 구간에서 같은 1%포인트가 얼마나 다르게 작동하는지 보인다.
 const REFERENCE_P = [0.05, 0.15, 0.5];
 
 export function TwoRegime() {
-  const [pPct, setPPct] = useState(5); // 성공 확률 %. 기본값은 대략의 현재 시세가 함의하는 값.
+  const [pPct, setPPct] = useState(5); // 성공 확률 %. 기본값은 저확률 구간의 예시다(아래 민감도 기준점 5%와 같다).
   const [winCapT, setWinCapT] = useState(Math.round(GOLD_CAP / 1e12)); // 성공 시 목표 시총 $T. 슬라이더 눈금이 1이라 정수로 반올림한다
-
-  // 성숙 곡선 탭이 쓰는 일간 종가가 아니라 실시간 시세를 쓴다. 종가는 하루 늦어
-  // 지금 시세가 함의하는 성공 확률을 읽는 자리에 맞지 않는다.
-  const { data } = useMarket();
-  const spot = data?.price ?? undefined;
 
   const p = pPct / 100;
   const winCap = winCapT * 1e12;
   const { winPrice, implied } = regimeImpliedPrice(p, winCap);
-  const spotP = spot != null ? impliedProbability(spot, winCap) : null;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -41,11 +34,6 @@ export function TwoRegime() {
         <ControlSlider
           icon={<TrendingUp className='size-4 text-series-3' />}
           label='체제 전환 성공 확률 (p)'
-          hint={
-            spotP != null
-              ? `지금 시세 ${formatUsd(spot!)}는 이 모델에서 성공 확률 ${formatPct(spotP * 100, 1)}를 함의한다.`
-              : "시장이 '비트코인이 끝내 진짜 화폐가 된다'고 믿는 정도. 이 한 숫자가 가격을 좌우한다."
-          }
           value={pPct}
           onChange={setPPct}
           min={1}

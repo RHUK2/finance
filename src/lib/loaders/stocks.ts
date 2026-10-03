@@ -6,7 +6,7 @@ import { fetchYahooSeries } from '@/lib/yahoo';
 
 // 스트래티지(MSTR)와 그 우선주(STRC)는 여기가 아니라 `strategy`에 있다.
 // 비트코인 차트 페이지만 쓰는 값이라, 주식 페이지 하나 열자고 같이 내려보내지 않는다.
-const SYMBOLS = [
+export const SYMBOLS = [
   { key: 'tsla', symbol: 'TSLA' },
   { key: 'nvda', symbol: 'NVDA' },
   { key: 'tsm', symbol: 'TSM' },

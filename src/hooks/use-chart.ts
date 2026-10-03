@@ -13,7 +13,15 @@ import {
 } from 'lightweight-charts';
 
 // 차트 컴포넌트가 lightweight-charts를 직접 import하지 않도록 여기서 재수출한다 (단일 관문).
-export { AreaSeries, LineSeries, LineStyle, createSeriesMarkers, type IChartApi, type Time } from 'lightweight-charts';
+export {
+  AreaSeries,
+  LineSeries,
+  LineStyle,
+  createSeriesMarkers,
+  type IChartApi,
+  type ISeriesApi,
+  type Time,
+} from 'lightweight-charts';
 
 // 차트는 canvas에 그려져 CSS 변수(--border 등)가 통하지 않는다. 테마별 색을 값으로 들고 있다가
 // resolvedTheme에 따라 골라 쓴다. 마운트 전에는 resolvedTheme이 undefined이므로 다크로 시작한다.
