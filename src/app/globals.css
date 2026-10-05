@@ -152,12 +152,16 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Windows Chromium의 기본 스크롤바(15px, 위아래 화살표)를 얇게 줄인다. 상속되지 않는 속성이라 *에 둔다 */
+    scrollbar-width: thin;
   }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-pretendard;
+    /* 상속되는 속성이라 html 하나로 본문 창과 사이드바 목록이 같은 색을 갖는다. 트랙은 바탕에 녹인다 */
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent) transparent;
   }
 }
 
