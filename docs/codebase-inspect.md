@@ -47,13 +47,13 @@
 4. 부모 에이전트는 교차 영역과 검증 실행을 조율하고, 결과를 합칠 때 중복과 오탐을 직접 확인한다.
 5. 결과 파일을 작성하고 Git 상태를 시작 시점과 비교한다.
 
-| 담당 영역      | 범위                                                                                                                                                                                                                                                |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 문서           | `AGENTS.md`·`CLAUDE.md`·`CONTEXT.md`, `docs/adr/`, `docs/agents/`, `docs/fact-check-log.md`, `docs/codebase-inspect.md` 자신, `docs/reference/` 인용 대조                                                                                           |
-| 데이터 계층    | `src/app/api/`, `src/lib/loaders/`, `src/lib/cache*.ts`·`fred.ts`·`yahoo.ts`·`series.ts`·`prefetch.ts`, `src/hooks/use-*.ts` 중 데이터 훅                                                                                                           |
-| 모델           | `src/lib/*-models.ts`·`*-concept.ts`·`bcra.ts`·`address-types.ts`, `src/app/<page>/models.ts`                                                                                                                                                       |
-| 화면           | `src/app/**`의 페이지·컴포넌트, `src/components/`(`ui/` 제외), 차트·재생 훅(`use-chart.ts`·`use-round-engine.ts` 등)                                                                                                                                |
-| 루트 실행 환경 | `package.json`, `pnpm-workspace.yaml`, `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `components.json`, `postcss.config.mjs`, `.nvmrc`, `.gitignore`, 포맷 설정, `.husky/`, `scripts/`, `link-worktree-files.sh`, `.mcp.json`, `.vscode/` |
+| 담당 영역      | 범위                                                                                                                                                                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 문서           | `AGENTS.md`·`CLAUDE.md`·`CONTEXT.md`, `docs/adr/`, `docs/agents/`, `docs/fact-check-log.md`, `docs/codebase-inspect.md` 자신, `docs/reference/` 인용 대조                                                                              |
+| 데이터 계층    | `src/app/api/`, `src/lib/loaders/`, `src/lib/cache*.ts`·`fred.ts`·`yahoo.ts`·`series.ts`·`prefetch.ts`, `src/hooks/use-*.ts` 중 데이터 훅                                                                                              |
+| 모델           | `src/lib/*-models.ts`·`*-concept.ts`·`bcra.ts`·`address-types.ts`, `src/app/<page>/models.ts`                                                                                                                                          |
+| 화면           | `src/app/**`의 페이지·컴포넌트, `src/components/`(`ui/` 제외), 차트·재생 훅(`use-chart.ts`·`use-round-engine.ts` 등)                                                                                                                   |
+| 루트 실행 환경 | `package.json`, `pnpm-workspace.yaml`, `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `components.json`, `postcss.config.mjs`, `.nvmrc`, `.gitignore`, 포맷 설정, `.husky/`, `scripts/`, `link-worktree-files.sh`, `.vscode/` |
 
 각 서브에이전트는 담당 영역에 해당하는 한 아래 「조사 항목」의 모든 항목을 점검한다. 실제 오류와 명시된 규약 위반을 먼저 보고, 나머지 항목은 표본 조사가 되면 그 범위를 기록한다.
 
@@ -93,7 +93,7 @@
 | `eslint.config.mjs`                                      | 끈 룰의 근거 주석이 지금도 맞는지(주석의 건수·파일 목록), 파일별 예외가 필요한지 |
 | `.prettierrc`·`.prettierignore`, `.vscode/settings.json` | Tailwind 진입점·클래스 함수 목록이 서로, 그리고 `eslint.config.mjs`와 같은지     |
 | `components.json`                                        | 별칭·경로가 실재하는지                                                           |
-| `.husky/pre-commit`, `.nvmrc`, `.mcp.json`, `.gitignore` | 가리키는 대상이 실재하는지, `.nvmrc`와 문서의 셋업 안내가 같은 버전인지          |
+| `.husky/pre-commit`, `.nvmrc`, `.gitignore`              | 가리키는 대상이 실재하는지, `.nvmrc`와 문서의 셋업 안내가 같은 버전인지          |
 | `scripts/*.mjs`, `link-worktree-files.sh`                | `CLAUDE.md`「워크트리와 로컬 설정」의 설명과 동작이 같은지                       |
 
 - 설정이 가리키는 경로·파일·스크립트·패키지가 실재하는지 확인한다. ignore 패턴, `files` 글롭, `entryPoint`, `extends` 대상이 여기에 든다.
