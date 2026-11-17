@@ -5,9 +5,9 @@ import type { EndpointKey } from './cache-config';
 
 type UnavailableData = { fetchedAt: string; available: false };
 
-export async function cachedWithKey<T extends { fetchedAt: string; available: boolean }>(
+export async function cachedWithKey<T extends { fetchedAt: string; available: true }>(
   key: EndpointKey,
-  envName: string,
+  envName: 'FRED_API_KEY' | 'ECOS_API_KEY',
   fetcher: (apiKey: string) => Promise<T>,
 ): Promise<T | UnavailableData> {
   // 키 부재는 데이터가 아니라 설정 상태다. 500 대신 available: false를 돌려줘
