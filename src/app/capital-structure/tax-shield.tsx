@@ -16,43 +16,19 @@ import {
 import { Panel } from '@/components/panel';
 import { cn, formatEok } from '@/lib/utils';
 
-import { TAX_RATE } from './models';
+import { ASSETS, distressCost, firmValue, shieldValue, taxShield, TAX_RATE } from './models';
 
 // 단위는 억원. 세금 방패만 떼어 보기 위해 영업이익과 이자율은 고정한다.
-const ASSETS = 1000;
 const EBIT = 150;
 const RATE = 5;
 
-// 부채가 늘수록 커지는 재무곤경 기대비용. 방패는 부채에 비례해 늘기만 하므로,
-// 이보다 가파른 4차식으로 두어야 내부 최적점이 생긴다.
-const DISTRESS_K = 0.3;
 const STEPS = Array.from({ length: 19 }, (_, i) => i * 5);
-
-// 화면에는 이름이 닮은 두 값이 함께 나온다. 헷갈리지 않도록 함수 이름부터 갈라 둔다.
-//   annualShield: 올해 한 해 덜 낸 법인세. 이자 × 세율.
-//   shieldValue:  그 절감이 매년 이어진다고 보고 현재가치로 합친 값. 이자율로 할인하면
-//                 이자율이 약분돼 부채 × 세율만 남는다. 곡선이 이자율과 무관한 이유다.
-function shieldValue(debtPct: number, taxRate: number) {
-  return ((ASSETS * debtPct) / 100) * (taxRate / 100);
-}
-
-function distressCost(debtPct: number) {
-  return ASSETS * DISTRESS_K * (debtPct / 100) ** 4;
-}
-
-function firmValue(debtPct: number, taxRate: number) {
-  return ASSETS + shieldValue(debtPct, taxRate) - distressCost(debtPct);
-}
 
 export function TaxShield() {
   const [debtRatio, setDebtRatio] = useState(40);
   const [taxRate, setTaxRate] = useState(TAX_RATE);
 
-  const debt = (ASSETS * debtRatio) / 100;
-  const interest = (debt * RATE) / 100;
-  const tax = Math.max(0, EBIT - interest) * (taxRate / 100);
-  const net = EBIT - interest - tax;
-  const annualShield = EBIT * (taxRate / 100) - tax;
+  const { debt, interest, tax, net, annualShield } = taxShield(debtRatio, taxRate, EBIT, RATE);
 
   const curve = STEPS.map((d) => ({ d, v: firmValue(d, taxRate) }));
   const best = curve.reduce((a, b) => (b.v > a.v ? b : a));
@@ -128,7 +104,7 @@ export function TaxShield() {
         {annualShield > 0
           ? `이자를 비용으로 털어 낸 덕분에 올해 정부로 나갈 ${formatEok(annualShield, 0)}이 회사 안에 남았다. 채권자와 주주가 나눠 갖는 몫의 합이 그만큼 커진다.`
           : taxRate === 0
-            ? '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 이때 자본구조는 파이를 자르는 방식일 뿐 파이의 크기를 바꾸지 못한다.'
+            ? '세율이 0이라 이자를 아무리 늘려도 아낄 세금이 없다. 세금 방패로 기업가치를 늘리는 효과는 사라지지만, 아래 모형의 재무곤경 비용에 따른 가치 감소는 남는다.'
             : `빚이 없어 비용으로 털어 낼 이자도 없다. 정부가 영업이익의 ${taxRate}%를 그대로 걷는다. 부채 비중을 올리면 그 몫이 줄기 시작한다.`}
       </StatusBanner>
 

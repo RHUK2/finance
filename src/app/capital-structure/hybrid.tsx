@@ -17,15 +17,17 @@ import {
 import { Panel } from '@/components/panel';
 import { formatEok, formatPct, formatWon } from '@/lib/utils';
 
-// 교육용 예시 회사. 금액 단위는 억원, 주가는 원.
-const BASE_SHARES = 10_000_000;
-const CB_FACE = 100;
-const CB_COUPON = 3; // 만기까지 받는 이자 총액
-const CONV_PRICE = 20_000;
-const CB_SHARES = (CB_FACE * 1e8) / CONV_PRICE;
-const REDEEM = CB_FACE + CB_COUPON;
-const CONV_STAKE = CB_SHARES / (BASE_SHARES + CB_SHARES);
-const BREAKEVEN = REDEEM / CONV_STAKE;
+import {
+  BASE_SHARES,
+  CB_FACE,
+  CB_COUPON,
+  CONV_PRICE,
+  CB_SHARES,
+  REDEEM,
+  CONV_STAKE,
+  BREAKEVEN,
+  hybrid,
+} from './models';
 
 type Instrument = {
   id: string;
@@ -85,14 +87,7 @@ export function Hybrid() {
   const [selected, setSelected] = useState('cb');
   const instrument = INSTRUMENTS.find((i) => i.id === selected) ?? INSTRUMENTS[1];
 
-  const convValue = value * CONV_STAKE;
-  const converts = convValue > REDEEM;
-  const holder = converts ? convValue : REDEEM;
-  const existing = value - holder;
-
-  const priceConverted = (value * 1e8) / (BASE_SHARES + CB_SHARES);
-  const priceRedeemed = ((value - REDEEM) * 1e8) / BASE_SHARES;
-  const price = converts ? priceConverted : priceRedeemed;
+  const { convValue, converts, holder, existing, priceRedeemed, price } = hybrid(value);
 
   const barMax = Math.max(value, 1);
 

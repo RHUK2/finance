@@ -54,8 +54,8 @@ export function WaterDiamond() {
       <Panel>
         <ControlSlider
           icon={<Droplets className='size-4 text-series-1' />}
-          label='이미 쥐고 있는 물'
-          hint='첫 잔은 마시지 못하면 죽으므로 목숨값이다. 잔이 늘수록 한 잔 더의 값어치가 떨어진다.'
+          label='첫 잔부터 비교할 마지막 잔까지'
+          hint='첫 잔은 마시지 못하면 죽으므로 목숨값이다. 잔이 늘수록 마지막 잔의 값어치가 떨어진다.'
           value={cups}
           onChange={setCups}
           min={1}
@@ -71,11 +71,12 @@ export function WaterDiamond() {
 
       <Panel className='gap-3'>
         <span className='flex items-center gap-1.5 text-sm font-semibold'>
-          <Scale className='size-4 text-series-3' />한 단위 더의 값어치
+          <Scale className='size-4 text-series-3' />
+          마지막 한 단위의 값어치
         </span>
         <div
           role='img'
-          aria-label={`물 한 잔 더의 지불의사가 1잔째 ${formatValue(bars[0])}에서 ${cups}잔째 ${formatValue(marginal)}까지 줄어든다. 다이아몬드 하나 더는 ${formatValue(diamondWon)}.`}
+          aria-label={`각 물 잔의 지불의사가 1잔째 ${formatValue(bars[0])}에서 ${cups}잔째 ${formatValue(marginal)}까지 줄어든다. 다이아몬드 하나 더는 ${formatValue(diamondWon)}.`}
           className='flex items-end gap-4'
         >
           <div className='flex h-32 flex-1 items-end gap-0.5'>
@@ -115,7 +116,7 @@ export function WaterDiamond() {
           label={`물 ${cups}잔째의 지불의사`}
           value={formatValue(marginal)}
           tone={waterWins ? 'good' : 'bad'}
-          sub='한 잔 더 얻으려고 내놓을 최대 금액. 한계효용을 금액으로 잰 값'
+          sub='앞선 잔을 가진 상태에서 이 잔을 얻으려고 내놓을 최대 금액. 한계효용을 금액으로 잰 값'
         />
         <Metric
           label='다이아몬드 하나 더의 지불의사'

@@ -155,7 +155,9 @@ export function Agency() {
         <p className='text-sm/relaxed text-muted-foreground'>
           {needsMeeting
             ? '이사회 결의를 빠뜨린 경우라면 상대방이 그 흠을 알았는지에 따라 계약의 운명이 갈린다. 하지만 주주총회 특별결의가 필요한 규모에서는 그 구분이 통하지 않는다.'
-            : '안쪽 절차의 흠은 회사 내부 문제다. 바깥의 상대방이 그 흠을 알았는지에 따라 계약의 운명이 갈린다.'}
+            : !needsBoard
+              ? '대표이사 전결 범위라 건너뛸 결의 절차가 없다. 상대방의 인지 여부는 이 구간에서 결과를 바꾸지 않는다.'
+              : '안쪽 절차의 흠은 회사 내부 문제다. 바깥의 상대방이 그 흠을 알았는지에 따라 계약의 운명이 갈린다.'}
         </p>
         <SegmentedControl
           options={[
@@ -164,7 +166,7 @@ export function Agency() {
           ]}
           value={counterpartyKnew}
           onChange={setCounterpartyKnew}
-          disabled={needsMeeting}
+          disabled={needsMeeting || !needsBoard}
         />
         <StatusBanner tone={skipOutcome.tone}>{skipOutcome.text}</StatusBanner>
       </Panel>
