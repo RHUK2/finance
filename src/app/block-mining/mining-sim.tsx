@@ -24,6 +24,7 @@ const ASIC_RATE = 5e14; // 실제 ASIC 채굴기 한 대: 초당 약 500조 회 
 
 export function MiningSim() {
   const [difficulty, setDifficulty] = useState(3);
+  const [speedMs, setSpeedMs] = useState(600);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -47,7 +48,7 @@ export function MiningSim() {
         />
       </Panel>
 
-      <MiningEngine key={difficulty} difficulty={difficulty} />
+      <MiningEngine key={difficulty} difficulty={difficulty} speedMs={speedMs} onSpeed={setSpeedMs} />
 
       <ExplainCard
         title='채굴이 전력을 그렇게 많이 먹는 이유'
@@ -67,14 +68,21 @@ export function MiningSim() {
   );
 }
 
-function MiningEngine({ difficulty }: { difficulty: number }) {
+function MiningEngine({
+  difficulty,
+  speedMs,
+  onSpeed,
+}: {
+  difficulty: number;
+  speedMs: number;
+  onSpeed: (speed: number) => void;
+}) {
   // MiningEngine은 부모에서 key={difficulty}로 매번 새로 마운트되므로,
   // 난이도가 바뀌어도 배치 크기는 이 마운트 동안 한 번만 계산하면 된다.
   const batch = batchSizeFor(difficulty);
-  const [speedMs, setSpeedMs] = useState(280);
-  const [nonce, setNonce] = useState(0);
+  const [nonce, setNonce] = useState(-1);
   const [attempts, setAttempts] = useState(0);
-  const [hash, setHash] = useState(() => hashWithNonce(HEADER_PREFIX, 0));
+  const [hash, setHash] = useState('');
   const [found, setFound] = useState(false);
 
   // 자동 재생은 한 틱에 batch번 해시하고, 수동 스텝 버튼("한 회 시도")은 정확히 한 번만 해시한다.
@@ -109,14 +117,14 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
         onStep={() => advance(1)}
         onReset={() => {
           engine.pause();
-          setNonce(0);
+          setNonce(-1);
           setAttempts(0);
           setFound(false);
-          setHash(hashWithNonce(HEADER_PREFIX, 0));
+          setHash('');
         }}
         round={attempts}
         speedMs={speedMs}
-        onSpeed={setSpeedMs}
+        onSpeed={onSpeed}
         done={found}
         unit='회 시도'
       />
@@ -124,9 +132,17 @@ function MiningEngine({ difficulty }: { difficulty: number }) {
       <StatusBanner
         tone={found ? 'good' : undefined}
         icon={<Pickaxe className={cn('size-4', found ? 'text-good' : 'text-muted-foreground')} />}
-        detail={<code className='font-mono text-xs break-all'>{shortHex(hash, 24)}</code>}
+        detail={
+          <code className='block min-h-5 font-mono text-xs break-all'>
+            {attempts > 0 ? shortHex(hash, 24) : '첫 시도 후 해시가 표시된다'}
+          </code>
+        }
       >
-        {found ? `nonce ${nonce}에서 목표를 찾았다!` : `nonce ${nonce} 시도 중…`}
+        {found
+          ? `nonce ${nonce}에서 목표를 찾았다!`
+          : attempts === 0
+            ? 'nonce 0부터 시도할 준비가 됐다'
+            : `nonce ${nonce} 시도 중…`}
       </StatusBanner>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>

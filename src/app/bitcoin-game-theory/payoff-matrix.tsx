@@ -64,6 +64,15 @@ export function PayoffMatrix() {
     WW: <>0</>,
   };
 
+  const comparisonKind = dominantStrategy !== 'A' ? 'unavailable' : u - r <= 0 ? 'dilemma' : 'aligned';
+
+  const comparison =
+    comparisonKind === 'unavailable'
+      ? '지금 값에서는 채택이 우월전략이 아니므로 죄수의 딜레마와의 비교가 성립하지 않는다.'
+      : comparisonKind === 'dilemma'
+        ? '지금은 채택이 우월전략이지만 모두 채택의 보수가 모두 관망보다 낫지 않아, 죄수의 딜레마와 같은 유인 구조다.'
+        : '지금은 채택이 우월전략이고 모두 채택의 보수도 더 높아, 죄수의 딜레마와 결과가 반대다.';
+
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='보수 행렬: 사면 이득, 안 사면 낙오'>
@@ -147,8 +156,8 @@ export function PayoffMatrix() {
 
       <Panel className='gap-3'>
         <SectionIntro title='비교: 죄수의 딜레마'>
-          같은 &#39;우월전략&#39; 구조라도 보상이 다르면 결과가 정반대가 된다. 죄수의 딜레마에선 배신이 우월전략이라 둘
-          다 배신(1/1)으로 수렴하지만, 이는 둘 다 협력(3/3)보다 <b>모두에게 더 나쁜</b> 결과다.
+          {comparison} 죄수의 딜레마에선 배신이 우월전략이라 둘 다 배신(1/1)으로 수렴하지만, 이는 둘 다 협력(3/3)보다{' '}
+          <b>모두에게 더 나쁜</b> 결과다.
         </SectionIntro>
         <PayoffGrid
           cells={PD.cells}
@@ -159,12 +168,24 @@ export function PayoffMatrix() {
       </Panel>
 
       <ExplainCard
-        title='왜 죄수의 딜레마와 결과가 정반대일까?'
-        preview="같은 '우월전략' 구조인데, 상승 기대가 비용을 넘으면 낙오 페널티 f가 유인의 방향을 통째로 뒤집는다."
+        title={
+          comparisonKind === 'unavailable'
+            ? '지금은 왜 비교가 성립하지 않을까?'
+            : comparisonKind === 'dilemma'
+              ? '지금은 왜 죄수의 딜레마와 같은 구조일까?'
+              : '왜 죄수의 딜레마와 결과가 반대일까?'
+        }
+        preview={
+          comparisonKind === 'unavailable'
+            ? '상승 기대와 낙오 페널티를 합쳐 비용을 넘기는 지점부터 비교할 수 있다.'
+            : comparisonKind === 'dilemma'
+              ? '낙오를 피하려는 선택이 모두의 보수를 더 높여 주지는 않는다.'
+              : '상승 기대가 비용을 넘으면 개인의 선택과 모두의 이득이 같은 방향을 향한다.'
+        }
         body={
-          dominantStrategy !== 'A'
+          comparisonKind === 'unavailable'
             ? `지금 값에서는 채택이 우월전략이 아니라 이 비교가 성립하지 않는다. 낙오 페널티 f와 상승 기대 u를 합쳐도 조기채택 비용 r을 넘지 못하면 누구도 먼저 움직이지 않고, 캐스케이드는 시작되지 않는다. f나 u를 키워 채택이 우월해지는 지점을 찾아보자.`
-            : u - r <= 0
+            : comparisonKind === 'dilemma'
               ? `지금 값에서는 채택이 우월전략이지만 모두 채택의 보수(u − r = ${sign(u - r)})가 모두 관망(0)${u - r < 0 ? '보다 낮다' : '과 같다'}. 이 구간의 채택 게임은 죄수의 딜레마와 같은 구조다. 낙오 페널티 f가 각자를 채택으로 밀어내지만, 둘 다 채택한 결과가 둘 다 관망한 결과보다 낫지 않다. 개인과 집단의 유인이 같은 방향으로 정렬되는 것은 상승 기대 u가 조기채택 비용 r을 넘을 때뿐이다.`
               : "비트코인 채택은 흔히 죄수의 딜레마처럼 보이지만, 보상 구조가 비대칭이라 결과가 다르다. 죄수의 딜레마는 우월전략(배신)이 모두를 더 나쁜 칸으로 끌고 가는 비극이지만, 채택 게임은 낙오 페널티 f가 개인과 집단의 유인을 같은 방향으로 정렬시킨다. 남들이 살 때 나만 안 사면 자산 가치 상승에서 소외돼 상대적으로 가난해진다(낙오 페널티 f). 이 페널티 때문에 관망은 열등전략이 되고, 합리적이라면 결국 채택을 택해 '모두 채택'이라는 최선의 결과로 수렴한다. 이것이 한 국가의 채택이 다른 국가의 채택을 부르는 캐스케이드의 출발점이다."
         }

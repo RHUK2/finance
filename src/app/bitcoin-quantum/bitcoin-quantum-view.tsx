@@ -87,15 +87,16 @@ export function BitcoinQuantumView() {
       </Panel>
 
       {/* 상태 배너 */}
-      <StatusBanner tone={sim.risk.tone} icon={<sim.risk.icon className='size-5 shrink-0' />}>
-        <div>
-          <p className='font-semibold'>이 잔고는 지금 &apos;{sim.risk.level}&apos; 상태다</p>
-          <p className='mt-0.5 text-xs font-normal text-muted-foreground'>
-            {sim.exposed
-              ? '공개키가 이미 노출되어 있어, 논리 큐비트 확보율이 그대로 위험도에 반영된다.'
-              : '아직 지출하지 않은 해시 주소라 공개키가 해시 뒤에 숨어 있어, 논리 큐비트가 아무리 늘어도 이 잔고를 직접 노릴 수 없다.'}
-          </p>
-        </div>
+      <StatusBanner
+        tone={sim.risk.tone}
+        icon={<sim.risk.icon className='size-5 shrink-0' />}
+        detail={
+          sim.exposed
+            ? '공개키가 이미 노출되어 있어, 논리 큐비트 확보율이 그대로 위험도에 반영된다.'
+            : '아직 지출하지 않은 해시 주소라 공개키가 해시 뒤에 숨어 있어, 논리 큐비트가 아무리 늘어도 이 잔고를 직접 노릴 수 없다.'
+        }
+      >
+        이 잔고는 지금 &apos;{sim.risk.level}&apos; 상태다
       </StatusBanner>
 
       {/* 지표 카드 */}

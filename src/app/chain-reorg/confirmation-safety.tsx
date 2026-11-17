@@ -6,16 +6,19 @@ import { ShieldCheck, TriangleAlert } from 'lucide-react';
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn, formatPct } from '@/lib/utils';
-import { CONFIRMATION_PRESETS, formatProbability, reversalProbability } from '@/lib/chain-concept';
+import {
+  CONFIRMATION_PRESETS,
+  formatProbability,
+  probabilityTone,
+  REVERSAL_RISK_THRESHOLD,
+  reversalProbability,
+} from '@/lib/chain-concept';
 
 // 백서가 예시로 든 공격자 비중. 설명 카드의 수치는 이 값에서 계산해 문구와 모델이 갈리지 않게 한다.
 const PAPER_Q = 0.1;
 // 확인 수 기준이다. 확인 2개 = 백서 z = 1, 확인 6개 = z = 5.
 const PAPER_P2 = reversalProbability(PAPER_Q, 2);
 const PAPER_P6 = reversalProbability(PAPER_Q, 6);
-
-// 1% 경계는 아래 StatusBanner와 같다. 확률이 커지면 Metric도 함께 나빠진다.
-const probabilityTone = (p: number) => (p >= 0.01 ? 'bad' : 'good');
 
 export function ConfirmationSafety() {
   const [attackPct, setAttackPct] = useState(10);
@@ -27,7 +30,7 @@ export function ConfirmationSafety() {
 
   const [confirmations, setConfirmations] = useState(6);
   const selectedProbability = reversalProbability(q, confirmations);
-  const reversalLikely = selectedProbability >= 0.01;
+  const reversalLikely = selectedProbability >= REVERSAL_RISK_THRESHOLD;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -86,7 +89,7 @@ export function ConfirmationSafety() {
                   <div
                     className={cn(
                       'h-full rounded-full',
-                      p > 0.05 ? 'bg-bad-surface' : p > 0.001 ? 'bg-warn-surface' : 'bg-good-surface',
+                      probabilityTone(p) === 'bad' ? 'bg-bad-surface' : 'bg-good-surface',
                     )}
                     style={{ width: `${Math.max(1, Math.min(100, p * 100))}%` }}
                   />

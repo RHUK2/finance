@@ -32,7 +32,7 @@ const TIMELINE = [
   },
   {
     date: '2026.08.23',
-    label: `${FACTS.ecashHeight.value.toLocaleString('ko-KR')}블록에서 eCash(ECX) 알파 분기, 1:1 크레딧을 정하는 정식 스냅샷은 10월 31일(${FACTS.ecashSnapshotHeight.value.toLocaleString('ko-KR')}블록) 예정`,
+    label: `${FACTS.ecashHeight.value.toLocaleString('ko-KR')}블록에서 eCash(ECX) 알파 분기, 1:1 크레딧을 정하는 정식 스냅샷 일정은 ${AS_OF} 기준 ${FACTS.ecashSnapshotHeight.scheduledDate}(${FACTS.ecashSnapshotHeight.value.toLocaleString('ko-KR')}블록)로 제시됐다`,
     tone: 'accent' as const,
   },
 ];
@@ -108,9 +108,9 @@ export function August2026() {
             <p>
               eCash는 폴 스토르츠가 제안한 별개의 하드포크로, {FACTS.ecashHeight.value.toLocaleString('ko-KR')}블록에서
               알파 체인이 갈라졌다. 비트코인의 과거 장부를 복사해 1 BTC마다 1 eCash를 주는 설계이고(그 기준이 되는 정식
-              스냅샷은 10월 31일 예정), SHA-256 채굴을 유지하면서 Drivechain 방식의 사이드체인을 얹는다. 사토시 것으로
-              추정되는 휴면 코인 약 50만 개를 분기 체인에서 재배정하는 내용이 함께 들어 있어, 이를 선례로 삼는 것이
-              위험하다는 반발이 컸다.
+              스냅샷 일정은 {AS_OF} 기준 {FACTS.ecashSnapshotHeight.scheduledDate}로 제시됐다), SHA-256 채굴을
+              유지하면서 Drivechain 방식의 사이드체인을 얹는다. 사토시 것으로 추정되는 휴면 코인 약 50만 개를 분기
+              체인에서 재배정하는 내용이 함께 들어 있어, 이를 선례로 삼는 것이 위험하다는 반발이 컸다.
             </p>
             <p>
               보유자에게 더 중요한 것은 다른 대목이다. 두 체인 사이에 완전한 리플레이 보호가 들어가지 않았다. 한쪽에서

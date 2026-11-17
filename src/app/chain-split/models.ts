@@ -39,6 +39,12 @@ export const FACTS = {
     asOf: '2026년 8월',
     source: 'BIP-110 배포 파라미터',
   },
+  minorityHashShare: {
+    value: 0.0003,
+    label: 'BIP-110 소수 체인 해시레이트 비중(보도 추정)',
+    asOf: '2026년 8월 9일',
+    source: 'https://crypto.news/bitcoin-bip-110-split-widens-as-fork-freezes-at-2-blocks/',
+  },
   minorityBlocks: {
     value: 2,
     label: 'BIP-110 소수 체인이 채굴한 블록 수',
@@ -56,9 +62,10 @@ export const FACTS = {
     value: 973_728,
     label: 'eCash 1:1 크레딧을 확정하는 정식 스냅샷 예정 블록',
     asOf: '2026년 8월',
-    source: 'eCash 단계별 일정 (8월 8일 변경, 10월 31일 예정)',
+    source: 'eCash 단계별 일정 (8월 8일 변경)',
+    scheduledDate: '2026년 10월 31일',
   },
-} satisfies Record<string, Fact>;
+} satisfies Record<string, Fact & { scheduledDate?: string }>;
 
 // 기준일. 화면에 그대로 박아 이 페이지가 언제의 사실을 말하는지 남긴다.
 export const AS_OF = '2026년 8월 25일';

@@ -119,7 +119,7 @@ export function BlockHeaderView() {
 
       <ExplainCard
         title='채굴자가 바꿀 수 있는 건 nonce만이 아니다'
-        preview='nonce가 4바이트를 다 써버리면 coinbase 트랜잭션의 extraNonce나 timestamp를 바꿔 머클 루트 자체를 새로 만든다.'
+        preview='nonce가 4바이트를 다 써버리면 coinbase 트랜잭션의 extraNonce를 바꿔 머클 루트 자체를 새로 만든다.'
         body={
           <>
             nonce는 4바이트(약 43억 가지)뿐이라 빠른 채굴기는 이걸 순식간에 다 써버린다. 그러면 블록에 자기 몫으로

@@ -19,7 +19,7 @@ import {
 } from './models';
 
 // 슬라이더의 시작값(0~100). 블록 신호율이지 해시레이트가 아니다. 소수 체인으로 실제 옮겨 간 해시는
-// 이보다 훨씬 적었으므로(보도 약 257 PH/s, 전체의 0.03% 안팎) 넉넉한 상한으로 놓고 시작한다.
+// 이보다 훨씬 적었으므로(FACTS.minorityHashShare) 넉넉한 상한으로 놓고 시작한다.
 // 화면 문구는 models의 SIGNAL_PCT_LABEL을 쓴다.
 const SIGNAL_HASH_PCT = FACTS.signalingShare.value * 100;
 const MINORITY_BLOCKS = `${FACTS.minorityBlocks.value}블록`;
@@ -69,8 +69,14 @@ export function WhyTwoChains() {
         <p className='text-sm/relaxed text-muted-foreground'>
           BIP-110은 {FACTS.signalingHeight.value.toLocaleString('ko-KR')}블록부터 이 구간에 들어갔다. 직전{' '}
           {RETARGET_INTERVAL.toLocaleString('ko-KR')}블록 중 신호한 블록은 {FACTS.signalingBlocks.value}개,{' '}
-          {SIGNAL_PCT_LABEL}였다. 조기 활성화 임계값은 {LOCK_IN_PCT_LABEL}다. 신호율은 활성화에 필요한 지지의 20분의 1도
-          안 됐고, 소수 체인으로 실제 옮겨 간 해시레이트는 그보다도 훨씬 적었다(보도된 값은 전체의 0.03% 안팎).
+          {SIGNAL_PCT_LABEL}였다. 조기 활성화 임계값은 {LOCK_IN_PCT_LABEL}다. 신호율은 활성화에 필요한 지지의 약{' '}
+          {formatPct((FACTS.signalingShare.value / FACTS.lockInThreshold.value) * 100, 1)}였고, 소수 체인으로 실제 옮겨
+          간 해시레이트는 그보다도 훨씬 적었다(전체의 약 {formatPct(FACTS.minorityHashShare.value * 100, 2)},{' '}
+          {FACTS.minorityHashShare.asOf} 기준,{' '}
+          <a href={FACTS.minorityHashShare.source} className='underline underline-offset-2'>
+            보도 추정
+          </a>
+          ).
         </p>
       </Panel>
 

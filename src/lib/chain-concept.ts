@@ -32,11 +32,36 @@ export function confirmationLimitProbability(q: number): number {
   return q >= 0.5 ? 1 : 0;
 }
 
+// 화면의 확률 판정과 표기가 함께 바뀌는 1% 경계.
+export const REVERSAL_RISK_THRESHOLD = 0.01;
+export const probabilityTone = (p: number) => (p >= REVERSAL_RISK_THRESHOLD ? 'bad' : 'good');
+
+// 시연의 판정 한계다. 60라운드 안에 따라잡지 못해도 이후 재구성이 불가능하다는 뜻은 아니다.
+export const REORG_MAX_ROUNDS = 60;
+export type ReorgRaceState = { round: number; honestBlocks: number; attackerBlocks: number };
+
+export function reorgRaceStatus(state: ReorgRaceState) {
+  const caughtUp = state.attackerBlocks >= state.honestBlocks;
+  const timedOut = state.round >= REORG_MAX_ROUNDS && !caughtUp;
+  return { caughtUp, timedOut, finished: caughtUp || timedOut };
+}
+
+// random은 [0, 1) 난수다. 동률도 따라잡기로 세며, 종료 뒤에는 더 진행하지 않는다.
+export function stepReorgRace(state: ReorgRaceState, q: number, random: number): ReorgRaceState {
+  if (reorgRaceStatus(state).finished) return state;
+  const attackerWins = random < q;
+  return {
+    round: state.round + 1,
+    honestBlocks: state.honestBlocks + (attackerWins ? 0 : 1),
+    attackerBlocks: state.attackerBlocks + (attackerWins ? 1 : 0),
+  };
+}
+
 export const CONFIRMATION_PRESETS = [1, 2, 3, 6, 10, 20] as const;
 
 // 확률을 사람이 읽기 좋은 문자열로. 1% 이상이면 %로, 그보다 작으면 "약 1,000분의 1" 식으로.
 export function formatProbability(p: number): string {
-  if (p >= 0.01) return formatPct(p * 100, 1);
+  if (p >= REVERSAL_RISK_THRESHOLD) return formatPct(p * 100, 1);
   if (p <= 0) return '0%에 근접';
   const denominator = Math.round(1 / p);
   return `약 ${denominator.toLocaleString('ko-KR')}분의 1`;

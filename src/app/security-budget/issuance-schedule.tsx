@@ -10,9 +10,9 @@ import { Panel } from '@/components/panel';
 import { MAX_SUPPLY_BTC, subsidyAtEra } from '@/lib/bitcoin-models';
 import { formatPct } from '@/lib/utils';
 
+import { formatBtc } from './format';
 import { BLOCKS_PER_YEAR, CURRENT_ERA, cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA } from './models';
 
-const fmtBtc = (n: number) => (n >= 1 ? `${n.toFixed(3)} BTC` : `${Math.round(n * 1e8).toLocaleString('ko-KR')} sat`);
 const fmtSupply = (n: number) => `${Math.round(n).toLocaleString('ko-KR')} BTC`;
 
 export function IssuanceSchedule() {
@@ -53,13 +53,13 @@ export function IssuanceSchedule() {
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='블록 보조금'
-          value={subsidy > 0 ? fmtBtc(subsidy) : '0'}
+          value={subsidy > 0 ? formatBtc(subsidy) : '0'}
           tone={subsidy > 0 ? 'accent' : 'bad'}
           sub={subsidy > 0 ? '한 블록을 캔 대가' : '더 이상 새 코인이 없다'}
         />
         <Metric
           label='연간 신규 발행'
-          value={annual >= 1 ? fmtSupply(annual) : fmtBtc(annual)}
+          value={annual >= 1 ? fmtSupply(annual) : formatBtc(annual)}
           sub={`${BLOCKS_PER_YEAR.toLocaleString('ko-KR')}블록 기준`}
         />
         <Metric
