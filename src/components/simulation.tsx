@@ -27,7 +27,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCountUp } from '@/hooks/use-count-up';
-import { LOG_TICKS, logTickToValue, logValueToTick } from '@/lib/simulation-models';
+import { linearSliderValue, LOG_TICKS, logTickToValue, logValueToTick } from '@/lib/simulation-models';
 import { clamp, cn, formatUsd } from '@/lib/utils';
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
@@ -228,11 +228,10 @@ export function ControlSlider({
   const nudge = (dir: 1 | -1) => {
     if (log) {
       const tick = Math.min(LOG_TICKS, Math.max(0, toTick(value) + dir));
-      onChange(Number(fromTick(tick).toPrecision(4)));
+      onChange(fromTick(tick));
       return;
     }
-    const digits = (String(step).split('.')[1] ?? '').length;
-    onChange(Number(Math.min(max, Math.max(min, value + dir * step)).toFixed(digits)));
+    onChange(linearSliderValue(value + dir * step, min, max, step));
   };
 
   return (
@@ -288,7 +287,7 @@ export function ControlSlider({
           max={max}
           step={step}
           value={[value]}
-          onValueChange={(v) => onChange(sliderValue(v))}
+          onValueChange={(v) => onChange(linearSliderValue(sliderValue(v), min, max, step))}
           disabled={disabled}
           aria-labelledby={labelId}
           getAriaValueText={(_, v) => format(v)}
@@ -372,7 +371,7 @@ export function StatusBanner({
       ) : (
         <>
           {icon}
-          {children}
+          <div className='min-w-0'>{children}</div>
         </>
       )}
     </div>
@@ -499,6 +498,11 @@ export function SimTabs({ tabs, defaultValue }: { tabs: SimTab[]; defaultValue: 
 // 버튼 묶음(SegmentedControl)은 FieldLabelContext로 라벨 id를 받아 group의 이름으로 쓴다.
 const FieldLabelContext = createContext<string | undefined>(undefined);
 
+// useFieldLabelId는 Field 안의 원시 버튼 묶음에 라벨 id를 전달한다.
+export function useFieldLabelId() {
+  return useContext(FieldLabelContext);
+}
+
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   const labelId = useId();
   return (
@@ -512,6 +516,7 @@ export function Field({ label, children }: { label: string; children: React.Reac
 }
 
 // 세그먼트형 토글 버튼 그룹. 값 하나를 고르는 라디오 대체.
+// label prop은 Field 밖에서 그룹의 접근 가능한 이름을 지정한다.
 // disabled는 지금 조건에서 이 선택이 결과를 바꾸지 못할 때 쓴다. 컨트롤을 숨기지 않는 이유는
 // 다른 조건에서는 살아난다는 사실 자체가 설명의 일부이기 때문이다.
 export function SegmentedControl<T extends string | boolean>({
@@ -519,17 +524,25 @@ export function SegmentedControl<T extends string | boolean>({
   value,
   onChange,
   disabled,
+  label,
 }: {
   options: { value: T; label: string }[];
   value: T;
   onChange: (v: T) => void;
   disabled?: boolean;
+  label?: string;
 }) {
-  const labelId = useContext(FieldLabelContext);
+  const labelId = useFieldLabelId();
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && !labelId && !label?.trim()) {
+      console.warn('SegmentedControl: Field 밖에서는 label prop으로 그룹의 이름을 지정해야 합니다.');
+    }
+  }, [labelId, label]);
   return (
     <div
       role='group'
       aria-labelledby={labelId}
+      aria-label={labelId ? undefined : label}
       className={cn('flex overflow-hidden rounded-md border', disabled && 'opacity-50')}
     >
       {options.map((o) => (

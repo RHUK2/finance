@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Link2, ScanEye } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
-import { ExplainCard, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
+import { ExplainCard, Field, SectionIntro, SegmentedControl, StatusBanner } from '@/components/simulation';
 import { shortHex } from '@/lib/utils';
 import { walletAddress } from '@/lib/privacy-concept';
 
@@ -32,14 +32,16 @@ export function AddressReuse() {
       </SectionIntro>
 
       <Panel>
-        <SegmentedControl
-          options={[
-            { value: 'reuse', label: '같은 주소 재사용' },
-            { value: 'fresh', label: '결제마다 새 주소' },
-          ]}
-          value={mode}
-          onChange={setMode}
-        />
+        <Field label='주소 사용 방식'>
+          <SegmentedControl
+            options={[
+              { value: 'reuse', label: '같은 주소 재사용' },
+              { value: 'fresh', label: '결제마다 새 주소' },
+            ]}
+            value={mode}
+            onChange={setMode}
+          />
+        </Field>
 
         <div className='flex flex-col gap-2'>
           {PAYMENTS.map((p, i) => (

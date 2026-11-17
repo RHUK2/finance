@@ -7,6 +7,7 @@ import { ArrowDown, Briefcase, Handshake, PenLine, Scale, TriangleAlert, Users }
 import {
   ControlSlider,
   ExplainCard,
+  Field,
   Metric,
   SectionIntro,
   SegmentedControl,
@@ -159,15 +160,17 @@ export function Agency() {
               ? '대표이사 전결 범위라 건너뛸 결의 절차가 없다. 상대방의 인지 여부는 이 구간에서 결과를 바꾸지 않는다.'
               : '안쪽 절차의 흠은 회사 내부 문제다. 바깥의 상대방이 그 흠을 알았는지에 따라 계약의 운명이 갈린다.'}
         </p>
-        <SegmentedControl
-          options={[
-            { value: false, label: '상대방이 몰랐다' },
-            { value: true, label: '상대방이 알고 있었다' },
-          ]}
-          value={counterpartyKnew}
-          onChange={setCounterpartyKnew}
-          disabled={needsMeeting || !needsBoard}
-        />
+        <Field label='상대방의 절차 누락 인지 여부'>
+          <SegmentedControl
+            options={[
+              { value: false, label: '상대방이 몰랐다' },
+              { value: true, label: '상대방이 알고 있었다' },
+            ]}
+            value={counterpartyKnew}
+            onChange={setCounterpartyKnew}
+            disabled={needsMeeting || !needsBoard}
+          />
+        </Field>
         <StatusBanner tone={skipOutcome.tone}>{skipOutcome.text}</StatusBanner>
       </Panel>
 

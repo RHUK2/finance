@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { Panel } from '@/components/panel';
-import { ExplainCard, Legend, SectionIntro, SegmentedControl } from '@/components/simulation';
+import { ExplainCard, Field, Legend, SectionIntro, SegmentedControl } from '@/components/simulation';
 import { cn } from '@/lib/utils';
 
 type Mode = 'legacy' | 'segwit';
@@ -48,8 +48,7 @@ export function TxStructure() {
       </SectionIntro>
 
       <Panel>
-        <div className='flex flex-col gap-2'>
-          <span className='text-sm font-semibold'>서명이 어디에 담기나</span>
+        <Field label='서명이 어디에 담기나'>
           <SegmentedControl<Mode>
             options={[
               { value: 'legacy', label: 'Legacy (서명 = scriptSig)' },
@@ -58,7 +57,7 @@ export function TxStructure() {
             value={mode}
             onChange={setMode}
           />
-        </div>
+        </Field>
 
         <div className='flex flex-col gap-1.5'>
           <FieldBox name='version' desc='트랜잭션 규칙 버전 (4바이트)' />
