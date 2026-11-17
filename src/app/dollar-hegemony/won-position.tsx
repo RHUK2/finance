@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { formatPct } from '@/lib/utils';
+import { formatPct, formatPctPoint } from '@/lib/utils';
 
 import { KR_RATE, krwChain } from './models';
 
@@ -46,16 +46,16 @@ export function WonPosition() {
           max={7}
           step={0.25}
           format={(v) => formatPct(v, 2)}
-          hint={`국내 경기만 보면 이 정도가 좋겠다는 값. 금리차가 ${KR_RATE.tolerance.toFixed(1)}%p를 넘어가면 이 값을 지킬 수 없다.`}
+          hint={`국내 경기만 보면 이 정도가 좋겠다는 값. 금리차가 ${formatPctPoint(KR_RATE.tolerance, 1)}를 넘어가면 이 값을 지킬 수 없다.`}
         />
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='한미 금리차'
-          value={`${c.gap.toFixed(2)}%p`}
+          value={formatPctPoint(c.gap, 2)}
           tone={c.holds ? undefined : 'bad'}
-          sub={`감내 폭 ${KR_RATE.tolerance.toFixed(1)}%p`}
+          sub={`감내 폭 ${formatPctPoint(KR_RATE.tolerance, 1)}`}
         />
         <Metric
           label='원화 절하 압력'
@@ -65,7 +65,7 @@ export function WonPosition() {
         />
         <Metric
           label='수입물가 기여'
-          value={`+${c.importInflation.toFixed(2)}%p`}
+          value={formatPctPoint(c.importInflation, 2, { plus: true })}
           sub={`절하분의 ${formatPct(KR_RATE.importPassthrough * 100, 0)}가 소비자물가로`}
         />
       </div>
@@ -76,7 +76,7 @@ export function WonPosition() {
       >
         {c.holds
           ? `금리차가 감내 폭 안이라 한국은 원하던 ${formatPct(intended, 2)}를 지킬 수 있다.`
-          : `한국은 원하던 ${formatPct(intended, 2)}를 지키지 못하고 ${formatPct(c.forcedRate, 2)}까지 따라 올리게 된다. 국내 경기와 무관하게 ${forcedUp.toFixed(2)}%p가 강제됐다.`}
+          : `한국은 원하던 ${formatPct(intended, 2)}를 지키지 못하고 ${formatPct(c.forcedRate, 2)}까지 따라 올리게 된다. 국내 경기와 무관하게 ${formatPctPoint(forcedUp, 2)}가 강제됐다.`}
       </StatusBanner>
 
       <Panel className='gap-3'>
@@ -91,16 +91,17 @@ export function WonPosition() {
           total={c.loanRate}
           segments={[
             { label: `한국이 원하던 기준금리 ${formatPct(intended, 2)}`, value: intended, className: 'bg-series-1' },
-            { label: `달러가 강제한 인상분 ${forcedUp.toFixed(2)}%p`, value: forcedUp, className: 'bg-series-2' },
+            { label: `달러가 강제한 인상분 ${formatPctPoint(forcedUp, 2)}`, value: forcedUp, className: 'bg-series-2' },
             {
-              label: `은행 가산폭 ${KR_RATE.spread.value.toFixed(2)}%p`,
+              label: `은행 가산폭 ${formatPctPoint(KR_RATE.spread.value, 2)}`,
               value: KR_RATE.spread.value,
               className: 'bg-muted-foreground/40',
             },
           ]}
         />
         <p className='text-xs/relaxed text-muted-foreground'>
-          가산폭 {KR_RATE.spread.value.toFixed(1)}%p는 {KR_RATE.spread.source}의 {KR_RATE.spread.asOf}에서 잡은 값이다.
+          가산폭 {formatPctPoint(KR_RATE.spread.value, 1)}는 {KR_RATE.spread.source}의 {KR_RATE.spread.asOf}에서 잡은
+          값이다.
         </p>
       </Panel>
 

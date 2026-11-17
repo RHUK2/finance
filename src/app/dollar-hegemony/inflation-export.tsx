@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StackedBar } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { formatPct } from '@/lib/utils';
+import { formatPct, formatPctPoint } from '@/lib/utils';
 
 import { exportLedger, type TierId } from './models';
 
@@ -69,7 +69,7 @@ export function InflationExport() {
         />
         <Metric
           label='수출된 압력'
-          value={`${r.exported.toFixed(2)}%p`}
+          value={formatPctPoint(r.exported, 2)}
           sub={`${r.abroad.toFixed(1)}조 달러가 국경을 넘었다`}
         />
       </div>

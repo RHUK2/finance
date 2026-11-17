@@ -7,7 +7,7 @@ import { Banknote, CalendarClock, Percent, ShieldCheck, TrendingUp, TriangleAler
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { levelPayment, REGULATION, schedule } from '@/lib/mortgage-models';
-import { formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
+import { formatEokFromMan, formatMan, formatPct, formatPctPoint } from '@/lib/utils';
 
 // 변동금리가 몇 년 뒤에 움직인다고 보고 계산한다. 고정금리는 그 대가로 처음부터 가산금리를 얹는다.
 const SHIFT_YEAR = 3;
@@ -69,7 +69,7 @@ export function RateStress() {
           ? {
               tone: 'accent' as const,
               icon: <TrendingUp className='size-4 shrink-0' />,
-              text: `금리는 ${delta.toFixed(2)}%p 올랐는데 월 상환액은 ${formatPct(jumpPct, 0)} 늘었다. 거의 줄지 않은 잔액 전체에 새 금리가 붙고, 상환액의 대부분이 이자라서다.`,
+              text: `금리는 ${formatPctPoint(delta, 2)} 올랐는데 월 상환액은 ${formatPct(jumpPct, 0)} 늘었다. 거의 줄지 않은 잔액 전체에 새 금리가 붙고, 상환액의 대부분이 이자라서다.`,
             }
           : {
               tone: 'good' as const,
@@ -114,7 +114,7 @@ export function RateStress() {
           min={0}
           max={4}
           step={0.25}
-          format={(v) => `+${v.toFixed(2)}%p`}
+          format={(v) => formatPctPoint(v, 2, { plus: true })}
           hint={`${SHIFT_YEAR}년 뒤 금리가 이만큼 올라 만기까지 유지된다고 본다. 오른 금리는 남은 잔액에만 붙는다.`}
         />
         <ControlSlider

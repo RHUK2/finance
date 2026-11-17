@@ -7,6 +7,7 @@ import {
   formatKrwPrice,
   formatMan,
   formatPct,
+  formatPctPoint,
   formatSigned,
   formatUsdPrice,
   formatWon,
@@ -73,5 +74,33 @@ describe('가격 표기', () => {
     expect(formatKrwPrice(1380.4)).toBe('₩1,380');
     expect(formatKrwPrice(2650.37, 2)).toBe('₩2,650.37');
     expect(formatKrwPrice(-1380.4)).toBe(`${MINUS}₩1,380`);
+  });
+});
+
+// A-129: 퍼센트포인트도 같은 부호·반올림 규칙을 따른다.
+describe('퍼센트포인트 표기', () => {
+  it.each([
+    [1.234, 2, false, '1.23%p'],
+    [-1.234, 2, false, '−1.23%p'],
+    [1.234, 2, true, '+1.23%p'],
+    [-1.234, 2, true, '−1.23%p'],
+    [0, 2, true, '0.00%p'],
+    [-0, 2, true, '0.00%p'],
+    [0.004, 2, true, '0.00%p'],
+    [-0.004, 2, false, '0.00%p'],
+    [-0.004, 2, true, '0.00%p'],
+    [-0.006, 2, true, '−0.01%p'],
+    [1.25, 1, false, '1.3%p'],
+    [-1.25, 1, false, '−1.3%p'],
+    [-0.04, 1, false, '0.0%p'],
+    [2.5, 0, true, '+3%p'],
+  ])('%s, digits=%s, plus=%s → %s', (value, digits, plus, expected) => {
+    expect(formatPctPoint(value, digits, { plus })).toBe(expected);
+  });
+
+  it('기본 자릿수는 소수 둘째 자리이고 +는 생략한다', () => {
+    expect(formatPctPoint(1.5)).toBe('1.50%p');
+    expect(formatPctPoint(-1.5)).toBe('−1.50%p');
+    expect(formatPctPoint(0)).toBe('0.00%p');
   });
 });
