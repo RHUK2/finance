@@ -8,7 +8,7 @@ pnpm ports        # 이 워크트리가 쓰는 포트 확인
 pnpm type         # TypeScript 타입 체크
 pnpm lint         # ESLint (에러 0이 통과 조건)
 pnpm lint:prune   # 갚은 lint 빚을 동결 목록에서 회수 (동결 파일이 없으면 아무것도 하지 않는다)
-pnpm test:scripts # scripts/ 의 node:test 스위트
+pnpm test:scripts # scripts/의 node:test 스위트를 실행한다. src 차트 팔레트와 globals.css 토큰의 일치를 검사하는 scripts/chart-palette.test.mjs도 포함하며, 토큰 변경으로 실패하면 팔레트도 함께 바꾼다.
 pnpm test         # src/ 의 모델 회귀 테스트 (Vitest, src/**/*.test.ts)
 pnpm inspect      # type + lint + test:scripts + test 한 번에
 pnpm build        # 프로덕션 빌드 (lint는 돌지 않는다. inspect를 먼저 돌릴 것)

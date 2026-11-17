@@ -16,7 +16,6 @@ import {
 export {
   AreaSeries,
   LineSeries,
-  LineStyle,
   createSeriesMarkers,
   type IChartApi,
   type ISeriesApi,

@@ -25,6 +25,3 @@ export function ratioLabel(ratio: number): string {
   if (Number(ratio.toFixed(2)) >= 0.1) return `${ratio.toFixed(1)}배`;
   return `${ratio.toFixed(2)}배`;
 }
-
-// BCRA 문맥에서 쓰던 이름. 호출부가 이미 여럿이라 별칭으로 남긴다.
-export const bcraLabel = ratioLabel;

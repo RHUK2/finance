@@ -24,7 +24,7 @@ import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const BASE_PORT = 3000;
-export const SLOT_COUNT = 10;
+const SLOT_COUNT = 10;
 
 const REGISTRY_NAME = '.worktree-ports.json';
 
@@ -33,7 +33,7 @@ function git(args, cwd) {
 }
 
 /** 워크트리 루트(여기서 dev를 띄우는 체크아웃). */
-export function worktreeRoot(cwd = process.cwd()) {
+function worktreeRoot(cwd = process.cwd()) {
   return git(['rev-parse', '--show-toplevel'], cwd);
 }
 
@@ -41,7 +41,7 @@ export function worktreeRoot(cwd = process.cwd()) {
  * 기준 체크아웃. 레지스트리를 여기에 둬야 모든 워크트리가 같은 장부를 본다.
  * link-worktree-files.sh와 같은 규칙(= `git worktree list`의 첫 항목)을 쓴다.
  */
-export function baseCheckout(cwd = process.cwd()) {
+function baseCheckout(cwd = process.cwd()) {
   const first = git(['worktree', 'list', '--porcelain'], cwd)
     .split('\n')
     .find((line) => line.startsWith('worktree '));

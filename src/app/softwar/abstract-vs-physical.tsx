@@ -6,7 +6,7 @@ import { Bomb, Crown, HeartPulse, ShieldAlert, ShieldCheck, Zap } from 'lucide-r
 
 import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { bcraLabel } from '@/lib/bcra';
+import { ratioLabel } from '@/lib/bcra';
 import { cn, formatUsd } from '@/lib/utils';
 
 import { powerCapture } from './models';
@@ -172,7 +172,7 @@ function RegimeCard({
       <CostBar label='탈취 비용' value={cost} max={max} className='bg-series-1' />
       <Metric
         label='BCRA (이득÷비용)'
-        value={bcraLabel(ratio)}
+        value={ratioLabel(ratio)}
         tone={captured ? 'bad' : 'good'}
         sub='1 미만이면 방어'
       />
