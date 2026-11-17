@@ -91,3 +91,9 @@ export function curveYields(shape: CurveShape, shortRate: number): number[] {
 export function spread10y2y(ys: number[]): number {
   return ys[I10] - ys[I2];
 }
+
+/** 선택한 곡선 모양과 2년물·10년물의 0% 바닥으로 표시 상태를 구한다. */
+export function curveState(shape: CurveShape, ys: number[]) {
+  const floored = ys[I2] === 0 && ys[I10] === 0;
+  return { floored, flat: shape === 'flat' || floored, inverted: !floored && shape === 'inverted' };
+}

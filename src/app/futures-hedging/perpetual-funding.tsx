@@ -52,7 +52,11 @@ export function PerpetualFunding() {
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='8시간당 펀딩비' value={formatPct(f.perCharge * 100, 3)} sub='롱이 숏에게 낸다' />
+        <Metric
+          label='8시간당 펀딩비'
+          value={formatPct(f.perCharge * 100, 3)}
+          sub='포지션 명목가 기준, 롱이 숏에게 낸다'
+        />
         <Metric
           label='연환산'
           value={formatPct(f.annualized * 100, 0)}
@@ -60,10 +64,10 @@ export function PerpetualFunding() {
           sub={`${f.charges}회 청구 예정`}
         />
         <Metric
-          label='누적 잠식률'
+          label='누적 펀딩비 비율'
           value={formatPct(f.cumulative * 100, 0)}
           tone={f.cumulative > 0.1 ? 'bad' : undefined}
-          sub={`${Math.round(days)}일 들고 있으면 원금에서 이만큼 빠진다`}
+          sub={`${Math.round(days)}일간 포지션 명목가 대비 낸 비율`}
         />
       </div>
 
@@ -78,7 +82,7 @@ export function PerpetualFunding() {
       </Panel>
 
       <StatusBanner tone={f.cumulative > 0.08 ? 'bad' : f.cumulative > 0.03 ? 'accent' : 'good'}>
-        롱 {formatPct(longShare * 100, 0)} 쏠림에서 {Math.round(days)}일을 버티면 원금의{' '}
+        롱 {formatPct(longShare * 100, 0)} 쏠림에서 {Math.round(days)}일을 버티면 포지션 명목가의{' '}
         {formatPct(f.cumulative * 100, 0)}가 반대편으로 넘어간다. 방향을 맞혀도 그만큼을 먼저 벌어야 본전이다. 위험을
         넘긴 대가는 만기물에서는 잠긴 가격으로 한 번에 청구되고, 무기한물에서는 8시간마다 조금씩 청구된다.
       </StatusBanner>
