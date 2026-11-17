@@ -3,6 +3,11 @@ import { describe, expect, it } from 'vitest';
 import {
   compoundDeposit,
   depositIndex,
+  grow,
+  latestValue,
+  normalizeToBase,
+  toKrw,
+  valueAt,
   KR_MIN_WAGE,
   KR_WAGE_LAST_YEAR,
   minWageAt,
@@ -76,5 +81,71 @@ describe('예금 누적', () => {
     expect(compoundDeposit(100, [], 2026)).toBeNull();
     expect(compoundDeposit(100, undefined, 2026)).toBeNull();
     expect(compoundDeposit(100, rates, 2027)).toBe(100);
+  });
+});
+
+describe('실데이터 환산', () => {
+  const history: Point[] = [
+    { time: '2020-07-01', value: 80 },
+    { time: '2021-02-01', value: 100 },
+    { time: '2021-12-01', value: 120 },
+  ];
+
+  it('연도 조회는 범위 앞에서 null, 연중 시작이면 첫 관측, 범위 뒤면 마지막 값이다', () => {
+    expect(valueAt(undefined, 2020)).toBeNull();
+    expect(valueAt([], 2020)).toBeNull();
+    expect(valueAt(history, 2019)).toBeNull();
+    expect(valueAt(history, 2020)).toBe(80);
+    expect(valueAt(history, 2021)).toBe(100);
+    expect(valueAt(history, 2022)).toBe(120);
+    expect(valueAt([{ time: '2021-01-01', value: 7 }], 2021)).toBe(7);
+  });
+
+  it('최신 값은 마지막 관측이며 빈 자료는 null이다', () => {
+    expect(latestValue(history)).toBe(120);
+    expect(latestValue(undefined)).toBeNull();
+    expect(latestValue([])).toBeNull();
+    expect(latestValue([{ time: '2021-01-01', value: 0 }])).toBe(0);
+  });
+
+  it('비율 환산은 결측과 0 분모를 구분하고 현재 값 0은 허용한다', () => {
+    expect(grow(1_000, 80, 120)).toBe(1_500);
+    expect(grow(1_000, null, 120)).toBeNull();
+    expect(grow(1_000, 80, null)).toBeNull();
+    expect(grow(1_000, 0, 120)).toBeNull();
+    expect(grow(1_000, 80, 0)).toBe(0);
+    expect(grow(0, 80, 120)).toBe(0);
+  });
+
+  it('원화 환산은 달 경계에서 환율을 바꾸고 빈 달과 최근 달에 직전 환율을 이어쓴다', () => {
+    const fx = [
+      { time: '2021-01-01', value: 1_000 },
+      { time: '2021-02-01', value: 1_100 },
+      { time: '2021-04-01', value: 1_200 },
+    ];
+    const dates = ['2021-01-31', '2021-02-01', '2021-03-31', '2021-04-01', '2021-05-31'];
+    const usd = dates.map((time) => ({ time, value: 2 }));
+    expect(toKrw(usd, fx)).toEqual(dates.map((time, i) => ({ time, value: [2_000, 2_200, 2_200, 2_400, 2_400][i] })));
+    // 기존 모델은 환율 시작 이전에도 첫 관측 환율을 적용한다.
+    expect(toKrw([{ time: '2020-12-31', value: 2 }], fx)).toEqual([{ time: '2020-12-31', value: 2_000 }]);
+    expect(toKrw(undefined, fx)).toBeUndefined();
+    expect(toKrw(usd, undefined)).toBeUndefined();
+    expect(toKrw(usd, [])).toBeUndefined();
+    expect(toKrw([], fx)).toEqual([]);
+    expect(usd.map((p) => p.value)).toEqual([2, 2, 2, 2, 2]);
+  });
+
+  it('정규화는 기준연도 첫 점을 base로 맞추고 앞선 관측을 제외한다', () => {
+    expect(normalizeToBase(history, 2021)).toEqual([
+      { time: '2021-02-01', value: 100 },
+      { time: '2021-12-01', value: 120 },
+    ]);
+    expect(normalizeToBase(history, 2020, 10).map((p) => p.value)).toEqual([10, 12.5, 15]);
+    expect(normalizeToBase(history, 2019)).toEqual([]);
+    expect(normalizeToBase(history, 2022)).toEqual([]);
+    expect(normalizeToBase(undefined, 2020)).toEqual([]);
+    expect(normalizeToBase([], 2020)).toEqual([]);
+    expect(normalizeToBase([{ time: '2020-01-01', value: 0 }], 2020)).toEqual([]);
+    expect(history[0].value).toBe(80);
   });
 });

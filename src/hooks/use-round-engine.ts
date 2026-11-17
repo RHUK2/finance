@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { advanceRound, trajectoryFrame } from '@/lib/simulation-models';
+
 // 스텝형 시뮬레이션의 재생 타이밍을 관리한다.
 // step()은 한 스텝 진행 후 "계속할 게 남았는가"를 boolean으로 반환한다.
 // false면 자동으로 일시정지한다.
@@ -44,9 +46,9 @@ export function useTrajectory(last: number, speedMs: number) {
 
   // 다음 라운드로 한 칸. 남은 라운드가 있는지 동기적으로 반환해 엔진이 종료를 판단한다.
   const step = useCallback(() => {
-    if (round >= last) return false;
-    setRound(round + 1);
-    return round + 1 < last;
+    const next = advanceRound(round, last);
+    setRound(next.round);
+    return next.hasNext;
   }, [round, last]);
 
   const engine = useRoundEngine(step, speedMs);
@@ -72,5 +74,5 @@ export function useTrajectory(last: number, speedMs: number) {
 // 이 frame을 쓴다.
 export function useTrajectoryPlayer<T>(frames: readonly T[], speedMs: number) {
   const player = useTrajectory(frames.length - 1, speedMs);
-  return { ...player, frame: frames[Math.min(player.round, frames.length - 1)] };
+  return { ...player, frame: trajectoryFrame(frames, player.round) };
 }
