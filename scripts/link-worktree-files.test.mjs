@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
+  lstatSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -157,3 +158,22 @@ test('경로 표기만 다르고 같은 기준을 가리키는 링크는 이미 
   assert.match(run.stdout, /\.scratch\s+이미 링크/);
   assert.equal(readlinkSync(join(wt, '.scratch')), '../finance/.scratch');
 });
+
+for (const args of [[], ['--force']]) {
+  test(`부모 .claude가 기준 링크여도 설정 원본을 보존한다 (${args[0] ?? '기본'})`, (t) => {
+    const root = sandbox(t);
+    const base = repo(join(root, 'finance'), 'base');
+    const wt = worktree(base, join(root, 'finance-topic'));
+    mkdirSync(join(base, '.claude'));
+    const source = join(base, '.claude', 'settings.local.json');
+    writeFileSync(source, '{"permissions":{}}');
+    symlinkSync(join(base, '.claude'), join(wt, '.claude'));
+
+    const run = link(wt, {}, args);
+
+    assert.equal(run.status, 0, run.stderr);
+    assert.equal(lstatSync(source).isSymbolicLink(), false);
+    assert.equal(readFileSync(source, 'utf8'), '{"permissions":{}}');
+    assert.equal(readlinkSync(join(wt, '.claude')), join(base, '.claude'));
+  });
+}
