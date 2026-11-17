@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { cached } from '@/lib/cache';
+import { cachedWithKey } from '@/lib/cached-with-key';
 import { fetchFredSeries } from '@/lib/fred';
 import type { MacroSeries } from '@/lib/series';
 
@@ -14,13 +14,7 @@ export type FredData = {
 };
 
 export async function loadFred(): Promise<FredData> {
-  // 키 부재는 데이터가 아니라 설정 상태다. cached() 안에서 돌려주면 그 응답이 TTL(하루)만큼
-  // 캐시에 남아, 키를 넣고 배포해도 최대 하루 동안 안내 문구가 그대로 나온다.
-  // 그래서 키 검사는 cached() 바깥에서 하고 이 응답은 캐시에 넣지 않는다.
-  const key = process.env.FRED_API_KEY;
-  if (!key) return { fetchedAt: new Date().toISOString(), available: false };
-
-  return cached('fred', async () => {
+  return cachedWithKey('fred', 'FRED_API_KEY', async (key) => {
     const start = new Date(Date.now() - 10 * 365 * 86_400_000).toISOString().slice(0, 10);
     // 스프레드는 FRED가 공표하는 10Y−2Y(`T10Y2Y` = DGS10 − DGS2)를 그대로 받는다. 야후 ^TNX에서
     // DGS2를 빼면 산출 방식과 기준 시각이 다른 두 값을 잇게 되어 0 근처 부호가 공표값과 갈린다.

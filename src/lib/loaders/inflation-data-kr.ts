@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { assertNonEmpty, fetchJson } from '@/lib/fetch-json';
-import { cached } from '@/lib/cache';
+import { cachedWithKey } from '@/lib/cached-with-key';
 import { toMacroSeries, type MacroSeries } from '@/lib/series';
 
 import type { InflationData } from './inflation';
@@ -50,16 +50,7 @@ async function fetchSeries(key: string, stat: string, item: string): Promise<Mac
 }
 
 export async function loadInflationDataKr(): Promise<InflationData> {
-  // 키가 없으면 500 대신 `available: false`를 돌려주고, 화면은 한국 데이터 없이 미국만
-  // 그린다. 필수로 만들면 키가 없는 환경에서 구매력 붕괴 페이지 전체가 죽는다.
-  // FRED 키를 읽는 두 로더(fred·inflation-data)도 같은 분기를 갖는다.
-  //
-  // 이 응답은 cached() 바깥에서 돌려준다. 키 부재는 데이터가 아니라 설정 상태라,
-  // 캐시에 넣으면 키를 넣고 배포해도 TTL(하루) 동안 안내 카드가 그대로 나온다.
-  const key = process.env.ECOS_API_KEY;
-  if (!key) return { fetchedAt: new Date().toISOString(), available: false };
-
-  return cached('inflation-data-kr', async () => {
+  return cachedWithKey('inflation-data-kr', 'ECOS_API_KEY', async (key) => {
     // 여섯을 Promise.all로 함께 받으므로 하나만 실패해도 이 키가 통째로 갱신되지 않는다.
     // 캐시에 값이 없으면 500, 있으면 마지막 성공 값이 계속 나간다. 위 STAT의 통계표 코드는
     // 한국은행 개편으로 바뀔 수 있고, 그때 한 코드가 죽으면 나머지 다섯도 함께 멈춘다
