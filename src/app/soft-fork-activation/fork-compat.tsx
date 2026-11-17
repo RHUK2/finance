@@ -62,22 +62,21 @@ export function ForkCompat() {
       <MarkTable
         title='두 종류를 같은 잣대 둘로 재면'
         icon={<GitCompare className='size-4 text-series-1' />}
-        headers={['포크 종류', '구버전이 신규칙 블록을 모두 수용', '신버전이 구규칙 블록을 모두 수용']}
+        headers={['포크 종류', '구버전 수용', '신버전 수용']}
         rows={ROWS}
         selected={kind}
         onSelect={(id) => setKind(id as ForkKind)}
       />
 
-      <p className='text-sm/relaxed text-muted-foreground'>
-        표는 활성화 이후에 만들어진 블록을 비교한다. 소프트포크의 신버전 노드는 구규칙을 만족해도 추가된 신규칙을 어기는
-        블록은 거부한다. 활성화 이전의 역사적 블록을 소급해서 거부한다는 뜻은 아니다. 하드포크 행은 위처럼 크기 한도만
-        늘리는 예시다.
-      </p>
-
       <Panel className='gap-1.5'>
         <span className='text-sm font-semibold'>{ex.label}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{ex.rule}</p>
       </Panel>
+
+      <p className='text-sm/relaxed text-muted-foreground'>
+        표는 활성화 이후의 블록을 비교한다. 구버전 수용은 신규칙 블록을 모두 받아들이는지, 신버전 수용은 구규칙 블록을
+        모두 받아들이는지를 뜻한다. 소프트포크의 신버전 노드는 구규칙을 만족해도 추가된 신규칙을 어기는 블록은 거부한다.
+      </p>
 
       <StatusBanner tone={ex.oldSeesNew ? 'good' : 'bad'}>
         <span className='leading-relaxed font-normal'>{ex.verdict}</span>

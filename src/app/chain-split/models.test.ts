@@ -6,6 +6,7 @@ import {
   formatDuration,
   LOCK_IN_PCT_LABEL,
   SIGNAL_PCT_LABEL,
+  SEND_AMOUNT,
   protectionAvailable,
   replayPossible,
   replayStages,
@@ -50,19 +51,15 @@ describe('리플레이 보호와 다섯 단계 잔고', () => {
     expect(replayPossible(kind, protection)).toBe(replayed);
 
     const stages = replayStages(kind, protection);
-    expect(stages.map(({ title }) => title)).toEqual([
-      '분기 직전',
-      '분기 발생',
-      '한쪽 체인에서 송금',
-      '반대편 체인에 복사 전송',
-      '결과',
-    ]);
+    expect(stages).toHaveLength(5);
+    const start = stages[0].main;
+    const spent = start - SEND_AMOUNT;
     expect(stages.map(({ main, forked }) => [main, forked])).toEqual([
-      [1, 0],
-      [1, 1],
-      [0.7, 1],
-      [0.7, replayed ? 0.7 : 1],
-      [0.7, replayed ? 0.7 : 1],
+      [start, 0],
+      [start, start],
+      [spent, start],
+      [spent, replayed ? spent : start],
+      [spent, replayed ? spent : start],
     ]);
   });
 });

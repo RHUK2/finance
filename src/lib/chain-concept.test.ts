@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { doubleSpendProbability, formatProbability, reversalProbability } from './chain-concept';
+import {
+  confirmationLimitProbability,
+  doubleSpendProbability,
+  formatProbability,
+  reversalProbability,
+} from './chain-concept';
 
 // 기대값은 docs/fact-check-log.md 「블록·합의」의 백서 11장 표(q = 0.1)다.
 describe('doubleSpendProbability (백서의 z)', () => {
@@ -58,5 +63,15 @@ describe('formatProbability', () => {
     expect(formatProbability(0.01)).toBe('1.0%');
     expect(formatProbability(0.001)).toBe('약 1,000분의 1');
     expect(formatProbability(0)).toBe('0%에 근접');
+  });
+});
+
+describe('confirmationLimitProbability', () => {
+  it.each([
+    [0.49, 0],
+    [0.5, 1],
+    [0.51, 1],
+  ])('공격자 비중 %d의 확인 수 극한은 %d다', (q, expected) => {
+    expect(confirmationLimitProbability(q)).toBe(expected);
   });
 });
