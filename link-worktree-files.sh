@@ -75,13 +75,30 @@ for f in "${ITEMS[@]}"; do
     continue
   fi
 
-  if [ -L "$dst" ]; then
-    # 문자열이 아니라 실체로 비교한다. 상대 경로나 심볼릭 링크를 낀 경로로 걸린 링크도 같은 기준이면
-    # 여기서 끝난다. 문자열로 비교하면 그런 링크를 "다른 곳"으로 오판해 2로 끝난다.
-    if [ "$dst" -ef "$src" ]; then
-      printf '  %-30s 이미 링크\n' "$f"
-      continue
+  # 최종 항목뿐 아니라 부모 디렉터리가 링크여도 같은 실체면 건드리지 않는다.
+  # 그렇지 않으면 rm이 부모 링크를 따라 기준 파일 자체를 지운다.
+  if [ "$dst" -ef "$src" ]; then
+    printf '  %-30s 이미 링크 (같은 실체)\n' "$f"
+    continue
+  fi
+
+  parent="$(dirname "$dst")"
+  if [ "$force" -eq 0 ] && [ -d "$parent" ]; then
+    physical_parent="$(cd "$parent" && pwd -P)"
+    if [ "$physical_parent" != "$parent" ]; then
+      case "$physical_parent" in
+        "$base"|"$base/"*) ;;
+        *)
+          printf '  %-30s 부모 디렉터리가 기준 밖을 가리키는 링크(%s). 건너뜀 (확인 뒤 --force)\n' "$f" "$physical_parent"
+          diverged+=("$f")
+          skipped=$((skipped + 1))
+          continue
+          ;;
+      esac
     fi
+  fi
+
+  if [ -L "$dst" ]; then
     # 다른 곳을 가리키는 링크다. 일부러 둔 개인 설정일 수도, 옮겨진 기준을 가리키는 낡은 링크일 수도
     # 있어 어느 쪽인지는 사람이 정한다. "이미 링크"로 넘기면 엉뚱한 실체를 쓰는 채로 성공처럼 끝난다.
     if [ "$force" -eq 0 ]; then

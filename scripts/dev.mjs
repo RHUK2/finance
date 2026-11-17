@@ -28,7 +28,27 @@ const child = spawn('next', ['dev', '--port', String(port), ...process.argv.slic
   env: { ...process.env, NODE_OPTIONS },
 });
 
+const signalHandlers = new Map();
+for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
+  // Next CLI는 SIGHUP을 정리하지 않으므로 서버 후손까지 종료하는 SIGTERM으로 보낸다.
+  const forward = () => child.kill(signal === 'SIGHUP' ? 'SIGTERM' : signal);
+  signalHandlers.set(signal, forward);
+  process.on(signal, forward);
+}
+
+function removeSignalHandlers() {
+  for (const [signal, handler] of signalHandlers) process.off(signal, handler);
+}
+
+child.on('error', (error) => {
+  removeSignalHandlers();
+  console.error(`개발 서버 실행 실패: ${error.message}`);
+  process.exit(1);
+});
+
 child.on('exit', (code, signal) => {
+  // 자기 자신에게 종료 신호를 보내기 전에 전달 리스너를 없애야 다시 자식에게 보내지 않는다.
+  removeSignalHandlers();
   if (signal) process.kill(process.pid, signal);
   else process.exit(code ?? 0);
 });
