@@ -123,9 +123,7 @@ export function ExitCalculus() {
 
       <Panel className='gap-1.5'>
         <span className='text-sm font-semibold'>{country.label}</span>
-        <p className='text-sm/relaxed text-muted-foreground'>
-          {country.note} 지금 조건의 이탈 유인 비율은 {ratioLabel(ledger.ratio)}다.
-        </p>
+        <p className='text-sm/relaxed text-muted-foreground'>{country.note}</p>
       </Panel>
 
       <ExplainCard

@@ -215,8 +215,8 @@ export function Repayment() {
             <p className='mt-2'>
               그래서 대출 초기의 중도상환은 효과가 크다. 갚은 금액만큼의 잔액이 남은 기간 내내 이자를 낳지 않기
               때문이다. 반대로 만기가 얼마 남지 않은 시점의 중도상환은 아낄 이자가 별로 없다. 중도상환수수료는
-              원칙적으로 금지되지만, 대출계약 성립 후 {REGULATION.prepaymentFeeYears}년 이내 상환에는 예외적으로 붙을 수
-              있다 ({REGULATION.prepaymentFeeNote}). 이 구간의 상환이 은행의 이자 수익을 가장 많이 깎는 시기이기도 하다.
+              원칙적으로 금지되지만, 대출일부터 {REGULATION.prepaymentFeeYears}년 이내 상환에는 예외적으로 붙을 수 있다
+              ({REGULATION.prepaymentFeeNote}). 이 구간의 상환이 은행의 이자 수익을 가장 많이 깎는 시기이기도 하다.
             </p>
             <p className='mt-2'>
               만기 연장이 늘 유리한 것도 아니다. 만기를 늘리면 월 상환액이 줄고 DSR 한도가 늘어 더 큰 집을 살 수 있게

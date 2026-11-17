@@ -59,7 +59,7 @@ export function CashVsChain() {
             </div>
             <p className='text-xs/relaxed text-muted-foreground'>
               미국은 1만 달러 초과(FinCEN), EU는 1만 유로 이상(규정 2018/1672)이면 신고해야 하고, 신고 없이 넘으면 처벌
-              대상이다(2026년 11월 확인). 물리적 검색에 걸릴 위험이 부피에 비례해 커진다.
+              대상이다(2026년 10월 1일 대조). 물리적 검색에 걸릴 위험이 부피에 비례해 커진다.
             </p>
           </Panel>
 
