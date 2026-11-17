@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { cacheMs, type EndpointKey } from '@/lib/cache-config';
+// 서버 전용 로더 표는 타입만 참조한다. `import type`이라 서버 코드는 따라오지 않는다.
 import type { LOADERS } from '@/lib/loaders';
 
 type EndpointData<K extends EndpointKey> = Awaited<ReturnType<(typeof LOADERS)[K]>>;
