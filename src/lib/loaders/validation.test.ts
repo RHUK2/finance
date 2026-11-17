@@ -145,8 +145,13 @@ it.each(['medianFee', 'nTx', 'blockVSize'])('멤풀 블록 필드 %s의 누락·
   }
 });
 
-it('배열이 아닌 멤풀 블록 응답을 거부한다', async () => {
+it('빈 객체인 멤풀 블록 응답은 fetchJson이 도메인 검증 전에 거부한다', async () => {
   respond({});
+  await expect(loadMempoolBlocks()).rejects.toThrow('mempool blocks: 빈 응답');
+});
+
+it('비어 있지 않아도 배열이 아닌 멤풀 블록 응답을 거부한다', async () => {
+  respond({ blocks: [] });
   await expect(loadMempoolBlocks()).rejects.toThrow('잘못된 블록 수치');
 });
 
@@ -156,7 +161,12 @@ it('정상 블록 수치의 단위와 반올림을 유지한다', async () => {
 });
 
 const difficulty = { difficultyChange: -2, remainingBlocks: 10, timeAvg: 600000, estimatedRetargetDate: 1800000000000 };
-it.each([null, 900000.5, -1])('잘못된 블록 높이 %s를 거부한다', async (height) => {
+it('null 블록 높이는 fetchJson이 도메인 검증 전에 거부한다', async () => {
+  respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, null);
+  await expect(loadMiningStats()).rejects.toThrow('block height: 빈 응답');
+});
+
+it.each([900000.5, -1])('잘못된 블록 높이 %s를 거부한다', async (height) => {
   respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, height);
   await expect(loadMiningStats()).rejects.toThrow('잘못된 채굴 수치');
 });

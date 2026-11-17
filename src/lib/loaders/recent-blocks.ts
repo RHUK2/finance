@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 
 type Block = {
@@ -26,12 +27,19 @@ export type RecentBlocksData = {
 };
 
 async function fetchRecentBlocks(): Promise<RecentBlocksData> {
-  const res = await fetch('https://mempool.space/api/v1/blocks', {
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error(`recent blocks error: ${res.status}`);
+  const jsonResponse = await fetchJson<Block[]>('https://mempool.space/api/v1/blocks', `recent blocks`);
 
-  const blocks = ((await res.json()) as Block[]).slice(0, 10).map((b) => ({
+  if (
+    !Array.isArray(jsonResponse) ||
+    jsonResponse.some((b) =>
+      [b.height, b.timestamp, b.tx_count, b.weight, b.extras?.medianFee].some(
+        (value) => !Number.isFinite(value) || value < 0,
+      ),
+    )
+  )
+    throw new Error('recent blocks: 잘못된 블록 수치');
+
+  const blocks = jsonResponse.slice(0, 10).map((b) => ({
     height: b.height,
     timestamp: b.timestamp,
     poolName: b.extras.pool.name,

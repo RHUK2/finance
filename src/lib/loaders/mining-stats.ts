@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { BLOCKS_PER_HALVING, INITIAL_SUBSIDY_BTC, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
+import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { pctChange } from '@/lib/utils';
 
@@ -18,25 +19,11 @@ export type MiningStatsData = {
 };
 
 async function fetchMiningStats(): Promise<MiningStatsData> {
-  const [hashrateRes, difficultyRes, blockHeightRes] = await Promise.all([
-    fetch('https://mempool.space/api/v1/mining/hashrate/1w', {
-      cache: 'no-store',
-    }),
-    fetch('https://mempool.space/api/v1/difficulty-adjustment', {
-      cache: 'no-store',
-    }),
-    fetch('https://mempool.space/api/blocks/tip/height', {
-      cache: 'no-store',
-    }),
+  const [hashrateData, difficulty, blockHeight] = await Promise.all([
+    fetchJson<{ hashrates: { avgHashrate: number }[] }>('https://mempool.space/api/v1/mining/hashrate/1w', 'hashrate'),
+    fetchJson<Record<string, number>>('https://mempool.space/api/v1/difficulty-adjustment', 'difficulty'),
+    fetchJson<number>('https://mempool.space/api/blocks/tip/height', 'block height'),
   ]);
-
-  if (!hashrateRes.ok) throw new Error(`hashrate error: ${hashrateRes.status}`);
-  if (!difficultyRes.ok) throw new Error(`difficulty error: ${difficultyRes.status}`);
-  if (!blockHeightRes.ok) throw new Error(`block height error: ${blockHeightRes.status}`);
-
-  const hashrateData = await hashrateRes.json();
-  const difficulty = await difficultyRes.json();
-  const blockHeight = (await blockHeightRes.json()) as number;
 
   const hashrates = hashrateData.hashrates as { avgHashrate: number }[];
   if (

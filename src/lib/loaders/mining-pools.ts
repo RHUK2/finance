@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 
 type Pool = { name: string; slug: string; blockCount: number };
@@ -16,12 +17,10 @@ export type MiningPoolsData = {
 const TOP = 3;
 
 async function fetchMiningPools(): Promise<MiningPoolsData> {
-  const res = await fetch('https://mempool.space/api/v1/mining/pools/1w', {
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error(`mining pools error: ${res.status}`);
-
-  const json = await res.json();
+  const json = await fetchJson<{ blockCount: number; pools: Pool[] }>(
+    'https://mempool.space/api/v1/mining/pools/1w',
+    `mining pools`,
+  );
   const total = json.blockCount as number;
   const all = json.pools as Pool[];
 

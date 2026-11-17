@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { assertNonEmpty, fetchJson } from './fetch-json';
 import { toMacroSeries, type MacroSeries } from './series';
 
 /**
@@ -23,14 +24,15 @@ export async function fetchFredSeries(
     file_type: 'json',
     observation_start: observationStart,
   });
-  const res = await fetch(`https://api.stlouisfed.org/fred/series/observations?${params}`, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`FRED ${seriesId} error: ${res.status}`);
-
-  const data = await res.json();
+  const data = await fetchJson<{ observations: { date: string; value: string }[] }>(
+    `https://api.stlouisfed.org/fred/series/observations?${params}`,
+    `FRED ${seriesId}`,
+  );
   const history = (data.observations as { date: string; value: string }[])
     .filter((o) => o.value !== '.')
     .map((o) => ({ time: o.date, value: Number(o.value) }));
-  if (history.length === 0) throw new Error(`FRED ${seriesId}: 빈 시계열`);
+  assertNonEmpty(history, `FRED ${seriesId}`);
 
+  if (history.some((point) => !Number.isFinite(point.value))) throw new Error('잘못된 시계열 수치');
   return toMacroSeries(history);
 }

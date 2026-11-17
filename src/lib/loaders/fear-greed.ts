@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { assertNonEmpty, fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { dedupeByTime } from '@/lib/series';
 
@@ -11,20 +12,17 @@ export type FearGreedData = {
 };
 
 async function fetchFearGreed(): Promise<FearGreedData> {
-  const res = await fetch('https://api.alternative.me/fng/?limit=2000', {
-    cache: 'no-store',
-  });
-
-  if (!res.ok) throw new Error(`Alternative.me error: ${res.status}`);
-
-  const json = await res.json();
+  const json = await fetchJson<{ data: { value: string; value_classification: string; timestamp: string }[] }>(
+    'https://api.alternative.me/fng/?limit=2000',
+    `Alternative.me`,
+  );
   const rows: {
     value: string;
     value_classification: string;
     timestamp: string;
   }[] = json.data ?? [];
 
-  if (rows.length === 0) throw new Error('No fear & greed data');
+  assertNonEmpty(rows, 'No fear & greed data');
 
   if (
     rows.some(
@@ -47,7 +45,7 @@ async function fetchFearGreed(): Promise<FearGreedData> {
       }))
       .sort((a, b) => a.time.localeCompare(b.time)),
   );
-  if (points.length === 0) throw new Error('No valid fear & greed data');
+  assertNonEmpty(points, 'No valid fear & greed data');
   const history = points.map(({ time, value }) => ({ time, value }));
 
   return {

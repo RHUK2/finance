@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { assertNonEmpty, fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { dedupeByTime } from '@/lib/series';
 
@@ -32,14 +33,11 @@ async function fetchBitcoinHistorical(): Promise<BitcoinHistoricalData> {
         const end = new Date(endMs).toISOString();
         const url = `https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=${start}&end=${end}`;
 
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`Coinbase error: ${res.status}`);
-
         // [timestamp_sec, low, high, open, close, volume], 내림차순 반환
-        const candles: [number, number, number, number, number, number][] = await res.json();
+        const candles = await fetchJson<[number, number, number, number, number, number][]>(url, `Coinbase BTC-USD`);
 
         // 상장 뒤 BTC-USD 거래 구간만 요청한다. 일부 청크라도 비면 장애로 보고 정상 캐시를 보존한다.
-        if (candles.length === 0) throw new Error('Coinbase BTC-USD: 빈 시계열 청크');
+        assertNonEmpty(candles, 'Coinbase BTC-USD 청크');
         if (
           candles.some(
             ([tSec, , , , close]) =>
@@ -58,7 +56,7 @@ async function fetchBitcoinHistorical(): Promise<BitcoinHistoricalData> {
   }
 
   // 빈 응답은 실패로 본다. 빈 값을 캐시에 넣으면 하루 동안 빈 차트가 신선한 값으로 남는다.
-  if (history.length === 0) throw new Error('Coinbase BTC-USD: 빈 시계열');
+  assertNonEmpty(history, 'Coinbase BTC-USD');
 
   // Coinbase는 내림차순이므로 날짜 오름차순으로 정렬
   history.sort((a, b) => a.time.localeCompare(b.time));

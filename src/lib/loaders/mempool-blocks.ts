@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 
 type MempoolBlock = {
@@ -21,10 +22,10 @@ export type MempoolBlocksData = {
 };
 
 async function fetchMempoolBlocks(): Promise<MempoolBlocksData> {
-  const res = await fetch('https://mempool.space/api/v1/fees/mempool-blocks', { cache: 'no-store' });
-  if (!res.ok) throw new Error(`mempool blocks error: ${res.status}`);
-
-  const rows = (await res.json()) as MempoolBlock[];
+  // 거래가 없는 멤풀은 빈 목록이 정상이다. 시계열과 달리 U3의 0 물량 규칙을 유지한다.
+  const rows = await fetchJson<MempoolBlock[]>('https://mempool.space/api/v1/fees/mempool-blocks', 'mempool blocks', {
+    allowEmptyArray: true,
+  });
   if (
     !Array.isArray(rows) ||
     rows.some(

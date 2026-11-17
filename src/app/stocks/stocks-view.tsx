@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import { CHART_SERIES } from '@/hooks/use-chart';
 import { useMarket } from '@/hooks/use-market';
 import { useRelativeTime } from '@/hooks/use-relative-time';
-import { useStocks, type StockKey, type StocksData } from '@/hooks/use-stocks';
+import { useStocks, type StockKey } from '@/hooks/use-stocks';
 import { withLive } from '@/lib/series';
 import { formatKrwPrice, formatUsdPrice } from '@/lib/utils';
 
 // 종목이 열둘이라 차트마다 ref·useMemo를 손으로 늘어놓지 않고 이 표 하나에서 파생시킨다.
-// 종목을 더하고 뺄 때 고칠 곳은 여기와 `src/lib/loaders/stocks.ts`의 SYMBOLS 둘이다.
+// 종목을 더하고 뺄 때 여기와 `src/lib/loaders/stocks.ts`의 SYMBOLS를 고치고 cache-config의 shape를 올린다.
 // 훅의 `StocksData`·`StockKey`는 SYMBOLS에서 파생되므로 따로 고치지 않는다.
 //
 // currency는 표시용이다. 야후가 주는 통화를 그대로 믿지 않고 여기 적는 것은, 시세가
@@ -156,16 +156,14 @@ export function StocksView() {
   // (useRelativeTime이 매분 리렌더를 일으키므로 인라인 배열이면 줌 상태까지 초기화된다).
   const chartLines = useMemo(() => {
     if (!data) return undefined;
-    return Object.fromEntries(STOCKS.map((s) => [s.key, [{ data: data[s.key].history, color: s.color }]])) as Record<
-      StockKey,
-      { data: { time: string; value: number }[]; color: string }[]
-    >;
+    return Object.fromEntries(
+      STOCKS.map((s) => [s.key, [{ data: data[s.key]?.history ?? [], color: s.color }]]),
+    ) as Record<StockKey, { data: { time: string; value: number }[]; color: string }[]>;
   }, [data]);
 
   // 헤드라인은 히스토리 끝에 실시간 시세를 얹은 값이다. 차트에는 히스토리(`chartLines`)와 시세(`live`)를
   // 따로 넘겨, 시세가 바뀌어도 차트를 다시 만들지 않는다.
-  const series = (key: StockKey) =>
-    data ? withLive(data[key as keyof StocksData] as StocksData['tsla'], quotes?.quotes[key]) : undefined;
+  const series = (key: StockKey) => (data?.[key] ? withLive(data[key], quotes?.quotes[key]) : undefined);
 
   return (
     <>

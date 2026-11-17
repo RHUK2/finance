@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 
 export type MempoolStatsData = {
@@ -12,20 +13,10 @@ export type MempoolStatsData = {
 };
 
 async function fetchMempoolStats(): Promise<MempoolStatsData> {
-  const [feesRes, mempoolRes] = await Promise.all([
-    fetch('https://mempool.space/api/v1/fees/recommended', {
-      cache: 'no-store',
-    }),
-    fetch('https://mempool.space/api/mempool', {
-      cache: 'no-store',
-    }),
+  const [fees, mempool] = await Promise.all([
+    fetchJson<Record<string, number>>('https://mempool.space/api/v1/fees/recommended', 'mempool fees'),
+    fetchJson<Record<string, number>>('https://mempool.space/api/mempool', 'mempool stats'),
   ]);
-
-  if (!feesRes.ok) throw new Error(`mempool fees error: ${feesRes.status}`);
-  if (!mempoolRes.ok) throw new Error(`mempool stats error: ${mempoolRes.status}`);
-
-  const fees = await feesRes.json();
-  const mempool = await mempoolRes.json();
 
   if (
     [mempool.count, mempool.vsize, fees.fastestFee, fees.halfHourFee, fees.hourFee].some(
