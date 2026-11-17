@@ -219,7 +219,7 @@ describe('화면 계산의 경계', () => {
     expect(samePt(result.X, sig.R)).toBe(false);
   });
 
-  it.each(['z', 's'] as const)('%s를 +1(mod n) 바꾼 통과 1,140건의 원인을 분류한다', (tamper) => {
+  it.each(['z', 's'] as const)('%s를 화면 규칙으로 바꾼 통과 1,140건의 원인을 분류한다', (tamper) => {
     const counts = { same: 0, negative: 0, folded: 0 };
     for (let d = 1; d < N; d++) {
       for (let z = 0; z < N; z++) {
@@ -230,7 +230,7 @@ describe('화면 계산의 경계', () => {
             MULTIPLES_OF_G[d],
             tamper === 'z' ? mod(z + 1, N) : z,
             sig.r,
-            tamper === 's' ? mod(sig.s + 1, N) : sig.s,
+            tamper === 's' ? tamperSignatureS(sig.s) : sig.s,
           );
           if (result.rejected || !result.ok) continue;
           if (samePt(result.X, sig.R)) counts.same++;
