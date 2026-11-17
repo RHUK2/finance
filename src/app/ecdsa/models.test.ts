@@ -16,6 +16,7 @@ import {
   sign,
   slope,
   verify,
+  verificationCaption,
 } from './models';
 
 const G = MULTIPLES_OF_G[1];
@@ -123,6 +124,30 @@ describe('서명·검증', () => {
     const sig = sign(4, 12, 9);
     expect(verify(mulPt(4, G), 12, sig.r, sig.s).ok).toBe(true);
     expect(verify(mulPt(5, G), 12, sig.r, sig.s).ok).toBe(false);
+  });
+});
+
+describe('검증 통과 캡션', () => {
+  it.each([
+    { z: 2, k: 13, tamper: 'z', expected: '서명은 그대로인데 바뀐 메시지에도 우연히 들어맞았다.' },
+    { z: 0, k: 19, tamper: 's', expected: '같은 메시지의 (r, s)와 (r, n − s)' },
+  ] as const)('$tamper 변조로 −R에 도달한 원인을 구분한다', ({ z, k, tamper, expected }) => {
+    const sig = sign(1, z, k);
+    const result = verify(
+      MULTIPLES_OF_G[1],
+      tamper === 'z' ? mod(z + 1, N) : z,
+      sig.r,
+      tamper === 's' ? mod(sig.s + 1, N) : sig.s,
+    );
+    expect(sig.invalid).toBeNull();
+    expect(result.ok).toBe(true);
+    if (result.rejected) throw new Error('유효한 서명이 범위 검사에서 거부됐다');
+    expect(result.X).toEqual({ x: sig.R!.x, y: mod(-sig.R!.y, P) });
+    const caption = verificationCaption(result, sig.R, tamper);
+    expect(caption).toContain('복원된 X는 −R이다.');
+    expect(caption).toContain(expected);
+    if (tamper === 'z') expect(caption).not.toContain('같은 메시지의 (r, s)');
+    else expect(caption).not.toContain('바뀐 메시지');
   });
 });
 

@@ -14,7 +14,7 @@ import {
 } from '@/components/simulation';
 import { TOTAL_BLOCKS_APPROX } from '@/lib/p2p-concept';
 
-type LockType = 'cltv' | 'csv';
+import { canSpendInNextBlock, type LockType } from './models';
 
 const fmtBlocks = (v: number) => `${v.toLocaleString('ko-KR')}블록`;
 const fmtConfirmations = (v: number) => `확인 ${v.toLocaleString('ko-KR')}개`;
@@ -36,7 +36,9 @@ export function TimelockLab() {
   const [confirmations, setConfirmations] = useState(100);
   const [requiredBlocks, setRequiredBlocks] = useState(144); // 약 하루치 블록 수
 
-  const unlocked = type === 'cltv' ? currentHeight >= unlockHeight : confirmations >= requiredBlocks;
+  const unlocked = canSpendInNextBlock(
+    type === 'cltv' ? { type, currentHeight, unlockHeight } : { type, confirmations, requiredBlocks },
+  );
 
   const scriptPubKey =
     type === 'cltv'
