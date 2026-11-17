@@ -17,15 +17,9 @@ import { Panel } from '@/components/panel';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatPct } from '@/lib/utils';
 
-import { type Holder, type HolderBand, buildHolders, hodlTrajectory } from './models';
+import { type Holder, type HolderBand, buildHolders, HODL_CONFIG, hodlTrajectory } from './models';
 
-const N = 180;
-const SEED = 777;
-const SHOCK = 0.15; // 외생 공포 충격 -15%
-// 가격 스파크라인의 y축 하한. 0으로 두면 전 구간 최저가가 54여서 곡선이 위쪽에
-// 눌려 직선처럼 보인다. 슬라이더 전 구간의 최저가보다 조금 아래로 고정해,
-// 설정을 바꿔도 세로 스케일이 변하지 않으면서 하락이 눈에 보이게 한다.
-const PRICE_FLOOR = 50;
+const { n: N, seed: SEED, shock: SHOCK, priceFloor: PRICE_FLOOR } = HODL_CONFIG;
 
 // 확신도 구간별 색. 채택 캐스케이드와 같은 읽는 법: 위치는 확신도 순, 색은 구간.
 const BAND_COLOR: Record<HolderBand, { holding: string; sold: string }> = {
@@ -56,9 +50,9 @@ export function HodlDilemma() {
           hint='시작가 대비 몇 %까지 떨어져도 안 던지는지. 확신도 60%면 60% 낙폭까지 버틴다는 뜻이다. 높일수록 다이아몬드손이 많아 충격을 흡수하고, 낮추면 약한 손이 먼저 던져 연쇄 매도가 터진다.'
           value={meanConviction}
           onChange={setMeanConviction}
-          min={0.2}
-          max={0.9}
-          step={0.01}
+          min={HODL_CONFIG.minConviction}
+          max={HODL_CONFIG.maxConviction}
+          step={HODL_CONFIG.convictionStep}
           format={(v) => formatPct(v * 100, 0)}
         />
       </Panel>

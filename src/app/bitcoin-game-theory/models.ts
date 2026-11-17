@@ -80,6 +80,20 @@ export function prisonersDilemma(): { cells: PayoffCells } {
 // 각 에이전트는 임계값 θ를 갖고, "전체" 채택률 p ≥ θ가 되면 채택한다.
 // 이웃·거리 개념은 없다. 공간적 전파가 아니라 임계값 분포가 캐스케이드를 만든다.
 // (docs/adr/0001-cascade-global-threshold-model.md 참조)
+// 화면과 회귀 테스트가 함께 사용하는 채택 시뮬레이션 설정.
+export const CASCADE_CONFIG = {
+  n: 180,
+  seed: 12345,
+  defaultThreshold: 0.3,
+  minThreshold: 0.1,
+  maxThreshold: 0.6,
+  thresholdStep: 0.01,
+  defaultSeedCount: 6,
+  minSeedCount: 1,
+  maxSeedCount: 30,
+  seedCountStep: 1,
+};
+
 export type AgentType = '개인' | '기업' | '국가';
 export type CascadeAgent = { type: AgentType; threshold: number };
 
@@ -132,7 +146,7 @@ function cascadeStep(agents: CascadeAgent[], adopted: boolean[]) {
 
 // 라운드 수 안전장치. 두 캐스케이드 모두 유한 라운드에 수렴하지만, 파라미터를
 // 잘못 넣어 수렴하지 않을 때 무한 루프 대신 잘린 궤적을 돌려준다.
-const MAX_ROUNDS = 200;
+export const MAX_ROUNDS = 200;
 
 // 한 프레임 = 한 라운드의 화면 상태. justChanged는 그 라운드에 새로 넘어온 칸.
 export type CascadeFrame = { adopted: boolean[]; justChanged: boolean[]; p: number };
@@ -171,6 +185,20 @@ export type HodlState = {
   drawdown: number; // 시작가 대비 누적 낙폭 (0~1)
   newSellers: number;
   round: number;
+};
+
+// 화면과 회귀 테스트가 함께 사용하는 홀더 시뮬레이션 설정.
+export const HODL_CONFIG = {
+  n: 180,
+  seed: 777,
+  shock: 0.15, // 첫 라운드의 외생 공포 충격 -15%
+  // 가격 스파크라인의 y축 하한. 0으로 두면 전 구간 최저가가 약 54.4여서 곡선이
+  // 위쪽에 눌려 직선처럼 보인다. 최저가보다 조금 아래로 고정해 설정을 바꿔도
+  // 세로 스케일이 변하지 않으면서 하락이 눈에 보이게 한다.
+  priceFloor: 50,
+  minConviction: 0.2,
+  maxConviction: 0.9,
+  convictionStep: 0.01,
 };
 
 const START_PRICE = 100;
