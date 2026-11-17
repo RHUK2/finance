@@ -8,8 +8,6 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '
 import { cn } from '@/lib/utils';
 import { formatProbability, reversalProbability } from '@/lib/chain-concept';
 
-const EVENTUALLY_CONFIRMATIONS = 200; // 유한한 확인 수로 "시간이 무한히 지나면"을 근사
-
 const COMPARE_PRESETS = [10, 30, 45, 51, 60] as const;
 
 export function AttackScope() {
@@ -18,13 +16,13 @@ export function AttackScope() {
   const isMajority = q >= 0.5;
 
   const atSix = reversalProbability(q, 6);
-  const eventually = reversalProbability(q, EVENTUALLY_CONFIRMATIONS);
+  const eventually = isMajority ? 1 : 0;
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='51%의 진짜 의미: 확률이 아니라 시간문제가 된다'>
-        해시레이트 비중이 절반을 넘는 순간 질적으로 다른 일이 벌어진다. 과반 미만이면 확인 수를 늘릴수록 따라잡을 확률이
-        0에 수렴하지만, 과반이 되면 확률은 언제나 결국 <b>1</b>이다. 확인을 아무리 많이 쌓아도 &#39;충분히
+        해시레이트 비중이 절반 이상이 되는 순간 질적으로 다른 일이 벌어진다. 절반 미만이면 확인 수를 늘릴수록 따라잡을
+        확률이 0에 수렴하지만, 절반 이상이면 확률은 언제나 <b>1</b>이다. 확인을 아무리 많이 쌓아도 &#39;충분히
         안전&#39;해지는 지점이 없고, 그저 시간문제가 된다.
       </SectionIntro>
 
@@ -50,17 +48,13 @@ export function AttackScope() {
           }
         >
           {isMajority
-            ? '과반 해시레이트: 확인을 아무리 쌓아도 확률은 결국 100%로 수렴한다.'
-            : '과반 미만: 확인 수를 늘릴수록 확률이 0에 가까워진다.'}
+            ? '해시레이트 절반 이상: 확인을 아무리 쌓아도 따라잡을 확률은 100%다.'
+            : '절반 미만: 확인 수를 늘릴수록 확률이 0에 가까워진다.'}
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3'>
           <Metric label='확인 6개 시 확률' value={formatProbability(atSix)} tone={atSix > 0.05 ? 'bad' : 'good'} />
-          <Metric
-            label={`확인 ${EVENTUALLY_CONFIRMATIONS}개 시 확률 ("결국")`}
-            value={formatProbability(eventually)}
-            tone={isMajority ? 'bad' : 'good'}
-          />
+          <Metric label='확인 수 → 무한대의 확률' value={`${eventually * 100}%`} tone={isMajority ? 'bad' : 'good'} />
         </div>
       </Panel>
 
@@ -70,13 +64,13 @@ export function AttackScope() {
           {COMPARE_PRESETS.map((pct) => {
             const pq = pct / 100;
             const six = reversalProbability(pq, 6);
-            const ev = reversalProbability(pq, EVENTUALLY_CONFIRMATIONS);
+            const ev = pq >= 0.5 ? 1 : 0;
             return (
               <div key={pct} className='flex items-center justify-between gap-3 py-2 text-sm'>
-                <span className={cn('w-14 font-medium', pct >= 51 && 'text-bad')}>{pct}%</span>
+                <span className={cn('w-14 font-medium', pct >= 50 && 'text-bad')}>{pct}%</span>
                 <span className='flex-1 text-muted-foreground'>확인 6개: {formatProbability(six)}</span>
                 <span className={cn('w-32 text-right tabular-nums', pq >= 0.5 ? 'text-bad' : 'text-good')}>
-                  결국: {formatProbability(ev)}
+                  극한: {ev * 100}%
                 </span>
               </div>
             );
