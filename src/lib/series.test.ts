@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { toMacroSeries, withLive, withLivePoint } from './series';
+import { dedupeByTime, toMacroSeries, withLive, withLivePoint } from './series';
 
 const history = [
   { time: '2026-10-01', value: 100 },
@@ -38,5 +38,35 @@ describe('withLive', () => {
     const s = withLive(toMacroSeries(history), { time: '2026-10-02', value: 121 });
     expect(s.current).toBe(121);
     expect(s.changePercent).toBeCloseTo(21);
+  });
+});
+
+describe('dedupeByTime', () => {
+  it('인접하지 않은 중복도 첫 관측만 남기고 순서를 지킨다', () => {
+    const rows = [...history, { time: history[0].time, value: 999 }];
+    expect(dedupeByTime(rows)).toEqual(history);
+    expect(rows).toHaveLength(3);
+    expect(dedupeByTime([])).toEqual([]);
+  });
+});
+
+describe('toMacroSeries', () => {
+  it('빈 시계열과 한 점은 변화율을 정하지 않는다', () => {
+    expect(toMacroSeries([])).toEqual({ history: [], current: null, changePercent: null });
+    expect(toMacroSeries([history[0]]).changePercent).toBeNull();
+  });
+  it('음수 분모의 방향과 0 분모의 결측을 유지한다', () => {
+    expect(
+      toMacroSeries([
+        { time: '1', value: -0.1 },
+        { time: '2', value: -0.05 },
+      ]).changePercent,
+    ).toBe(50);
+    expect(
+      toMacroSeries([
+        { time: '1', value: 0 },
+        { time: '2', value: 10 },
+      ]).changePercent,
+    ).toBeNull();
   });
 });

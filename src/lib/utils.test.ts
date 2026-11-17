@@ -10,6 +10,8 @@ import {
   formatPctPoint,
   formatSigned,
   formatUsdPrice,
+  formatUsd,
+  pctChange,
   formatWon,
 } from './utils';
 
@@ -103,4 +105,32 @@ describe('퍼센트포인트 표기', () => {
     expect(formatPctPoint(-1.5)).toBe('−1.50%p');
     expect(formatPctPoint(0)).toBe('0.00%p');
   });
+});
+
+describe('pctChange', () => {
+  it.each([
+    [110, 100, 10],
+    [-0.05, -0.1, 50],
+    [-0.1, -0.05, -100],
+    [1, -1, 200],
+    [0, 0, null],
+    [10, 0, null],
+  ])('%s, %s → %s', (cur, prev, expected) => expect(pctChange(cur, prev)).toBe(expected));
+});
+
+describe('formatUsd', () => {
+  it.each([
+    [0, '$0'],
+    [-0.4, '$0'],
+    [90, '$90'],
+    [-1500000, '−$1.5M'],
+    [999.5, '$1.0K'],
+    [999949, '$999.9K'],
+    [999950, '$1.0M'],
+    [999999, '$1.0M'],
+    [999950000, '$1.0B'],
+    [999950000000, '$1.0T'],
+    [1.2e12, '$1.2T'],
+    [-999950, '−$1.0M'],
+  ])('%s → %s', (input, expected) => expect(formatUsd(input)).toBe(expected));
 });

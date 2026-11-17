@@ -5,9 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function pctChange(cur: number, prev: number): number {
-  if (prev === 0) return 0;
-  return Number((((cur - prev) / prev) * 100).toFixed(2));
+export function pctChange(cur: number, prev: number): number | null {
+  if (prev === 0) return null;
+  return Number((((cur - prev) / Math.abs(prev)) * 100).toFixed(2));
 }
 
 // 비트코인 브랜드 오렌지. 차트 선·역사 배지·아이콘이 쓴다.
@@ -33,11 +33,20 @@ export function formatSigned(n: number, locale = 'ko-KR'): string {
 
 // 컴팩트 USD 포맷 ($1.2T / $3.4B / $5.6M / $7.8K / $90).
 export function formatUsd(n: number): string {
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(1)}T`;
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${Math.round(n)}`;
+  return withSign(n, (a) => {
+    const units = ['', 'K', 'M', 'B', 'T'];
+    let unit = 0;
+    while (unit < units.length - 1 && a >= 1000) {
+      a /= 1000;
+      unit++;
+    }
+    let rounded = Number(a.toFixed(unit === 0 ? 0 : 1));
+    if (rounded >= 1000 && unit < units.length - 1) {
+      rounded /= 1000;
+      unit++;
+    }
+    return `$${rounded.toFixed(unit === 0 ? 0 : 1)}${units[unit]}`;
+  });
 }
 
 // ── 가격 표기 ────────────────────────────────────────────────────────────

@@ -19,14 +19,19 @@ function useScrollProgress() {
   useEffect(() => {
     function read() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setState({ progress: max > 0 ? Math.min(1, window.scrollY / max) : 0, scrolled: window.scrollY > 300 });
+      const progress = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
+      const scrolled = window.scrollY > 300;
+      setState((prev) => (prev.progress === progress && prev.scrolled === scrolled ? prev : { progress, scrolled }));
     }
     read();
     window.addEventListener('scroll', read, { passive: true });
     window.addEventListener('resize', read);
+    const observer = new ResizeObserver(read);
+    observer.observe(document.body);
     return () => {
       window.removeEventListener('scroll', read);
       window.removeEventListener('resize', read);
+      observer.disconnect();
     };
   }, []);
 

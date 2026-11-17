@@ -31,9 +31,20 @@ export function useScrollDrag() {
     el.addEventListener('scroll', updateMask, { passive: true });
     const ro = new ResizeObserver(updateMask);
     ro.observe(el);
+    let content: Element | null = null;
+    const observeContent = () => {
+      if (content) ro.unobserve(content);
+      content = el.firstElementChild;
+      if (content) ro.observe(content);
+      updateMask();
+    };
+    observeContent();
+    const mutations = new MutationObserver(observeContent);
+    mutations.observe(el, { childList: true });
     return () => {
       el.removeEventListener('scroll', updateMask);
       ro.disconnect();
+      mutations.disconnect();
     };
   }, [el]);
 
@@ -82,5 +93,5 @@ export function useScrollDrag() {
             : undefined,
   };
 
-  return { ref, handlers, maskStyle };
+  return { ref, elRef, handlers, maskStyle };
 }

@@ -19,22 +19,22 @@
  */
 export const ENDPOINTS = {
   market: { ttl: 300, shape: 2 },
-  stocks: { ttl: 86400, shape: 0 },
-  strategy: { ttl: 86400, shape: 0 },
+  stocks: { ttl: 86400, shape: 1 },
+  strategy: { ttl: 86400, shape: 1 },
   'mempool-stats': { ttl: 300, shape: 1 },
   'mining-stats': { ttl: 300, shape: 0 },
   'mining-pools': { ttl: 86400, shape: 0 },
   'recent-blocks': { ttl: 300, shape: 0 },
   'hashrate-history': { ttl: 86400, shape: 0 },
   'mempool-blocks': { ttl: 300, shape: 0 },
-  economy: { ttl: 86400, shape: 1 },
-  commodities: { ttl: 86400, shape: 1 },
-  fred: { ttl: 86400, shape: 1 },
+  economy: { ttl: 86400, shape: 2 },
+  commodities: { ttl: 86400, shape: 2 },
+  fred: { ttl: 86400, shape: 2 },
   'fear-greed': { ttl: 86400, shape: 0 },
   mvrv: { ttl: 86400, shape: 0 },
   'bitcoin-historical': { ttl: 86400, shape: 0 },
-  'inflation-data': { ttl: 86400, shape: 0 },
-  'inflation-data-kr': { ttl: 86400, shape: 0 },
+  'inflation-data': { ttl: 86400, shape: 1 },
+  'inflation-data-kr': { ttl: 86400, shape: 1 },
 } as const satisfies Record<string, { ttl: number; shape: number }>;
 
 export type EndpointKey = keyof typeof ENDPOINTS;

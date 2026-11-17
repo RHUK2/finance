@@ -3,6 +3,7 @@ import 'server-only';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { connection } from 'next/server';
 
+import { describeError } from './cache';
 import { type EndpointKey } from './cache-config';
 import { LOADERS } from './loaders';
 
@@ -37,7 +38,7 @@ export async function prefetchEndpoints(keys: EndpointKey[]) {
             return await LOADERS[key]();
           } catch (error) {
             // prefetchQuery는 오류를 삼킨다. 라우트와 같은 접두사로 남겨 두지 않으면 서버 쪽 실패가 보이지 않는다.
-            console.error(`${key} prefetch error:`, error);
+            console.error(`${key} prefetch error:`, describeError(error));
             throw error;
           }
         },
