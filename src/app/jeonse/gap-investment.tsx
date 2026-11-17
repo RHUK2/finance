@@ -8,6 +8,8 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
+import { gapInvestment } from './models';
+
 // 부호를 붙인 억 표기. 표기 자체는 formatEok에 맡기고 여기서는 부호만 얹는다.
 const signedEok = (n: number) => `${n >= 0 ? '+' : '−'}${formatEok(Math.abs(n))}`;
 
@@ -16,12 +18,7 @@ export function GapInvestment() {
   const [ratio, setRatio] = useState(70);
   const [change, setChange] = useState(10);
 
-  const deposit = (price * ratio) / 100;
-  const gap = price - deposit;
-  const leverage = gap > 0 ? price / gap : Infinity;
-  const newPrice = price * (1 + change / 100);
-  const profit = newPrice - price;
-  const roe = gap > 0 ? (profit / gap) * 100 : 0;
+  const { deposit, gap, leverage, newPrice, profit, roe } = gapInvestment(price, ratio, change);
   const barMax = Math.max(price, 1);
 
   const banner =

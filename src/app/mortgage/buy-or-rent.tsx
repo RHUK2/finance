@@ -7,21 +7,14 @@ import { ArrowLeftRight, CalendarClock, House, KeyRound, Percent, Repeat, Trendi
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import {
-  acquisitionTaxRate,
   ACQUISITION_TAX_BRACKET_NOTE,
   ACQUISITION_TAX_NOTE,
   HOLDING_TAX_NOTE,
   HOLDING_TAX_RATE,
-  schedule,
 } from '@/lib/mortgage-models';
 import { formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
 
-// 금액 단위는 만원. 비교를 단순하게 하려고 조달 조건 몇 가지는 고정한다.
-const LOAN_RATIO = 60; // 집값 대비 대출 비중
-const LOAN_TERM = 30;
-const DEPOSIT_RATE = 3; // 묶인 돈을 예금에 뒀다면 받았을 이자
-// 취득세는 가격대별 누진이라 상수로 둘 수 없다. mortgage-models가 단일 출처다.
-const MONTHLY_DEPOSIT_RATIO = 10; // 월세 보증금은 전세 보증금의 이 비율
+import { buyOrRent, cumulativeInterest, LOAN_RATIO, LOAN_TERM, DEPOSIT_RATE } from './models';
 
 export function BuyOrRent() {
   const [price, setPrice] = useState(80000);
@@ -31,40 +24,24 @@ export function BuyOrRent() {
   const [jeonseRatio, setJeonseRatio] = useState(65);
   const [convRate, setConvRate] = useState(5.5);
 
-  const loan = (price * LOAN_RATIO) / 100;
-  const equity = price - loan;
-
-  // 보유 기간 동안 실제로 낸 이자만 비용으로 본다. 갚은 원금은 자산으로 남는다.
-  // 상환표는 만기가 고정이라 거주 기간과 무관하다. 누적 이자만 미리 쌓아 두고 기간으로 꺼내 쓴다.
-  const cumInterest = useMemo(() => {
-    const out = [0];
-    for (const r of schedule(loan, rate, LOAN_TERM, 'equal-payment')) out.push(out[out.length - 1] + r.interest);
-    return out;
-  }, [loan, rate]);
-
-  const interest = cumInterest[years * 12];
-
-  const acqRate = acquisitionTaxRate(price);
-  const acqTax = (price * acqRate) / 100;
-  const holdTax = ((price * HOLDING_TAX_RATE) / 100) * years;
-  const buyOpportunity = ((equity * DEPOSIT_RATE) / 100) * years;
-  const buyFixed = interest + acqTax + holdTax + buyOpportunity;
-
-  const priceGain = price * ((1 + growth / 100) ** years - 1);
-  const buyCost = buyFixed - priceGain;
-
-  const deposit = (price * jeonseRatio) / 100;
-  const jeonseCost = ((deposit * DEPOSIT_RATE) / 100) * years;
-
-  const monthlyDeposit = (deposit * MONTHLY_DEPOSIT_RATIO) / 100;
-  const monthlyRent = ((deposit - monthlyDeposit) * convRate) / 100 / 12;
-  const rentCost = monthlyRent * 12 * years + ((monthlyDeposit * DEPOSIT_RATE) / 100) * years;
-
-  // 매수가 전세보다 싸지려면 집값이 해마다 얼마나 올라야 하는가.
-  // buyFixed - price*((1+g)^years - 1) = jeonseCost 를 g에 대해 푼다.
-  // ratio ≤ 0이면 집값이 0이 돼도(g = −100%) 매수가 전세보다 싸다는 뜻이라 손익분기 상승률이 없다.
-  const ratio = 1 + (buyFixed - jeonseCost) / price;
-  const breakeven = ratio <= 0 ? null : (ratio ** (1 / years) - 1) * 100;
+  const cumInterest = useMemo(() => cumulativeInterest(price, rate), [price, rate]);
+  const {
+    deposit,
+    monthlyDeposit,
+    monthlyRent,
+    loan,
+    equity,
+    interest,
+    acqRate,
+    acqTax,
+    holdTax,
+    buyOpportunity,
+    priceGain,
+    buyCost,
+    jeonseCost,
+    rentCost,
+    breakeven,
+  } = buyOrRent(price, years, growth, jeonseRatio, convRate, cumInterest);
 
   const options = [
     { id: 'buy', label: '매수', cost: buyCost, className: 'bg-series-1' },
