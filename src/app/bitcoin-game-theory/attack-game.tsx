@@ -6,7 +6,7 @@ import { Bitcoin, Cpu, ShieldCheck, Zap } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
-import { bcra, bcraLabel, deterred } from '@/lib/bcra';
+import { bcra, ratioLabel, deterred } from '@/lib/bcra';
 import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 import { BTC_COLOR, formatUsd } from '@/lib/utils';
 
@@ -119,7 +119,7 @@ export function AttackGame() {
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         {/* 공격 비용 자체에는 좋고 나쁨이 없다. 이득과 견준 결과는 바로 옆 BCRA 카드가 말한다. */}
         <Metric label='공격 비용' value={formatUsd(r.attackCost)} sub={`이득 ${formatUsd(r.doubleSpendGain)} 대비`} />
-        <Metric label='BCRA (이득÷비용)' value={bcraLabel(ratio)} tone={safe ? 'good' : 'bad'} sub='1 미만이면 방어' />
+        <Metric label='BCRA (이득÷비용)' value={ratioLabel(ratio)} tone={safe ? 'good' : 'bad'} sub='1 미만이면 방어' />
         <Metric
           label='장비 회수 기간'
           value={recoverable ? `${r.paybackYears.toFixed(1)}년` : '회수 불가'}
@@ -131,7 +131,7 @@ export function AttackGame() {
       <StatusBanner icon={<ShieldCheck className='size-5 shrink-0' />} tone={safe ? 'good' : 'bad'}>
         {safe ? (
           <span className='text-sm/relaxed font-normal'>
-            BCRA가 <b className='text-good'>{bcraLabel(ratio)}</b>다. 같은 장비를 정직 채굴에 쓰면{' '}
+            BCRA가 <b className='text-good'>{ratioLabel(ratio)}</b>다. 같은 장비를 정직 채굴에 쓰면{' '}
             {pays ? (
               <>
                 전기비를 치르고도 <b>{r.paybackYears.toFixed(1)}년</b>이면 장비값을 회수하고 그 뒤로는 계속 번다
@@ -156,7 +156,7 @@ export function AttackGame() {
           </span>
         ) : (
           <span className='text-sm/relaxed font-normal'>
-            이 극단적 설정에선 BCRA가 <b className='text-bad'>{bcraLabel(ratio)}</b>로 1을 넘어 이득이 비용을 앞선다.
+            이 극단적 설정에선 BCRA가 <b className='text-bad'>{ratioLabel(ratio)}</b>로 1을 넘어 이득이 비용을 앞선다.
             하지만 공격이 성공하는 순간 BTC 신뢰가 붕괴해 가격이 폭락하므로, 노린 이득 자체가 증발하고 보유 자산·장비도
             함께 파괴된다. 자기 파괴적 공격은 여전히 비합리적이다.
           </span>

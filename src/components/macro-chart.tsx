@@ -32,7 +32,7 @@ type RangeKey = (typeof RANGES)[number]['value'];
  * 공표되므로, 최신 점이 거의 늘 30일보다 오래됐다. 그래서 월간이면 1개월 탭을 그리지 않고,
  * 마지막 두 점의 변화를 "전일"이 아니라 "전월"로 적는다.
  */
-export type MacroFrequency = 'daily' | 'monthly';
+type MacroFrequency = 'daily' | 'monthly';
 
 const MONTHLY_HIDDEN: readonly RangeKey[] = ['1m'];
 

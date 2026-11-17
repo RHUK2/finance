@@ -6,7 +6,7 @@ import { Clock, ShieldCheck, TriangleAlert, Wallet } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { bcra, bcraLabel, deterred } from '@/lib/bcra';
+import { bcra, ratioLabel, deterred } from '@/lib/bcra';
 import { formatPct, formatUsd } from '@/lib/utils';
 
 import { attackCost, BASE_ANNUAL } from './models';
@@ -83,7 +83,7 @@ export function AttackCost() {
         <Metric label='이중지불 이득' value={formatUsd(gain)} sub='되돌린 자기 거래' />
         <Metric
           label='이득 ÷ 비용'
-          value={bcraLabel(ratio)}
+          value={ratioLabel(ratio)}
           tone={safe ? 'good' : 'bad'}
           sub={safe ? '1 미만이라 공격이 비합리' : '1을 넘어 공격이 합리'}
         />
