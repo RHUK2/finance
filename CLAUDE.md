@@ -72,7 +72,7 @@ bash link-worktree-files.sh
 - Route Handler(`src/app/api/*/route.ts`): `serveEndpoint(key, load<Key>, 문구)`(`src/lib/loaders/serve.ts`) 한 줄로 로더를 감싸는 클라이언트용 프록시. 로더가 실패하면 500. 클라이언트에 API 키나 외부 도메인을 노출하지 않는다
 - 서버 prefetch(`src/lib/prefetch.ts`): 페이지 서버 컴포넌트(대시보드 다섯과 `inflation`)의 `prefetchEndpoints(keys)`가 `LOADERS`(`src/lib/loaders/index.ts`)로 같은 로더를 직접 부른다. HTTP로 자기 라우트를 다시 부르지 않으므로 라우트와 prefetch가 같은 `cached` 한 벌을 읽는다. 첫 줄의 `connection()`이 페이지를 요청 시점 렌더로 둔다
 - 공용 fetch 헬퍼는 `src/lib/fred.ts`(FRED), `src/lib/yahoo.ts`(Yahoo 시계열), `src/lib/series.ts`(`MacroSeries` 타입·변환)에 위치
-- 훅(`src/hooks/use-*.ts`): 각 훅은 `useEndpoint<T>(key)`(`src/hooks/use-endpoint.ts`) 한 줄 래퍼. 컴포넌트는 훅을 통해서만 데이터 접근
+- 훅(`src/hooks/use-*.ts`): 각 훅은 `useEndpoint(key)`(`src/hooks/use-endpoint.ts`) 한 줄 래퍼. 응답 타입은 `LOADERS`의 해당 키 로더 반환 타입에서 파생된다. 컴포넌트는 훅을 통해서만 데이터 접근
 - 외부 API 의존성: Yahoo Finance(`yahoo-finance2`, 주식·거시·원자재), Alternative.me(공포지수), CoinMetrics(MVRV), Coinbase Exchange(BTC 가격 히스토리, 300일 청크 병렬 fetch), mempool.space(멤풀·채굴), FRED(미국 거시), ECOS(한국은행 통계). TTL은 `cache-config.ts` 참조
 - 야후 일봉(`fetchYahooSeries`)을 읽는 로더가 넷인 것은 화면이 넷이기 때문이 아니라 페이지마다 내려보낼 심볼이 다르기 때문이다. `stocks`·`strategy`·`economy`·`commodities`가 모두 `fetchYahooSeries`로 일봉을 받고(기간은 로더가 정한다. 거시·원자재는 최근 2년, `stocks`는 2020-01-01부터, `strategy`는 2020-08-01부터. 뒤의 둘은 담아야 할 사건이 날짜로 정해져 있어 고정 시작일이다), `market`만 실시간 시세를 받는다(야후 `yf.quote` 일괄 호출, BTC는 `bitcoin-historical`과 같은 Coinbase)
 - 일봉 히스토리는 24시간, 끝점만 5분이다. 장중에 움직이는 건 마지막 봉 하나라서 시계열 전체를 5분마다 다시 받지 않고, `market`(300초)의 시세를 화면이 히스토리 끝에 얹는다(`withLivePoint`·`withLive`, `src/lib/series.ts`). 차트에는 히스토리를 `lines`로, 시세를 `MacroChart`의 `live`로 따로 넘긴다. 시세를 `lines`에 섞으면 5분마다 차트가 다시 만들어져 확대해 둔 화면이 풀린다. 시세 대상은 `stocks`·`strategy`의 `SYMBOLS`에서 파생되므로 종목을 더할 때 `market`은 따로 고치지 않는다. 비트코인 차트 페이지의 네 지표(메이어·푸엘·레인보우·파이사이클)는 일봉 지표라 시세를 얹지 않는다
@@ -229,7 +229,7 @@ bash link-worktree-files.sh
 
 - 새 종목 추가: 로더의 `SYMBOLS`와 화면의 표 둘 다 고친다. 주식은 `src/lib/loaders/stocks.ts`의 `SYMBOLS` + `src/app/stocks/stocks-view.tsx`의 `STOCKS`(훅의 응답 타입은 로더의 `StocksData`에서 파생된다), 스트래티지 증권은 `src/lib/loaders/strategy.ts`. 심볼을 더하기 전에 야후에서 그 티커가 살아 있는지 확인한다. 하나가 죽으면 `fetchYahooSeries`의 `Promise.all`이 실패해 그 키가 갱신되지 않는다. 캐시에 값이 없으면 500, 있으면 마지막 성공 값이 계속 나가 갱신시각만 늘어난다(`src/lib/yahoo.ts`)
 - 종목 추가로 응답 키가 늘면 dev 서버를 띄우기 전에 `src/lib/cache-config.ts`에서 해당 로더 키의 `shape`를 올린다.
-- 새 API 엔드포인트 추가: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·`ttl`·`shape: 0` 추가 → `src/lib/loaders/<key>.ts`에 `import 'server-only'`, 응답 타입과 `load<Key>()`(안에서 `cached(key, ...)`, 외부 JSON은 `src/lib/fetch-json.ts`의 `fetchJson`, 빈 시계열 검증은 `assertNonEmpty` 사용) → `src/lib/loaders/index.ts`의 `LOADERS`에 등록(`satisfies`라 빠뜨리면 타입 오류) → 라우트는 `serveEndpoint` 한 줄 → 훅은 응답 타입을 `import type`으로 받아 `useEndpoint<T>(key)` 한 줄
+- 새 API 엔드포인트 추가: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·`ttl`·`shape: 0` 추가 → `src/lib/loaders/<key>.ts`에 `import 'server-only'`, 응답 타입과 `load<Key>()`(안에서 `cached(key, ...)`, 외부 JSON은 `src/lib/fetch-json.ts`의 `fetchJson`, 빈 시계열 검증은 `assertNonEmpty` 사용) → `src/lib/loaders/index.ts`의 `LOADERS`에 등록(`satisfies`라 빠뜨리면 타입 오류) → 라우트는 `serveEndpoint` 한 줄 → 훅은 `useEndpoint(key)` 한 줄(응답 타입은 `LOADERS`의 해당 키 로더 반환 타입에서 파생)
 - 새 차트 추가: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - UI 컴포넌트: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용
 - 상자: 설명형 페이지의 맨 패널은 `Panel`(`src/components/panel.tsx`), 대시보드의 슬롯 카드는 `Card`다. 가르는 기준은 페이지 성격이 아니라 `CardHeader`·`CardContent`를 쓰는가다. `Panel`에 `p-4`를 다시 적지 않는다. 자기가 갖고 있다(ADR 0010)

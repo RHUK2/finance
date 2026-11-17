@@ -9,5 +9,5 @@ import type { StrategyData } from '@/lib/loaders/strategy';
 export type { StocksData, StrategyData };
 export type StockKey = Exclude<keyof StocksData, 'fetchedAt'>;
 
-export const useStocks = () => useEndpoint<StocksData>('stocks');
-export const useStrategy = () => useEndpoint<StrategyData>('strategy');
+export const useStocks = () => useEndpoint('stocks');
+export const useStrategy = () => useEndpoint('strategy');
