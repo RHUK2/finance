@@ -1,5 +1,14 @@
 import { expect, it } from 'vitest';
-import { EXIT_COUNTRIES, KR_RATE, TIERS, exitLedger, exportLedger, krwChain } from './models';
+import {
+  EXIT_COUNTRIES,
+  EXIT_DEFAULTS,
+  paymentReliefThreshold,
+  KR_RATE,
+  TIERS,
+  exitLedger,
+  exportLedger,
+  krwChain,
+} from './models';
 
 it('기본 조건에서는 러시아만 이탈하고, 중국은 대체망 38%에서 남고 39%에서 이탈하며 분자를 묶고 분모만 줄이면 46%에서 기준선을 넘는다', () => {
   expect(EXIT_COUNTRIES.filter((c) => exitLedger(c, 0.35, 0.6).exits).map((c) => c.id)).toEqual(['russia']);
@@ -34,4 +43,19 @@ it('감내 폭 1.5%p까지 금리를 지키고 초과분만 따라 올린다', (
   expect(krwChain(4.01, 2.5).holds).toBe(false);
   expect(krwChain(5, 2.5).forcedRate).toBeCloseTo(3.3);
   expect(krwChain(1, 2.5).depreciation).toBe(0);
+});
+
+it('결제 비용만 줄이는 임계값은 기본 이득과 처음 같아지거나 넘는 정수 슬라이더 값이다', () => {
+  for (const country of EXIT_COUNTRIES) {
+    const threshold = paymentReliefThreshold(country);
+    const benefit = exitLedger(country, EXIT_DEFAULTS.network / 100, EXIT_DEFAULTS.sanction / 100).benefit;
+    if (threshold == null) {
+      expect(benefit).toBeLessThan(exitLedger(country, 1, EXIT_DEFAULTS.sanction / 100).cost);
+    } else {
+      expect(benefit).toBeGreaterThanOrEqual(exitLedger(country, threshold / 100, EXIT_DEFAULTS.sanction / 100).cost);
+      if (threshold > 0) {
+        expect(benefit).toBeLessThan(exitLedger(country, (threshold - 1) / 100, EXIT_DEFAULTS.sanction / 100).cost);
+      }
+    }
+  }
 });

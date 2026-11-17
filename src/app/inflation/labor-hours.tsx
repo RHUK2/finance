@@ -13,6 +13,7 @@ import { fmtHours, hi, makeMoneyFmt, type Currency } from './components';
 type Props = {
   data: InflationData;
   btc?: Point[];
+  btcUnavailable?: string;
   currency: Currency;
   minYear: number;
   maxYear: number;
@@ -20,9 +21,9 @@ type Props = {
   stockLabel: string;
 };
 
-export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, stockLabel }: Props) {
+export function LaborHours({ data, btc, btcUnavailable, currency, minYear, maxYear, wageTable, stockLabel }: Props) {
   const [startYear, setStartYear] = useState(minYear);
-  const money = makeMoneyFmt(currency);
+  const money = makeMoneyFmt(currency, false, 2);
   // 최저임금은 해마다 고시로 바뀌는 법정 금액이라 화면에 어느 해 값인지 함께 적는다.
   // 조회는 maxYear 이하 최댓값이라 표를 갱신하지 않은 해에는 표의 마지막 해 시급이 쓰인다.
   const wageYear = wageTable.filter((row) => row.year <= maxYear).at(-1)?.year;
@@ -110,7 +111,12 @@ export function LaborHours({ data, btc, currency, minYear, maxYear, wageTable, s
         <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
           {r.entries.map((e) =>
             e.value == null || r.currentWage == null ? (
-              <Metric key={e.key} label={e.label} value={null} sub={`${startYear}년 데이터 없음`} />
+              <Metric
+                key={e.key}
+                label={e.label}
+                value={null}
+                sub={e.key === 'btc' && btcUnavailable ? btcUnavailable : `${startYear}년 데이터 없음`}
+              />
             ) : (
               <Metric
                 key={e.key}

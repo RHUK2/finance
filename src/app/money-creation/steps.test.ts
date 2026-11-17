@@ -21,3 +21,11 @@ it('모든 단계에서 주체별 장부가 균형을 이루고 정부예금은 
     });
   }
 });
+
+it('1~50% 지급준비율에서 해설의 통화승수가 최종 장부의 카드 값과 같다', () => {
+  for (let pct = 1; pct <= 50; pct++) {
+    const steps = buildSteps(pct / 100);
+    const multiplier = metricsAt(steps, steps.length - 1).multiplier.toFixed(1);
+    expect(steps[steps.length - 1].narration).toContain(`${multiplier}배`);
+  }
+});

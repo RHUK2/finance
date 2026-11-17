@@ -20,6 +20,7 @@ const BASIS_LABELS: Record<Basis, { ref: string; hold: string }> = {
 type Props = {
   data: InflationData;
   btc?: Point[];
+  btcUnavailable?: string;
   currency: Currency;
   minYear: number;
   maxYear: number;
@@ -27,7 +28,16 @@ type Props = {
   stockLabel: string;
 };
 
-export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amount, stockLabel }: Props) {
+export function CollapseCalculator({
+  data,
+  btc,
+  btcUnavailable,
+  currency,
+  minYear,
+  maxYear,
+  amount,
+  stockLabel,
+}: Props) {
   const [startYear, setStartYear] = useState(minYear);
   const [basis, setBasis] = useState<Basis>('M2');
   const money = makeMoneyFmt(currency, true);
@@ -129,16 +139,16 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
         </p>
 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-          <Metric label='통장 잔고 (명목)' value={money(r.depositNominal ?? amount)} />
+          <Metric label='통장 잔고 (명목)' value={r.depositNominal != null ? money(r.depositNominal) : null} />
           <Metric
             label={holdLabel}
-            value={money(r.holdLine ?? amount)}
+            value={r.holdLine != null ? money(r.holdLine) : null}
             sub={r.ratio != null ? `${refName} ×${r.ratio.toFixed(1)}` : '-'}
           />
           <Metric
             label='유지선 대비'
-            value={money(r.gap ?? 0)}
-            tone={r.lossPct != null && r.lossPct < 0 ? 'bad' : 'good'}
+            value={r.gap != null ? money(r.gap) : null}
+            tone={r.lossPct == null ? undefined : r.lossPct < 0 ? 'bad' : 'good'}
             sub={r.lossPct != null ? formatPct(r.lossPct, 0, { plus: true }) : '데이터 범위 밖'}
           />
         </div>
@@ -148,7 +158,12 @@ export function CollapseCalculator({ data, btc, currency, minYear, maxYear, amou
           <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
             {r.assets.map((a) =>
               a.value == null ? (
-                <Metric key={a.key} label={a.label} value={null} sub={`${startYear}년 데이터 없음`} />
+                <Metric
+                  key={a.key}
+                  label={a.label}
+                  value={null}
+                  sub={a.key === 'btc' && btcUnavailable ? btcUnavailable : `${startYear}년 데이터 없음`}
+                />
               ) : (
                 <Metric
                   key={a.key}

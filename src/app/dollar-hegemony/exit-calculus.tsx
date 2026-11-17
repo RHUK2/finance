@@ -17,14 +17,17 @@ import {
 import { Panel } from '@/components/panel';
 import { ratioLabel } from '@/lib/bcra';
 
-import { COST_FLOOR, EXIT_COUNTRIES, type Grade, exitLedger } from './models';
+import { COST_FLOOR, EXIT_COUNTRIES, EXIT_DEFAULTS, type Grade, exitLedger, paymentReliefThreshold } from './models';
 
 const MARK: Record<Grade, MarkState> = { high: 'yes', mid: 'partial', low: 'no' };
 
 export function ExitCalculus() {
-  const [network, setNetwork] = useState(35);
-  const [sanction, setSanction] = useState(60);
+  const [network, setNetwork] = useState<number>(EXIT_DEFAULTS.network);
+  const [sanction, setSanction] = useState<number>(EXIT_DEFAULTS.sanction);
   const [selected, setSelected] = useState(EXIT_COUNTRIES[0].id);
+
+  const china = EXIT_COUNTRIES.find((c) => c.id === 'china');
+  const chinaThreshold = china ? paymentReliefThreshold(china) : null;
 
   const n = network / 100;
   const s = sanction / 100;
@@ -89,8 +92,8 @@ export function ExitCalculus() {
         tone={ledger.exits ? 'accent' : undefined}
       >
         {ledger.exits
-          ? `지금 조건에서 ${country.label}의 이탈은 합리다. 네 나라 중 ${leaving}곳이 기준선을 넘었다.`
-          : `지금 조건에서 ${country.label}의 이탈은 비합리다. 나가는 값이 남는 값보다 비싸다. 네 나라 중 ${leaving}곳이 기준선을 넘었다.`}
+          ? `지금 조건에서 ${country.label}의 이탈은 합리다. ${EXIT_COUNTRIES.length}개국 중 ${leaving}곳이 기준선을 넘었다.`
+          : `지금 조건에서 ${country.label}의 이탈은 비합리다. 나가는 값이 남는 값보다 비싸다. ${EXIT_COUNTRIES.length}개국 중 ${leaving}곳이 기준선을 넘었다.`}
       </StatusBanner>
 
       <Panel className='gap-3'>
@@ -110,7 +113,7 @@ export function ExitCalculus() {
       </Panel>
 
       <MarkTable
-        title='같은 잣대로 잰 네 나라'
+        title={`같은 잣대로 잰 ${EXIT_COUNTRIES.length}개국`}
         icon={<Scale className='size-4 text-muted-foreground' />}
         headers={['국가', '무역', '안보', '자산']}
         rows={rows}
@@ -120,7 +123,9 @@ export function ExitCalculus() {
 
       <Panel className='gap-1.5'>
         <span className='text-sm font-semibold'>{country.label}</span>
-        <p className='text-sm/relaxed text-muted-foreground'>{country.note}</p>
+        <p className='text-sm/relaxed text-muted-foreground'>
+          {country.note} 지금 조건의 이탈 유인 비율은 {ratioLabel(ledger.ratio)}다.
+        </p>
       </Panel>
 
       <ExplainCard
@@ -147,8 +152,11 @@ export function ExitCalculus() {
             </p>
             <p>
               정리하면 비트코인은 이탈 비용 세 항목 중 하나의 일부를 깎는다. 이 표에서 그 정도로도 판정이 뒤집히는
-              나라가 있고(분자를 기본값(대체망 35%·제재 60%)에 묶어 두고 분모만 줄여도 중국은 대체망 약 46%에서 기준선을
-              넘는다) 꿈쩍도 않는 나라가 있다. 어느 쪽인지는 그 나라가 나머지 두 항목에서 얼마나 묶여 있느냐로 갈린다.
+              나라가 있고 꿈쩍도 않는 나라가 있다.{' '}
+              {chinaThreshold != null
+                ? `분자를 기본값(대체망 ${EXIT_DEFAULTS.network}%·제재 ${EXIT_DEFAULTS.sanction}%)에 묶어 두고 결제 마비 비용만 줄여도 중국은 대체망 ${chinaThreshold}%에서 기준선에 닿는다.`
+                : '분자를 기본값에 묶어 두면 중국은 대체망을 끝까지 올려도 기준선에 닿지 않는다.'}{' '}
+              어느 쪽인지는 그 나라가 나머지 두 항목에서 얼마나 묶여 있느냐로 갈린다.
             </p>
           </div>
         }

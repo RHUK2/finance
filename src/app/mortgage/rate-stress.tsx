@@ -63,7 +63,7 @@ export function RateStress() {
         ? {
             tone: 'bad' as const,
             icon: <TriangleAlert className='size-4 shrink-0' />,
-            text: `상환액이 소득의 ${formatPct(dsrAfter, 0)}까지 올라가 DSR 한도 ${DSR_CAP}%를 넘는다. 대출을 새로 받는다면 승인되지 않았을 수준이라, 스트레스 금리로 한도를 미리 깎아 두는 이유가 여기 있다.`,
+            text: `상환액이 소득의 ${formatPct(dsrAfter, 0)}까지 올라가 DSR 한도 ${DSR_CAP}%(${DSR_NOTE})를 넘는다. 대출을 새로 받는다면 승인되지 않았을 수준이라, 스트레스 금리로 한도를 미리 깎아 두는 이유가 여기 있다.`,
           }
         : jumpPct > 20
           ? {

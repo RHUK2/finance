@@ -11,6 +11,7 @@ import { useInflationData, useInflationDataKr, type InflationData } from '@/hook
 import { KR_MIN_WAGE, KR_WAGE_LAST_YEAR, US_MIN_WAGE, toKrw } from '@/lib/inflation-models';
 
 import { AssetRaceChart } from './asset-race-chart';
+import { btcUnavailableReason } from './btc-unavailable';
 import { CollapseCalculator } from './collapse-calculator';
 import { CpiM2GapChart } from './cpi-m2-gap-chart';
 import { LaborHours } from './labor-hours';
@@ -93,6 +94,14 @@ export function InflationView() {
     [country, btcQuery.data, data],
   );
 
+  const btcUnavailable = btcUnavailableReason({
+    hasPrices: !!btc?.length,
+    isPending: btcQuery.isPending,
+    isError: btcQuery.isError,
+    needsFx: country === 'KR',
+    hasFx: !!data?.fx?.history?.length,
+  });
+
   return (
     <ExplainerPage
       title='예금은 노동의 가치를 지켜주는가'
@@ -128,7 +137,14 @@ export function InflationView() {
           </CardContent>
         </Card>
       ) : (
-        <Devices country={country} cfg={cfg} data={data} btc={btc} />
+        <Devices
+          country={country}
+          cfg={cfg}
+          data={data}
+          btc={btc}
+          btcUnavailable={btcUnavailable}
+          btcPending={btcQuery.isPending}
+        />
       )}
 
       <p className='border-t pt-4 text-xs/relaxed text-muted-foreground'>
@@ -145,11 +161,15 @@ function Devices({
   cfg,
   data,
   btc,
+  btcUnavailable,
+  btcPending,
 }: {
   country: Country;
   cfg: (typeof CONFIG)[Country];
   data: InflationData;
   btc?: { time: string; value: number }[];
+  btcUnavailable?: string;
+  btcPending: boolean;
 }) {
   const updatedLabel = useRelativeTime(data.fetchedAt);
   const maxYear = maxYearFor(country);
@@ -162,6 +182,7 @@ function Devices({
           <CollapseCalculator
             data={data}
             btc={btc}
+            btcUnavailable={btcUnavailable}
             currency={cfg.currency}
             minYear={cfg.minYear}
             maxYear={maxYear}
@@ -180,12 +201,14 @@ function Devices({
           <LaborHours
             data={data}
             btc={btc}
+            btcUnavailable={btcUnavailable}
             currency={cfg.currency}
             minYear={cfg.minYear}
             maxYear={maxYear}
             wageTable={cfg.wageTable}
             stockLabel={cfg.stockLabel}
           />
+          {!btcPending && btcUnavailable ? <p className='text-xs text-muted-foreground'>{btcUnavailable}</p> : null}
           <AssetRaceChart
             data={data}
             btc={btc}

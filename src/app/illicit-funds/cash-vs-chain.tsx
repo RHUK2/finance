@@ -58,8 +58,8 @@ export function CashVsChain() {
               <Metric label={`캐리어 (${SUITCASE_KG}kg 기준)`} value={`${fmtNum(suitcases)}개`} tone='bad' />
             </div>
             <p className='text-xs/relaxed text-muted-foreground'>
-              대부분의 나라에서 일정 금액(미국·EU는 1만 달러/유로 상당) 이상의 현금을 신고 없이 반출입하면 그 자체로
-              범죄다. 물리적 검색에 걸릴 위험이 부피에 비례해 커진다.
+              미국은 1만 달러 초과(FinCEN), EU는 1만 유로 이상(규정 2018/1672)이면 신고해야 하고, 신고 없이 넘으면 처벌
+              대상이다(2026년 11월 확인). 물리적 검색에 걸릴 위험이 부피에 비례해 커진다.
             </p>
           </Panel>
 

@@ -86,22 +86,25 @@ export function EconomyView() {
       kospi: [{ data: eco.kospi?.history ?? [], color: CHART_SERIES[1] }],
       nasdaq: [{ data: eco.nasdaq?.history ?? [], color: CHART_SERIES[0] }],
       vix: [{ data: eco.vix?.history ?? [], color: CHART_SERIES[2] }],
-      // 헤드라인이 10Y라 10Y가 첫 선이다(MacroChart는 커서 값·구간 수익률을 첫 선에서 읽는다).
-      // FRED 2Y는 10년치가 오므로 야후 10Y·30Y의 구간(2년)에 맞춰 잘라 x축을 맞춘다.
-      treasury: [
-        { label: '10Y', data: eco.us10y?.history ?? [], color: CHART_SERIES[3] },
-        ...(fred?.us2y
-          ? [
-              {
-                label: '2Y',
-                data: fred.us2y.history.filter((p) => p.time >= (eco.us10y?.history[0]?.time ?? '')),
-                color: CHART_SERIES[0],
-              },
-            ]
-          : []),
-        { label: '30Y', data: eco.us30y?.history ?? [], color: CHART_SERIES[1] },
-      ],
     };
+  }, [eco]);
+
+  // 헤드라인이 10Y라 첫 선으로 둔다. FRED 2Y는 야후 국채의 2년 구간에 맞춘다.
+  const treasuryLines = useMemo(() => {
+    if (!eco) return undefined;
+    return [
+      { label: '10Y', data: eco.us10y?.history ?? [], color: CHART_SERIES[3] },
+      ...(fred?.us2y
+        ? [
+            {
+              label: '2Y',
+              data: fred.us2y.history.filter((p) => p.time >= (eco.us10y?.history[0]?.time ?? '')),
+              color: CHART_SERIES[0],
+            },
+          ]
+        : []),
+      { label: '30Y', data: eco.us30y?.history ?? [], color: CHART_SERIES[1] },
+    ];
   }, [eco, fred]);
 
   const fedFundsLines = useMemo(
@@ -221,7 +224,7 @@ export function EconomyView() {
               currentLabel={eco?.us10y?.current != null ? formatPct(eco.us10y.current, 2) : '-'}
               formatValue={(v) => formatPct(v, 2)}
               changePercent={eco?.us10y?.changePercent ?? null}
-              lines={chartLines?.treasury}
+              lines={treasuryLines}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}
               resetRef={us10yReset}

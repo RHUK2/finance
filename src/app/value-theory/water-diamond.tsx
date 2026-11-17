@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Droplets, Gem, Scale } from 'lucide-react';
 
-import { cn, formatEokFromMan, formatMan, formatWon } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 import {
   ControlSlider,
@@ -17,12 +17,7 @@ import {
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 
-import { MAX_CUPS, SITUATIONS, type Situation, waterMarginalWon, waterTotalWon } from './models';
-
-// 값이 수천 원에서 수억 원까지 걸쳐 있어 한 단위로는 읽히지 않는다. 새 표기를 만드는
-// 게 아니라 utils의 표기 셋 중 자릿수에 맞는 것을 고를 뿐이다.
-const formatValue = (won: number) =>
-  won >= 1e8 ? formatEokFromMan(won / 1e4) : won >= 1e4 ? formatMan(won / 1e4) : formatWon(won);
+import { formatValue, MAX_CUPS, SITUATIONS, type Situation, waterMarginalWon, waterTotalWon } from './models';
 
 const SITUATION_OPTIONS = (Object.keys(SITUATIONS) as Situation[]).map((k) => ({
   value: k,
