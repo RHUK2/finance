@@ -26,14 +26,20 @@ async function fetchFearGreed(): Promise<FearGreedData> {
 
   if (rows.length === 0) throw new Error('No fear & greed data');
 
-  const valid = rows.filter(
-    (row) =>
-      Number.isFinite(Number(row.value)) &&
-      row.value.trim() !== '' &&
-      Number.isFinite(new Date(Number(row.timestamp) * 1000).getTime()),
-  );
+  if (
+    rows.some(
+      (row) =>
+        typeof row.value !== 'string' ||
+        row.value.trim() === '' ||
+        !Number.isFinite(Number(row.value)) ||
+        !(Number(row.timestamp) > 0) ||
+        !Number.isFinite(new Date(Number(row.timestamp) * 1000).getTime()),
+    )
+  ) {
+    throw new Error('No valid fear & greed data');
+  }
   const points = dedupeByTime(
-    valid
+    rows
       .map((row) => ({
         time: new Date(Number(row.timestamp) * 1000).toISOString().slice(0, 10),
         value: Number(row.value),

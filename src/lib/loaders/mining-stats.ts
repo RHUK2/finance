@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { BLOCKS_PER_HALVING, INITIAL_SUBSIDY_BTC } from '@/lib/bitcoin-models';
+import { BLOCKS_PER_HALVING, INITIAL_SUBSIDY_BTC, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
 import { cached } from '@/lib/cache';
 import { pctChange } from '@/lib/utils';
 
@@ -48,8 +48,6 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
     !Number.isFinite(difficulty.difficultyChange) ||
     !Number.isFinite(difficulty.remainingBlocks) ||
     difficulty.remainingBlocks < 0 ||
-    !Number.isFinite(difficulty.timeAvg) ||
-    difficulty.timeAvg <= 0 ||
     !Number.isFinite(difficulty.estimatedRetargetDate)
   ) {
     throw new Error('mining stats: 잘못된 채굴 수치');
@@ -63,7 +61,10 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
   const blockRewardBTC = INITIAL_SUBSIDY_BTC / Math.pow(2, epoch);
   const remainingHalvingBlocks = (epoch + 1) * BLOCKS_PER_HALVING - blockHeight;
 
-  const timeAvgMs = difficulty.timeAvg as number;
+  const timeAvgMs =
+    Number.isFinite(difficulty.timeAvg) && difficulty.timeAvg > 0
+      ? (difficulty.timeAvg as number)
+      : TARGET_BLOCK_MINUTES * 60_000;
   const estimatedHalvingDate = new Date(Date.now() + remainingHalvingBlocks * timeAvgMs).toISOString().slice(0, 10);
 
   const estimatedRetargetDate = new Date(difficulty.estimatedRetargetDate as number).toISOString().slice(0, 10);
