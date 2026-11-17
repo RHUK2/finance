@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { cached } from '@/lib/cache';
+import { cachedWithKey } from '@/lib/cached-with-key';
 import { fetchFredSeries } from '@/lib/fred';
 
 import type { InflationData } from './inflation';
@@ -9,13 +9,7 @@ import type { InflationData } from './inflation';
 const OBSERVATION_START = '1971-01-01';
 
 export async function loadInflationData(): Promise<InflationData> {
-  // 키 부재는 데이터가 아니라 설정 상태다. cached() 안에서 돌려주면 그 응답이 TTL(하루)만큼
-  // 캐시에 남아, 키를 넣고 배포해도 최대 하루 동안 안내 카드가 그대로 나온다.
-  // 그래서 키 검사는 cached() 바깥에서 하고 이 응답은 캐시에 넣지 않는다.
-  const key = process.env.FRED_API_KEY;
-  if (!key) return { fetchedAt: new Date().toISOString(), available: false };
-
-  return cached('inflation-data', async () => {
+  return cachedWithKey('inflation-data', 'FRED_API_KEY', async (key) => {
     // 하나만 실패해도 Promise.all이 전체를 reject해 이 키가 통째로 갱신되지 않는다.
     // 캐시에 값이 없으면 500, 있으면 마지막 성공 값이 계속 나간다. 폐기·개편된 시리즈가
     // 섞이면 나머지 넷이 멀쩡해도 화면이 비거나 멈추므로, 시리즈를 더할 때 그 시리즈가
