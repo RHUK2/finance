@@ -59,6 +59,25 @@ describe('전세 모델', () => {
     expect(depositLoan(4, 4, 100).gap).toBe(-400);
   });
 
+  it('보증금·금리·월세 슬라이더 격자의 동률과 양옆을 구분한다', () => {
+    for (let halfDeposit = 2; halfDeposit <= 20; halfDeposit++) {
+      for (let rateTenths = 0; rateTenths <= 80; rateTenths++) {
+        const monthlyRent = (halfDeposit * rateTenths * 5) / 12;
+        if (monthlyRent < 20 || monthlyRent > 400 || monthlyRent % 5 !== 0) continue;
+
+        const deposit = halfDeposit / 2;
+        const rate = rateTenths / 10;
+        expect(depositLoan(deposit, rate, monthlyRent).tie).toBe(true);
+        for (const offset of [-5, 5]) {
+          if (monthlyRent + offset < 20 || monthlyRent + offset > 400) continue;
+          const adjacent = depositLoan(deposit, rate, monthlyRent + offset);
+          expect(adjacent.tie).toBe(false);
+          expect(adjacent.gap).toBeCloseTo(offset * 12);
+        }
+      }
+    }
+  });
+
   it.each([-30, 0, 10])('갭투자 변동률 %s의 손익을 자기자본에 귀속한다', (change) => {
     const r = gapInvestment(6, 80, change);
     expect(r.deposit + r.gap).toBe(6);

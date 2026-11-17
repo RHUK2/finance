@@ -116,7 +116,7 @@ export function ReverseJeonse() {
                 ? `집값과 같다. 집주인의 자기 자본이 0이다. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
                 : `집값 ${formatEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
           }
-          tone={underwater > 0 ? 'bad' : depositRatio >= 90 ? 'accent' : 'good'}
+          tone={underwater > 0 ? 'bad' : depositRatio >= 90 - 1e-9 ? 'accent' : 'good'}
         />
       </div>
 
