@@ -179,7 +179,7 @@ export function RateStress() {
           sub='남은 잔액에 오른 금리를 붙여 남은 기간으로 다시 나눈 금액'
         />
         <CostBar
-          label={`고정금리 (+${FIXED_PREMIUM}%p)`}
+          label={`고정금리 (${formatPctPoint(FIXED_PREMIUM, 1, { plus: true })})`}
           value={fixed}
           max={barMax}
           className='bg-series-1'

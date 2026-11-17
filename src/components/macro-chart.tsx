@@ -6,7 +6,7 @@ import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard } from '@/components/indicator-card';
 import { LineSeries, useChart, type IChartApi, type ISeriesApi } from '@/hooks/use-chart';
 import { withLivePoint, type LivePoint, type SeriesPoint } from '@/lib/series';
-import { cn, formatPct } from '@/lib/utils';
+import { cn, formatPct, formatPctPoint } from '@/lib/utils';
 
 export type MacroLine = {
   label?: string;
@@ -45,13 +45,6 @@ function sliceRange<T extends { time: string }>(points: T[], range: RangeKey): T
   const start = points.findIndex((p) => p.time >= cutoff);
   if (start === -1) return [];
   return start === 0 ? points : points.slice(start);
-}
-
-// %p(산술 차이) 표기. utils.ts의 표기 함수에 %p가 없어 여기 둔다. 부호 규칙은 formatPct와 같다.
-function formatPp(n: number, digits: number): string {
-  const text = Math.abs(n).toFixed(digits);
-  const sign = !/[1-9]/.test(text) ? '' : n < 0 ? '−' : '+';
-  return `${sign}${text}%p`;
 }
 
 function RangeTabs({
@@ -208,7 +201,7 @@ export function MacroChart({
   const change = changeDiff ? changeDiff.value : changePercent;
   const diffDigits = changeDiff?.digits ?? 2;
   // 방향은 화살표가 말하므로 크기만 적는다.
-  const changeText = (v: number) => (changeDiff ? `${Math.abs(v).toFixed(diffDigits)}%p` : `${Math.abs(v)}%`);
+  const changeText = (v: number) => (changeDiff ? formatPctPoint(Math.abs(v), diffDigits) : `${Math.abs(v)}%`);
   // 오르면 빨강(`text-up`), 내리면 파랑(`text-down`)이다. 이 색은 좋고 나쁨이 아니라 방향만 뜻한다
   // (globals.css 등락 색). 오르는 것이 좋은지는 자산마다 달라서(VIX·달러/원) 판정 색(good/bad)은 쓰지 않는다.
   // 찍히는 크기가 0이면(연방기금 실효금리의 월평균이 전월과 같은 달 등) 화살표 없이 '보합'으로 적고 흐리게 둔다.
@@ -219,7 +212,7 @@ export function MacroChart({
     rangeChange == null
       ? null
       : changeDiff
-        ? formatPp(rangeChange, diffDigits)
+        ? formatPctPoint(rangeChange, diffDigits, { plus: true })
         : formatPct(rangeChange, 1, { plus: true });
   // 좁힌 탭에 관측값이 하나도 없다(갱신이 멈춘 일봉 등). 빈 차트만 두면 고장으로 읽힌다.
   const emptyRange = range !== 'all' && !!shown?.[0] && shown[0].data.length === 0;
