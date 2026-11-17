@@ -18,7 +18,7 @@ import {
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatPct } from '@/lib/utils';
 
-import { type Organism, buildOrganisms, predationTrajectory } from './models';
+import { type Organism, buildOrganisms, predationOutcome, predationTrajectory } from './models';
 
 const N = 180;
 const SEED = 24680;
@@ -75,7 +75,7 @@ export function PrimordialEconomics() {
       <ExplainCard
         title='물리적 비용 부과는 생존의 필수 조건'
         preview='투사력 없는 개체는 약탈당해 사라진다. 채굴이 태우는 와트도 같은 생존 신호다.'
-        body="물리력을 투사하지 못하는 개체는 약탈의 표적이 되어 사라지고, 살아남은 개체군의 평균 투사력은 라운드마다 올라간다. 비트코인 채굴이 소비하는 막대한 전력도 같은 논리다. 낭비처럼 보이는 그 와트가 곧 네트워크가 포식자에게 보내는 '공격하면 손해' 신호이며, 디지털 자산을 지키는 물리적 비용 벽이다."
+        body="물리력을 투사하지 못하는 개체는 약탈의 표적이 되어 사라지고, 일부가 도태되고 생존자가 남으면 평균 투사력이 올라간다. 비트코인 채굴이 소비하는 막대한 전력도 같은 논리다. 낭비처럼 보이는 그 와트가 곧 네트워크가 포식자에게 보내는 '공격하면 손해' 신호이며, 디지털 자산을 지키는 물리적 비용 벽이다."
       />
     </div>
   );
@@ -155,19 +155,10 @@ function PredationSim({
             tone={aliveCount > 0 ? 'good' : undefined}
           />
           <Metric label='도태 개체' value={`${dead}`} tone={dead > 0 ? 'bad' : undefined} />
-          <Metric label='생존자 평균 투사력' value={formatPct(survivorAvg * 100, 0)} tone='accent' />
+          <Metric label='생존자 평균 투사력' value={formatPct(survivorAvg * 100, 1)} tone='accent' />
         </>
       }
-      outcome={
-        done
-          ? aliveCount === 0
-            ? { tone: 'bad', text: '💀 포식 압력이 개체군 전체의 투사력을 넘어섰다. 아무도 살아남지 못했다.' }
-            : {
-                tone: 'accent',
-                text: `압력이 멈춘 지점에서 ${aliveCount}개체가 살아남았고, 생존자의 평균 투사력은 시작보다 높아졌다. 도태가 개체군을 더 강하게 투사하는 쪽으로 밀어 올린다.`,
-              }
-          : undefined
-      }
+      outcome={done ? predationOutcome(aliveCount, organisms.length) : undefined}
     />
   );
 }

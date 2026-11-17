@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
-import { BLOCKS_PER_YEAR, CURRENT_ERA, cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA, subsidyAt } from './models';
+import {
+  BASE,
+  BASE_ANNUAL,
+  attackCost,
+  blockRevenue,
+  requiredFee,
+  BLOCKS_PER_YEAR,
+  CURRENT_ERA,
+  cumulativeSupply,
+  eraStartYear,
+  LAST_SUBSIDY_ERA,
+  subsidyAt,
+} from './models';
 
 // 발행 스케줄은 프로토콜이 정한다. 사토시 정수 나눗셈이라 50 BTC = 5e9 sat을 33번 자르면 0이다.
 describe('보조금', () => {
@@ -38,5 +50,50 @@ describe('시대 시작 연도', () => {
 
   it('1년 = 144블록 × 365일', () => {
     expect(BLOCKS_PER_YEAR).toBe(52_560);
+  });
+});
+
+describe('보안 예산과 공격 비용', () => {
+  it('블록 수입을 달러·연간 예산으로 환산하고 수수료 몫을 구한다', () => {
+    expect(blockRevenue({ era: 4, btcPrice: 100_000, feePerBlock: 0.125 })).toEqual({
+      subsidy: 3.125,
+      totalBtc: 3.25,
+      perBlockUsd: 325_000,
+      annualUsd: 17_082_000_000,
+      feeShare: 0.125 / 3.25,
+    });
+    expect(BASE_ANNUAL).toBe((subsidyAt(BASE.era) + BASE.feePerBlock) * BASE.btcPrice * 52_560);
+  });
+
+  it.each([CURRENT_ERA, CURRENT_ERA + 1, LAST_SUBSIDY_ERA + 1])(
+    '시대 %s에서 필요한 수수료는 목표 예산을 복원한다',
+    (era) => {
+      for (const btcPrice of [BASE.btcPrice / 2, BASE.btcPrice]) {
+        const feePerBlock = requiredFee(BASE_ANNUAL, era, btcPrice);
+        expect(blockRevenue({ era, btcPrice, feePerBlock }).annualUsd / BASE_ANNUAL).toBeCloseTo(1, 12);
+      }
+    },
+  );
+
+  it('보조금만으로 목표를 넘으면 필요 수수료는 0이다', () => {
+    expect(requiredFee(BASE_ANNUAL, BASE.era, BASE.btcPrice * 2)).toBe(0);
+    expect(requiredFee(0, BASE.era, BASE.btcPrice)).toBe(0);
+  });
+
+  it('보조금이 끝나면 수수료가 전부이며, 수입 0도 유한한 값이다', () => {
+    for (const feePerBlock of [0, 0.02]) {
+      const revenue = blockRevenue({ ...BASE, era: LAST_SUBSIDY_ERA + 1, feePerBlock });
+      expect(revenue.subsidy).toBe(0);
+      expect(revenue.feeShare).toBe(1);
+      expect(revenue.annualUsd).toBe(feePerBlock * BASE.btcPrice * BLOCKS_PER_YEAR);
+    }
+  });
+
+  it('공격 운영비는 예산과 시간에 비례하고 8760시간이면 연간 예산과 같다', () => {
+    expect(attackCost(BASE_ANNUAL, 8760)).toBeCloseTo(BASE_ANNUAL, 4);
+    expect(attackCost(8760, 1)).toBe(1);
+    expect(attackCost(8760, 24)).toBe(24);
+    expect(attackCost(BASE_ANNUAL, 0)).toBe(0);
+    expect(attackCost(0, 24)).toBe(0);
   });
 });

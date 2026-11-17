@@ -201,9 +201,9 @@ export function EconomyView() {
               description="S&P 500 옵션 시장이 예상하는 30일 변동성, '공포지수'. 상승할수록 시장 불안이 커지며(20 이상 불안, 30 이상 극도의 공포), 낮게 유지되면 시장이 안정·낙관 국면임을 뜻합니다."
             />
 
-            <FredGate available={fredAvailable} title='연준 기준금리'>
+            <FredGate available={fredAvailable} title='연방기금 실효금리 (월평균)'>
               <MacroChart
-                title='연준 기준금리'
+                title='연방기금 실효금리 (월평균)'
                 currentLabel={fred?.fedFunds?.current != null ? formatPct(fred.fedFunds.current, 2) : '-'}
                 formatValue={(v) => formatPct(v, 2)}
                 changePercent={fred?.fedFunds?.changePercent ?? null}
@@ -212,7 +212,7 @@ export function EconomyView() {
                 updatedLabel={fredRelTime ?? undefined}
                 error={fredFailed}
                 resetRef={fedFundsReset}
-                description='연방준비제도가 설정하는 단기 금리 목표. 인상은 긴축 국면으로 유동성을 죄어 위험자산에 불리하고, 인하는 완화 신호로 유동성 공급 기대를 높여 위험자산에 우호적입니다.'
+                description='은행 간 초단기 자금 거래에서 형성된 연방기금 실효금리의 일별 값을 평균한 월간 지표입니다. 연방공개시장위원회(FOMC)가 정하는 목표 범위와는 다르며, 금리가 바뀐 달의 월평균은 현재 목표 범위를 뜻하지 않습니다. 대체로 상승은 긴축으로 위험자산에 부담을 주고, 하락은 완화 신호로 읽히지만, 경기·물가 여건에 따라 시장 반응은 달라질 수 있습니다.'
               />
             </FredGate>
 

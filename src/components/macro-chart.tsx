@@ -211,7 +211,7 @@ export function MacroChart({
   const changeText = (v: number) => (changeDiff ? `${Math.abs(v).toFixed(diffDigits)}%p` : `${Math.abs(v)}%`);
   // 오르면 빨강(`text-up`), 내리면 파랑(`text-down`)이다. 이 색은 좋고 나쁨이 아니라 방향만 뜻한다
   // (globals.css 등락 색). 오르는 것이 좋은지는 자산마다 달라서(VIX·달러/원) 판정 색(good/bad)은 쓰지 않는다.
-  // 찍히는 크기가 0이면(연준 기준금리가 동결된 달 등) 화살표 없이 '보합'으로 적고 흐리게 둔다.
+  // 찍히는 크기가 0이면(연방기금 실효금리의 월평균이 전월과 같은 달 등) 화살표 없이 '보합'으로 적고 흐리게 둔다.
   // 반올림해 0이 된 값도 같다.
   const changeTone = (text: string, value: number) =>
     !/[1-9]/.test(text) ? 'text-muted-foreground' : value > 0 ? 'text-up' : 'text-down';
