@@ -22,7 +22,7 @@ const EXAMPLES: Record<
     label: '소프트포크 예시: Taproot (새 서명 검증 규칙 추가)',
     rule: '기존에는 "아무 조건이나 통과"로 보이던 스크립트에 새로운 서명 검증 조건을 추가한다. 규칙을 더 좁히는 변경이다.',
     oldSeesNew: true,
-    newSeesOld: true,
+    newSeesOld: false,
     verdict:
       '구버전 노드는 새 규칙을 모르지만, 새 규칙을 지킨 블록은 구버전이 알던 (더 느슨한) 규칙도 자동으로 만족한다. 그래서 구버전 노드도 계속 새 블록을 유효하다고 받아들인다. 해시레이트 과반이 새 규칙을 지키는 한, 업그레이드하지 않아도 체인이 갈라지지 않는다. 과반이 새 규칙을 어긴 블록을 이어 가면 구버전 노드는 그쪽을 따라가고 체인이 갈라진다.',
   },
@@ -62,7 +62,7 @@ export function ForkCompat() {
       <MarkTable
         title='두 종류를 같은 잣대 둘로 재면'
         icon={<GitCompare className='size-4 text-series-1' />}
-        headers={['포크 종류', '구버전이 새 블록을 봄', '신버전이 구 블록을 봄']}
+        headers={['포크 종류', '구버전 수용', '신버전 수용']}
         rows={ROWS}
         selected={kind}
         onSelect={(id) => setKind(id as ForkKind)}
@@ -72,6 +72,11 @@ export function ForkCompat() {
         <span className='text-sm font-semibold'>{ex.label}</span>
         <p className='text-sm/relaxed text-muted-foreground'>{ex.rule}</p>
       </Panel>
+
+      <p className='text-sm/relaxed text-muted-foreground'>
+        표는 활성화 이후의 블록을 비교한다. 구버전 수용은 신규칙 블록을 모두 받아들이는지, 신버전 수용은 구규칙 블록을
+        모두 받아들이는지를 뜻한다. 소프트포크의 신버전 노드는 구규칙을 만족해도 추가된 신규칙을 어기는 블록은 거부한다.
+      </p>
 
       <StatusBanner tone={ex.oldSeesNew ? 'good' : 'bad'}>
         <span className='leading-relaxed font-normal'>{ex.verdict}</span>

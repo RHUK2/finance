@@ -27,6 +27,11 @@ export function reversalProbability(q: number, confirmations: number): number {
   return doubleSpendProbability(q, confirmations - 1);
 }
 
+// 확인 수를 무한히 늘렸을 때의 재구성 확률이다. 절반 이상에서는 1에 머문다.
+export function confirmationLimitProbability(q: number): number {
+  return q >= 0.5 ? 1 : 0;
+}
+
 export const CONFIRMATION_PRESETS = [1, 2, 3, 6, 10, 20] as const;
 
 // 확률을 사람이 읽기 좋은 문자열로. 1% 이상이면 %로, 그보다 작으면 "약 1,000분의 1" 식으로.

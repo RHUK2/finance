@@ -6,9 +6,7 @@ import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn } from '@/lib/utils';
-import { formatProbability, reversalProbability } from '@/lib/chain-concept';
-
-const EVENTUALLY_CONFIRMATIONS = 200; // 유한한 확인 수로 "시간이 무한히 지나면"을 근사
+import { confirmationLimitProbability, formatProbability, reversalProbability } from '@/lib/chain-concept';
 
 const COMPARE_PRESETS = [10, 30, 45, 51, 60] as const;
 
@@ -18,13 +16,13 @@ export function AttackScope() {
   const isMajority = q >= 0.5;
 
   const atSix = reversalProbability(q, 6);
-  const eventually = reversalProbability(q, EVENTUALLY_CONFIRMATIONS);
+  const eventually = confirmationLimitProbability(q);
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='51%의 진짜 의미: 확률이 아니라 시간문제가 된다'>
-        해시레이트 비중이 절반을 넘는 순간 질적으로 다른 일이 벌어진다. 과반 미만이면 확인 수를 늘릴수록 따라잡을 확률이
-        0에 수렴하지만, 과반이 되면 확률은 언제나 결국 <b>1</b>이다. 확인을 아무리 많이 쌓아도 &#39;충분히
+        해시레이트 비중이 절반 이상이 되는 순간 질적으로 다른 일이 벌어진다. 절반 미만이면 확인 수를 늘릴수록 따라잡을
+        확률이 0에 수렴하지만, 절반 이상이면 확률은 언제나 <b>1</b>이다. 확인을 아무리 많이 쌓아도 &#39;충분히
         안전&#39;해지는 지점이 없고, 그저 시간문제가 된다.
       </SectionIntro>
 
@@ -50,14 +48,14 @@ export function AttackScope() {
           }
         >
           {isMajority
-            ? '과반 해시레이트: 확인을 아무리 쌓아도 확률은 결국 100%로 수렴한다.'
-            : '과반 미만: 확인 수를 늘릴수록 확률이 0에 가까워진다.'}
+            ? '해시레이트 절반 이상: 확인을 아무리 쌓아도 따라잡을 확률은 100%다.'
+            : '절반 미만: 확인 수를 늘릴수록 확률이 0에 가까워진다.'}
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3'>
           <Metric label='확인 6개 시 확률' value={formatProbability(atSix)} tone={atSix > 0.05 ? 'bad' : 'good'} />
           <Metric
-            label={`확인 ${EVENTUALLY_CONFIRMATIONS}개 시 확률 ("결국")`}
+            label='확인 수 → 무한대의 확률'
             value={formatProbability(eventually)}
             tone={isMajority ? 'bad' : 'good'}
           />
@@ -70,13 +68,13 @@ export function AttackScope() {
           {COMPARE_PRESETS.map((pct) => {
             const pq = pct / 100;
             const six = reversalProbability(pq, 6);
-            const ev = reversalProbability(pq, EVENTUALLY_CONFIRMATIONS);
+            const ev = confirmationLimitProbability(pq);
             return (
               <div key={pct} className='flex items-center justify-between gap-3 py-2 text-sm'>
-                <span className={cn('w-14 font-medium', pct >= 51 && 'text-bad')}>{pct}%</span>
+                <span className={cn('w-14 font-medium', pct >= 50 && 'text-bad')}>{pct}%</span>
                 <span className='flex-1 text-muted-foreground'>확인 6개: {formatProbability(six)}</span>
                 <span className={cn('w-32 text-right tabular-nums', pq >= 0.5 ? 'text-bad' : 'text-good')}>
-                  결국: {formatProbability(ev)}
+                  극한: {formatProbability(ev)}
                 </span>
               </div>
             );
@@ -86,7 +84,7 @@ export function AttackScope() {
 
       <ExplainCard
         icon={<CircleX className='size-4 text-series-3' />}
-        title='과반 공격자도 할 수 없는 것'
+        title='해시레이트 절반 이상을 가진 공격자도 할 수 없는 것'
         preview='남의 서명을 위조하거나 없는 코인을 만들 수는 없다. 오래된 과거는 막힌 게 아니라 깊이만큼 오래 걸린다.'
         body={
           <>
@@ -97,10 +95,10 @@ export function AttackScope() {
               <li>발행 상한을 넘겨 새 코인을 만들어내기(모든 노드가 블록 보상 규칙을 독립적으로 검증한다)</li>
             </ul>
             <br />
-            오래된 과거를 다시 쓰는 것은 이 목록에 들지 않는다. 위 표대로 과반이면 격차가 얼마든 결국 따라잡는다. 다만
-            블록 하나마다 격차가 평균 (공격자 몫 − 정직한 몫)만큼만 줄어서, 51%면 100블록 뒤처진 지점을 따라잡는 데 평균
-            약 5,000블록(한 달 남짓)이 걸리고 그동안 과반 해시레이트를 계속 유지해야 한다. 깊을수록 막히는 게 아니라
-            깊이에 비례해 오래 걸리고 비싸진다.
+            오래된 과거를 다시 쓰는 것은 이 목록에 들지 않는다. 위 표대로 해시레이트가 절반 이상이면 격차가 얼마든 결국
+            따라잡는다. 다만 과반일 때는 블록 하나마다 격차가 평균 (공격자 몫 − 정직한 몫)만큼만 줄어서, 51%면 100블록
+            뒤처진 지점을 따라잡는 데 평균 약 5,000블록(한 달 남짓)이 걸리고 그동안 과반 해시레이트를 계속 유지해야
+            한다. 깊을수록 막히는 게 아니라 깊이에 비례해 오래 걸리고 비싸진다.
             <br />
             <br />
             그리고 과반 해시레이트를 갖출 정도의 투자자는 이미 네트워크 최대 이해관계자라 공격으로 얻는 이득보다 신뢰

@@ -53,7 +53,7 @@ export function ChainAnalysis() {
 
       <Panel>
         <div>
-          <span className='text-xs text-muted-foreground'>입력 (모두 같은 지갑이 서명해야 쓸 수 있다)</span>
+          <span className='text-xs text-muted-foreground'>입력 (이 예시에서는 둘 다 철수 소유로 설정했다)</span>
           <div className='mt-1 flex flex-col gap-1.5'>
             {[INPUT_A, INPUT_B].map((addr, i) => (
               <div key={addr} className='flex items-center justify-between rounded-md border p-2 text-xs'>
@@ -67,8 +67,8 @@ export function ChainAnalysis() {
         <div className='flex items-center gap-2 rounded-md border p-3 text-sm'>
           <Users className='size-4 shrink-0 text-series-1' />
           <span>
-            <b>공통 입력 소유권 휴리스틱</b>: 두 입력을 한 트랜잭션에 함께 썼다는 건, 둘 다 같은 지갑의 개인키로
-            서명했다는 뜻이다. 두 주소가 같은 사람 것이라는 사실이 이 순간 공개된다.
+            <b>공통 입력 소유권 휴리스틱</b>: 분석가는 함께 쓰인 입력을 보통 같은 지갑 소유로 추정한다. CoinJoin처럼
+            여러 참가자가 공동으로 만드는 트랜잭션에서는 이 가정이 성립하지 않는다.
           </span>
         </div>
 
