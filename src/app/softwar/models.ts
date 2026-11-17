@@ -94,6 +94,19 @@ function predationStep(
 
 export type PredationFrame = { state: PredationState; justChanged: boolean[] };
 
+export function predationOutcome(aliveCount: number, total: number): { tone: 'bad' | 'accent'; text: string } {
+  if (aliveCount === 0) {
+    return { tone: 'bad', text: '💀 포식 압력이 개체군 전체의 투사력을 넘어섰다. 아무도 살아남지 못했다.' };
+  }
+  return {
+    tone: 'accent',
+    text:
+      aliveCount === total
+        ? '모든 개체가 살아남아 평균 투사력은 시작과 같다. 포식 압력이 가장 약한 개체의 투사력을 넘지 못했다.'
+        : `압력이 멈춘 지점에서 ${aliveCount}개체가 살아남았고, 생존자의 평균 투사력은 시작보다 높아졌다. 도태가 개체군을 더 강하게 투사하는 쪽으로 밀어 올린다.`,
+  };
+}
+
 // 포식 궤적 전체. 압력이 라운드마다 PREDATION_INC씩 정해진 폭으로 차오르는
 // 결정론적 모델이라 미리 계산할 수 있다. 덕분에 라운드를 앞뒤로 왕복하고
 // 생존 곡선의 최종 모양을 첫 프레임부터 보여 줄 수 있다.

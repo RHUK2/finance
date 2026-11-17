@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildOrganisms, powerCapture, predationTrajectory } from './models';
+import { buildOrganisms, powerCapture, predationOutcome, predationTrajectory } from './models';
 
 describe('개체군 투사력', () => {
   it.each([0, 0.2, 0.45, 0.5, 0.8, 1])('평균 %s를 유한 개체군에서도 보존한다', (mean) => {
@@ -57,6 +57,29 @@ describe('포식 궤적', () => {
     const organisms = buildOrganisms(3, 0.5, 24680);
     expect(predationTrajectory(organisms, 0.5).at(-1)!.state.alive).toEqual([false, true, true]);
     expect(predationTrajectory(organisms, 1).at(-1)!.state.alive).toEqual([false, false, false]);
+  });
+});
+
+describe('포식 결과 문구', () => {
+  it('전원 도태되면 생존자가 없다고 알린다', () => {
+    const outcome = predationOutcome(0, 180);
+    expect(outcome.tone).toBe('bad');
+    expect(outcome.text).toContain('아무도 살아남지 못했다');
+    expect(outcome.text).not.toContain('시작보다 높아졌다');
+  });
+
+  it('전원 생존하면 평균 투사력이 시작과 같다고 알린다', () => {
+    const outcome = predationOutcome(180, 180);
+    expect(outcome.tone).toBe('accent');
+    expect(outcome.text).toContain('모든 개체가 살아남아 평균 투사력은 시작과 같다');
+    expect(outcome.text).not.toContain('시작보다 높아졌다');
+  });
+
+  it.each([1, 90, 179])('일부인 %s개체가 생존하면 생존자 수와 평균 상승을 알린다', (aliveCount) => {
+    const outcome = predationOutcome(aliveCount, 180);
+    expect(outcome.tone).toBe('accent');
+    expect(outcome.text).toContain(`${aliveCount}개체가 살아남았고`);
+    expect(outcome.text).toContain('시작보다 높아졌다');
   });
 });
 

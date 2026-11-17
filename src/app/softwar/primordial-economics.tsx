@@ -18,7 +18,7 @@ import {
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatPct } from '@/lib/utils';
 
-import { type Organism, buildOrganisms, predationTrajectory } from './models';
+import { type Organism, buildOrganisms, predationOutcome, predationTrajectory } from './models';
 
 const N = 180;
 const SEED = 24680;
@@ -155,22 +155,10 @@ function PredationSim({
             tone={aliveCount > 0 ? 'good' : undefined}
           />
           <Metric label='도태 개체' value={`${dead}`} tone={dead > 0 ? 'bad' : undefined} />
-          <Metric label='생존자 평균 투사력' value={formatPct(survivorAvg * 100, 0)} tone='accent' />
+          <Metric label='생존자 평균 투사력' value={formatPct(survivorAvg * 100, 1)} tone='accent' />
         </>
       }
-      outcome={
-        done
-          ? aliveCount === 0
-            ? { tone: 'bad', text: '💀 포식 압력이 개체군 전체의 투사력을 넘어섰다. 아무도 살아남지 못했다.' }
-            : {
-                tone: 'accent',
-                text:
-                  dead === 0
-                    ? '모든 개체가 살아남아 평균 투사력은 시작과 같다. 포식 압력이 가장 약한 개체의 투사력을 넘지 못했다.'
-                    : `압력이 멈춘 지점에서 ${aliveCount}개체가 살아남았고, 생존자의 평균 투사력은 시작보다 높아졌다. 도태가 개체군을 더 강하게 투사하는 쪽으로 밀어 올린다.`,
-              }
-          : undefined
-      }
+      outcome={done ? predationOutcome(aliveCount, organisms.length) : undefined}
     />
   );
 }

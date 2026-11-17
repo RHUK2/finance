@@ -212,7 +212,7 @@ export function EconomyView() {
                 updatedLabel={fredRelTime ?? undefined}
                 error={fredFailed}
                 resetRef={fedFundsReset}
-                description='은행 간 초단기 자금 거래에서 형성된 연방기금 실효금리의 일별 값을 평균한 월간 지표입니다. 연방공개시장위원회(FOMC)가 정하는 목표 범위와는 다르며, 금리가 바뀐 달의 월평균은 현재 목표 범위를 뜻하지 않습니다.'
+                description='은행 간 초단기 자금 거래에서 형성된 연방기금 실효금리의 일별 값을 평균한 월간 지표입니다. 연방공개시장위원회(FOMC)가 정하는 목표 범위와는 다르며, 금리가 바뀐 달의 월평균은 현재 목표 범위를 뜻하지 않습니다. 대체로 상승은 긴축으로 위험자산에 부담을 주고, 하락은 완화 신호로 읽히지만, 경기·물가 여건에 따라 시장 반응은 달라질 수 있습니다.'
               />
             </FredGate>
 
