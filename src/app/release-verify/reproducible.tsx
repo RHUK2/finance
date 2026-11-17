@@ -28,15 +28,25 @@ const NOTE: Record<Case, string> = {
 
 export function Reproducible() {
   const [c, setC] = useState<Case>('clean');
-  const [base, setBase] = useState('');
-  const [evil, setEvil] = useState('');
+  const [state, setState] = useState<{ status: 'pending' | 'error' } | { status: 'ready'; base: string; evil: string }>(
+    { status: 'pending' },
+  );
 
   useEffect(() => {
-    void Promise.all([sha256Hex('소스 v1.0.0'), sha256Hex('소스 v1.0.0 + 백도어')]).then(([a, b]) => {
-      setBase(a);
-      setEvil(b);
-    });
+    let live = true;
+    void Promise.all([sha256Hex('소스 v1.0.0'), sha256Hex('소스 v1.0.0 + 백도어')])
+      .then(([base, evil]) => {
+        if (live) setState({ status: 'ready', base, evil });
+      })
+      .catch(() => {
+        if (live) setState({ status: 'error' });
+      });
+    return () => {
+      live = false;
+    };
   }, []);
+  const base = state.status === 'ready' ? state.base : '';
+  const evil = state.status === 'ready' ? state.evil : '';
 
   const hashOf = (i: number) => {
     if (c === 'clean') return base;
@@ -74,7 +84,11 @@ export function Reproducible() {
                     odd ? 'bg-bad-surface/10 text-bad' : 'bg-muted',
                   )}
                 >
-                  {groupHex(h.slice(0, 24))}
+                  {state.status === 'ready'
+                    ? groupHex(h.slice(0, 24))
+                    : state.status === 'error'
+                      ? '계산 실패'
+                      : '계산 중'}
                 </span>
               </div>
             );
@@ -82,16 +96,24 @@ export function Reproducible() {
         </div>
       </Panel>
 
-      <StatusBanner
-        icon={verdict === 'good' ? <CheckCircle2 className='size-4' /> : <XCircle className='size-4' />}
-        tone={verdict}
-      >
-        {c === 'clean'
-          ? '넷이 일치한다. 배포된 바이너리가 이 소스에서 나왔다'
-          : caught
-            ? '배포자의 결과만 어긋난다. 여기서 잡힌다'
-            : '넷이 일치한다. 그래도 백도어는 들어 있다'}
-      </StatusBanner>
+      {state.status !== 'ready' ? (
+        <StatusBanner>
+          {state.status === 'error'
+            ? '이 브라우저에서는 WebCrypto 해시를 계산하지 못했다. HTTPS나 localhost에서 열고 브라우저 지원을 확인하라'
+            : '브라우저가 해시를 계산하는 중'}
+        </StatusBanner>
+      ) : (
+        <StatusBanner
+          icon={verdict === 'good' ? <CheckCircle2 className='size-4' /> : <XCircle className='size-4' />}
+          tone={verdict}
+        >
+          {c === 'clean'
+            ? '넷이 일치한다. 배포된 바이너리가 이 소스에서 나왔다'
+            : caught
+              ? '배포자의 결과만 어긋난다. 여기서 잡힌다'
+              : '넷이 일치한다. 그래도 백도어는 들어 있다'}
+        </StatusBanner>
+      )}
 
       <ExplainCard
         icon={<Boxes className='size-4 text-series-1' />}

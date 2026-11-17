@@ -149,6 +149,25 @@ export function verify(Q: Pt, z: number, r: number, s: number): Verification {
   return { rejected: false, w, u1, u2, X, xModN, ok: xModN !== null && xModN === r };
 }
 
+// 같은 x좌표로 통과해도 메시지 변조와 서명 변조의 원인은 다르다.
+export function verificationCaption(
+  res: Extract<Verification, { rejected: false }>,
+  R: Pt,
+  tamper: 'none' | 'z' | 's',
+): string {
+  if (!res.ok) return '복원된 X가 엉뚱한 자리에 떨어졌다. 재료 하나만 어긋나도 전혀 다른 점이 나온다.';
+  if (samePt(res.X, R)) {
+    return '복원된 X가 서명할 때 만들었던 R과 같은 점이다. 검증자는 R을 본 적이 없는데도 같은 자리에 닿았다.';
+  }
+  if (res.X && R && res.X.x === R.x) {
+    if (tamper === 's') {
+      return '복원된 X는 −R이다. y좌표만 반대이고 x좌표가 같아 통과한다. 같은 메시지의 (r, s)와 (r, n − s)는 실제 ECDSA에서도 이 대칭을 갖는다.';
+    }
+    return '복원된 X는 −R이다. y좌표만 반대이고 x좌표가 같아 통과한다. 서명은 그대로인데 바뀐 메시지에도 우연히 들어맞았다. 위수가 31뿐인 작은 곡선에서는 이런 조합을 쉽게 찾을 수 있다.';
+  }
+  return `복원된 X ${fmtPt(res.X)}는 R ${fmtPt(R)}이 아니지만, x좌표를 n으로 접은 값이 r과 같아 통과한다. 곡선이 작아 x좌표가 접히는 곳에서 생기는 일이다.`;
+}
+
 // 같은 일회용 비밀값으로 만든 두 서명에서 k와 개인키를 되찾는다.
 // s₁ − s₂ = k⁻¹(z₁ − z₂)에서 k가 먼저 나오고, 그 k를 서명식에 되넣으면 d가 나온다.
 export function recoverFromReuse(

@@ -9,7 +9,7 @@ import { Panel } from '@/components/panel';
 
 import { CalcLine } from './calc-line';
 import { CurveGrid, type GridMark } from './curve-grid';
-import { MULTIPLES_OF_G, N, type Pt, fmtPt, mod, mulPt, samePt, sign, verify } from './models';
+import { MULTIPLES_OF_G, N, type Pt, fmtPt, mod, mulPt, verificationCaption, sign, verify } from './models';
 
 type Tamper = 'none' | 'z' | 's';
 
@@ -108,13 +108,7 @@ function VerifySteps({
   if (u2Q) marks.push({ ...u2Q, label: `u₂Q`, color: 'series-2' });
   if (res.X) marks.push({ ...res.X, label: 'u₁G + u₂Q', color: res.ok ? 'good' : 'bad' });
 
-  // 통과는 x(X) mod n = r만 본다. p > n이라 x가 접히고 (r, s)와 (r, n − s)는 R과 −R을 주므로,
-  // 통과해도 X가 R이 아닐 수 있다. 캡션은 실제로 같은 점인지를 따로 확인해 적는다.
-  const caption = !res.ok
-    ? '복원된 X가 엉뚱한 자리에 떨어졌다. 재료 하나만 어긋나도 전혀 다른 점이 나온다.'
-    : samePt(res.X, R)
-      ? '복원된 X가 서명할 때 만들었던 R과 같은 점이다. 검증자는 R을 본 적이 없는데도 같은 자리에 닿았다.'
-      : `복원된 X ${fmtPt(res.X)}는 R ${fmtPt(R)}이 아니지만, x좌표를 n으로 접은 값이 r과 같아 통과한다. 곡선이 작아 x좌표가 접히는 곳에서 생기는 일이다.`;
+  const caption = verificationCaption(res, R, tamper);
 
   return (
     <>
@@ -144,7 +138,15 @@ function VerifySteps({
       </Panel>
 
       {res.ok ? (
-        <StatusBanner icon={<CheckCircle2 className='size-4' />} tone='good'>
+        <StatusBanner
+          icon={<CheckCircle2 className='size-4' />}
+          tone={tamper === 'none' ? 'good' : 'accent'}
+          detail={
+            tamper === 'none'
+              ? undefined
+              : '값을 바꿨지만 검증을 통과했다. 위 격자 설명처럼 같은 x좌표나 같은 나머지를 얻을 수 있다. 작은 곡선에서는 이런 조합을 쉽게 만난다.'
+          }
+        >
           x(X) mod n = {res.xModN} = r. 서명이 유효하다. 개인키를 쓰지 않고 확인했다.
         </StatusBanner>
       ) : (

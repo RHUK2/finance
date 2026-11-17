@@ -42,6 +42,7 @@ export function MultisigLab() {
   const scriptSig = `OP_0 ${signed
     .map((v, i) => (v ? `<sig${keyLabel(i)}>` : null))
     .filter(Boolean)
+    .slice(0, m)
     .join(' ')}`;
 
   return (
@@ -118,6 +119,11 @@ export function MultisigLab() {
             <div className='mt-1 break-all'>{scriptSig || '(서명 없음)'}</div>
           </div>
         </div>
+        {validCount > m && (
+          <p className='text-xs text-muted-foreground'>
+            공개키 순서로 앞의 {m}개 서명만 싣는다. 남은 {validCount - m}개는 쓰지 않는다.
+          </p>
+        )}
       </Panel>
 
       <ExplainCard

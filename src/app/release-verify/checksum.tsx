@@ -29,33 +29,33 @@ function HexView({ hex, diff }: { hex: string; diff?: boolean[] }) {
 export function Checksum() {
   const inputId = useId();
   const [text, setText] = useState(ORIGINAL);
-  const [base, setBase] = useState('');
-  const [now, setNow] = useState('');
+  const [state, setState] = useState<
+    | { status: 'pending' }
+    | { status: 'error'; text: string }
+    | { status: 'ready'; text: string; base: string; now: string }
+  >({ status: 'pending' });
 
-  // 해시는 비동기라 빨리 친 글자의 결과가 늦게 도착할 수 있다. cleanup에서 live를 내려
-  // 지나간 입력의 결과가 지금 입력의 값을 덮지 않게 한다.
+  // 입력도 결과에 묶어 이전 입력의 해시를 새 입력의 판정으로 그리지 않는다.
   useEffect(() => {
     let live = true;
-    void sha256Hex(ORIGINAL).then((h) => {
-      if (live) setBase(h);
-    });
-    return () => {
-      live = false;
-    };
-  }, []);
-  useEffect(() => {
-    let live = true;
-    void sha256Hex(text).then((h) => {
-      if (live) setNow(h);
-    });
+    void Promise.all([sha256Hex(ORIGINAL), sha256Hex(text)])
+      .then(([base, now]) => {
+        if (live) setState({ status: 'ready', text, base, now });
+      })
+      .catch(() => {
+        if (live) setState({ status: 'error', text });
+      });
     return () => {
       live = false;
     };
   }, [text]);
 
+  const status = state.status === 'pending' || state.text !== text ? 'pending' : state.status;
+  const ready = state.status === 'ready' && state.text === text ? state : null;
   const changed = text !== ORIGINAL;
-  const diff = base && now ? diffPositions(now, base) : undefined;
-  const diffCount = diff ? diff.filter(Boolean).length : 0;
+  const diff = ready ? diffPositions(ready.now, ready.base) : undefined;
+  const diffCount = diff ? diff.filter(Boolean).length : null;
+  const matches = ready?.now === ready?.base;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -72,12 +72,16 @@ export function Checksum() {
         <Input id={inputId} value={text} onChange={(e) => setText(e.target.value)} className='font-mono text-sm' />
         <div className='flex flex-col gap-1'>
           <span className='text-xs text-muted-foreground'>SHA-256</span>
-          <HexView hex={now} diff={diff} />
+          {ready ? (
+            <HexView hex={ready.now} diff={diff} />
+          ) : (
+            <span className='text-xs text-muted-foreground'>{status === 'error' ? '계산 실패' : '계산 중'}</span>
+          )}
         </div>
-        {changed && (
+        {changed && ready && (
           <div className='flex flex-col gap-1'>
             <span className='text-xs text-muted-foreground'>원본 &#39;{ORIGINAL}&#39;의 SHA-256</span>
-            <HexView hex={base} />
+            <HexView hex={ready.base} />
           </div>
         )}
       </Panel>
@@ -86,19 +90,27 @@ export function Checksum() {
         <Metric label='바뀐 글자' value={changed ? '1자 이상' : '없음'} tone={changed ? 'accent' : undefined} />
         <Metric
           label='달라진 자리'
-          value={`${diffCount} / 64`}
-          tone={diffCount > 0 ? 'bad' : 'good'}
+          value={diffCount === null ? null : `${diffCount} / 64`}
+          tone={diffCount === null ? undefined : diffCount > 0 ? 'bad' : 'good'}
           sub='16진수 한 자리 단위'
         />
       </div>
 
-      <StatusBanner
-        icon={changed ? <CircleX className='size-4 text-bad' /> : <CircleCheck className='size-4 text-good' />}
-        tone={changed ? 'bad' : 'good'}
-        detail='그런데 여기서 대조한 원본 값은 어디서 받았나'
-      >
-        {changed ? '체크섬 불일치. 원본 값과 다르다.' : '체크섬 일치. 원본 값과 같다.'}
-      </StatusBanner>
+      {!ready ? (
+        <StatusBanner>
+          {status === 'error'
+            ? '이 브라우저에서는 WebCrypto 해시를 계산하지 못했다. HTTPS나 localhost에서 열고 브라우저 지원을 확인하라'
+            : '브라우저가 해시를 계산하는 중'}
+        </StatusBanner>
+      ) : (
+        <StatusBanner
+          icon={!matches ? <CircleX className='size-4 text-bad' /> : <CircleCheck className='size-4 text-good' />}
+          tone={!matches ? 'bad' : 'good'}
+          detail='그런데 여기서 대조한 원본 값은 어디서 받았나'
+        >
+          {!matches ? '체크섬 불일치. 원본 값과 다르다.' : '체크섬 일치. 원본 값과 같다.'}
+        </StatusBanner>
+      )}
 
       <ExplainCard
         icon={<FileCheck2 className='size-4 text-series-1' />}
