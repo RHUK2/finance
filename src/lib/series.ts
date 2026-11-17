@@ -37,7 +37,7 @@ export type LivePoint = { time: string; value: number };
 /**
  * 하루 한 번 받는 일봉 히스토리 끝에 실시간 시세 한 점을 얹는다. 같은 날이면 마지막 봉을 바꾸고
  * 다음 날이면 붙인다. 시세가 히스토리보다 이르면(장이 닫힌 뒤 히스토리가 먼저 갱신된 경우 등) 버린다.
- * 차트의 `series.update`가 받는 규칙과 같아서, 화면 숫자와 차트 끝점이 같은 판정을 따른다.
+ * 화면 숫자는 반환된 배열로 계산하고, 차트는 같은 배열을 첫 선의 `setData`에 넘긴다.
  */
 export function withLivePoint<T extends { time: string; value: number }>(
   history: T[],

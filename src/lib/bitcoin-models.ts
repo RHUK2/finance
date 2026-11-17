@@ -110,10 +110,11 @@ export function rollingVolatility(series: SeriesPoint[], window: number): Series
   const returns: SeriesPoint[] = [];
   for (let i = 1; i < series.length; i++) {
     const prev = series[i - 1].value;
-    if (prev > 0)
+    const current = series[i].value;
+    if (Number.isFinite(prev) && Number.isFinite(current) && prev > 0 && current > 0)
       returns.push({
         time: series[i].time,
-        value: Math.log(series[i].value / prev),
+        value: Math.log(current) - Math.log(prev),
       });
   }
   const out: SeriesPoint[] = [];
@@ -143,4 +144,49 @@ export function generateModelDates(startDate: string, endDate: string, stepDays 
     dates.push(new Date(t).toISOString().slice(0, 10));
   }
   return dates;
+}
+
+export const MAYER_THRESHOLDS = { low: 1, elevated: 1.5, high: 2.4 } as const;
+export const PUELL_THRESHOLDS = { low: 0.5, elevated: 1.5, high: 4 } as const;
+export const MVRV_THRESHOLDS = { low: 0.1, elevated: 3, high: 7 } as const;
+
+function multipleOfAverage(history: SeriesPoint[], window: number): SeriesPoint[] {
+  const averages = new Map(movingAverage(history, window).map((p) => [p.time, p.value]));
+  return history.flatMap((p) => {
+    const average = averages.get(p.time);
+    return average ? [{ time: p.time, value: p.value / average }] : [];
+  });
+}
+
+export function mayerMultiple(history: SeriesPoint[]): SeriesPoint[] {
+  return multipleOfAverage(history, 200);
+}
+
+export function puellMultiple(history: SeriesPoint[]): SeriesPoint[] {
+  return multipleOfAverage(
+    history.map((p) => ({ time: p.time, value: p.value * dailyIssuanceBtc(p.time) })),
+    365,
+  );
+}
+
+export function piCycleCrossovers(history: SeriesPoint[]) {
+  const sma111 = movingAverage(history, 111);
+  const sma350x2 = movingAverage(history, 350).map((p) => ({
+    time: p.time,
+    value: p.value * 2,
+  }));
+  // 111일 MA가 350일 MA×2를 상향 돌파한 지점이 사이클 천장 신호
+  const longMap = new Map(sma350x2.map((p) => [p.time, p.value]));
+  const crossovers: { time: string }[] = [];
+  // 첫 비교점은 앞 점이 없어 교차로 세지 않는다. 그 점이 이미 위에 있으면 돌파가 아니라 시작이 위인 것이다
+  // (지금 데이터는 2016-07-03에 아래서 시작해 해당하지 않는다).
+  let prevBelow: boolean | null = null;
+  for (const p of sma111) {
+    const long = longMap.get(p.time);
+    if (long == null) continue;
+    const below = p.value < long;
+    if (prevBelow === true && !below) crossovers.push({ time: p.time });
+    prevBelow = below;
+  }
+  return { sma111, sma350x2, crossovers };
 }

@@ -4,16 +4,17 @@ import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard, ScoreHeadline, type IndicatorStatus } from '@/components/indicator-card';
 import { CHART_SERIES, CHART_TONE, LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { MvrvData } from '@/hooks/use-crypto';
+import { MVRV_THRESHOLDS } from '@/lib/bitcoin-models';
 
 const ZONE_LINES = [
-  { price: 7, label: '천장 위험', color: CHART_TONE.bad },
-  { price: 0.1, label: '바닥 기회', color: CHART_TONE.good },
+  { price: MVRV_THRESHOLDS.high, label: '천장 위험', color: CHART_TONE.bad },
+  { price: MVRV_THRESHOLDS.low, label: '바닥 기회', color: CHART_TONE.good },
 ];
 
 function getZScoreStatus(value: number): IndicatorStatus {
-  if (value >= 7) return { label: '천장 위험', variant: 'destructive' };
-  if (value >= 3) return { label: '고평가', variant: 'secondary' };
-  if (value >= 0.1) return { label: '적정', variant: 'outline' };
+  if (value >= MVRV_THRESHOLDS.high) return { label: '천장 위험', variant: 'destructive' };
+  if (value >= MVRV_THRESHOLDS.elevated) return { label: '고평가', variant: 'secondary' };
+  if (value >= MVRV_THRESHOLDS.low) return { label: '적정', variant: 'outline' };
   return { label: '바닥 기회', variant: 'secondary' };
 }
 
@@ -52,7 +53,7 @@ export function MvrvZScoreChart({ data, resetRef, updatedLabel, error }: Props) 
       headline={current != null && <ScoreHeadline value={current} status={getZScoreStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
-      description='시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 보통 7 이상은 평균 대비 극단적 고평가(사이클 천장권), 0.1 미만은 시장가치가 실현가치에 근접하거나 밑도는 역사적 바닥권으로 읽힙니다.'
+      description={`시장가치(MV)와 실현가치(RV)의 괴리를 표준편차로 환산한 값. 보통 ${MVRV_THRESHOLDS.high} 이상은 평균 대비 극단적 고평가(사이클 천장권), ${MVRV_THRESHOLDS.low} 미만은 시장가치가 실현가치에 근접하거나 밑도는 역사적 바닥권으로 읽힙니다.`}
     />
   );
 }

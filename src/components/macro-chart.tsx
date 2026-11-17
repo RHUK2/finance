@@ -104,7 +104,7 @@ type Props = {
   lines?: MacroLine[];
   /**
    * 첫 선의 끝에 얹을 실시간 시세(`withLivePoint`). `lines`는 하루 한 번 바뀌는 히스토리 그대로 넘긴다.
-   * 시세가 바뀌면 차트를 다시 만들지 않고 끝점만 옮겨서, 확대·이동해 둔 화면이 5분마다 풀리지 않는다.
+   * 시세가 바뀌면 차트 인스턴스를 유지하고 `setData`로 첫 선의 전체 데이터를 갱신한다.
    * 헤드라인 값(`currentLabel`·`changePercent`)은 호출부가 같은 점을 얹어(`withLive`) 계산한다.
    */
   live?: LivePoint | null;
@@ -180,15 +180,14 @@ export function MacroChart({
 
   const { containerRef, resetView } = useChart(setup, [base], { height: 240, resetRef });
 
-  // 시세만 바뀌었으면 끝점 하나를 옮긴다. `withLivePoint`가 버리는 이른 시세는 여기서도 건너뛴다
-  // (update는 마지막 봉보다 이른 시각을 받으면 예외를 던진다). 차트를 새로 만든 직후에는 setup이
-  // 이미 얹어 그렸으므로 같은 점을 한 번 더 넣는 것이라 무해하다.
+  // 시세가 사라지거나 날짜가 되돌아가도 shown과 캔버스를 같은 데이터로 맞춘다.
+  // 차트 인스턴스·가격축 설정은 유지한다. 시간축은 라이브러리가 최신 봉을 따라가거나
+  // 과거 구간을 보존하도록 두고, 새 봉을 숨길 수 있는 이전 논리 범위를 강제로 복원하지 않는다.
   useEffect(() => {
     const series = primarySeries.current;
-    const last = base?.[0]?.data.at(-1);
-    if (!series || !live || (last && live.time < last.time)) return;
-    series.update(live);
-  }, [base, live]);
+    if (!series) return;
+    series.setData(shown?.[0]?.data ?? []);
+  }, [shown]);
 
   // 구간 수익률은 좁혔을 때만 보인다. '전체'에서는 헤드라인 옆 숫자가 예전처럼 전일 대비
   // 하나뿐이라, 탭을 건드리지 않은 화면은 이전과 같은 것을 말한다.
@@ -204,7 +203,8 @@ export function MacroChart({
   }, [shown, range, changeDiff]);
 
   const rangeLabel = RANGES.find((r) => r.value === range)?.label;
-  const headlineValue = hover && formatValue ? formatValue(hover.value) : currentLabel;
+  const hoverValue = hover ? shown?.[0]?.data.find((p) => p.time === hover.time)?.value : undefined;
+  const headlineValue = hoverValue != null && formatValue ? formatValue(hoverValue) : currentLabel;
   const change = changeDiff ? changeDiff.value : changePercent;
   const diffDigits = changeDiff?.digits ?? 2;
   // 방향은 화살표가 말하므로 크기만 적는다.
@@ -251,7 +251,7 @@ export function MacroChart({
           {/* 커서가 올라간 동안에만 날짜가 뜬다. 평소에는 자리만 지켜 카드 높이가 흔들리지 않는다.
               상대시간은 서버 렌더와 하이드레이션 사이에 분이 넘어가면 텍스트가 어긋난다 */}
           <p className='h-4 text-3xs text-muted-foreground tabular-nums' suppressHydrationWarning>
-            {hover
+            {hover && hoverValue != null
               ? `${hover.time} 기준`
               : emptyRange
                 ? '이 기간에 관측값이 없습니다'
