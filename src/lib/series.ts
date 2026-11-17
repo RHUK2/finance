@@ -1,8 +1,10 @@
 import { pctChange } from './utils';
 
+export type SeriesPoint = { time: string; value: number };
+
 // 로더(src/lib/loaders/) 응답과 클라이언트 훅이 공유하는 시계열 요약 형태.
 export type MacroSeries = {
-  history: { time: string; value: number }[];
+  history: SeriesPoint[];
   current: number | null;
   changePercent: number | null;
 };
@@ -21,7 +23,7 @@ export function dedupeByTime<T extends { time: string }>(rows: T[]): T[] {
 }
 
 /** 히스토리에서 현재값·직전 대비 변화율을 계산해 MacroSeries로 감싼다. */
-export function toMacroSeries(history: { time: string; value: number }[]): MacroSeries {
+export function toMacroSeries(history: SeriesPoint[]): MacroSeries {
   const last = history[history.length - 1];
   const prev = history[history.length - 2];
   return {
@@ -32,17 +34,14 @@ export function toMacroSeries(history: { time: string; value: number }[]): Macro
 }
 
 /** 실시간 시세 한 점. `time`은 그 시세가 속한 일봉의 날짜(YYYY-MM-DD)라 히스토리의 날짜와 같은 축이다. */
-export type LivePoint = { time: string; value: number };
+export type LivePoint = SeriesPoint;
 
 /**
  * 하루 한 번 받는 일봉 히스토리 끝에 실시간 시세 한 점을 얹는다. 같은 날이면 마지막 봉을 바꾸고
  * 다음 날이면 붙인다. 시세가 히스토리보다 이르면(장이 닫힌 뒤 히스토리가 먼저 갱신된 경우 등) 버린다.
  * 화면 숫자는 반환된 배열로 계산하고, 차트는 같은 배열을 첫 선의 `setData`에 넘긴다.
  */
-export function withLivePoint<T extends { time: string; value: number }>(
-  history: T[],
-  live: LivePoint | null | undefined,
-): { time: string; value: number }[] {
+export function withLivePoint<T extends SeriesPoint>(history: T[], live: LivePoint | null | undefined): SeriesPoint[] {
   const last = history[history.length - 1];
   if (!live || (last && live.time < last.time)) return history;
   if (last && live.time === last.time) return [...history.slice(0, -1), live];

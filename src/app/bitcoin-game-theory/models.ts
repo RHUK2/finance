@@ -1,7 +1,7 @@
 // 비트코인 게임이론 페이지에 쓰이는 순수 계산 모델을 한 곳에 모은다.
 // 외부 API 없이 클라이언트에서 계산하며, 모든 수치는 개념 설명용 예시다.
 
-import { HALVINGS, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
+import { subsidyAtDate, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
 import { clamp01, mulberry32 } from '@/lib/utils';
 
 // ── 1. 보수 행렬 (2인 채택 게임) ───────────────────────────────────────────
@@ -300,8 +300,6 @@ export type AttackInput = {
 };
 
 const J_PER_TH = 15; // 현행 주력 세대 ASIC 효율 ≈ 15 J/TH(S21 Pro급) → 15 W per TH/s
-// 지금 블록 보상 (BTC). 마지막으로 실제 일어난 반감기의 보상이라 다음 반감기가 오면 HALVINGS를 따라 바뀐다.
-const BLOCK_REWARD = HALVINGS.filter((h) => !h.estimated).at(-1)!.reward;
 const BLOCKS_PER_HOUR = 60 / TARGET_BLOCK_MINUTES;
 const HOURS_PER_YEAR = 24 * 365;
 const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불 규모(예시 상한)
@@ -330,7 +328,7 @@ export function attack51({ btcPrice, networkHashrate, attackHours, hardwareCostP
 
   // 같은 장비로 정직하게 채굴할 때의 연 매출. 과반이라 블록의 절반을 가져간다.
   // 수수료는 무시한다(보상의 몇 % 수준이라 결론을 바꾸지 않는다).
-  const honestRevenue = BLOCK_REWARD * BLOCKS_PER_HOUR * HOURS_PER_YEAR * 0.5 * btcPrice;
+  const honestRevenue = subsidyAtDate().subsidy * BLOCKS_PER_HOUR * HOURS_PER_YEAR * 0.5 * btcPrice;
   // 정직 채굴도 같은 장비를 1년 내내 돌리므로 전기비를 치른다. 장비값은 이 순현금흐름으로
   // 회수하고, 순현금흐름이 0 이하이면 회수할 길이 없다(Infinity).
   const honestPowerCost = powerKW * HOURS_PER_YEAR * electricity;

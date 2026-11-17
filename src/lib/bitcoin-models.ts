@@ -1,3 +1,7 @@
+import type { SeriesPoint } from './series';
+
+export type { SeriesPoint } from './series';
+
 const GENESIS_MS = new Date('2009-01-03').getTime();
 const MS_PER_DAY = 86_400_000;
 
@@ -38,36 +42,42 @@ export const TARGET_BLOCK_MINUTES = 10;
 export const BLOCKS_PER_DAY = (24 * 60) / TARGET_BLOCK_MINUTES; // 144
 export const TARGET_RETARGET_DAYS = (RETARGET_INTERVAL * TARGET_BLOCK_MINUTES) / (24 * 60); // 14
 
-// 반감기별 블록 보상 (일일 발행량 계산용). estimated는 아직 오지 않은 반감기의 추정 날짜다.
-export const HALVINGS = [
-  { date: '2009-01-03', reward: 50, estimated: false },
-  { date: '2012-11-28', reward: 25, estimated: false },
-  { date: '2016-07-09', reward: 12.5, estimated: false },
-  { date: '2020-05-11', reward: 6.25, estimated: false },
-  { date: '2024-04-20', reward: 3.125, estimated: false },
-  // 2026-08-18 블록 963,000에서 1,050,000까지 87,000블록을 10분 간격으로 셈한 추정. 실제 반감기 뒤 확정값으로 바꾼다.
-  { date: '2028-04-13', reward: 1.5625, estimated: true },
-] as const;
+/** 시대(반감기 횟수) 기준 블록 보조금 (BTC). 사토시 단위로 내림한다. */
+export function subsidyAtEra(era: number): number {
+  if (era < 0) return INITIAL_SUBSIDY_BTC;
+  const satoshi = 1e-8;
+  return Math.floor(INITIAL_SUBSIDY_BTC / satoshi / 2 ** era) * satoshi;
+}
 
-// 상수 날짜의 epoch-ms를 모듈 로드 시 한 번만 파싱 (getEra는 히스토리 포인트마다 호출된다)
+// estimated는 아직 오지 않은 반감기의 추정 날짜다. 보조금은 시대에서 파생한다.
+export const HALVINGS = [
+  { date: '2009-01-03', estimated: false },
+  { date: '2012-11-28', estimated: false },
+  { date: '2016-07-09', estimated: false },
+  { date: '2020-05-11', estimated: false },
+  { date: '2024-04-20', estimated: false },
+  // 2026-08-18 블록 963,000에서 1,050,000까지 87,000블록을 10분 간격으로 셈한 추정. 실제 반감기 뒤 확정값으로 바꾼다.
+  { date: '2028-04-13', estimated: true },
+].map((halving, era) => ({ ...halving, reward: subsidyAtEra(era) }));
+
+// 상수 날짜의 epoch-ms를 모듈 로드 시 한 번만 파싱한다.
 const HALVING_TIMES = HALVINGS.map((h) => new Date(h.date).getTime());
 
-function getEra(dateStr: string): (typeof HALVINGS)[number] {
-  const dateMs = new Date(dateStr).getTime();
-  let era: (typeof HALVINGS)[number] = HALVINGS[0];
-  for (let i = 0; i < HALVINGS.length; i++) {
-    if (dateMs >= HALVING_TIMES[i]) era = HALVINGS[i];
+/** UTC 날짜 기준 시대와 보조금. 추정 반감기도 표의 날짜부터 전환한다. */
+export function subsidyAtDate(date: string | Date = new Date()): { era: number; subsidy: number } {
+  const dateMs = new Date(date).getTime();
+  let era = 0;
+  for (let i = 1; i < HALVING_TIMES.length; i++) {
+    if (dateMs >= HALVING_TIMES[i]) era = i;
     else break;
   }
-  return era;
+  return { era, subsidy: subsidyAtEra(era) };
 }
 
 // 일일 신규 발행량 (BTC). 블록당 보상 × 하루 평균 블록 수
 export function dailyIssuanceBtc(dateStr: string): number {
-  return getEra(dateStr).reward * BLOCKS_PER_DAY;
+  return subsidyAtDate(dateStr).subsidy * BLOCKS_PER_DAY;
 }
-
-export type SeriesPoint = { time: string; value: number };
 
 // MVRV Z-Score = (시총 − 실현시총) / 시총의 표준편차 (실현시총 = 시총 / MVRV)
 // 표준편차는 확장 윈도우(시작~당일)로 계산해 미래 데이터 참조를 배제.

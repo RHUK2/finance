@@ -274,3 +274,29 @@ it('CoinMetrics의 다음 페이지 data가 비면 이미 받은 시계열도 �
   expect(result.zScore).toHaveLength(1);
   expect(Number.isFinite(result.zScore[0].value)).toBe(true);
 });
+
+it.each([
+  ['2024-04-19', 3, 6.25],
+  ['2024-04-20', 4, 3.125],
+  ['2028-04-12', 4, 3.125],
+  ['2028-04-13', 5, 1.5625],
+] as const)('%s에 로더·보안 예산·게임이론의 보조금이 일치한다', async (date, era, subsidy) => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date(date));
+  vi.resetModules();
+  const { CURRENT_ERA, subsidyAt } = await import('@/app/security-budget/models');
+  const { attack51 } = await import('@/app/bitcoin-game-theory/models');
+  // 실측 높이가 날짜 표와 달라도 보조금 전환은 공용 날짜 기준이다.
+  respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, 1049856);
+  expect(await loadMiningStats()).toMatchObject({
+    blockRewardBTC: subsidy,
+    nextRewardBTC: subsidy / 2,
+    remainingHalvingBlocks: 144,
+  });
+  expect(CURRENT_ERA).toBe(era);
+  expect(subsidyAt(CURRENT_ERA)).toBe(subsidy);
+  expect(
+    attack51({ btcPrice: 100000, networkHashrate: 1000, attackHours: 1, hardwareCostPerTH: 20, electricity: 0.025 })
+      .honestRevenue,
+  ).toBe(subsidy * 6 * 8760 * 0.5 * 100000);
+});

@@ -5,7 +5,13 @@
 // 때문이다(CLAUDE.md "설명 페이지의 모델 배치"). 반감기 날짜와 일일 발행량이 필요한
 // 차트 쪽 계산은 그쪽에 이미 있고, 여기서는 높이(블록 번호) 기준으로 본다.
 
-import { BLOCKS_PER_DAY, BLOCKS_PER_HALVING, HALVINGS, INITIAL_SUBSIDY_BTC } from '@/lib/bitcoin-models';
+import {
+  BLOCKS_PER_DAY,
+  BLOCKS_PER_HALVING,
+  HALVINGS,
+  subsidyAtDate,
+  subsidyAtEra as subsidyAt,
+} from '@/lib/bitcoin-models';
 import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 
 /** 하루 144블록 × 365일. 난이도 조정이 10분을 유지한다는 전제다. */
@@ -21,14 +27,7 @@ const HALVING_YEARS = BLOCKS_PER_HALVING / BLOCKS_PER_YEAR;
  */
 export const LAST_SUBSIDY_ERA = 32;
 
-const SATOSHI = 1e-8;
-
-/** 시대(반감기 횟수) 기준 블록 보조금 (BTC). 사토시 단위로 내림한다. */
-export function subsidyAt(era: number): number {
-  if (era < 0) return INITIAL_SUBSIDY_BTC;
-  const sats = Math.floor(INITIAL_SUBSIDY_BTC / SATOSHI / 2 ** era);
-  return sats * SATOSHI;
-}
+export { subsidyAt };
 
 /**
  * 그 시대가 시작하는 해 (근사).
@@ -41,8 +40,8 @@ export function subsidyAt(era: number): number {
  */
 const OBSERVED_START_YEARS = HALVINGS.filter((h) => !h.estimated).map((h) => Number(h.date.slice(0, 4)));
 
-/** 지금 시대. 마지막으로 실제 일어난 반감기 뒤의 시대라 다음 반감기가 오면 `HALVINGS`를 따라 바뀐다. */
-export const CURRENT_ERA = OBSERVED_START_YEARS.length - 1;
+/** 지금 시대. 공용 반감기 표의 UTC 날짜를 기준으로 전환한다. */
+export const CURRENT_ERA = subsidyAtDate().era;
 
 export function eraStartYear(era: number): number {
   if (era < OBSERVED_START_YEARS.length) return OBSERVED_START_YEARS[Math.max(0, era)];
@@ -87,7 +86,12 @@ export function blockRevenue({ era, btcPrice, feePerBlock }: RevenueInput) {
  * 수수료 0.02 BTC는 2026년 8월 무렵 블록 평균 수수료(mempool.space 1개월 평균 약 0.024, 6개월 약 0.022 BTC)를
  * 반올림한 값이다. 6개월 최대가 약 0.13~0.2 BTC라 화면 힌트의 "혼잡하면 열 배 가까이"가 여기서 나온다.
  */
-export const BASE = { era: CURRENT_ERA, btcPrice: BTC_PRICE_BASELINE.value, feePerBlock: 0.02 };
+export const BASE = {
+  // BTC_PRICE_BASELINE.asOf(2026년 8월)의 시대를 쓰며 현재 날짜를 따르지 않는다.
+  era: subsidyAtDate('2026-08-01').era,
+  btcPrice: BTC_PRICE_BASELINE.value,
+  feePerBlock: 0.02,
+};
 export const BASE_ANNUAL = blockRevenue(BASE).annualUsd;
 
 /**

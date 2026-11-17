@@ -5,12 +5,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard } from '@/components/indicator-card';
 import { LineSeries, useChart, type IChartApi, type ISeriesApi } from '@/hooks/use-chart';
-import { withLivePoint, type LivePoint } from '@/lib/series';
+import { withLivePoint, type LivePoint, type SeriesPoint } from '@/lib/series';
 import { cn, formatPct } from '@/lib/utils';
 
 export type MacroLine = {
   label?: string;
-  data: { time: string; value: number }[];
+  data: SeriesPoint[];
   color: string;
 };
 

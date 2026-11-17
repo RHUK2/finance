@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   BASE,
@@ -54,6 +54,25 @@ describe('시대 시작 연도', () => {
 });
 
 describe('보안 예산과 공격 비용', () => {
+  it.each([
+    ['2028-04-12T23:59:59.999Z', 4],
+    ['2028-04-13T00:00:00.000Z', 5],
+  ] as const)('%s에도 과거 시장 기준점의 연간 예산은 유지된다', async (date, currentEra) => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date(date));
+      vi.resetModules();
+      const models = await import('./models');
+
+      expect(models.CURRENT_ERA).toBe(currentEra);
+      expect(models.BASE.era).toBe(4);
+      expect(models.BASE_ANNUAL).toBe(12_397_590_000);
+    } finally {
+      vi.useRealTimers();
+      vi.resetModules();
+    }
+  });
+
   it('블록 수입을 달러·연간 예산으로 환산하고 수수료 몫을 구한다', () => {
     expect(blockRevenue({ era: 4, btcPrice: 100_000, feePerBlock: 0.125 })).toEqual({
       subsidy: 3.125,
