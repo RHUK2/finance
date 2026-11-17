@@ -15,7 +15,7 @@ import {
   type Time,
 } from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
-import { movingAverage } from '@/lib/bitcoin-models';
+import { piCycleCrossovers } from '@/lib/bitcoin-models';
 import { formatPct } from '@/lib/utils';
 
 type Props = {
@@ -33,28 +33,7 @@ function getPiCycleStatus(ratio: number): IndicatorStatus {
 }
 
 export function PiCycleChart({ data, resetRef, updatedLabel, error }: Props) {
-  const { sma111, sma350x2, crossovers } = useMemo(() => {
-    if (!data) return { sma111: [], sma350x2: [], crossovers: [] };
-    const sma111 = movingAverage(data.history, 111);
-    const sma350x2 = movingAverage(data.history, 350).map((p) => ({
-      time: p.time,
-      value: p.value * 2,
-    }));
-    // 111일 MA가 350일 MA×2를 상향 돌파한 지점이 사이클 천장 신호
-    const longMap = new Map(sma350x2.map((p) => [p.time, p.value]));
-    const crossovers: { time: string }[] = [];
-    // 첫 비교점은 앞 점이 없어 교차로 세지 않는다. 그 점이 이미 위에 있으면 돌파가 아니라 시작이 위인 것이다
-    // (지금 데이터는 2016-07-03에 아래서 시작해 해당하지 않는다).
-    let prevBelow: boolean | null = null;
-    for (const p of sma111) {
-      const long = longMap.get(p.time);
-      if (long == null) continue;
-      const below = p.value < long;
-      if (prevBelow === true && !below) crossovers.push({ time: p.time });
-      prevBelow = below;
-    }
-    return { sma111, sma350x2, crossovers };
-  }, [data]);
+  const { sma111, sma350x2, crossovers } = useMemo(() => piCycleCrossovers(data?.history ?? []), [data]);
 
   const { containerRef, resetView } = useChart(
     (chart) => {

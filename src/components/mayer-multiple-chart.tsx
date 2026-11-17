@@ -6,17 +6,17 @@ import { ChartContainer } from '@/components/chart-container';
 import { IndicatorCard, ScoreHeadline, type IndicatorStatus } from '@/components/indicator-card';
 import { CHART_SERIES, CHART_TONE, LineSeries, addZoneLines, useChart } from '@/hooks/use-chart';
 import type { BitcoinHistoricalData } from '@/hooks/use-crypto';
-import { movingAverage } from '@/lib/bitcoin-models';
+import { mayerMultiple, MAYER_THRESHOLDS } from '@/lib/bitcoin-models';
 
 const ZONE_LINES = [
-  { price: 2.4, label: '과열', color: CHART_TONE.bad },
-  { price: 1, label: '저평가', color: CHART_TONE.good },
+  { price: MAYER_THRESHOLDS.high, label: '과열', color: CHART_TONE.bad },
+  { price: MAYER_THRESHOLDS.low, label: '저평가', color: CHART_TONE.good },
 ];
 
 function getMayerStatus(value: number): IndicatorStatus {
-  if (value >= 2.4) return { label: '과열', variant: 'destructive' };
-  if (value >= 1.5) return { label: '고평가', variant: 'secondary' };
-  if (value >= 1) return { label: '적정', variant: 'outline' };
+  if (value >= MAYER_THRESHOLDS.high) return { label: '과열', variant: 'destructive' };
+  if (value >= MAYER_THRESHOLDS.elevated) return { label: '고평가', variant: 'secondary' };
+  if (value >= MAYER_THRESHOLDS.low) return { label: '적정', variant: 'outline' };
   return { label: '저평가', variant: 'secondary' };
 }
 
@@ -29,15 +29,7 @@ type Props = {
 };
 
 export function MayerMultipleChart({ data, resetRef, updatedLabel, error }: Props) {
-  const mayer = useMemo(() => {
-    if (!data) return [];
-    const sma = movingAverage(data.history, 200);
-    const smaMap = new Map(sma.map((p) => [p.time, p.value]));
-    return data.history.flatMap((p) => {
-      const ma = smaMap.get(p.time);
-      return ma ? [{ time: p.time, value: p.value / ma }] : [];
-    });
-  }, [data]);
+  const mayer = useMemo(() => mayerMultiple(data?.history ?? []), [data]);
 
   const { containerRef, resetView } = useChart(
     (chart) => {
@@ -64,7 +56,7 @@ export function MayerMultipleChart({ data, resetRef, updatedLabel, error }: Prop
       headline={current != null && <ScoreHeadline value={current} status={getMayerStatus(current)} />}
       height={280}
       chart={<ChartContainer containerRef={containerRef} onReset={resetView} />}
-      description='현재 가격 ÷ 200일 이동평균. 1을 기준선으로 읽습니다. 보통 1 미만은 장기 추세 아래의 저평가, 2.4 이상은 추세를 크게 벗어난 단기 과열로 읽힙니다.'
+      description={`현재 가격 ÷ 200일 이동평균. ${MAYER_THRESHOLDS.low}을 기준선으로 읽습니다. 보통 ${MAYER_THRESHOLDS.low} 미만은 장기 추세 아래의 저평가, ${MAYER_THRESHOLDS.high} 이상은 추세를 크게 벗어난 단기 과열로 읽힙니다.`}
     />
   );
 }
