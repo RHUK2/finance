@@ -159,6 +159,36 @@ test('경로 표기만 다르고 같은 기준을 가리키는 링크는 이미 
   assert.equal(readlinkSync(join(wt, '.scratch')), '../finance/.scratch');
 });
 
+test('부모 .claude가 기준 밖을 가리키면 같은 내용도 보존하고 --force일 때만 교체한다', (t) => {
+  const root = sandbox(t);
+  const base = repo(join(root, 'finance'), 'base');
+  const wt = worktree(base, join(root, 'finance-topic'));
+  const outside = join(root, 'finance-other', '.claude');
+  mkdirSync(join(base, '.claude'));
+  mkdirSync(outside, { recursive: true });
+  const source = join(base, '.claude', 'settings.local.json');
+  const target = join(outside, 'settings.local.json');
+  writeFileSync(source, '{"permissions":{}}');
+  writeFileSync(target, '{"permissions":{}}');
+  symlinkSync(outside, join(wt, '.claude'));
+
+  const run = link(wt);
+
+  assert.equal(run.status, 2, run.stderr);
+  assert.match(run.stdout, /\.claude\/settings\.local\.json\s+부모 디렉터리가 기준 밖/);
+  assert.equal(lstatSync(target).isSymbolicLink(), false);
+  assert.equal(readFileSync(target, 'utf8'), '{"permissions":{}}');
+  assert.equal(readlinkSync(join(wt, '.claude')), outside);
+
+  const forced = link(wt, {}, ['--force']);
+
+  assert.equal(forced.status, 0, forced.stderr);
+  assert.equal(readlinkSync(target), source);
+  assert.equal(lstatSync(source).isSymbolicLink(), false);
+  assert.equal(readFileSync(source, 'utf8'), '{"permissions":{}}');
+  assert.equal(readlinkSync(join(wt, '.claude')), outside);
+});
+
 for (const args of [[], ['--force']]) {
   test(`부모 .claude가 기준 링크여도 설정 원본을 보존한다 (${args[0] ?? '기본'})`, (t) => {
     const root = sandbox(t);

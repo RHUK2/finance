@@ -82,6 +82,22 @@ for f in "${ITEMS[@]}"; do
     continue
   fi
 
+  parent="$(dirname "$dst")"
+  if [ "$force" -eq 0 ] && [ -d "$parent" ]; then
+    physical_parent="$(cd "$parent" && pwd -P)"
+    if [ "$physical_parent" != "$parent" ]; then
+      case "$physical_parent" in
+        "$base"|"$base/"*) ;;
+        *)
+          printf '  %-30s 부모 디렉터리가 기준 밖을 가리키는 링크(%s). 건너뜀 (확인 뒤 --force)\n' "$f" "$physical_parent"
+          diverged+=("$f")
+          skipped=$((skipped + 1))
+          continue
+          ;;
+      esac
+    fi
+  fi
+
   if [ -L "$dst" ]; then
     # 다른 곳을 가리키는 링크다. 일부러 둔 개인 설정일 수도, 옮겨진 기준을 가리키는 낡은 링크일 수도
     # 있어 어느 쪽인지는 사람이 정한다. "이미 링크"로 넘기면 엉뚱한 실체를 쓰는 채로 성공처럼 끝난다.

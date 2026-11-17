@@ -40,7 +40,7 @@ for (const [signal, childSignal] of [
       setInterval(() => {}, 1000);
     `,
     );
-    const exited = once(launcher, 'exit');
+    const exited = once(launcher, 'close');
     let output = '';
     launcher.stdout.on('data', (chunk) => {
       output += chunk;
@@ -72,6 +72,6 @@ test('next 실행 실패는 원인을 출력하고 1로 종료한다', { timeout
     stderr += chunk;
   });
   launcher.stdout.resume();
-  assert.deepEqual(await once(launcher, 'exit'), [1, null]);
+  assert.deepEqual(await once(launcher, 'close'), [1, null]);
   assert.match(stderr, /개발 서버 실행 실패:.*ENOENT/);
 });
