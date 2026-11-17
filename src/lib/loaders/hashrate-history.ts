@@ -27,6 +27,8 @@ async function fetchHashrateHistory(): Promise<HashrateHistoryData> {
     })),
   );
 
+  if (history.length === 0) throw new Error('hashrate history: 빈 시계열');
+
   return { fetchedAt: new Date().toISOString(), history };
 }
 

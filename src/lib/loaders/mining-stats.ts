@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { BLOCKS_PER_HALVING, INITIAL_SUBSIDY_BTC, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
+import { BLOCKS_PER_HALVING, INITIAL_SUBSIDY_BTC } from '@/lib/bitcoin-models';
 import { cached } from '@/lib/cache';
 import { pctChange } from '@/lib/utils';
 
@@ -39,8 +39,23 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
   const blockHeight = (await blockHeightRes.json()) as number;
 
   const hashrates = hashrateData.hashrates as { avgHashrate: number }[];
-  const latestHashrate = hashrates[hashrates.length - 1]?.avgHashrate ?? 0;
-  const oldestHashrate = hashrates[0]?.avgHashrate ?? latestHashrate;
+  if (
+    !Array.isArray(hashrates) ||
+    hashrates.length === 0 ||
+    hashrates.some((h) => !Number.isFinite(h.avgHashrate) || h.avgHashrate <= 0) ||
+    !Number.isInteger(blockHeight) ||
+    blockHeight < 0 ||
+    !Number.isFinite(difficulty.difficultyChange) ||
+    !Number.isFinite(difficulty.remainingBlocks) ||
+    difficulty.remainingBlocks < 0 ||
+    !Number.isFinite(difficulty.timeAvg) ||
+    difficulty.timeAvg <= 0 ||
+    !Number.isFinite(difficulty.estimatedRetargetDate)
+  ) {
+    throw new Error('mining stats: 잘못된 채굴 수치');
+  }
+  const latestHashrate = hashrates[hashrates.length - 1].avgHashrate;
+  const oldestHashrate = hashrates[0].avgHashrate;
   const hashrateEHs = Number((latestHashrate / 1e18).toFixed(2));
   const hashrateChangePct = pctChange(latestHashrate, oldestHashrate);
 
@@ -48,7 +63,7 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
   const blockRewardBTC = INITIAL_SUBSIDY_BTC / Math.pow(2, epoch);
   const remainingHalvingBlocks = (epoch + 1) * BLOCKS_PER_HALVING - blockHeight;
 
-  const timeAvgMs = (difficulty.timeAvg as number) || TARGET_BLOCK_MINUTES * 60_000;
+  const timeAvgMs = difficulty.timeAvg as number;
   const estimatedHalvingDate = new Date(Date.now() + remainingHalvingBlocks * timeAvgMs).toISOString().slice(0, 10);
 
   const estimatedRetargetDate = new Date(difficulty.estimatedRetargetDate as number).toISOString().slice(0, 10);

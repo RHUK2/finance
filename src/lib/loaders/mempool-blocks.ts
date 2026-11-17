@@ -24,7 +24,19 @@ async function fetchMempoolBlocks(): Promise<MempoolBlocksData> {
   const res = await fetch('https://mempool.space/api/v1/fees/mempool-blocks', { cache: 'no-store' });
   if (!res.ok) throw new Error(`mempool blocks error: ${res.status}`);
 
-  const blocks = ((await res.json()) as MempoolBlock[]).map((b) => ({
+  const rows = (await res.json()) as MempoolBlock[];
+  if (
+    !Array.isArray(rows) ||
+    rows.some(
+      (b) =>
+        !Array.isArray(b.feeRange) ||
+        b.feeRange.length === 0 ||
+        [b.medianFee, b.nTx, b.blockVSize, ...b.feeRange].some((value) => !Number.isFinite(value) || value < 0),
+    )
+  ) {
+    throw new Error('mempool blocks: 잘못된 블록 수치');
+  }
+  const blocks = rows.map((b) => ({
     medianFee: Math.round(b.medianFee),
     feeMin: Math.round(b.feeRange[0]),
     feeMax: Math.round(b.feeRange[b.feeRange.length - 1]),
