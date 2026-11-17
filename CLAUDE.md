@@ -91,11 +91,12 @@ bash link-worktree-files.sh
 
 설명·시뮬레이션 페이지의 순수 계산 모델은 두 자리에 나뉘어 있다. 관례가 그룹별로 갈렸을 뿐 원칙에 따른 구분이 아니므로, 새 모델을 어디에 둘지는 아래 기준으로 정한다.
 
-| 위치                          | 쓰는 곳                                                                                |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| `src/app/<page>/models.ts`    | 그 페이지 전용 모델. 한 페이지에서만 쓰이면 여기                                       |
-| `src/lib/<domain>-models.ts`  | 도메인 계산 모델 (`bitcoin-models`·`inflation-models`·`mortgage-models`)               |
-| `src/lib/<domain>-concept.ts` | 비트코인 프로토콜 그룹 (tx·script·block·chain·bip·p2p·privacy·lightning·soft-fork 9개) |
+| 위치                           | 쓰는 곳                                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------------------- |
+| `src/app/<page>/models.ts`     | 그 페이지 전용 모델. 한 페이지에서만 쓰이면 여기                                          |
+| `src/lib/<domain>-models.ts`   | 도메인 계산 모델 (`bitcoin-models`·`inflation-models`·`mortgage-models`)                  |
+| `src/lib/simulation-models.ts` | 시뮬레이션 UI 공용 계산. 라운드 진행·종료 판정, 궤적 프레임 선택, 로그 슬라이더 눈금 변환 |
+| `src/lib/<domain>-concept.ts`  | 비트코인 프로토콜 그룹 (tx·script·block·chain·bip·p2p·privacy·lightning·soft-fork 9개)    |
 
 `*-concept.ts` 9개 중 실제로 여러 페이지가 공유하는 건 `tx-concept`(트랜잭션·P2P·라이트닝)와 `script-concept`(스크립트 검증·멀티시그) 둘뿐이고 나머지 일곱은 한 페이지 전용이다. 다만 `bip-concept`의 `illustrativeHex`·`illustrativeAddress`는 그럴듯한 가짜 생성기라 `src/lib/`의 다른 concept·주소 파일이 가져다 쓴다. 바꾸면 그 페이지들의 시연 해시·주소가 함께 바뀐다.
 
