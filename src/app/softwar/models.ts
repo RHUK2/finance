@@ -35,8 +35,9 @@ function typeForPower(power: number): OrganismType {
   return power < 0.33 ? '평화주의자' : power < 0.66 ? '약한 방어' : '강한 투사자';
 }
 
-// meanPower(0~1): 개체군 평균 투사력. power를 [0, 2·mean]에 고르게 퍼뜨린다.
-// seed로 재현 가능.
+// meanPower(0~1): 개체군 평균 투사력. 폭 min(mean, 1−mean) 안에서
+// 평균을 중심으로 대칭 쌍을 생성한다. 홀수 개체의 마지막 값은 평균으로 두어
+// 유한 개체군에서도 평균을 보존하며, seed로 재현 가능하다.
 //
 // 투사력 오름차순으로 정렬해 돌려준다. 포식 압력이 아래에서 위로 차오르므로
 // 도태 집합이 언제나 앞에서부터의 연속 구간이 되고, 격자를 이 순서로 그리면
@@ -44,8 +45,12 @@ function typeForPower(power: number): OrganismType {
 // 딜레마와 같은 읽는 법이다(docs/adr/0001 참조).
 export function buildOrganisms(n: number, meanPower: number, seed: number): Organism[] {
   const rng = mulberry32(seed);
-  return Array.from({ length: n }, () => {
-    const power = clamp01(rng() * 2 * meanPower);
+  const mean = clamp01(meanPower);
+  const width = Math.min(mean, 1 - mean);
+  let offset = 0;
+  return Array.from({ length: n }, (_, i) => {
+    if (i % 2 === 0) offset = i === n - 1 ? 0 : rng() * width;
+    const power = mean + (i % 2 === 0 ? -offset : offset);
     return { power, type: typeForPower(power) };
   }).sort((a, b) => a.power - b.power);
 }
