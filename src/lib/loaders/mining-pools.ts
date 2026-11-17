@@ -25,6 +25,16 @@ async function fetchMiningPools(): Promise<MiningPoolsData> {
   const total = json.blockCount as number;
   const all = json.pools as Pool[];
 
+  if (
+    !Number.isFinite(total) ||
+    total <= 0 ||
+    !Array.isArray(all) ||
+    all.length === 0 ||
+    all.some((pool) => !Number.isFinite(pool.blockCount) || pool.blockCount < 0 || pool.blockCount > total)
+  ) {
+    throw new Error('mining pools: 잘못된 블록 수');
+  }
+
   const share = (blocks: number) => Number(((blocks / total) * 100).toFixed(1));
   const top = all.slice(0, TOP).map((p) => ({ name: p.name, slug: p.slug, sharePct: share(p.blockCount) }));
   const restBlocks = all.slice(TOP).reduce((sum, p) => sum + p.blockCount, 0);

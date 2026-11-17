@@ -27,6 +27,14 @@ async function fetchMempoolStats(): Promise<MempoolStatsData> {
   const fees = await feesRes.json();
   const mempool = await mempoolRes.json();
 
+  if (
+    [mempool.count, mempool.vsize, fees.fastestFee, fees.halfHourFee, fees.hourFee].some(
+      (value) => !Number.isFinite(value) || value < 0,
+    )
+  ) {
+    throw new Error('mempool stats: 잘못된 수치');
+  }
+
   return {
     fetchedAt: new Date().toISOString(),
     pendingTxCount: mempool.count as number,

@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { cached } from '@/lib/cache';
+import { dedupeByTime } from '@/lib/series';
 
 export type BitcoinHistoricalData = {
   fetchedAt: string;
@@ -37,6 +38,16 @@ async function fetchBitcoinHistorical(): Promise<BitcoinHistoricalData> {
         // [timestamp_sec, low, high, open, close, volume], 내림차순 반환
         const candles: [number, number, number, number, number, number][] = await res.json();
 
+        // 상장 뒤 BTC-USD 거래 구간만 요청한다. 일부 청크라도 비면 장애로 보고 정상 캐시를 보존한다.
+        if (candles.length === 0) throw new Error('Coinbase BTC-USD: 빈 시계열 청크');
+        if (
+          candles.some(
+            ([tSec, , , , close]) =>
+              !Number.isFinite(new Date(tSec * 1000).getTime()) || !Number.isFinite(close) || close <= 0,
+          )
+        ) {
+          throw new Error('Coinbase BTC-USD: 잘못된 일봉');
+        }
         return candles.map(([tSec, , , , close]) => ({
           time: new Date(tSec * 1000).toISOString().slice(0, 10),
           value: close,
@@ -52,7 +63,7 @@ async function fetchBitcoinHistorical(): Promise<BitcoinHistoricalData> {
   // Coinbase는 내림차순이므로 날짜 오름차순으로 정렬
   history.sort((a, b) => a.time.localeCompare(b.time));
 
-  return { fetchedAt: new Date().toISOString(), history };
+  return { fetchedAt: new Date().toISOString(), history: dedupeByTime(history) };
 }
 
 export const loadBitcoinHistorical = () => cached('bitcoin-historical', fetchBitcoinHistorical);

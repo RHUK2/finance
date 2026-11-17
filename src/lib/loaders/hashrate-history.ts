@@ -20,12 +20,18 @@ async function fetchHashrateHistory(): Promise<HashrateHistoryData> {
     avgHashrate: number;
   }[];
 
+  if (hashrates.some((h) => !Number.isFinite(h.avgHashrate) || h.avgHashrate <= 0)) {
+    throw new Error('hashrate history: 잘못된 해시레이트');
+  }
+
   const history = dedupeByTime(
     hashrates.map((h) => ({
       time: new Date(h.timestamp * 1000).toISOString().slice(0, 10),
       value: Number((h.avgHashrate / 1e18).toFixed(2)),
     })),
   );
+
+  if (history.length === 0) throw new Error('hashrate history: 빈 시계열');
 
   return { fetchedAt: new Date().toISOString(), history };
 }
