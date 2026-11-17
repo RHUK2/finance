@@ -16,7 +16,7 @@ const fake = vi.hoisted(() => {
     values.set(key, { value: structuredClone(value), expires: opts?.ex ? Date.now() + opts.ex * 1000 : Infinity });
     return 'OK';
   });
-  const exists = vi.fn(async (key: string) => Number((await get(key)) !== null));
+  const exists = vi.fn(async (key: string) => Number(read(key) !== null));
   const evaluate = vi.fn(async (script: string, keys: string[], args: string[]) => {
     if (read(keys[0]) !== args[0]) return 0;
     if (script.includes("redis.call('set'")) return set(keys[1], JSON.parse(args[1]));
@@ -68,6 +68,52 @@ it.each([undefined, -1])('형태 버전 %s는 stale로도 반환하지 않고 �
   expect(await fake.exists('lock:market')).toBe(0);
 });
 
+it.each(['freshUntil', 'retryAfter'])('락 획득 전에 기록된 %s 유효 항목은 외부 호출 없이 반환한다', async (field) => {
+  await seed();
+  const previous = await fake.get('cache:market');
+  fake.get.mockImplementationOnce(async () => {
+    await seed({ data: 'new', [field]: Date.now() + 60_000 });
+    return previous;
+  });
+  const fetcher = vi.fn().mockRejectedValue(new Error('down'));
+  expect(await cached(key, fetcher)).toBe('new');
+  expect(fetcher).not.toHaveBeenCalled();
+  expect(await fake.get('cache:market')).toMatchObject({ data: 'new', [field]: Date.now() + 60_000 });
+  expect(await fake.exists('lock:market')).toBe(0);
+});
+
+it('갱신 실패 기록은 락 획득 뒤 다시 읽은 항목에 얹는다', async () => {
+  await seed();
+  const previous = await fake.get('cache:market');
+  const freshUntil = Date.now() - 1000;
+  fake.get.mockImplementationOnce(async () => {
+    await seed({ data: 'newer', freshUntil });
+    return previous;
+  });
+  expect(await cached(key, vi.fn().mockRejectedValue(new Error('down')))).toBe('newer');
+  expect(await fake.get('cache:market')).toEqual({
+    v: cacheShape(key),
+    freshUntil,
+    data: 'newer',
+    retryAfter: Date.now() + 60_000,
+  });
+  expect(await fake.exists('lock:market')).toBe(0);
+});
+
+it('락 획득 뒤 형태 버전이 달라져도 갱신 실패 시 처음 읽은 값을 반환하고 기록한다', async () => {
+  await seed();
+  const previous = await fake.get('cache:market');
+  fake.get.mockImplementationOnce(async () => {
+    await seed({ v: cacheShape(key) + 1, data: 'other-shape' });
+    return previous;
+  });
+  const fetcher = vi.fn().mockRejectedValue(new Error('down'));
+  await expect(cached(key, fetcher)).resolves.toBe('old');
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(await fake.get('cache:market')).toEqual({ ...(previous as object), retryAfter: Date.now() + 60_000 });
+  expect(await fake.exists('lock:market')).toBe(0);
+});
+
 it('실패 후 60초 동안 신선도·데이터를 유지하며 재시도를 억제하고 경계에서 회복한다', async () => {
   await seed();
   const before = await fake.get('cache:market');
@@ -101,6 +147,7 @@ it.each([false, true])('만료된 옛 보유자의 완료(실패=%s)는 새 값�
   expect(await pending).toBe(fail ? 'old' : 'late');
   expect(await fake.get('cache:market')).toEqual(latest);
   expect(await fake.get('lock:market')).toBe('next-owner');
+  expect(console.error).toHaveBeenCalledWith('[cache] market: 락 소유권이 없어 캐시 기록을 건너뛴다');
 });
 
 it.each([false, true])('대기자는 보유자의 완료(실패=%s)를 읽고 외부를 부르지 않는다', async (fail) => {
@@ -117,7 +164,8 @@ it.each([false, true])('대기자는 보유자의 완료(실패=%s)를 읽고 �
   await vi.advanceTimersByTimeAsync(300);
   expect(await waiting).toBe(fail ? 'old' : 'new');
   expect(fetcher).not.toHaveBeenCalled();
-  expect(fake.exists.mock.invocationCallOrder[0]).toBeLessThan(fake.get.mock.invocationCallOrder.at(-1)!);
+  const cacheReadIndex = fake.get.mock.calls.findLastIndex(([readKey]) => readKey === 'cache:market');
+  expect(fake.exists.mock.invocationCallOrder[0]).toBeLessThan(fake.get.mock.invocationCallOrder[cacheReadIndex]);
 });
 
 it.each([false, true])('대기 시간 초과는 stale 유무(%s)에 따라 반환하거나 실패한다', async (stale) => {

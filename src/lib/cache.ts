@@ -15,6 +15,7 @@ import { cacheMs, cacheShape, type EndpointKey } from './cache-config';
  * - 신선하면 캐시값 즉시 반환
  * - 만료/미스 → 락(SET NX)을 획득한 한 요청만 외부 API 호출 후 캐시 기록
  * - 락에 실패한 동시 요청은 갱신 완료까지 폴링 대기(스탬피드 차단)
+ * - 갱신이 실패하면 마지막 값을 반환하고 60초 동안 재시도를 억제한다.
  *
  * 캐시 항목에는 Redis 만료를 걸지 않는다. 갱신이 실패하면 옛 값을 계속 돌려주므로
  * "외부가 실패하면 500"은 캐시에 값이 없을 때만 맞다. 값이 있으면 마지막 성공 값이 나가고
@@ -36,8 +37,8 @@ type Entry<T> = { v?: number; freshUntil: number; retryAfter?: number; data: T }
 
 const LOCK_TTL = 30; // 락 보유 상한(초). 외부 호출이 더 길면 자동 만료.
 const WAIT_TIMEOUT = 9000; // 다른 요청의 갱신을 기다리는 상한(ms).
-const RETRY_DELAY = 60_000; // 갱신 실패 뒤 stale을 즉시 반환하는 기간(ms).
 const WAIT_INTERVAL = 300; // 폴링 간격(ms).
+const RETRY_DELAY = 60_000; // 갱신 실패 뒤 stale을 즉시 반환하는 기간(ms).
 
 // 락은 요청마다 다른 토큰으로 잡고, 토큰이 같을 때만 지운다. 외부 호출이 LOCK_TTL을 넘겨
 // 락이 만료된 뒤 다른 요청이 새로 잡았다면, 늦게 끝난 옛 보유자가 그 락을 지우면 안 된다.
@@ -83,7 +84,8 @@ export async function cached<T>(key: EndpointKey, fetcher: () => Promise<T>): Pr
   const reusable = (value: Entry<T>) => Date.now() < value.freshUntil || Date.now() < (value.retryAfter ?? 0);
   const write = async (token: string, value: Entry<T>) => {
     try {
-      await r.eval(WRITE_ENTRY, [lockKey, cacheKey], [token, JSON.stringify(value)]);
+      const result = await r.eval(WRITE_ENTRY, [lockKey, cacheKey], [token, JSON.stringify(value)]);
+      if (result === 0) console.error(`[cache] ${key}: 락 소유권이 없어 캐시 기록을 건너뛴다`);
     } catch (err) {
       // 기록 실패가 방금 받은 값이나 stale 반환을 막지는 않는다.
       console.error(`[cache] ${key}: 캐시 기록 실패(${describeError(err)})`);
@@ -94,15 +96,18 @@ export async function cached<T>(key: EndpointKey, fetcher: () => Promise<T>): Pr
 
   const refresh = async (token: string): Promise<T> => {
     try {
+      const latest = await read();
+      if (latest && reusable(latest)) return latest.data;
       let data: T;
       try {
         data = await fetcher();
       } catch (err) {
         // 갱신 실패 시 stale이라도 있으면 반환(외부 API 일시 장애 대비).
-        if (entry) {
+        const stale = latest ?? entry;
+        if (stale) {
           logStale(key, `갱신 실패(${describeError(err)})`);
-          await write(token, { ...entry, retryAfter: Date.now() + RETRY_DELAY });
-          return entry.data;
+          await write(token, { ...stale, retryAfter: Date.now() + RETRY_DELAY });
+          return stale.data;
         }
         throw err;
       }
