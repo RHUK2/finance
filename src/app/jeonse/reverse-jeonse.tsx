@@ -8,21 +8,16 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
+import { reverseJeonse } from './models';
+
 export function ReverseJeonse() {
   const [price, setPrice] = useState(6);
   const [ratio, setRatio] = useState(80);
   const [priceDrop, setPriceDrop] = useState(25);
   const [rentDrop, setRentDrop] = useState(20);
 
-  const deposit = (price * ratio) / 100; // 2년 전 계약한 보증금. 시세와 무관하게 전액 반환 대상
-  const nowPrice = price * (1 - priceDrop / 100);
-  const nowMarketDeposit = deposit * (1 - rentDrop / 100); // 지금 새 임차인에게 받을 수 있는 금액
-  const refundGap = Math.max(0, deposit - nowMarketDeposit); // 집주인이 현금으로 메워야 할 차액
-  // 계약 당시 보증금을 지금 집값으로 나눈 값이다. 새 임차인이 내는 보증금으로 재는 시장의
-  // 전세가율(아래 marketRatio)과는 분자가 달라 숫자가 크게 벌어지므로 이름을 갈라 둔다.
-  const depositRatio = nowPrice > 0 ? (deposit / nowPrice) * 100 : Infinity;
-  const marketRatio = nowPrice > 0 ? (nowMarketDeposit / nowPrice) * 100 : Infinity;
-  const underwater = Math.max(0, deposit - nowPrice); // 집을 팔아도 모자라는 금액
+  const { deposit, nowPrice, nowMarketDeposit, refundGap, depositRatio, marketRatio, underwater, atParity } =
+    reverseJeonse(price, ratio, priceDrop, rentDrop);
   const barMax = Math.max(price, deposit, 1);
 
   const banner =
@@ -117,7 +112,7 @@ export function ReverseJeonse() {
           sub={
             underwater > 0
               ? `깡통전세. 지금 시장의 전세가율은 ${formatPct(marketRatio)}다`
-              : deposit === nowPrice
+              : atParity
                 ? `집값과 같다. 집주인의 자기 자본이 0이다. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
                 : `집값 ${formatEok(nowPrice)} 대비. 지금 시장의 전세가율은 ${formatPct(marketRatio)}`
           }

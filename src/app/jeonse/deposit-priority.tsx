@@ -17,32 +17,24 @@ import {
 import { Panel } from '@/components/panel';
 import { formatEok } from '@/lib/utils';
 
+import { depositPriority } from './models';
+
 export function DepositPriority() {
   const [deposit, setDeposit] = useState(4);
   const [mortgage, setMortgage] = useState(2);
   const [salePrice, setSalePrice] = useState(5);
-  const [senior, setSenior] = useState(true); // 근저당보다 먼저 대항요건을 갖췄는가
+  const [senior, setSenior] = useState(true); // 대항력 효력과 확정일자를 근저당의 같은 쪽에 둔 가정
   const [moveIn, setMoveIn] = useState(true); // 전입신고 + 점유 = 대항력
   const [fixedDate, setFixedDate] = useState(true); // 확정일자 = 배당 참여 자격
 
-  // 대항력과 우선변제권은 모두 전입신고와 점유를 전제로 한다.
-  const hasOpposing = moveIn && senior;
-  const canClaim = moveIn && fixedDate;
-  const tenantFirst = canClaim && senior;
-
-  // 낙찰가를 순위대로 나눈다.
-  let remaining = salePrice;
-  const tenantPaidFirst = tenantFirst ? Math.min(deposit, remaining) : 0;
-  remaining -= tenantPaidFirst;
-  const bankPaid = Math.min(mortgage, remaining);
-  remaining -= bankPaid;
-  const tenantPaidLater = !tenantFirst && canClaim ? Math.min(deposit, remaining) : 0;
-
-  const distributed = tenantPaidFirst + tenantPaidLater;
-  // 대항력이 있으면 못 받은 잔액을 낙찰자가 떠안는다.
-  const assumed = hasOpposing ? Math.max(0, deposit - distributed) : 0;
-  const recovered = distributed + assumed;
-  const lost = Math.max(0, deposit - recovered);
+  const { hasOpposing, canClaim, tenantFirst, bankPaid, distributed, assumed, recovered, lost } = depositPriority(
+    deposit,
+    mortgage,
+    salePrice,
+    senior,
+    moveIn,
+    fixedDate,
+  );
   const barMax = Math.max(deposit, salePrice, 1);
 
   const banner =
@@ -101,7 +93,7 @@ export function DepositPriority() {
                 : '전입신고와 점유가 없으면 확정일자만으로는 순위가 서지 않는다.'}
             </p>
           </Field>
-          <Field label='근저당과의 선후'>
+          <Field label='대항력·확정일자와 근저당의 선후'>
             <SegmentedControl
               options={[
                 { value: true, label: '내가 먼저' },
@@ -113,7 +105,7 @@ export function DepositPriority() {
             />
             <p className='text-xs text-muted-foreground'>
               {moveIn
-                ? '같은 날이라도 하루 차이로 순위가 갈린다.'
+                ? '대항력 효력 발생과 확정일자 취득이 모두 근저당보다 먼저이거나 모두 나중이라고 가정한다. 둘 사이에 근저당이 설정된 경우는 다루지 않는다.'
                 : '겨룰 순위 자체가 없어 근저당과의 선후를 따질 일이 없다.'}
             </p>
           </Field>

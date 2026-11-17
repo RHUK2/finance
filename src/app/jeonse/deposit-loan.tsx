@@ -8,6 +8,8 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import { formatEok, formatMan, formatPct } from '@/lib/utils';
 
+import { depositLoan } from './models';
+
 // 금액 단위는 만원. 보증금만 억 단위 슬라이더로 받고 내부에서 만원으로 환산한다.
 
 export function DepositLoan() {
@@ -15,14 +17,8 @@ export function DepositLoan() {
   const [rate, setRate] = useState(3.5);
   const [monthlyRent, setMonthlyRent] = useState(120);
 
-  const deposit = depositEok * 10000;
-  const jeonseCost = (deposit * rate) / 100; // 보증금을 묶어 두며 포기하는 연 이자
-  const rentCost = monthlyRent * 12;
-  const conversionRate = deposit > 0 ? (rentCost / deposit) * 100 : 0;
-  const gap = rentCost - jeonseCost;
+  const { jeonseCost, rentCost, conversionRate, gap, tie } = depositLoan(depositEok, rate, monthlyRent);
   const barMax = Math.max(jeonseCost, rentCost, 1);
-  // 슬라이더 값의 곱이라 같은 금액도 부동소수 끝자리가 갈릴 수 있다. 만원의 1/1000 안쪽은 같다고 본다.
-  const tie = Math.abs(gap) < 1e-3;
 
   const banner = tie
     ? {
