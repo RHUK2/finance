@@ -6,6 +6,7 @@ const rtf = new Intl.RelativeTimeFormat('ko', { numeric: 'always' });
 
 /** epoch ms 기준 현재까지의 경과를 "방금 전" / "N분 전" / "N시간 전" / "N일 전"으로 포맷 */
 export function formatRelativeTime(timestampMs: number): string {
+  if (!Number.isFinite(timestampMs)) return '';
   const diffMin = Math.floor((Date.now() - timestampMs) / 60_000);
   if (diffMin < 1) return '방금 전';
   if (diffMin < 60) return rtf.format(-diffMin, 'minute');

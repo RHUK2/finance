@@ -27,6 +27,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCountUp } from '@/hooks/use-count-up';
+import { LOG_TICKS, logTickToValue, logValueToTick } from '@/lib/simulation-models';
 import { clamp, cn, formatUsd } from '@/lib/utils';
 
 // 인터랙티브 시뮬레이션·설명 페이지(게임이론·소프트워·변동성 등)가 공유하는 UI 프리미티브.
@@ -180,11 +181,6 @@ export function RoundControls({
   );
 }
 
-// 로그 스케일 슬라이더가 쓰는 손잡이 눈금 수. 값이 아니라 위치를 이 정수로 잡고
-// min~max 사이를 로그 등간격으로 매핑한다.
-
-const LOG_TICKS = 240;
-
 // 슬라이더 컨트롤 한 줄: 라벨 + 포맷된 값 + 슬라이더.
 //
 // scale='log'는 min~max가 여러 자릿수에 걸칠 때 쓴다. 선형 슬라이더는 범위가
@@ -223,9 +219,8 @@ export function ControlSlider({
 }) {
   const labelId = useId();
   const log = scale === 'log';
-  const ratio = log ? Math.log(max / min) : 0;
-  const toTick = (v: number) => Math.round((LOG_TICKS * Math.log(v / min)) / ratio);
-  const fromTick = (t: number) => min * Math.exp((ratio * t) / LOG_TICKS);
+  const toTick = (v: number) => logValueToTick(v, min, max);
+  const fromTick = (t: number) => logTickToValue(t, min, max);
 
   // 한 칸씩 옮기는 버튼. 좁은 화면에서는 끌기만으로 원하는 값을 맞출 수 없다. 360px 폭에서
   // 0~100이면 한 칸이 3.6px이고, 로그 스케일은 구간에 따라 그보다 촘촘하다.
