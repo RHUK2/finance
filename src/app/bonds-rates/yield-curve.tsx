@@ -32,11 +32,10 @@ export function YieldCurve() {
 
   const ys = curveYields(shape, shortRate);
   const spread = spread10y2y(ys);
-  // 부호를 셋으로 가른다. 금리가 0 아래로 내려가지 못해 역전 모양도 단기금리가 낮으면
-  // 두 만기가 모두 0에 눌려 스프레드가 0이 된다. 이때를 정상 순서로 읽으면 안 된다.
-  const flat = Math.abs(spread) < 1e-9;
-  const inverted = !flat && spread < 0;
-  const floored = flat && ys[I2] === 0 && ys[I10] === 0;
+  // 평탄 예시는 작은 양의 스프레드가 있다. 선택한 모양으로 해설하되 0% 바닥은 따로 가른다.
+  const floored = ys[I2] === 0 && ys[I10] === 0;
+  const flat = shape === 'flat' || floored;
+  const inverted = !floored && shape === 'inverted';
   const max = Math.max(...ys, 0.5);
 
   return (
@@ -85,9 +84,9 @@ export function YieldCurve() {
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='10년 − 2년'
-          value={`${flat ? '' : spread > 0 ? '+' : '−'}${Math.abs(spread).toFixed(2)}%p`}
+          value={`${spread === 0 ? '' : spread > 0 ? '+' : '−'}${Math.abs(spread).toFixed(2)}%p`}
           tone={flat ? undefined : inverted ? 'bad' : 'good'}
-          sub={flat ? '평탄' : inverted ? '역전 상태' : '정상 순서'}
+          sub={floored ? '0% 바닥' : flat ? '평탄' : inverted ? '역전 상태' : '정상 순서'}
         />
         <Metric label='2년물' value={formatPct(ys[I2], 2)} sub='정책금리 전망을 반영' />
         <Metric label='10년물' value={formatPct(ys[I10], 2)} sub='장기 성장·물가 전망을 반영' />
@@ -109,7 +108,7 @@ export function YieldCurve() {
           {floored
             ? '10년물과 2년물이 모두 0%다. 금리가 0 아래로 내려가지 못해 곡선이 바닥에 눌렸고, 여기서는 순서가 정상인지 역전인지를 읽을 수 없다.'
             : flat
-              ? '10년물과 2년물 금리가 같다. 오래 묶어도 더 받지 못하는 평탄한 곡선이라, 시장이 금리의 방향을 어느 쪽으로도 확신하지 않는다는 뜻이다.'
+              ? '10년물과 2년물 금리 차이가 작다. 오래 묶어도 거의 더 받지 못하는 평탄한 곡선이라, 시장이 금리의 방향을 어느 쪽으로도 확신하지 않는다는 뜻이다.'
               : inverted
                 ? '장기금리가 단기금리보다 낮다. 시장이 앞으로 금리가 내려갈 것으로 보고 있다는 뜻이고, 금리를 내려야 할 상황이 온다는 예상이기도 하다.'
                 : '오래 묶을수록 더 받는 정상 순서다. 시장이 당장의 급격한 금리 인하를 예상하지 않는다는 뜻이다.'}

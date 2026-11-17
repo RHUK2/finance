@@ -112,7 +112,15 @@ export function CrackSpread() {
       <Panel className='gap-3'>
         <span className='text-sm font-semibold'>같은 시장에서 세 가지 선택이 만드는 마진</span>
         {bars.map((b) => (
-          <CostBar key={b.label} {...b} max={worst} format={formatUsdPrice} />
+          <CostBar
+            key={b.label}
+            {...b}
+            label={`${b.label}${b.value < 0 ? ' (손실)' : ''}`}
+            value={Math.abs(b.value)}
+            className={b.value < 0 ? 'bg-bad-surface' : b.className}
+            max={worst}
+            format={() => formatUsdPrice(b.value)}
+          />
         ))}
       </Panel>
 
