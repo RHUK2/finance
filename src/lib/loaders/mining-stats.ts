@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { BLOCKS_PER_HALVING, subsidyAtDate, subsidyAtEra, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
+import { BLOCKS_PER_HALVING, subsidyAtEra, TARGET_BLOCK_MINUTES } from '@/lib/bitcoin-models';
 import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { pctChange } from '@/lib/utils';
@@ -45,7 +45,8 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
   const hashrateChangePct = pctChange(latestHashrate, oldestHashrate);
 
   const epoch = Math.floor(blockHeight / BLOCKS_PER_HALVING);
-  const { era, subsidy: blockRewardBTC } = subsidyAtDate();
+  // 보조금과 다음 반감기까지 남은 블록은 모두 실측 높이를 따른다.
+  const blockRewardBTC = subsidyAtEra(epoch);
   const remainingHalvingBlocks = (epoch + 1) * BLOCKS_PER_HALVING - blockHeight;
 
   const timeAvgMs =
@@ -66,7 +67,7 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
     estimatedRetargetDate,
     remainingHalvingBlocks,
     estimatedHalvingDate,
-    nextRewardBTC: subsidyAtEra(era + 1),
+    nextRewardBTC: subsidyAtEra(epoch + 1),
   };
 }
 

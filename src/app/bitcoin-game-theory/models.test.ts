@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 
@@ -59,6 +59,12 @@ describe('보수 행렬의 내시 균형', () => {
 // 티켓 29: 정직 채굴 회수 기간은 전기비를 뺀 순현금흐름으로 잰다.
 // 기본값은 docs/fact-check-log.md 「시간이 지나면 다시 봐야 하는 값」: $75,000, 910 EH/s, $0.025/kWh. 효율은 15 J/TH.
 describe('attack51 회수 기간', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-08-01T00:00:00.000Z'));
+  });
+  afterEach(() => vi.useRealTimers());
+
   const base = { btcPrice: 75_000, networkHashrate: 910, attackHours: 6, hardwareCostPerTH: 15, electricity: 0.025 };
 
   it('기준 시세는 $75,000이다', () => {

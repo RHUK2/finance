@@ -3,15 +3,10 @@
 //
 // 여기 있는 모델이 `bitcoin-models.ts`로 가지 않은 이유는 이 페이지 하나만 쓰기
 // 때문이다(CLAUDE.md "설명 페이지의 모델 배치"). 반감기 날짜와 일일 발행량이 필요한
-// 차트 쪽 계산은 그쪽에 이미 있고, 여기서는 높이(블록 번호) 기준으로 본다.
+// 차트 쪽 계산은 그쪽에 이미 있다. 시대별 발행량은 블록 수 기준이고, 지금 시대는
+// 공용 반감기 표의 UTC 날짜로 정한다.
 
-import {
-  BLOCKS_PER_DAY,
-  BLOCKS_PER_HALVING,
-  HALVINGS,
-  subsidyAtDate,
-  subsidyAtEra as subsidyAt,
-} from '@/lib/bitcoin-models';
+import { BLOCKS_PER_DAY, BLOCKS_PER_HALVING, HALVINGS, subsidyAtDate, subsidyAtEra } from '@/lib/bitcoin-models';
 import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 
 /** 하루 144블록 × 365일. 난이도 조정이 10분을 유지한다는 전제다. */
@@ -26,8 +21,6 @@ const HALVING_YEARS = BLOCKS_PER_HALVING / BLOCKS_PER_YEAR;
  * 마지막으로 보조금이 나오는 시대는 32번이고, 그 끝이 2140년 언저리다.
  */
 export const LAST_SUBSIDY_ERA = 32;
-
-export { subsidyAt };
 
 /**
  * 그 시대가 시작하는 해 (근사).
@@ -55,7 +48,7 @@ export function eraStartYear(era: number): number {
  */
 export function cumulativeSupply(era: number): number {
   let total = 0;
-  for (let i = 0; i < era; i++) total += subsidyAt(i) * BLOCKS_PER_HALVING;
+  for (let i = 0; i < era; i++) total += subsidyAtEra(i) * BLOCKS_PER_HALVING;
   return total;
 }
 
@@ -72,7 +65,7 @@ export type RevenueInput = {
 };
 
 export function blockRevenue({ era, btcPrice, feePerBlock }: RevenueInput) {
-  const subsidy = subsidyAt(era);
+  const subsidy = subsidyAtEra(era);
   const totalBtc = subsidy + feePerBlock;
   const perBlockUsd = totalBtc * btcPrice;
   const annualUsd = perBlockUsd * BLOCKS_PER_YEAR;
@@ -100,7 +93,7 @@ export const BASE_ANNUAL = blockRevenue(BASE).annualUsd;
  */
 export function requiredFee(targetAnnualUsd: number, era: number, btcPrice: number): number {
   const needPerBlockBtc = targetAnnualUsd / BLOCKS_PER_YEAR / btcPrice;
-  return Math.max(0, needPerBlockBtc - subsidyAt(era));
+  return Math.max(0, needPerBlockBtc - subsidyAtEra(era));
 }
 
 // ── 예산과 공격 비용 ──────────────────────────────────────────────────────

@@ -7,10 +7,10 @@ import { Coins, Hourglass } from 'lucide-react';
 import { ExplainCard, ControlSlider, Metric, SectionIntro, Sparkline, StackedBar } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 
-import { MAX_SUPPLY_BTC } from '@/lib/bitcoin-models';
+import { MAX_SUPPLY_BTC, subsidyAtEra } from '@/lib/bitcoin-models';
 import { formatPct } from '@/lib/utils';
 
-import { BLOCKS_PER_YEAR, CURRENT_ERA, cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA, subsidyAt } from './models';
+import { BLOCKS_PER_YEAR, CURRENT_ERA, cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA } from './models';
 
 const fmtBtc = (n: number) => (n >= 1 ? `${n.toFixed(3)} BTC` : `${Math.round(n * 1e8).toLocaleString('ko-KR')} sat`);
 const fmtSupply = (n: number) => `${Math.round(n).toLocaleString('ko-KR')} BTC`;
@@ -19,10 +19,10 @@ export function IssuanceSchedule() {
   const [era, setEra] = useState(CURRENT_ERA);
 
   const eras = useMemo(() => Array.from({ length: LAST_SUBSIDY_ERA + 2 }, (_, i) => i), []);
-  const subsidies = useMemo(() => eras.map((e) => subsidyAt(e)), [eras]);
+  const subsidies = useMemo(() => eras.map((e) => subsidyAtEra(e)), [eras]);
   const supplies = useMemo(() => eras.map((e) => cumulativeSupply(e)), [eras]);
 
-  const subsidy = subsidyAt(era);
+  const subsidy = subsidyAtEra(era);
   const issued = cumulativeSupply(era);
   const remaining = Math.max(0, MAX_SUPPLY_BTC - issued);
   const annual = subsidy * BLOCKS_PER_YEAR;

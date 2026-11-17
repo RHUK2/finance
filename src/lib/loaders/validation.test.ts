@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { subsidyAtEra } from '@/lib/bitcoin-models';
 import { fetchFredSeries } from '@/lib/fred';
 
 import { loadFearGreed } from './fear-greed';
@@ -280,23 +281,39 @@ it.each([
   ['2024-04-20', 4, 3.125],
   ['2028-04-12', 4, 3.125],
   ['2028-04-13', 5, 1.5625],
-] as const)('%s에 로더·보안 예산·게임이론의 보조금이 일치한다', async (date, era, subsidy) => {
+] as const)('%s에 보안 예산·게임이론의 보조금이 달력 기준으로 일치한다', async (date, era, subsidy) => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(date));
   vi.resetModules();
-  const { CURRENT_ERA, subsidyAt } = await import('@/app/security-budget/models');
+  const { CURRENT_ERA } = await import('@/app/security-budget/models');
   const { attack51 } = await import('@/app/bitcoin-game-theory/models');
-  // 실측 높이가 날짜 표와 달라도 보조금 전환은 공용 날짜 기준이다.
-  respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, 1049856);
-  expect(await loadMiningStats()).toMatchObject({
-    blockRewardBTC: subsidy,
-    nextRewardBTC: subsidy / 2,
-    remainingHalvingBlocks: 144,
-  });
   expect(CURRENT_ERA).toBe(era);
-  expect(subsidyAt(CURRENT_ERA)).toBe(subsidy);
+  expect(subsidyAtEra(CURRENT_ERA)).toBe(subsidy);
   expect(
     attack51({ btcPrice: 100000, networkHashrate: 1000, attackHours: 1, hardwareCostPerTH: 20, electricity: 0.025 })
       .honestRevenue,
   ).toBe(subsidy * 6 * 8760 * 0.5 * 100000);
 });
+
+// 추정일보다 실제 반감기가 빠르거나 늦어도 카드의 보조금·잔여 블록·예상일은 같은 높이를 따른다.
+it.each([
+  ['2028-04-06', 1_049_999, 3.125, 1.5625, 1, '2028-04-06'],
+  ['2028-04-06', 1_050_000, 1.5625, 0.78125, 210_000, '2032-04-03'],
+  ['2028-04-06', 1_050_001, 1.5625, 0.78125, 209_999, '2032-04-03'],
+  ['2028-04-20', 1_049_999, 3.125, 1.5625, 1, '2028-04-20'],
+  ['2028-04-20', 1_050_000, 1.5625, 0.78125, 210_000, '2032-04-17'],
+  ['2028-04-20', 1_050_001, 1.5625, 0.78125, 209_999, '2032-04-17'],
+] as const)(
+  '%s의 높이 %i에서 채굴 카드의 반감기 수치가 일치한다',
+  async (date, height, blockRewardBTC, nextRewardBTC, remainingHalvingBlocks, estimatedHalvingDate) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(date));
+    respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, height);
+    expect(await loadMiningStats()).toMatchObject({
+      blockRewardBTC,
+      nextRewardBTC,
+      remainingHalvingBlocks,
+      estimatedHalvingDate,
+    });
+  },
+);

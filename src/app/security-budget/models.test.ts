@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
+import { subsidyAtEra } from '@/lib/bitcoin-models';
+
+// 현재 시대는 모듈 초기화 때 정해지므로 import 전에 기준 날짜를 고정한다.
+vi.useFakeTimers();
+vi.setSystemTime(new Date('2026-08-01T00:00:00.000Z'));
+const {
   BASE,
   BASE_ANNUAL,
   attackCost,
@@ -11,23 +16,23 @@ import {
   cumulativeSupply,
   eraStartYear,
   LAST_SUBSIDY_ERA,
-  subsidyAt,
-} from './models';
+} = await import('./models');
+vi.useRealTimers();
 
 // 발행 스케줄은 프로토콜이 정한다. 사토시 정수 나눗셈이라 50 BTC = 5e9 sat을 33번 자르면 0이다.
 describe('보조금', () => {
   it('시대 4는 3.125 BTC', () => {
-    expect(subsidyAt(0)).toBe(50);
-    expect(subsidyAt(4)).toBe(3.125);
+    expect(subsidyAtEra(0)).toBe(50);
+    expect(subsidyAtEra(4)).toBe(3.125);
   });
 
   // 티켓 25: 마지막 1사토시는 시대 32, 0이 되는 것은 시대 33이다.
   it('시대 31·32·33은 2 sat·1 sat·0', () => {
     expect(LAST_SUBSIDY_ERA).toBe(32);
-    expect(Math.round(subsidyAt(31) * 1e8)).toBe(2);
-    expect(Math.round(subsidyAt(32) * 1e8)).toBe(1);
-    expect(subsidyAt(33)).toBe(0);
-    expect(subsidyAt(LAST_SUBSIDY_ERA + 1)).toBe(0);
+    expect(Math.round(subsidyAtEra(31) * 1e8)).toBe(2);
+    expect(Math.round(subsidyAtEra(32) * 1e8)).toBe(1);
+    expect(subsidyAtEra(33)).toBe(0);
+    expect(subsidyAtEra(LAST_SUBSIDY_ERA + 1)).toBe(0);
   });
 
   it('누적 공급은 20,999,999.9769 BTC에서 멈추고 2,100만을 넘지 않는다', () => {
@@ -81,7 +86,7 @@ describe('보안 예산과 공격 비용', () => {
       annualUsd: 17_082_000_000,
       feeShare: 0.125 / 3.25,
     });
-    expect(BASE_ANNUAL).toBe((subsidyAt(BASE.era) + BASE.feePerBlock) * BASE.btcPrice * 52_560);
+    expect(BASE_ANNUAL).toBe((subsidyAtEra(BASE.era) + BASE.feePerBlock) * BASE.btcPrice * 52_560);
   });
 
   it.each([CURRENT_ERA, CURRENT_ERA + 1, LAST_SUBSIDY_ERA + 1])(
