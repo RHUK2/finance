@@ -1,3 +1,5 @@
+import { inspect } from 'node:util';
+
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { assertNonEmpty, fetchJson } from './fetch-json';
@@ -42,7 +44,7 @@ it('멈춘 요청은 지정한 제한 시간에 중단하고 URL의 키를 노�
     ),
   );
   await expect(fetchJson('https://example.com?key=secret', 'test', { timeoutMs: 10 })).rejects.toThrow(
-    'test: 시간 초과',
+    /^test: 시간 초과$/,
   );
 });
 
@@ -65,3 +67,30 @@ it('시계열은 빈 배열과 배열 아닌 값을 거부한다', () => {
   expect(() => assertNonEmpty(null as unknown as number[], 'series')).toThrow('빈 시계열');
   expect(() => assertNonEmpty([0], 'series')).not.toThrow();
 });
+
+it.each([new TypeError('fetch failed'), new SyntaxError('Unexpected token in JSON')])(
+  '원인 종류와 URL 없는 메시지를 보존한다: %s',
+  async (cause) => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(cause));
+    const error = await fetchJson('https://example.com?key=secret', 'test').catch((error: unknown) => error);
+    expect(error).toMatchObject({ cause: { name: cause.name, message: cause.message } });
+    expect(inspect(error)).not.toContain('secret');
+    expect(inspect(error)).not.toContain('https://');
+  },
+);
+
+it.each(['https://example.com?key=secret', 'https://ecos.example/api/secret/json'])(
+  '원인 메시지·스택·중첩 cause의 URL을 노출하지 않는다: %s',
+  async (url) => {
+    const original = new TypeError(`Failed to parse URL from ${url}`, { cause: new Error(url) });
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(original));
+    const error = await fetchJson(url, 'test').catch((error: unknown) => error);
+    expect(error).toMatchObject({
+      message: 'test: 요청 또는 JSON 해석 실패',
+      cause: { name: 'TypeError', message: 'URL이 포함된 오류 메시지 생략' },
+    });
+    expect(inspect(error, { depth: null })).not.toContain(url);
+    expect(inspect(error, { depth: null })).not.toContain('secret');
+    expect(inspect(error, { depth: null })).not.toContain('https://');
+  },
+);

@@ -22,7 +22,7 @@ async function fetchFearGreed(): Promise<FearGreedData> {
     timestamp: string;
   }[] = json.data ?? [];
 
-  assertNonEmpty(rows, 'No fear & greed data');
+  assertNonEmpty(rows, 'Alternative.me');
 
   if (
     rows.some(
@@ -45,7 +45,7 @@ async function fetchFearGreed(): Promise<FearGreedData> {
       }))
       .sort((a, b) => a.time.localeCompare(b.time)),
   );
-  assertNonEmpty(points, 'No valid fear & greed data');
+  assertNonEmpty(points, 'Alternative.me');
   const history = points.map(({ time, value }) => ({ time, value }));
 
   return {

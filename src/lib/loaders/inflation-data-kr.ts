@@ -45,7 +45,7 @@ async function fetchSeries(key: string, stat: string, item: string): Promise<Mac
   // 행이 없으면 실패로 본다. 빈 값을 캐시에 넣으면 하루 동안 빈 차트가 신선한 값으로 남는다.
   assertNonEmpty(history, `ECOS ${stat}`);
 
-  if (history.some((point) => !Number.isFinite(point.value))) throw new Error('잘못된 시계열 수치');
+  if (history.some((point) => !Number.isFinite(point.value))) throw new Error(`ECOS ${stat}: 잘못된 시계열 수치`);
   return toMacroSeries(history);
 }
 

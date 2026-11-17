@@ -229,7 +229,7 @@ bash link-worktree-files.sh
 
 - 새 종목 추가: 로더의 `SYMBOLS`와 화면의 표 둘 다 고친다. 주식은 `src/lib/loaders/stocks.ts`의 `SYMBOLS` + `src/app/stocks/stocks-view.tsx`의 `STOCKS`(훅의 응답 타입은 로더의 `StocksData`에서 파생된다), 스트래티지 증권은 `src/lib/loaders/strategy.ts`. 심볼을 더하기 전에 야후에서 그 티커가 살아 있는지 확인한다. 하나가 죽으면 `fetchYahooSeries`의 `Promise.all`이 실패해 그 키가 갱신되지 않는다. 캐시에 값이 없으면 500, 있으면 마지막 성공 값이 계속 나가 갱신시각만 늘어난다(`src/lib/yahoo.ts`)
 - 종목 추가로 응답 키가 늘면 dev 서버를 띄우기 전에 `src/lib/cache-config.ts`에서 해당 로더 키의 `shape`를 올린다.
-- 새 API 엔드포인트 추가: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·`ttl`·`shape: 0` 추가 → `src/lib/loaders/<key>.ts`에 `import 'server-only'`, 응답 타입과 `load<Key>()`(안에서 `cached(key, ...)`) → `src/lib/loaders/index.ts`의 `LOADERS`에 등록(`satisfies`라 빠뜨리면 타입 오류) → 라우트는 `serveEndpoint` 한 줄 → 훅은 응답 타입을 `import type`으로 받아 `useEndpoint<T>(key)` 한 줄
+- 새 API 엔드포인트 추가: `src/lib/cache-config.ts`의 `ENDPOINTS`에 키·`ttl`·`shape: 0` 추가 → `src/lib/loaders/<key>.ts`에 `import 'server-only'`, 응답 타입과 `load<Key>()`(안에서 `cached(key, ...)`, 외부 JSON은 `src/lib/fetch-json.ts`의 `fetchJson`, 빈 시계열 검증은 `assertNonEmpty` 사용) → `src/lib/loaders/index.ts`의 `LOADERS`에 등록(`satisfies`라 빠뜨리면 타입 오류) → 라우트는 `serveEndpoint` 한 줄 → 훅은 응답 타입을 `import type`으로 받아 `useEndpoint<T>(key)` 한 줄
 - 새 차트 추가: `useChart` 훅 사용, `src/lib/bitcoin-models.ts`에 모델 함수 추가
 - UI 컴포넌트: shadcn(`pnpm dlx shadcn@latest add <component>`)으로 추가, `src/components/ui/`에 위치. BTC 브랜드 색은 `BTC_COLOR`(`src/lib/utils.ts`) 사용
 - 상자: 설명형 페이지의 맨 패널은 `Panel`(`src/components/panel.tsx`), 대시보드의 슬롯 카드는 `Card`다. 가르는 기준은 페이지 성격이 아니라 `CardHeader`·`CardContent`를 쓰는가다. `Panel`에 `p-4`를 다시 적지 않는다. 자기가 갖고 있다(ADR 0010)

@@ -33,6 +33,6 @@ export async function fetchFredSeries(
     .map((o) => ({ time: o.date, value: Number(o.value) }));
   assertNonEmpty(history, `FRED ${seriesId}`);
 
-  if (history.some((point) => !Number.isFinite(point.value))) throw new Error('잘못된 시계열 수치');
+  if (history.some((point) => !Number.isFinite(point.value))) throw new Error(`FRED ${seriesId}: 잘못된 시계열 수치`);
   return toMacroSeries(history);
 }

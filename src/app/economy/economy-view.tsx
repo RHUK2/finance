@@ -81,25 +81,25 @@ export function EconomyView() {
     if (!eco) return undefined;
     return {
       // 선 색은 카드를 가를 뿐 뜻이 없어 계열색에서 고른다(판정색을 쓰면 VIX가 나쁜 선으로 읽힌다).
-      usdkrw: [{ data: eco.usdkrw.history, color: CHART_SERIES[0] }],
-      dxy: [{ data: eco.dxy.history, color: CHART_SERIES[3] }],
-      kospi: [{ data: eco.kospi.history, color: CHART_SERIES[1] }],
-      nasdaq: [{ data: eco.nasdaq.history, color: CHART_SERIES[0] }],
-      vix: [{ data: eco.vix.history, color: CHART_SERIES[2] }],
+      usdkrw: [{ data: eco.usdkrw?.history ?? [], color: CHART_SERIES[0] }],
+      dxy: [{ data: eco.dxy?.history ?? [], color: CHART_SERIES[3] }],
+      kospi: [{ data: eco.kospi?.history ?? [], color: CHART_SERIES[1] }],
+      nasdaq: [{ data: eco.nasdaq?.history ?? [], color: CHART_SERIES[0] }],
+      vix: [{ data: eco.vix?.history ?? [], color: CHART_SERIES[2] }],
       // 헤드라인이 10Y라 10Y가 첫 선이다(MacroChart는 커서 값·구간 수익률을 첫 선에서 읽는다).
       // FRED 2Y는 10년치가 오므로 야후 10Y·30Y의 구간(2년)에 맞춰 잘라 x축을 맞춘다.
       treasury: [
-        { label: '10Y', data: eco.us10y.history, color: CHART_SERIES[3] },
+        { label: '10Y', data: eco.us10y?.history ?? [], color: CHART_SERIES[3] },
         ...(fred?.us2y
           ? [
               {
                 label: '2Y',
-                data: fred.us2y.history.filter((p) => p.time >= (eco.us10y.history[0]?.time ?? '')),
+                data: fred.us2y.history.filter((p) => p.time >= (eco.us10y?.history[0]?.time ?? '')),
                 color: CHART_SERIES[0],
               },
             ]
           : []),
-        { label: '30Y', data: eco.us30y.history, color: CHART_SERIES[1] },
+        { label: '30Y', data: eco.us30y?.history ?? [], color: CHART_SERIES[1] },
       ],
     };
   }, [eco, fred]);
@@ -131,9 +131,9 @@ export function EconomyView() {
           <div className='grid gap-3 xl:grid-cols-2'>
             <MacroChart
               title='달러/원 (USD/KRW)'
-              currentLabel={eco?.usdkrw.current != null ? formatKrwPrice(eco.usdkrw.current) : '-'}
+              currentLabel={eco?.usdkrw?.current != null ? formatKrwPrice(eco.usdkrw.current) : '-'}
               formatValue={(v) => formatKrwPrice(v)}
-              changePercent={eco?.usdkrw.changePercent ?? null}
+              changePercent={eco?.usdkrw?.changePercent ?? null}
               lines={chartLines?.usdkrw}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}
@@ -143,9 +143,9 @@ export function EconomyView() {
 
             <MacroChart
               title='달러인덱스'
-              currentLabel={eco?.dxy.current?.toFixed(2) ?? '-'}
+              currentLabel={eco?.dxy?.current?.toFixed(2) ?? '-'}
               formatValue={(v) => v.toFixed(2)}
-              changePercent={eco?.dxy.changePercent ?? null}
+              changePercent={eco?.dxy?.changePercent ?? null}
               lines={chartLines?.dxy}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}
@@ -156,14 +156,14 @@ export function EconomyView() {
             <MacroChart
               title='코스피'
               currentLabel={
-                eco?.kospi.current != null
+                eco?.kospi?.current != null
                   ? eco.kospi.current.toLocaleString('ko-KR', {
                       maximumFractionDigits: 2,
                     })
                   : '-'
               }
               formatValue={(v) => v.toLocaleString('ko-KR', { maximumFractionDigits: 2 })}
-              changePercent={eco?.kospi.changePercent ?? null}
+              changePercent={eco?.kospi?.changePercent ?? null}
               lines={chartLines?.kospi}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}
@@ -174,14 +174,14 @@ export function EconomyView() {
             <MacroChart
               title='나스닥'
               currentLabel={
-                eco?.nasdaq.current != null
+                eco?.nasdaq?.current != null
                   ? eco.nasdaq.current.toLocaleString('en-US', {
                       maximumFractionDigits: 2,
                     })
                   : '-'
               }
               formatValue={(v) => v.toLocaleString('en-US', { maximumFractionDigits: 2 })}
-              changePercent={eco?.nasdaq.changePercent ?? null}
+              changePercent={eco?.nasdaq?.changePercent ?? null}
               lines={chartLines?.nasdaq}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}
@@ -191,9 +191,9 @@ export function EconomyView() {
 
             <MacroChart
               title='VIX 변동성지수'
-              currentLabel={eco?.vix.current?.toFixed(2) ?? '-'}
+              currentLabel={eco?.vix?.current?.toFixed(2) ?? '-'}
               formatValue={(v) => v.toFixed(2)}
-              changePercent={eco?.vix.changePercent ?? null}
+              changePercent={eco?.vix?.changePercent ?? null}
               lines={chartLines?.vix}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}
@@ -218,9 +218,9 @@ export function EconomyView() {
 
             <MacroChart
               title='미국 국채금리'
-              currentLabel={eco?.us10y.current != null ? formatPct(eco.us10y.current, 2) : '-'}
+              currentLabel={eco?.us10y?.current != null ? formatPct(eco.us10y.current, 2) : '-'}
               formatValue={(v) => formatPct(v, 2)}
-              changePercent={eco?.us10y.changePercent ?? null}
+              changePercent={eco?.us10y?.changePercent ?? null}
               lines={chartLines?.treasury}
               updatedLabel={ecoRelTime ?? undefined}
               error={ecoFailed}

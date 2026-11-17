@@ -42,7 +42,7 @@ async function fetchMvrv(): Promise<MvrvData> {
     nextPageToken = (json.next_page_token as string) ?? null;
   } while (nextPageToken);
 
-  assertNonEmpty(rows, 'No MVRV data');
+  assertNonEmpty(rows, 'CoinMetrics');
 
   const merged = dedupeByTime(
     rows
@@ -57,7 +57,7 @@ async function fetchMvrv(): Promise<MvrvData> {
   // 화면(MVRV Z-Score 차트)은 zScore만 읽는다. MVRV 원시 시계열은 `/` HTML에 dehydrate돼
   // 실리므로 소비처 없이 내보내지 않는다.
   const zScore = mvrvZScore(merged).filter((p) => p.time >= DISPLAY_START);
-  assertNonEmpty(zScore, 'No MVRV Z-Score data');
+  assertNonEmpty(zScore, 'MVRV Z-Score');
 
   return {
     fetchedAt: new Date().toISOString(),
