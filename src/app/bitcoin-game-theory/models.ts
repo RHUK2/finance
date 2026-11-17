@@ -132,7 +132,7 @@ function cascadeStep(agents: CascadeAgent[], adopted: boolean[]) {
 
 // 라운드 수 안전장치. 두 캐스케이드 모두 유한 라운드에 수렴하지만, 파라미터를
 // 잘못 넣어 수렴하지 않을 때 무한 루프 대신 잘린 궤적을 돌려준다.
-const MAX_ROUNDS = 200;
+export const MAX_ROUNDS = 200;
 
 // 한 프레임 = 한 라운드의 화면 상태. justChanged는 그 라운드에 새로 넘어온 칸.
 export type CascadeFrame = { adopted: boolean[]; justChanged: boolean[]; p: number };
@@ -171,6 +171,18 @@ export type HodlState = {
   drawdown: number; // 시작가 대비 누적 낙폭 (0~1)
   newSellers: number;
   round: number;
+};
+
+// 화면과 회귀 테스트가 함께 사용하는 홀더 시뮬레이션 설정.
+export const HODL_CONFIG = {
+  n: 180,
+  seed: 777,
+  shock: 0.15,
+  // 슬라이더 전 구간 최저가(약 54.4)보다 낮은 고정 y축 하한.
+  priceFloor: 50,
+  minConviction: 0.2,
+  maxConviction: 0.9,
+  convictionStep: 0.01,
 };
 
 const START_PRICE = 100;
