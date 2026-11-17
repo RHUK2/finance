@@ -118,7 +118,7 @@ export function HedgeLedger() {
           : l.fillRate < 0.8
             ? `투기자가 부족해 ${mb(l.unfilled)}이 상대를 찾지 못했다. 그 물량의 위험은 산유국에 그대로 남아 실효 단가가 ${formatUsdPrice(l.producerEffective)}로 흔들린다.`
             : gain > 0.005
-              ? `만기 유가는 잠근 선물가 ${formatUsdPrice(l.effectiveFutures)}보다 낮은 ${formatUsdPrice(settle)}지만 산유국은 ${formatUsdPrice(l.producerEffective)}에 판 효과를 얻었다. 선물 상대방이 지급한 차액을 전체 생산량으로 나누면 배럴당 ${formatUsdPrice(gain)}의 이익이다.`
+              ? `만기 유가는 잠근 선물가 ${formatUsdPrice(l.effectiveFutures)}보다 낮은 ${formatUsdPrice(settle)}지만 산유국은 ${formatUsdPrice(l.producerEffective)}에 판 효과를 얻었다. 선물 상대방이 지급한 차액을 팔 물량 전체로 나누면 헤지를 안 했을 때보다 배럴당 ${formatUsdPrice(gain)}의 이익이다.`
               : gain < -0.005
                 ? `만기 유가가 잠근 선물가 ${formatUsdPrice(l.effectiveFutures)}보다 높은 ${formatUsdPrice(settle)}까지 갔지만 산유국은 ${formatUsdPrice(l.producerEffective)}밖에 받지 못했다. 헤지는 하락을 막는 대신 상승도 같이 포기하는 거래다.`
                 : `만기 유가가 잠근 선물가 ${formatUsdPrice(l.effectiveFutures)}와 같아 헤지를 했든 안 했든 산유국이 받는 값이 같다.`}

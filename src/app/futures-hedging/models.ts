@@ -106,6 +106,16 @@ export function crackResult(crude: number, gasoline: number, hedge: CrackHedge):
   };
 }
 
+/** 세 헤지 방식의 부호 있는 마진과 막대 길이를 같은 절댓값 축으로 구한다. */
+export function crackMarginBars(crude: number, gasoline: number) {
+  const hedges: CrackHedge[] = ['none', 'crude', 'both'];
+  const bars = hedges.map((hedge) => {
+    const margin = crackResult(crude, gasoline, hedge).margin;
+    return { margin, value: Math.abs(margin), loss: margin < 0 };
+  });
+  return { bars, max: Math.max(...bars.map((bar) => bar.value), 1) };
+}
+
 // ---------------------------------------------------------------------------
 // 강제청산 연쇄
 // ---------------------------------------------------------------------------
@@ -210,7 +220,7 @@ export type FundingResult = {
   perCharge: number; // 회당 요율
   annualized: number; // 연환산
   charges: number; // 보유 기간 동안의 과금 횟수
-  cumulative: number; // 누적 잠식률 (명목가 대비 단순 합)
+  cumulative: number; // 누적 펀딩비 비율 (명목가 대비 단순 합)
 };
 
 // 펀딩비는 회마다 포지션 명목가 × 요율로 정산된다(바이낸스 등). 명목가는 낸 펀딩비와

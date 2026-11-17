@@ -18,7 +18,7 @@ import {
 import { Panel } from '@/components/panel';
 import { formatPct } from '@/lib/utils';
 
-import { curveYields, I10, I2, spread10y2y, TENORS, type CurveShape } from './models';
+import { curveState, curveYields, I10, I2, spread10y2y, TENORS, type CurveShape } from './models';
 
 const SHAPE_LABELS: { value: CurveShape; label: string }[] = [
   { value: 'normal', label: '정상' },
@@ -32,10 +32,7 @@ export function YieldCurve() {
 
   const ys = curveYields(shape, shortRate);
   const spread = spread10y2y(ys);
-  // 평탄 예시는 작은 양의 스프레드가 있다. 선택한 모양으로 해설하되 0% 바닥은 따로 가른다.
-  const floored = ys[I2] === 0 && ys[I10] === 0;
-  const flat = shape === 'flat' || floored;
-  const inverted = !floored && shape === 'inverted';
+  const { floored, flat, inverted } = curveState(shape, ys);
   const max = Math.max(...ys, 0.5);
 
   return (

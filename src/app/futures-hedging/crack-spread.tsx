@@ -17,7 +17,7 @@ import {
 import { Panel } from '@/components/panel';
 import { formatUsdPrice } from '@/lib/utils';
 
-import { CRUDE_LOCK, type CrackHedge, GASOLINE_LOCK, crackResult } from './models';
+import { CRUDE_LOCK, type CrackHedge, GASOLINE_LOCK, crackMarginBars, crackResult } from './models';
 
 const HEDGE_OPTIONS: { value: CrackHedge; label: string }[] = [
   { value: 'none', label: '헤지 없음' },
@@ -33,28 +33,24 @@ export function CrackSpread() {
   const [hedge, setHedge] = useState<CrackHedge>('none');
 
   const r = crackResult(crude, gasoline, hedge);
-  // 세 막대가 한 축을 쓰도록 최대값은 막대에 넘기는 값 그대로에서 구한다.
+  const marginBars = crackMarginBars(crude, gasoline);
   const bars = [
     {
       label: '헤지 없음',
-      value: r.crackNow,
       className: 'bg-series-1',
       sub: `원유 ${formatUsdPrice(crude)}에 사서 휘발유 ${formatUsdPrice(gasoline)}에 판다. 두 가격이 다 움직인다`,
     },
     {
       label: '원유만 잠금',
-      value: gasoline - CRUDE_LOCK,
       className: 'bg-series-2',
       sub: `매입은 ${formatUsdPrice(CRUDE_LOCK)}에 고정. 휘발유가 빠지면 마진이 그대로 빠진다`,
     },
     {
       label: '양쪽 다 잠금',
-      value: r.locked,
       className: 'bg-series-3',
       sub: `${formatUsdPrice(CRUDE_LOCK)}에 사서 ${formatUsdPrice(GASOLINE_LOCK)}에 판다. 두 슬라이더를 어디로 밀어도 안 움직인다`,
     },
   ];
-  const worst = Math.max(...bars.map((b) => Math.abs(b.value)), 1);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -99,7 +95,7 @@ export function CrackSpread() {
           label='이 헤지 방식의 마진'
           value={formatUsdPrice(r.margin)}
           tone={r.margin > r.crackNow ? 'good' : r.margin < r.crackNow ? 'bad' : undefined}
-          sub={hedge === 'both' ? '두 가격과 무관하게 고정' : '아직 시장에 노출됨'}
+          sub={`${hedge === 'both' ? '두 가격과 무관하게 고정' : '아직 시장에 노출됨'}. 색은 헤지 없음 대비 개선·악화를 나타낸다`}
         />
         <Metric
           label='남아 있는 노출'
@@ -111,15 +107,18 @@ export function CrackSpread() {
 
       <Panel className='gap-3'>
         <span className='text-sm font-semibold'>같은 시장에서 세 가지 선택이 만드는 마진</span>
-        {bars.map((b) => (
+        <p className='text-xs text-muted-foreground'>
+          막대 길이는 마진의 절댓값이다. 빨간 막대는 마진이 0보다 작은 손실이다.
+        </p>
+        {bars.map((b, i) => (
           <CostBar
             key={b.label}
             {...b}
-            label={`${b.label}${b.value < 0 ? ' (손실)' : ''}`}
-            value={Math.abs(b.value)}
-            className={b.value < 0 ? 'bg-bad-surface' : b.className}
-            max={worst}
-            format={() => formatUsdPrice(b.value)}
+            label={`${b.label}${marginBars.bars[i].loss ? ' (손실)' : ''}`}
+            value={marginBars.bars[i].value}
+            className={marginBars.bars[i].loss ? 'bg-bad-surface' : b.className}
+            max={marginBars.max}
+            format={() => formatUsdPrice(marginBars.bars[i].margin)}
           />
         ))}
       </Panel>

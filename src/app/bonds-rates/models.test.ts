@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { bondPrice, curveYields, I10, I2, modifiedDuration, rateShock, spread10y2y, TENORS } from './models';
+import {
+  bondPrice,
+  curveState,
+  curveYields,
+  I10,
+  I2,
+  modifiedDuration,
+  rateShock,
+  spread10y2y,
+  TENORS,
+} from './models';
 
 // 티켓 28: 역전 곡선은 0에서 잘린다. 단기금리가 낮으면 스프레드가 0이 되어 역전도 정상도 아니다.
 describe('수익률 곡선', () => {
@@ -23,6 +33,34 @@ describe('수익률 곡선', () => {
     for (let s = 0; s <= 10; s += 0.25) {
       expect(spread10y2y(curveYields('normal', s))).toBeCloseTo(0.9, 9);
       expect(spread10y2y(curveYields('flat', s))).toBeCloseTo(0.1, 9);
+    }
+  });
+
+  it('평탄 예시는 양의 스프레드여도 평탄으로 표시한다', () => {
+    for (let rate = 0; rate <= 10; rate += 0.25) {
+      expect(curveState('flat', curveYields('flat', rate))).toEqual({ floored: false, flat: true, inverted: false });
+      expect(curveState('normal', curveYields('normal', rate))).toEqual({
+        floored: false,
+        flat: false,
+        inverted: false,
+      });
+    }
+  });
+
+  it('역전 곡선의 0% 바닥은 평탄으로, 바닥을 벗어나면 역전으로 표시한다', () => {
+    for (const rate of [0, 0.25]) {
+      expect(curveState('inverted', curveYields('inverted', rate))).toEqual({
+        floored: true,
+        flat: true,
+        inverted: false,
+      });
+    }
+    for (let rate = 0.5; rate <= 10; rate += 0.25) {
+      expect(curveState('inverted', curveYields('inverted', rate))).toEqual({
+        floored: false,
+        flat: false,
+        inverted: true,
+      });
     }
   });
 

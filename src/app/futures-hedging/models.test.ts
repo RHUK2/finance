@@ -8,6 +8,7 @@ import {
   ENTRY_PRICE,
   OPENING_SHOCK,
   crackResult,
+  crackMarginBars,
   type CrackHedge,
   fundingCost,
   FUTURES_PRICE,
@@ -99,9 +100,31 @@ describe('crackResult', () => {
   });
 });
 
+describe('crackMarginBars', () => {
+  it('음수 마진도 절댓값 길이로 보이고 손실 부호를 보존한다', () => {
+    const { bars, max } = crackMarginBars(120, 50);
+    expect(bars).toEqual([
+      { margin: -70, value: 70, loss: true },
+      { margin: -28, value: 28, loss: true },
+      { margin: 17, value: 17, loss: false },
+    ]);
+    expect(max).toBe(70);
+  });
+
+  it('가장 긴 막대는 세 방식 전체에서 정하고 마진 0의 길이는 0이다', () => {
+    expect(crackMarginBars(120, 150).max).toBe(72);
+    const { bars, max } = crackMarginBars(78, 78);
+    expect(bars.slice(0, 2)).toEqual([
+      { margin: 0, value: 0, loss: false },
+      { margin: 0, value: 0, loss: false },
+    ]);
+    expect(max).toBe(17);
+  });
+});
+
 // 펀딩비는 명목가 × 요율의 단순 합이다. 복리로 쌓으면 슬라이더 끝(롱 90%·90일)에서 명목가의 102%가 빠진다고 나왔다.
 describe('fundingCost', () => {
-  it('누적 잠식률은 회당 요율 × 횟수다', () => {
+  it('누적 펀딩비 비율은 회당 요율 × 횟수다', () => {
     const f = fundingCost(0.7, 30);
     expect(f.charges).toBe(90);
     expect(f.cumulative).toBeCloseTo(f.perCharge * 90, 12);
