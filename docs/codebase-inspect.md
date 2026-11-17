@@ -63,8 +63,7 @@
 
 부모 에이전트가 직접 확인할 교차 영역은 다음과 같다.
 
-- `cache-config.ts`의 `ENDPOINTS` 키, `src/app/api/<key>/` 디렉터리, `useEndpoint<T>(key)` 호출이 한 벌로 맞는지
-- 라우트의 응답 타입과 훅의 제네릭 타입이 같은 정의를 가리키는지(예: `StocksData`와 `stocks` 라우트)
+- `cache-config.ts`의 `ENDPOINTS` 키, `src/app/api/<key>/` 디렉터리, `useEndpoint(key)` 호출이 한 벌로 맞는지
 - 같은 모델·수치를 페이지와 `src/lib/`가 따로 갖고 있어 함께 고쳐야 하는지
 - `src/lib/nav.ts`의 페이지 목록과 `src/app/` 아래 실제 라우트, 사이드바 그룹과 페이지 부류(대시보드·설명형)가 맞는지
 - 화면 문구·코드 식별자·`CONTEXT.md` 사이의 용어 대응과 의미 차이
@@ -180,12 +179,12 @@
 
 `CLAUDE.md`「데이터 흐름」과 「환경변수」가 정본이다.
 
-- 키 대응: `ENDPOINTS` 키 = `/api/<key>` 경로 = `useEndpoint<T>(key)` 인자. 셋 중 하나만 있는 것을 찾는다.
+- 키 대응: `ENDPOINTS` 키 = `/api/<key>` 경로 = `useEndpoint(key)` 인자. 셋 중 하나만 있는 것을 찾는다.
 - 신선도: 라우트가 TTL·`staleTime`·`refetchInterval`을 `cache-config.ts` 밖에서 따로 정하는 곳이 있는지 본다.
 - 캐시 경유: 모든 라우트가 `cached(key, fetcher)`를 거치는지, 라우트의 캐시 키가 `ENDPOINTS` 키와 같은지 본다.
 - 키 부재 분기: `FRED_API_KEY`·`ECOS_API_KEY`를 읽는 라우트가 모두 키가 없을 때 500이 아니라 `available: false`를 돌려주고, 화면이 그 분기를 그리는지 확인한다.
 - 실패 전파: 심볼 하나가 죽으면 라우트 전체가 실패하는 `Promise.all` 경로(`src/lib/yahoo.ts`·`src/lib/fred.ts`)와 라우트의 `SYMBOLS`·화면 표가 한 벌인지 확인한다. 야후 티커가 살아 있는지는 네트워크 확인이라 외부 확인 후보로 둔다.
-- 응답 모양: 라우트가 돌려주는 타입과 훅의 제네릭이 같은 정의인지, 캐시에 남은 옛 응답 형태가 새 코드를 깨뜨릴 수 있는 변경이 있었는지(캐시 키에 환경·버전 구분이 없다) 본다.
+- 응답 모양: 훅의 응답 타입은 `LOADERS`의 해당 키 로더 반환 타입에서 파생된다. 캐시에 남은 옛 응답 형태가 새 코드를 깨뜨릴 수 있는 변경이 있었는지(캐시 키에 환경·버전 구분이 없다) 본다.
 - 스탬피드 차단: `src/lib/cache.ts`의 락 획득·해제·타임아웃 경로에서 fetcher 실패 시 락이 남는지 본다.
 
 화면이 틀리거나 라우트가 실패하면 P1, `CLAUDE.md`의 분기·대응 규약을 어기면 P2, 나머지는 P3다. 이번 단계에서 외부 API를 호출하지 않는다.

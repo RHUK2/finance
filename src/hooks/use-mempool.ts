@@ -18,9 +18,9 @@ export type {
   RecentBlocksData,
 };
 
-export const useMempoolStats = () => useEndpoint<MempoolStatsData>('mempool-stats');
-export const useMiningStats = () => useEndpoint<MiningStatsData>('mining-stats');
-export const useMiningPools = () => useEndpoint<MiningPoolsData>('mining-pools');
-export const useRecentBlocks = () => useEndpoint<RecentBlocksData>('recent-blocks');
-export const useHashrateHistory = () => useEndpoint<HashrateHistoryData>('hashrate-history');
-export const useMempoolBlocks = () => useEndpoint<MempoolBlocksData>('mempool-blocks');
+export const useMempoolStats = () => useEndpoint('mempool-stats');
+export const useMiningStats = () => useEndpoint('mining-stats');
+export const useMiningPools = () => useEndpoint('mining-pools');
+export const useRecentBlocks = () => useEndpoint('recent-blocks');
+export const useHashrateHistory = () => useEndpoint('hashrate-history');
+export const useMempoolBlocks = () => useEndpoint('mempool-blocks');

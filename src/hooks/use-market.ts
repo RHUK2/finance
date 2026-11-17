@@ -7,4 +7,4 @@ import type { MarketData, QuoteKey } from '@/lib/loaders/market';
 export type { MarketData, QuoteKey };
 
 /** 일봉 히스토리의 끝점을 바꿀 실시간 시세(300초). 시계열은 `use-stocks`·`use-crypto`에서 받고 이 값을 얹는다. */
-export const useMarket = () => useEndpoint<MarketData>('market');
+export const useMarket = () => useEndpoint('market');

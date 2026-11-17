@@ -8,5 +8,5 @@ import type { FredData } from '@/lib/loaders/fred';
 // `import type`이라 서버 코드는 따라오지 않는다.
 export type { EconomyData, FredData };
 
-export const useEconomy = () => useEndpoint<EconomyData>('economy');
-export const useFred = () => useEndpoint<FredData>('fred');
+export const useEconomy = () => useEndpoint('economy');
+export const useFred = () => useEndpoint('fred');
