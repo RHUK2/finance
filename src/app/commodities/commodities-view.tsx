@@ -35,12 +35,12 @@ export function CommoditiesView() {
     if (!data) return undefined;
     return {
       // 선 색은 카드·선을 가를 뿐 뜻이 없어 계열색에서 고른다.
-      gold: [{ data: data.gold.history, color: CHART_SERIES[0] }],
+      gold: [{ data: data.gold?.history ?? [], color: CHART_SERIES[0] }],
       oil: [
-        { label: 'WTI', data: data.wti.history, color: CHART_SERIES[3] },
-        { label: '브렌트', data: data.brent.history, color: CHART_SERIES[2] },
+        { label: 'WTI', data: data.wti?.history ?? [], color: CHART_SERIES[3] },
+        { label: '브렌트', data: data.brent?.history ?? [], color: CHART_SERIES[2] },
       ],
-      corn: [{ data: data.corn.history, color: CHART_SERIES[1] }],
+      corn: [{ data: data.corn?.history ?? [], color: CHART_SERIES[1] }],
     };
   }, [data]);
 
@@ -57,9 +57,9 @@ export function CommoditiesView() {
           </div>
           <MacroChart
             title='금 (Gold)'
-            currentLabel={data?.gold.current != null ? formatUsdPrice(data.gold.current) : '-'}
+            currentLabel={data?.gold?.current != null ? formatUsdPrice(data.gold.current) : '-'}
             formatValue={(v) => formatUsdPrice(v)}
-            changePercent={data?.gold.changePercent ?? null}
+            changePercent={data?.gold?.changePercent ?? null}
             lines={chartLines?.gold}
             updatedLabel={relTime ?? undefined}
             error={failed}
@@ -68,9 +68,9 @@ export function CommoditiesView() {
           />
           <MacroChart
             title='원유'
-            currentLabel={data?.wti.current != null ? formatUsdPrice(data.wti.current) : '-'}
+            currentLabel={data?.wti?.current != null ? formatUsdPrice(data.wti.current) : '-'}
             formatValue={(v) => formatUsdPrice(v)}
-            changePercent={data?.wti.changePercent ?? null}
+            changePercent={data?.wti?.changePercent ?? null}
             lines={chartLines?.oil}
             updatedLabel={relTime ?? undefined}
             error={failed}
@@ -79,9 +79,9 @@ export function CommoditiesView() {
           />
           <MacroChart
             title='옥수수 (Corn)'
-            currentLabel={data?.corn.current != null ? formatUsdPrice(data.corn.current) : '-'}
+            currentLabel={data?.corn?.current != null ? formatUsdPrice(data.corn.current) : '-'}
             formatValue={(v) => formatUsdPrice(v)}
-            changePercent={data?.corn.changePercent ?? null}
+            changePercent={data?.corn?.changePercent ?? null}
             lines={chartLines?.corn}
             updatedLabel={relTime ?? undefined}
             error={failed}

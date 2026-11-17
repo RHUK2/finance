@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { mvrvZScore } from '@/lib/bitcoin-models';
+import { assertNonEmpty, fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { dedupeByTime } from '@/lib/series';
 
@@ -31,17 +32,17 @@ async function fetchMvrv(): Promise<MvrvData> {
     });
     if (nextPageToken) params.set('next_page_token', nextPageToken);
 
-    const res = await fetch(`https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?${params}`, {
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error(`CoinMetrics error: ${res.status}`);
+    const json = await fetchJson<{ data: Row[]; next_page_token?: string }>(
+      `https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?${params}`,
+      `CoinMetrics`,
+    );
 
-    const json = await res.json();
+    assertNonEmpty(json.data, 'CoinMetrics');
     rows.push(...((json.data as Row[]) ?? []));
     nextPageToken = (json.next_page_token as string) ?? null;
   } while (nextPageToken);
 
-  if (rows.length === 0) throw new Error('No MVRV data');
+  assertNonEmpty(rows, 'CoinMetrics');
 
   const merged = dedupeByTime(
     rows
@@ -56,7 +57,7 @@ async function fetchMvrv(): Promise<MvrvData> {
   // 화면(MVRV Z-Score 차트)은 zScore만 읽는다. MVRV 원시 시계열은 `/` HTML에 dehydrate돼
   // 실리므로 소비처 없이 내보내지 않는다.
   const zScore = mvrvZScore(merged).filter((p) => p.time >= DISPLAY_START);
-  if (zScore.length === 0) throw new Error('No MVRV Z-Score data');
+  assertNonEmpty(zScore, 'MVRV Z-Score');
 
   return {
     fetchedAt: new Date().toISOString(),

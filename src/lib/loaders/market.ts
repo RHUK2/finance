@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import type { LivePoint } from '@/lib/series';
 import { barDate, yf } from '@/lib/yahoo';
@@ -27,9 +28,7 @@ export type MarketData = {
 };
 
 async function fetchBtc(): Promise<Partial<Record<QuoteKey, LivePoint>>> {
-  const res = await fetch(COINBASE_TICKER, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`Coinbase ticker: ${res.status}`);
-  const { price, time } = (await res.json()) as { price: string; time: string };
+  const { price, time } = await fetchJson<{ price: string; time: string }>(COINBASE_TICKER, `Coinbase ticker`);
   const value = Number(price);
   if (!Number.isFinite(value)) throw new Error('Coinbase ticker: 가격이 숫자가 아니다');
   return { btc: { time: time.slice(0, 10), value } };

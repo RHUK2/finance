@@ -39,7 +39,7 @@ it.each([true, false])('빈 응답 또는 실패한 청크(ok=%s)를 캐시할 �
   vi.useFakeTimers();
   vi.setSystemTime(new Date('2015-07-22'));
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok, status: 503, json: async () => [] }));
-  await expect(loadBitcoinHistorical()).rejects.toThrow(ok ? '빈 시계열' : '503');
+  await expect(loadBitcoinHistorical()).rejects.toThrow(ok ? '빈 응답' : '503');
 });
 
 it.each([0, 1])('청크 %s만 비어도 전체 갱신을 실패시킨다', async (emptyIndex) => {
@@ -53,7 +53,7 @@ it.each([0, 1])('청크 %s만 비어도 전체 갱신을 실패시킨다', async
       json: async () => (index++ === emptyIndex ? [] : [[1437350400, 1, 9, 3, 5, 99]]),
     })),
   );
-  await expect(loadBitcoinHistorical()).rejects.toThrow('빈 시계열 청크');
+  await expect(loadBitcoinHistorical()).rejects.toThrow('빈 응답');
 });
 
 it('청크 사이 중복 날짜는 한 번만 반환한다', async () => {

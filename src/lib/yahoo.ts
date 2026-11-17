@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { assertNonEmpty } from '@/lib/fetch-json';
+
 import YahooFinance from 'yahoo-finance2';
 
 import { toMacroSeries, type MacroSeries } from './series';
@@ -79,7 +81,7 @@ export async function fetchYahooSeries<K extends string>(
             value: Number(((q.close as number) * scale).toFixed(digits)),
           })),
       );
-      if (history.length === 0) throw new Error(`Yahoo ${symbol}: 빈 시계열`);
+      assertNonEmpty(history, `Yahoo ${symbol}`);
       return [key, toMacroSeries(history)] as const;
     }),
   );

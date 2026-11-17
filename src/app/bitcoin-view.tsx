@@ -83,8 +83,8 @@ export function BitcoinView() {
     () => (historical ? withLive(toMacroSeries(historical.history), btcLive) : undefined),
     [historical, btcLive],
   );
-  const mstr = useMemo(() => (strategy ? withLive(strategy.mstr, mstrLive) : undefined), [strategy, mstrLive]);
-  const strc = useMemo(() => (strategy ? withLive(strategy.strc, strcLive) : undefined), [strategy, strcLive]);
+  const mstr = useMemo(() => (strategy?.mstr ? withLive(strategy.mstr, mstrLive) : undefined), [strategy, mstrLive]);
+  const strc = useMemo(() => (strategy?.strc ? withLive(strategy.strc, strcLive) : undefined), [strategy, strcLive]);
 
   // lines 배열의 참조를 고정해 useChart가 리렌더마다 차트를 재생성하지 않게 한다
   // (useRelativeTime이 매분 리렌더를 일으키므로 인라인 배열이면 줌 상태까지 초기화된다).
@@ -93,11 +93,11 @@ export function BitcoinView() {
     [historical],
   );
   const mstrLines = useMemo(
-    () => (strategy ? [{ data: strategy.mstr.history, color: MSTR_COLOR }] : undefined),
+    () => (strategy?.mstr ? [{ data: strategy.mstr.history, color: MSTR_COLOR }] : undefined),
     [strategy],
   );
   const strcLines = useMemo(
-    () => (strategy ? [{ data: strategy.strc.history, color: STRC_COLOR }] : undefined),
+    () => (strategy?.strc ? [{ data: strategy.strc.history, color: STRC_COLOR }] : undefined),
     [strategy],
   );
 

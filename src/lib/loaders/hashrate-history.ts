@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { assertNonEmpty, fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { dedupeByTime } from '@/lib/series';
 
@@ -9,17 +10,16 @@ export type HashrateHistoryData = {
 };
 
 async function fetchHashrateHistory(): Promise<HashrateHistoryData> {
-  const res = await fetch('https://mempool.space/api/v1/mining/hashrate/1y', {
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error(`hashrate history error: ${res.status}`);
-
-  const json = await res.json();
+  const json = await fetchJson<{ hashrates: { timestamp: number; avgHashrate: number }[] }>(
+    'https://mempool.space/api/v1/mining/hashrate/1y',
+    `hashrate history`,
+  );
   const hashrates = json.hashrates as {
     timestamp: number;
     avgHashrate: number;
   }[];
 
+  assertNonEmpty(hashrates, 'hashrate history');
   if (hashrates.some((h) => !Number.isFinite(h.avgHashrate) || h.avgHashrate <= 0)) {
     throw new Error('hashrate history: 잘못된 해시레이트');
   }
@@ -31,7 +31,7 @@ async function fetchHashrateHistory(): Promise<HashrateHistoryData> {
     })),
   );
 
-  if (history.length === 0) throw new Error('hashrate history: 빈 시계열');
+  assertNonEmpty(history, 'hashrate history');
 
   return { fetchedAt: new Date().toISOString(), history };
 }

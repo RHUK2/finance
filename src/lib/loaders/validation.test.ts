@@ -1,16 +1,22 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { fetchFredSeries } from '@/lib/fred';
+
 import { loadFearGreed } from './fear-greed';
 import { loadHashrateHistory } from './hashrate-history';
+import { loadInflationDataKr } from './inflation-data-kr';
 import { loadMempoolBlocks } from './mempool-blocks';
 import { loadMempoolStats } from './mempool-stats';
 import { loadMiningPools } from './mining-pools';
 import { loadMiningStats } from './mining-stats';
+import { loadMvrv } from './mvrv';
+import { loadRecentBlocks } from './recent-blocks';
 
 vi.mock('@/lib/cache', () => ({ cached: (_key: string, fetcher: () => Promise<unknown>) => fetcher() }));
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
 });
 const respond = (...values: unknown[]) => {
   let index = 0;
@@ -145,8 +151,13 @@ it.each(['medianFee', 'nTx', 'blockVSize'])('멤풀 블록 필드 %s의 누락·
   }
 });
 
-it('배열이 아닌 멤풀 블록 응답을 거부한다', async () => {
+it('빈 객체인 멤풀 블록 응답은 fetchJson이 도메인 검증 전에 거부한다', async () => {
   respond({});
+  await expect(loadMempoolBlocks()).rejects.toThrow('mempool blocks: 빈 응답');
+});
+
+it('비어 있지 않아도 배열이 아닌 멤풀 블록 응답을 거부한다', async () => {
+  respond({ blocks: [] });
   await expect(loadMempoolBlocks()).rejects.toThrow('잘못된 블록 수치');
 });
 
@@ -156,7 +167,12 @@ it('정상 블록 수치의 단위와 반올림을 유지한다', async () => {
 });
 
 const difficulty = { difficultyChange: -2, remainingBlocks: 10, timeAvg: 600000, estimatedRetargetDate: 1800000000000 };
-it.each([null, 900000.5, -1])('잘못된 블록 높이 %s를 거부한다', async (height) => {
+it('null 블록 높이는 fetchJson이 도메인 검증 전에 거부한다', async () => {
+  respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, null);
+  await expect(loadMiningStats()).rejects.toThrow('block height: 빈 응답');
+});
+
+it.each([900000.5, -1])('잘못된 블록 높이 %s를 거부한다', async (height) => {
   respond({ hashrates: [{ avgHashrate: 500e18 }] }, difficulty, height);
   await expect(loadMiningStats()).rejects.toThrow('잘못된 채굴 수치');
 });
@@ -207,4 +223,54 @@ it('유효한 평균 블록 시간은 반감기 예상일에 그대로 쓴다', 
 it('정상 채굴 수치는 유한한 값으로 반환한다', async () => {
   respond({ hashrates: [{ avgHashrate: 400e18 }, { avgHashrate: 500e18 }] }, difficulty, 900000);
   expect(await loadMiningStats()).toMatchObject({ hashrateEHs: 500, hashrateChangePct: 25, difficultyChangePct: -2 });
+});
+
+it('최근 블록의 음수 weight를 거부하고 정상 weight는 MvB로 변환한다', async () => {
+  const block = {
+    height: 900000,
+    timestamp: 1704067200,
+    tx_count: 2000,
+    weight: 4000000,
+    extras: { medianFee: 2.6, pool: { name: 'A' } },
+  };
+  respond([{ ...block, weight: -1 }]);
+  await expect(loadRecentBlocks()).rejects.toThrow('recent blocks: 잘못된 블록 수치');
+  respond([block]);
+  expect((await loadRecentBlocks()).blocks[0]).toMatchObject({ vMB: 1, medianFee: 3, txCount: 2000 });
+});
+
+it('FRED의 Infinity를 시리즈 ID와 함께 거부하고 정상값은 보존한다', async () => {
+  respond({ observations: [{ date: '2024-01-01', value: 'Infinity' }] });
+  await expect(fetchFredSeries('CPIAUCSL', 'test-key', '2024-01-01')).rejects.toThrow(
+    'FRED CPIAUCSL: 잘못된 시계열 수치',
+  );
+  respond({ observations: [{ date: '2024-01-01', value: '100' }] });
+  expect(await fetchFredSeries('CPIAUCSL', 'test-key', '2024-01-01')).toMatchObject({ current: 100 });
+});
+
+it('ECOS의 Infinity를 통계표 코드와 함께 거부하고 정상값은 보존한다', async () => {
+  vi.stubEnv('ECOS_API_KEY', 'test-key');
+  const normal = { StatisticSearch: { row: [{ TIME: '202401', DATA_VALUE: '100' }] } };
+  const invalid = { StatisticSearch: { row: [{ TIME: '202401', DATA_VALUE: 'Infinity' }] } };
+  respond(normal, normal, normal, normal, invalid, normal);
+  await expect(loadInflationDataKr()).rejects.toThrow('ECOS 901Y062: 잘못된 시계열 수치');
+  respond(normal, normal, normal, normal, normal, normal);
+  expect(await loadInflationDataKr()).toMatchObject({ available: true, house: { current: 100 } });
+});
+
+it('CoinMetrics의 다음 페이지 data가 비면 이미 받은 시계열도 반환하지 않는다', async () => {
+  const rows = Array.from({ length: 365 }, (_, index) => ({
+    time: new Date(Date.UTC(2016, 0, index + 1)).toISOString(),
+    CapMVRVCur: '2',
+    CapMrktCurUSD: String(1000 + index),
+  }));
+  respond({ data: rows, next_page_token: 'page-2' }, { data: [] });
+  await expect(loadMvrv()).rejects.toThrow('CoinMetrics: 빈 시계열');
+  expect(fetch).toHaveBeenCalledTimes(2);
+  expect(new URL(vi.mocked(fetch).mock.calls[1][0] as string).searchParams.get('next_page_token')).toBe('page-2');
+
+  respond({ data: rows.slice(0, 200), next_page_token: 'page-2' }, { data: rows.slice(200) });
+  const result = await loadMvrv();
+  expect(result.zScore).toHaveLength(1);
+  expect(Number.isFinite(result.zScore[0].value)).toBe(true);
 });

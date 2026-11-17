@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { assertNonEmpty, fetchJson } from '@/lib/fetch-json';
 import { cached } from '@/lib/cache';
 import { toMacroSeries, type MacroSeries } from '@/lib/series';
 
@@ -24,10 +25,10 @@ function endMonth(): string {
 
 async function fetchSeries(key: string, stat: string, item: string): Promise<MacroSeries> {
   const url = `https://ecos.bok.or.kr/api/StatisticSearch/${key}/json/kr/1/100000/${stat}/M/${START}/${endMonth()}/${item}`;
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`ECOS ${stat} error: ${res.status}`);
-
-  const data = await res.json();
+  const data = await fetchJson<{
+    RESULT?: { CODE: string; MESSAGE: string };
+    StatisticSearch?: { row: { TIME: string; DATA_VALUE: string }[] };
+  }>(url, `ECOS ${stat}`);
   // ECOS는 키 오류(INFO-100)·데이터 없음(INFO-200) 같은 실패도 HTTP 200에 `RESULT` 본문으로 준다.
   // 행이 없으므로 아래 빈 시계열 검사에서도 걸리지만, 로그에 원인 코드가 남도록 먼저 가른다.
   if (data?.RESULT) throw new Error(`ECOS ${stat}: ${data.RESULT.CODE} ${data.RESULT.MESSAGE}`);
@@ -42,8 +43,9 @@ async function fetchSeries(key: string, stat: string, item: string): Promise<Mac
       value: Number(r.DATA_VALUE),
     }));
   // 행이 없으면 실패로 본다. 빈 값을 캐시에 넣으면 하루 동안 빈 차트가 신선한 값으로 남는다.
-  if (history.length === 0) throw new Error(`ECOS ${stat}: 빈 시계열`);
+  assertNonEmpty(history, `ECOS ${stat}`);
 
+  if (history.some((point) => !Number.isFinite(point.value))) throw new Error(`ECOS ${stat}: 잘못된 시계열 수치`);
   return toMacroSeries(history);
 }
 
