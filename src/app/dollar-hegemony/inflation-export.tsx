@@ -114,8 +114,8 @@ export function InflationExport() {
           />
         ))}
         <p className='text-xs/relaxed text-muted-foreground'>
-          원화는 신흥국 칸에 있다. 발행국보다 크게 맞지만 취약 통화만큼은 아니다. 이 자리가 실제로 무엇을 뜻하는지는
-          다음 탭에서 금리로 따라간다.
+          원화는 신흥국 칸에 있다. 물가 압력은 유입 금액과 경제 규모, 전가 계수에 따라 달라진다. 이 자리가 실제로 무엇을
+          뜻하는지는 다음 탭에서 금리로 따라간다.
         </p>
       </Panel>
 

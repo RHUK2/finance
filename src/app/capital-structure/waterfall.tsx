@@ -8,6 +8,8 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
+import { waterfall } from './models';
+
 // 단위는 억원. 장부상 자산 1,000억짜리 회사가 청산에 들어갔다고 하자.
 const BOOK_ASSETS = 1000;
 
@@ -84,16 +86,7 @@ const DEBT_CLAIM = TIERS.filter((t) => t.kind === 'debt').reduce((s, t) => s + t
 export function Waterfall() {
   const [proceeds, setProceeds] = useState(550);
 
-  // 위에서부터 순서대로 물을 채운다. 앞 계층이 다 차야 다음 계층에 물이 닿는다.
-  const rows: (Tier & { paid: number; rate: number })[] = [];
-  let remaining = proceeds;
-  for (const t of TIERS) {
-    const paid = Math.min(t.claim, remaining);
-    remaining -= paid;
-    rows.push({ ...t, paid, rate: (paid / t.claim) * 100 });
-  }
-
-  const fulcrum = rows.find((r) => r.paid > 0 && r.paid < r.claim) ?? rows.find((r) => r.paid === 0);
+  const { rows, fulcrum } = waterfall(TIERS, proceeds);
   const debtPaid = rows.filter((r) => r.kind === 'debt').reduce((s, r) => s + r.paid, 0);
   const common = rows[rows.length - 1];
   const focus = fulcrum ?? common;

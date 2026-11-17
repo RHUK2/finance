@@ -8,10 +8,7 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBan
 import { Panel } from '@/components/panel';
 import { cn, formatEok, formatPct } from '@/lib/utils';
 
-import { TAX_RATE, TAX_RATE_NOTE } from './models';
-
-// 단위는 억원. 총자산을 1,000억으로 고정하고 그 안에서 부채와 자본의 비율만 바꾼다.
-const ASSETS = 1000;
+import { ASSETS, leverage, netIncome, TAX_RATE, TAX_RATE_NOTE } from './models';
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -20,33 +17,16 @@ const SCENARIOS = [
   { label: '불황', ebit: 0 },
 ];
 
-// 이익이 날 때만 법인세를 매긴다. 결손금 이월공제는 넣지 않은 단순화다.
-function netIncome(ebit: number, interest: number) {
-  const pretax = ebit - interest;
-  return pretax - Math.max(0, pretax) * (TAX_RATE / 100);
-}
-
 export function Leverage() {
   const [debtRatio, setDebtRatio] = useState(40);
   const [rate, setRate] = useState(5);
   const [ebit, setEbit] = useState(100);
 
-  const debt = (ASSETS * debtRatio) / 100;
-  const equity = ASSETS - debt;
-  const interest = (debt * rate) / 100;
-
-  const net = netIncome(ebit, interest);
-
-  // ROA와 ROE를 같은 잣대로 재야 "ROE가 ROA를 넘어선다"는 문장이 화면의 숫자와 맞는다.
-  // ROE는 세금을 뺀 뒤의 값이므로 ROA도 세후로 잡는다. 곧 빚이 없을 때의 순이익 ÷ 자산이고,
-  // 아래 표의 '무차입' 열과 정확히 같은 정의다. 이자율도 손금 효과를 반영한 세후로 비교한다.
-  const roa = (netIncome(ebit, 0) / ASSETS) * 100;
-  const roe = (net / equity) * 100;
-  const afterTaxRate = rate * (1 - TAX_RATE / 100);
-  const coverage = interest > 0 ? ebit / interest : null;
-  // 손금 효과는 깎을 이익이 있을 때만 실현된다. 영업이익이 이자보다 작으면 모자란 만큼 덜 깎인다.
-  const realizedShield = netIncome(ebit, interest) - (netIncome(ebit, 0) - interest);
-  const realizedRate = debt > 0 ? ((interest - realizedShield) / debt) * 100 : afterTaxRate;
+  const { debt, equity, interest, net, roa, roe, afterTaxRate, coverage, realizedRate } = leverage(
+    debtRatio,
+    rate,
+    ebit,
+  );
   // 부동소수 오차로 같은 값이 한쪽으로 기울지 않게 작은 허용치로 동률을 가른다.
   const EPS = 1e-9;
   const tie = Math.abs(roa - afterTaxRate) < EPS;
