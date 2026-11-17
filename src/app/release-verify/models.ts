@@ -17,6 +17,18 @@ export type MarkData<Id extends string = string> = { id: Id; label: string; sub?
 
 /* ── 체크섬 ─────────────────────────────────────────────── */
 
+export type ChecksumState =
+  | { status: 'pending' }
+  | { status: 'error'; text: string }
+  | { status: 'ready'; text: string; base: string; now: string };
+
+/** 현재 입력의 계산이 끝난 뒤에만 해시를 대조한다. */
+export function checksumResult(state: ChecksumState, text: string) {
+  const status = state.status === 'pending' || state.text !== text ? 'pending' : state.status;
+  const ready = state.status === 'ready' && state.text === text ? state : null;
+  return { status, ready, matches: ready === null ? null : ready.now === ready.base };
+}
+
 const encoder = new TextEncoder();
 
 function toHex(buf: ArrayBuffer): string {

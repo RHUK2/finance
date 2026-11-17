@@ -141,11 +141,7 @@ function VerifySteps({
         <StatusBanner
           icon={<CheckCircle2 className='size-4' />}
           tone={tamper === 'none' ? 'good' : 'accent'}
-          detail={
-            tamper === 'none'
-              ? undefined
-              : '값을 바꿨지만 검증을 통과했다. 위 격자 설명처럼 같은 x좌표나 같은 나머지를 얻을 수 있다. 작은 곡선에서는 이런 조합을 쉽게 만난다.'
-          }
+          detail={tamper === 'none' ? undefined : '값을 바꿨지만 검증을 통과했다.'}
         >
           x(X) mod n = {res.xModN} = r. 서명이 유효하다. 개인키를 쓰지 않고 확인했다.
         </StatusBanner>

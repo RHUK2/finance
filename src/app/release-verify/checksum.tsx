@@ -9,7 +9,7 @@ import { Panel } from '@/components/panel';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
-import { diffPositions, sha256Hex } from './models';
+import { type ChecksumState, checksumResult, diffPositions, sha256Hex } from './models';
 
 const ORIGINAL = '설치 파일 v1.0.0';
 
@@ -29,11 +29,7 @@ function HexView({ hex, diff }: { hex: string; diff?: boolean[] }) {
 export function Checksum() {
   const inputId = useId();
   const [text, setText] = useState(ORIGINAL);
-  const [state, setState] = useState<
-    | { status: 'pending' }
-    | { status: 'error'; text: string }
-    | { status: 'ready'; text: string; base: string; now: string }
-  >({ status: 'pending' });
+  const [state, setState] = useState<ChecksumState>({ status: 'pending' });
 
   // 입력도 결과에 묶어 이전 입력의 해시를 새 입력의 판정으로 그리지 않는다.
   useEffect(() => {
@@ -50,12 +46,10 @@ export function Checksum() {
     };
   }, [text]);
 
-  const status = state.status === 'pending' || state.text !== text ? 'pending' : state.status;
-  const ready = state.status === 'ready' && state.text === text ? state : null;
+  const { status, ready, matches } = checksumResult(state, text);
   const changed = text !== ORIGINAL;
   const diff = ready ? diffPositions(ready.now, ready.base) : undefined;
   const diffCount = diff ? diff.filter(Boolean).length : null;
-  const matches = ready?.now === ready?.base;
 
   return (
     <div className='flex flex-col gap-4'>

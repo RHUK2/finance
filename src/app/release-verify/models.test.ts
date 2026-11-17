@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { diffPositions, generateSigningKey, groupHex, sha256Hex, signText, verifyText } from './models';
+import { checksumResult, diffPositions, generateSigningKey, groupHex, sha256Hex, signText, verifyText } from './models';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -47,5 +47,37 @@ describe.each(['Ed25519', 'ECDSA P-256'] as const)('%s 릴리스 서명', (algo)
     expect(await verifyText(dev, signature, tampered)).toBe(false);
     expect(await verifyText(attacker, signature, manifest)).toBe(false);
     expect(await verifyText(attacker, await signText(attacker, tampered), tampered)).toBe(true);
+  });
+});
+
+describe('체크섬 판정 상태', () => {
+  it('계산 중이거나 실패했으면 일치 여부를 판정하지 않는다', () => {
+    expect(checksumResult({ status: 'pending' }, '새 입력')).toEqual({
+      status: 'pending',
+      ready: null,
+      matches: null,
+    });
+    expect(checksumResult({ status: 'error', text: '새 입력' }, '새 입력')).toEqual({
+      status: 'error',
+      ready: null,
+      matches: null,
+    });
+  });
+
+  it('이전 입력의 성공과 실패는 새 입력에서 계산 중으로 취급한다', () => {
+    for (const state of [
+      { status: 'ready', text: '이전 입력', base: 'abc', now: 'abc' },
+      { status: 'error', text: '이전 입력' },
+    ] as const) {
+      expect(checksumResult(state, '새 입력')).toEqual({ status: 'pending', ready: null, matches: null });
+    }
+  });
+
+  it.each([
+    ['abc', true],
+    ['abd', false],
+  ] as const)('현재 입력의 해시 %s를 대조한다', (now, matches) => {
+    const state = { status: 'ready', text: '현재 입력', base: 'abc', now } as const;
+    expect(checksumResult(state, '현재 입력')).toEqual({ status: 'ready', ready: state, matches });
   });
 });

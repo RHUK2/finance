@@ -9,3 +9,12 @@ type Lock =
 export function canSpendInNextBlock(lock: Lock): boolean {
   return lock.type === 'cltv' ? lock.currentHeight >= lock.unlockHeight : lock.confirmations >= lock.requiredBlocks;
 }
+
+/** 공개키 순서로 유효한 서명을 골라 필요한 M개까지만 싣는다. */
+export function multisigScriptSig(signed: readonly boolean[], m: number): string {
+  const signatures = signed
+    .map((valid, i) => (valid ? `<sig${String.fromCharCode('A'.charCodeAt(0) + i)}>` : null))
+    .filter(Boolean)
+    .slice(0, m);
+  return `OP_0 ${signatures.join(' ')}`;
+}
