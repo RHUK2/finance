@@ -104,7 +104,7 @@ type Props = {
   lines?: MacroLine[];
   /**
    * 첫 선의 끝에 얹을 실시간 시세(`withLivePoint`). `lines`는 하루 한 번 바뀌는 히스토리 그대로 넘긴다.
-   * 시세가 바뀌면 차트를 다시 만들지 않고 끝점만 옮겨서, 확대·이동해 둔 화면이 5분마다 풀리지 않는다.
+   * 시세가 바뀌면 차트 인스턴스를 유지하고 `setData`로 첫 선의 전체 데이터를 갱신한다.
    * 헤드라인 값(`currentLabel`·`changePercent`)은 호출부가 같은 점을 얹어(`withLive`) 계산한다.
    */
   live?: LivePoint | null;

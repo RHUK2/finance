@@ -85,6 +85,7 @@ bash link-worktree-files.sh
 - `powerLawPrice(days)`: BTC 공정가치 추정 (로그 회귀)
 - `RAINBOW_BANDS`: Power Law 기반 9단계 밸류에이션 밴드 (0.18x ~ 20.13x)
 - `mvrvZScore(rows)`, `movingAverage`, `rollingVolatility`: 지표 시계열 계산
+- `MAYER_THRESHOLDS`·`PUELL_THRESHOLDS`·`MVRV_THRESHOLDS`: 메이어·푸엘·MVRV Z 지표의 판정 경계값
 - 모델 상수(PL_A, PL_B), 반감기 데이터(HALVINGS), 프로토콜 상수(`BLOCKS_PER_HALVING`, `RETARGET_INTERVAL`)는 이 파일에서 관리
 
 ### 설명 페이지의 모델 배치
