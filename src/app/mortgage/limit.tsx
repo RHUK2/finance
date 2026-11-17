@@ -16,7 +16,7 @@ import {
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 import { levelPayment, maxLoanByDsr, REGULATION } from '@/lib/mortgage-models';
-import { formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
+import { formatEokFromMan, formatMan, formatPct, formatPctPoint } from '@/lib/utils';
 
 // 금액 단위는 만원. 규제 수치와 그 기준은 REGULATION 한곳에서만 온다.
 const { dsrCap: DSR_CAP, dsrNote: DSR_NOTE, stressAdd: STRESS_ADD, stressNote: STRESS_NOTE } = REGULATION;
@@ -113,8 +113,8 @@ export function Limit() {
             onChange={setStress}
           />
           <p className='text-xs/relaxed text-muted-foreground'>
-            한도를 계산할 때만 약정 금리에 {STRESS_ADD.toFixed(1)}%p를 얹어 본다({STRESS_NOTE}. 비수도권은 더 낮다).
-            나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
+            한도를 계산할 때만 약정 금리에 {formatPctPoint(STRESS_ADD, 1)}를 얹어 본다({STRESS_NOTE}. 비수도권은 더
+            낮다). 나중에 금리가 올라도 갚을 수 있는지 미리 확인하는 장치라, 실제로 내는 이자는 약정 금리 그대로다.
           </p>
         </Field>
       </Panel>
@@ -186,7 +186,7 @@ export function Limit() {
           tone='good'
           sub={
             stress && binding === 'dsr'
-              ? `약정 금리 기준. 한도 ${DSR_CAP}%(${DSR_NOTE})까지 ${(DSR_CAP - dsrActual).toFixed(1)}%p 남고, 이 여유가 스트레스 금리로 미리 깎아 둔 몫이다`
+              ? `약정 금리 기준. 한도 ${DSR_CAP}%(${DSR_NOTE})까지 ${formatPctPoint(DSR_CAP - dsrActual, 1)} 남고, 이 여유가 스트레스 금리로 미리 깎아 둔 몫이다`
               : `약정 금리 기준, 한도는 ${DSR_CAP}%(${DSR_NOTE})`
           }
         />
@@ -211,8 +211,8 @@ export function Limit() {
             </p>
             <p className='mt-2'>
               여기 계산은 주택담보대출 하나만 있다고 보고 기존 대출과 신용대출은 넣지 않았다. 쓴 규제 수치는 DSR 한도{' '}
-              {DSR_CAP}%({DSR_NOTE}), 스트레스 가산폭 {STRESS_ADD.toFixed(1)}%p({STRESS_NOTE})다. 둘 다 대책 한 번에
-              바뀌므로 실제 한도는 은행에서 확인해야 한다.
+              {DSR_CAP}%({DSR_NOTE}), 스트레스 가산폭 {formatPctPoint(STRESS_ADD, 1)}({STRESS_NOTE})다. 둘 다 대책 한
+              번에 바뀌므로 실제 한도는 은행에서 확인해야 한다.
             </p>
           </>
         }

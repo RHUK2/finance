@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CHART_SERIES } from '@/hooks/use-chart';
 import { useEconomy, useFred } from '@/hooks/use-economy';
 import { useRelativeTime } from '@/hooks/use-relative-time';
-import { formatKrwPrice, formatPct } from '@/lib/utils';
+import { formatKrwPrice, formatPct, formatPctPoint } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
 import { useMemo, useRef, type ReactNode } from 'react';
 
@@ -231,8 +231,8 @@ export function EconomyView() {
             <FredGate available={fredAvailable} title='수익률 곡선 스프레드 (10Y−2Y)'>
               <MacroChart
                 title='수익률 곡선 스프레드 (10Y−2Y)'
-                currentLabel={yieldSpread?.current != null ? `${yieldSpread.current.toFixed(2)}%p` : '-'}
-                formatValue={(v) => `${v.toFixed(2)}%p`}
+                currentLabel={yieldSpread?.current != null ? formatPctPoint(yieldSpread.current, 2) : '-'}
+                formatValue={(v) => formatPctPoint(v, 2)}
                 changeDiff={{ value: spreadDiff }}
                 lines={yieldSpreadLines}
                 updatedLabel={fredRelTime ?? undefined}

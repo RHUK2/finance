@@ -96,6 +96,10 @@ export const formatEokFromWon = (n: number) => `${withSign(n, (a) => Math.round(
 export const formatPct = (n: number, digits = 1, { plus = false } = {}) =>
   `${withSign(n, (a) => a.toFixed(digits), plus)}%`;
 
+/** 퍼센트포인트 단위 입력. -1.5 → `−1.50%p`. plus면 양수에 `+`를 붙인다. */
+export const formatPctPoint = (n: number, digits = 2, { plus = false } = {}) =>
+  `${withSign(n, (a) => a.toFixed(digits), plus)}%p`;
+
 // 긴 16진 문자열을 표시용으로 앞부분만 자른다(hash·pubkey 등 공용 표기).
 export function shortHex(hex: string, head = 10): string {
   return hex.length <= head ? hex : hex.slice(0, head) + '…';

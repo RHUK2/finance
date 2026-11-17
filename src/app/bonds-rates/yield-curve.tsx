@@ -16,7 +16,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { formatPct } from '@/lib/utils';
+import { formatPct, formatPctPoint } from '@/lib/utils';
 
 import { curveState, curveYields, I10, I2, spread10y2y, TENORS, type CurveShape } from './models';
 
@@ -81,7 +81,7 @@ export function YieldCurve() {
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
         <Metric
           label='10년 − 2년'
-          value={`${spread === 0 ? '' : spread > 0 ? '+' : '−'}${Math.abs(spread).toFixed(2)}%p`}
+          value={formatPctPoint(spread, 2, { plus: true })}
           tone={flat ? undefined : inverted ? 'bad' : 'good'}
           sub={floored ? '0% 바닥' : flat ? '평탄' : inverted ? '역전 상태' : '정상 순서'}
         />

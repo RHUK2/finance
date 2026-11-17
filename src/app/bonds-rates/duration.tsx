@@ -6,7 +6,7 @@ import { Percent, Ruler, TrendingDown, TriangleAlert } from 'lucide-react';
 
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { formatPct, formatWon } from '@/lib/utils';
+import { formatPct, formatPctPoint, formatWon } from '@/lib/utils';
 
 import { modifiedDuration, rateShock, type Bond } from './models';
 
@@ -71,7 +71,7 @@ export function Duration() {
           min={-0.03}
           max={0.03}
           step={0.0025}
-          format={(v) => `${v >= 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(2)}%p`}
+          format={(v) => formatPctPoint(v * 100, 2, { plus: true })}
         />
       </Panel>
 
@@ -86,7 +86,7 @@ export function Duration() {
         <Metric
           label='듀레이션 근사'
           value={formatPct(shock.approxPct, 1, { plus: true })}
-          sub={`실제와 ${Math.abs(shock.convexityGap).toFixed(2)}%p 차이`}
+          sub={`실제와 ${formatPctPoint(Math.abs(shock.convexityGap), 2)} 차이`}
         />
       </div>
 
@@ -107,8 +107,7 @@ export function Duration() {
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>만기만 다른 세 채권</span>
           <span className='text-xs text-muted-foreground'>
-            금리 {delta >= 0 ? '+' : '−'}
-            {Math.abs(delta * 100).toFixed(2)}%p일 때 가격 변동폭
+            금리 {formatPctPoint(delta * 100, 2, { plus: true })}일 때 가격 변동폭
           </span>
         </div>
         {ladder.map((l) => (
