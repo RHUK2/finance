@@ -37,6 +37,9 @@ export function AddressCompare() {
   const native = addrMeta('native');
   const defaultTaprootVb = txVBytes('taproot', 2, 2);
   const defaultNativeVb = txVBytes('native', 2, 2);
+  const crossoverInputs = Array.from({ length: MAX_TX_PARTS }, (_, i) => i + 1).find(
+    (inputs) => txVBytes('taproot', inputs, numOut) < txVBytes('native', inputs, numOut),
+  );
 
   return (
     <div className='flex flex-col gap-4'>
@@ -84,7 +87,7 @@ export function AddressCompare() {
               label={`${r.purpose} ${r.label}`}
               value={r.fee}
               max={maxFee}
-              className={r.value === 'legacy' ? 'bg-muted-foreground/40' : 'bg-primary'}
+              className={r.value === 'legacy' ? 'bg-series-2' : 'bg-series-1'}
               format={formatSats}
               aside={`· ${r.vb} vB`}
               sub={
@@ -116,8 +119,14 @@ export function AddressCompare() {
             출력에 20바이트 공개키 해시 대신 32바이트 공개키(x-only 조정 공개키)를 그대로 담아서다.
             <br />
             <br />
-            그래서 순위가 <b>입력 개수에 따라 뒤집힌다</b>. 입력이 늘수록 입력 쪽 이득이 출력 쪽 손해를 넘어선다. 위
-            입력 개수를 3으로 올려 보면 Taproot가 Native SegWit을 앞지르고, 5로 올리면 격차가 더 벌어진다.
+            {crossoverInputs === undefined ? (
+              `현재 출력 ${numOut}개에서는 입력을 ${MAX_TX_PARTS}개까지 늘려도 Taproot가 Native SegWit보다 작아지지 않는다.`
+            ) : (
+              <>
+                그래서 순위가 <b>입력 개수에 따라 뒤집힌다</b>. 입력이 늘수록 입력 쪽 이득이 출력 쪽 손해를 넘어선다.
+                현재 출력 {numOut}개에서는 입력이 {crossoverInputs}개 이상이면 Taproot가 Native SegWit보다 작아진다.
+              </>
+            )}
           </>
         }
       />

@@ -67,7 +67,7 @@ export function AddressScriptCompare() {
               value={t.sigBytes}
               max={maxSigBytes}
               format={(v) => `${v} B`}
-              className={t.value === 'taproot' ? 'bg-primary' : 'bg-muted-foreground/40'}
+              className={t.value === 'taproot' ? 'bg-series-1' : 'bg-series-2'}
             />
           ))}
         </div>

@@ -10,10 +10,10 @@
 // (ADR 0009). 화면에 뜨는 지문은 전부 이 파일이 그 자리에서 만든 일회용 키의
 // 것이거나 형태만 보이는 자리표시자다.
 
-// 표의 행은 데이터만 담는다. 아이콘과 표 컴포넌트의 타입은 화면 쪽(attacker.tsx·key-origin.tsx)이
-// 붙인다. 모델이 컴포넌트 모듈을 가리키지 않게 하려는 것이다.
-export type MarkState = 'yes' | 'no' | 'partial';
-export type MarkData<Id extends string = string> = { id: Id; label: string; sub?: string; marks: MarkState[] };
+import type { MarkRow } from '@/components/simulation';
+
+// 공용 표의 데이터 계약을 쓰되, 페이지 모델에는 아이콘을 담지 않는다.
+export type MarkData<Id extends string = string> = Omit<MarkRow, 'id' | 'icon'> & { id: Id };
 
 /* ── 체크섬 ─────────────────────────────────────────────── */
 
@@ -133,7 +133,7 @@ export const ATTACK_ROWS: MarkData<AttackId>[] = [
   },
 ];
 
-export const ATTACK_DETAIL: Record<string, { title: string; body: string }> = {
+export const ATTACK_DETAIL: Record<AttackId, { title: string; body: string }> = {
   web: {
     title: '체크섬만 대조하면 그대로 통과한다',
     body: '체크섬 목록은 대개 바이너리 바로 옆에 놓인다. 서버를 쥔 쪽은 파일을 바꾸고 그 파일의 체크섬을 다시 계산해 목록도 같이 고쳐 둘 수 있다. 독자가 성실하게 대조해도 두 값은 완벽히 맞는다. 체크섬이 잡는 것은 전송 중에 깨진 비트이지, 양쪽을 다 만질 수 있는 상대가 아니다. 릴리스 서명이 여기서부터 일을 시작한다.',
@@ -169,7 +169,9 @@ export const CHANNEL_HEADERS: [string, ...string[]] = [
   '제3자가 본다',
 ];
 
-export const CHANNEL_ROWS: MarkData[] = [
+export type ChannelId = 'site' | 'repo' | 'keyserver' | 'social' | 'offline';
+
+export const CHANNEL_ROWS: MarkData<ChannelId>[] = [
   { id: 'site', label: '다운로드 페이지', sub: '가장 흔한 경로', marks: ['no', 'no', 'no'] },
   { id: 'repo', label: '프로젝트 코드 저장소', sub: '저장소 안의 키 파일', marks: ['partial', 'yes', 'partial'] },
   { id: 'keyserver', label: '공개 키서버', sub: '누구나 조회 가능', marks: ['yes', 'yes', 'partial'] },
@@ -182,7 +184,7 @@ export const CHANNEL_ROWS: MarkData[] = [
   { id: 'offline', label: '대면·인쇄물', sub: '컨퍼런스, 책', marks: ['yes', 'no', 'partial'] },
 ];
 
-export const CHANNEL_DETAIL: Record<string, { title: string; body: string }> = {
+export const CHANNEL_DETAIL: Record<ChannelId, { title: string; body: string }> = {
   site: {
     title: '이것만으로는 아무것도 확인되지 않는다',
     body: '파일을 준 곳에서 그 파일을 검증할 키까지 받으면, 그 서버를 쥔 쪽은 둘을 함께 바꾸면 그만이다. 절차는 전부 통과하고 결과는 아무것도 말해 주지 않는다. 그런데도 거의 모든 안내 문서가 이 경로를 첫 줄에 적는다. 편해서다. 다른 채널로 한 번 대조하기 전까지 이 경로는 검증이 아니라 검증의 흉내다.',

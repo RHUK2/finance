@@ -86,12 +86,7 @@ export function PointAdd({ d, onChangeD }: { d: number; onChangeD: (v: number) =
             sub={samePt(p1, p2) ? '접선이므로 3x² ÷ 2y' : '(y_Q − y_P) ÷ (x_Q − x_P)'}
           />
           <Metric label='세 번째 교점' value={third ? fmtPt(third) : '없음'} sub='곡선과 만나는 나머지 한 점' />
-          <Metric
-            label='P + Q'
-            value={fmtPt(sum)}
-            tone={sum === null ? 'accent' : 'good'}
-            sub='세 번째 교점을 x축에 대해 뒤집은 것'
-          />
+          <Metric label='P + Q' value={fmtPt(sum)} sub='세 번째 교점을 x축에 대해 뒤집은 것' />
         </div>
         {lam !== null && sum && (
           <p className='text-xs/relaxed text-muted-foreground'>

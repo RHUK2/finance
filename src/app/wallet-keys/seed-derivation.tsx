@@ -21,7 +21,8 @@ export function SeedDerivation({
   seedHex: string;
 }) {
   const passphraseId = useId();
-  const extraWordPosition = mnemonic.split(' ').length + 1;
+  const wordCount = mnemonic.split(' ').length;
+  const extraWordPosition = wordCount + 1;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -33,11 +34,11 @@ export function SeedDerivation({
 
       <ExplainCard
         title='쉽게 말하면: 믹서기에 2048번 갈기'
-        preview='12개 단어를 PBKDF2 믹서기에 넣고 2048번 돌려 시드를 뽑는다.'
+        preview={`${wordCount}개 단어를 PBKDF2 믹서기에 넣고 2048번 돌려 시드를 뽑는다.`}
         body={
           <>
-            12개 단어를 재료로 믹서기(PBKDF2)에 넣고 2048번 돌린다고 생각하면 된다. passphrase는 나만 아는 비밀 재료
-            하나를 몰래 추가하는 것이다. 재료가 한 글자라도 다르면 완전히 다른 주스가 나오고, 완성된 주스에서 원래
+            {wordCount}개 단어를 재료로 믹서기(PBKDF2)에 넣고 2048번 돌린다고 생각하면 된다. passphrase는 나만 아는 비밀
+            재료 하나를 몰래 추가하는 것이다. 재료가 한 글자라도 다르면 완전히 다른 주스가 나오고, 완성된 주스에서 원래
             재료를 되돌릴 수도 없다. 이렇게 나온 주스 한 잔이 512비트 시드이고, 지갑의 모든 키는 이 원액에서 만들어진다.
           </>
         }

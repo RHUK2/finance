@@ -132,6 +132,11 @@ export function sign(d: number, z: number, k: number): Signature {
   return { R, r, s, invalid: null };
 }
 
+// 검증 실험에서는 s를 1 바꾸되, 상한에서는 내려 범위 안에서 점 복원을 비교한다.
+export function tamperSignatureS(s: number): number {
+  return s + (s === N - 1 ? -1 : 1);
+}
+
 export type Verification =
   | { rejected: true; ok: false }
   | { rejected: false; w: number; u1: number; u2: number; X: Pt; xModN: number | null; ok: boolean };

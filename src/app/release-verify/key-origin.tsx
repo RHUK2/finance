@@ -7,7 +7,7 @@ import { Repeat, Route } from 'lucide-react';
 import { ExplainCard, MarkTable, SectionIntro, StatusBanner } from '@/components/simulation';
 import { Panel } from '@/components/panel';
 
-import { CHANNEL_DETAIL, CHANNEL_HEADERS, CHANNEL_ROWS } from './models';
+import { CHANNEL_DETAIL, CHANNEL_HEADERS, CHANNEL_ROWS, type ChannelId } from './models';
 
 // 순환 논리 도식. 이 그림은 말로 하면 안 와닿고 그리면 한눈에 우스꽝스러워지는 종류라
 // 그림값을 한다. 색은 currentColor와 테마 토큰만 써서 라이트·다크에서 같이 읽힌다.
@@ -52,7 +52,7 @@ function CircularLogic() {
 }
 
 export function KeyOrigin() {
-  const [selected, setSelected] = useState('site');
+  const [selected, setSelected] = useState<ChannelId>('site');
   const detail = CHANNEL_DETAIL[selected];
 
   return (
@@ -72,7 +72,10 @@ export function KeyOrigin() {
         headers={CHANNEL_HEADERS}
         rows={CHANNEL_ROWS}
         selected={selected}
-        onSelect={setSelected}
+        onSelect={(id) => {
+          const row = CHANNEL_ROWS.find((row) => row.id === id);
+          if (row) setSelected(row.id);
+        }}
       />
 
       <Panel className='gap-2'>

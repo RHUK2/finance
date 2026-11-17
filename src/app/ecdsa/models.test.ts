@@ -4,6 +4,10 @@ import {
   addPt,
   bruteForce,
   CURVE_POINTS,
+  doubleAndAddSteps,
+  REAL_PX_RANGE,
+  REAL_QX_RANGE,
+  realExample,
   lineCells,
   mod,
   mulPt,
@@ -15,6 +19,7 @@ import {
   samePt,
   sign,
   slope,
+  tamperSignatureS,
   verify,
   verificationCaption,
 } from './models';
@@ -168,5 +173,77 @@ describe('공격', () => {
 
   it('후보가 30개뿐이라 전수 대입으로 개인키가 나온다', () => {
     for (let d = 1; d < N; d++) expect(bruteForce(mulPt(d, G))).toBe(d);
+  });
+});
+
+describe('화면 계산의 경계', () => {
+  it('모든 개인키에서 이중화·덧셈 기록의 끝은 dG다', () => {
+    for (let d = 0; d <= N; d++) {
+      const steps = doubleAndAddSteps(d);
+      expect(steps.at(-1)?.acc ?? null).toEqual(mulPt(d, G));
+    }
+  });
+
+  it('실수 곡선 슬라이더의 모든 눈금에서 세 교점과 합이 그림 안에 남는다', () => {
+    const pTicks = Math.round((REAL_PX_RANGE.max - REAL_PX_RANGE.min) / 0.1);
+    const qTicks = Math.round((REAL_QX_RANGE.max - REAL_QX_RANGE.min) / 0.1);
+    for (let p = 0; p <= pTicks; p++) {
+      for (let q = 0; q <= qTicks; q++) {
+        const e = realExample(REAL_PX_RANGE.min + p * 0.1, REAL_QX_RANGE.min + q * 0.1);
+        for (const [x, y] of [
+          [e.px, e.py],
+          [e.qx, e.qy],
+          [e.rx, e.thirdY],
+          [e.rx, e.sumY],
+        ]) {
+          expect(Number.isFinite(x) && Number.isFinite(y)).toBe(true);
+          expect(y * y).toBeCloseTo(x ** 3 + 7, 8);
+          expect(x * 2.2).toBeGreaterThanOrEqual(-5.1);
+          expect(x * 2.2).toBeLessThanOrEqual(6.1);
+          expect(Math.abs(y)).toBeLessThanOrEqual(5.4);
+        }
+        expect(e.thirdY).toBeCloseTo(e.l * (e.rx - e.px) + e.py, 8);
+        expect(e.sumY).toBe(-e.thirdY);
+      }
+    }
+  });
+
+  it('기본 서명의 s를 30에서 29로 바꾸면 거부 없이 다른 점을 복원한다', () => {
+    const sig = sign(7, 19, 11);
+    expect(sig).toMatchObject({ r: 9, s: N - 1, invalid: null });
+    const sSeen = tamperSignatureS(sig.s);
+    expect(sSeen).toBe(29);
+    const result = verify(MULTIPLES_OF_G[7], 19, sig.r, sSeen);
+    expect(result).toMatchObject({ rejected: false, ok: false });
+    if (result.rejected) throw new Error('범위 안의 s가 거부됐다');
+    expect(samePt(result.X, sig.R)).toBe(false);
+  });
+
+  it.each(['z', 's'] as const)('%s를 +1(mod n) 바꾼 통과 1,140건의 원인을 분류한다', (tamper) => {
+    const counts = { same: 0, negative: 0, folded: 0 };
+    for (let d = 1; d < N; d++) {
+      for (let z = 0; z < N; z++) {
+        for (let k = 1; k < N; k++) {
+          const sig = sign(d, z, k);
+          if (sig.invalid) continue;
+          const result = verify(
+            MULTIPLES_OF_G[d],
+            tamper === 'z' ? mod(z + 1, N) : z,
+            sig.r,
+            tamper === 's' ? mod(sig.s + 1, N) : sig.s,
+          );
+          if (result.rejected || !result.ok) continue;
+          if (samePt(result.X, sig.R)) counts.same++;
+          else if (result.X!.x === sig.R!.x) {
+            expect(result.X!.y).toBe(mod(-sig.R!.y, P));
+            counts.negative++;
+          } else {
+            expect(mod(result.X!.x, N)).toBe(sig.r);
+            counts.folded++;
+          }
+        }
+      }
+    }
+    expect(counts).toEqual({ same: 0, negative: 900, folded: 240 });
   });
 });

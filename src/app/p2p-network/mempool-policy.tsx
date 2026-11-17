@@ -39,7 +39,10 @@ export function MempoolPolicy() {
           label='이 노드의 최소 릴레이 수수료율 (아래 두 시연 공통)'
           hint='기본값 0.1 sat/vB(Bitcoin Core 29.1부터, 그 전에는 1 sat/vB). 멤풀이 꽉 차면 노드가 이 값을 스스로 더 올리기도 한다.'
           value={minRelayRate}
-          onChange={setMinRelayRate}
+          onChange={(rate) => {
+            setMinRelayRate(rate);
+            setOldFeeRate((old) => Math.max(old, rate));
+          }}
           min={0.1}
           max={5}
           step={0.1}
@@ -102,7 +105,7 @@ export function MempoolPolicy() {
           label='원본 tx 수수료율 (멤풀에 멈춰 있음)'
           value={oldFeeRate}
           onChange={setOldFeeRate}
-          min={0.1}
+          min={minRelayRate}
           max={10}
           step={0.1}
           format={(v) => `${v} sat/vB`}

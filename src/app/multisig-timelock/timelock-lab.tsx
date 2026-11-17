@@ -12,7 +12,7 @@ import {
   SegmentedControl,
   StatusBanner,
 } from '@/components/simulation';
-import { TOTAL_BLOCKS_APPROX } from '@/lib/p2p-concept';
+import { TOTAL_BLOCKS_APPROX, TOTAL_BLOCKS_AS_OF } from '@/lib/p2p-concept';
 
 import { canSpendInNextBlock, type LockType } from './models';
 
@@ -69,6 +69,7 @@ export function TimelockLab() {
           <>
             <ControlSlider
               label='현재 블록 높이'
+              hint={`기본값은 ${TOTAL_BLOCKS_AS_OF} 기준 근사값이다.`}
               value={currentHeight}
               onChange={setCurrentHeight}
               min={CLTV_RANGE.min}

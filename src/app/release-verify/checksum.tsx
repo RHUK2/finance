@@ -55,8 +55,8 @@ export function Checksum() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='체크섬은 사고를 잡지 사람을 잡지 않는다'>
         체크섬은 파일 하나를 고정 길이 값으로 줄인 것이다. 아래 칸의 글자를 하나만 고쳐 보면 아래 값이 통째로 뒤집힌다.
-        한 글자와 절반쯤 되는 자리가 함께 바뀌는 이 성질 덕분에, 전송 중에 비트 하나가 깨져도 값이 어긋나 곧바로
-        드러난다.
+        한 글자를 바꾸면 16진수의 거의 모든 자리가 함께 바뀌는 이 성질 덕분에, 전송 중에 비트 하나가 깨져도 값이 어긋나
+        곧바로 드러난다.
       </SectionIntro>
 
       <Panel className='gap-3'>
