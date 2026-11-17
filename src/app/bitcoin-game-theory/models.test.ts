@@ -7,6 +7,7 @@ import {
   bestResponses,
   buildCascadeAgents,
   buildHolders,
+  CASCADE_CONFIG,
   cascadeTrajectory,
   HODL_CONFIG,
   hodlTrajectory,
@@ -104,20 +105,24 @@ function expectPrefix(values: boolean[]) {
 }
 
 describe('채택 캐스케이드 궤적', () => {
-  it('기본 임계값 0.3과 시드 6명에서 전원이 채택한다', () => {
-    const agents = buildCascadeAgents(180, 0.3, 12345);
-    expect(agents).toEqual(buildCascadeAgents(180, 0.3, 12345));
-    const frames = cascadeTrajectory(agents, 6);
-    expect(frames[0].adopted.filter(Boolean)).toHaveLength(6);
-    expect(frames.at(-1)!.adopted.filter(Boolean)).toHaveLength(180);
+  const c = CASCADE_CONFIG;
+
+  it('화면 기본 임계값과 시드 인원에서 전원이 채택한다', () => {
+    const agents = buildCascadeAgents(c.n, c.defaultThreshold, c.seed);
+    expect(agents).toEqual(buildCascadeAgents(c.n, c.defaultThreshold, c.seed));
+    const frames = cascadeTrajectory(agents, c.defaultSeedCount);
+    expect(frames[0].adopted.filter(Boolean)).toHaveLength(c.defaultSeedCount);
+    expect(frames.at(-1)!.adopted.filter(Boolean)).toHaveLength(c.n);
   });
 
   it('슬라이더 전 구간에서 정렬·접두 구간·단조 채택과 수렴을 지킨다', () => {
-    for (let mean = 10; mean <= 60; mean++) {
-      const agents = buildCascadeAgents(180, mean / 100, 12345);
-      expect(agents).toHaveLength(180);
+    const steps = Math.round((c.maxThreshold - c.minThreshold) / c.thresholdStep);
+    for (let step = 0; step <= steps; step++) {
+      const mean = c.minThreshold + step * c.thresholdStep;
+      const agents = buildCascadeAgents(c.n, mean, c.seed);
+      expect(agents).toHaveLength(c.n);
       expect(agents.map((a) => a.threshold)).toEqual(agents.map((a) => a.threshold).sort((a, b) => a - b));
-      for (let seed = 1; seed <= 30; seed++) {
+      for (let seed = c.minSeedCount; seed <= c.maxSeedCount; seed += c.seedCountStep) {
         const frames = cascadeTrajectory(agents, seed);
         expect(frames.length).toBeLessThan(MAX_ROUNDS);
         frames.forEach((frame, r) => {
@@ -163,6 +168,21 @@ describe('홀더 궤적', () => {
       const last = frames.at(-1)!.state;
       expect(holders.every((h, i) => last.sold[i] || h.conviction > last.drawdown)).toBe(true);
     }
+  });
+
+  it('일부만 매도하고 멈추는 가운데 결과가 연속된 확신도 구간에 존재한다', () => {
+    const c = HODL_CONFIG;
+    const steps = Math.round((c.maxConviction - c.minConviction) / c.convictionStep);
+    const partialSteps: number[] = [];
+    for (let step = 0; step <= steps; step++) {
+      const mean = c.minConviction + step * c.convictionStep;
+      const holders = buildHolders(c.n, mean, c.seed);
+      const last = hodlTrajectory(holders, c.shock).at(-1)!.state;
+      const soldCount = last.sold.filter(Boolean).length;
+      // 화면의 가운데 결과: 붕괴(50% 초과)도 충격 흡수(10% 이하)도 아니다.
+      if (soldCount > c.n * 0.1 && soldCount <= c.n * 0.5) partialSteps.push(step);
+    }
+    expect(partialSteps.some((step, i) => i > 0 && step === partialSteps[i - 1] + 1)).toBe(true);
   });
 
   it('충격이나 추가 매도 없이 멈추며, 충격만 있는 라운드는 보존한다', () => {

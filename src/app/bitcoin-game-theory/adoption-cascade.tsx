@@ -18,10 +18,9 @@ import {
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatPct } from '@/lib/utils';
 
-import { type AgentType, type CascadeAgent, buildCascadeAgents, cascadeTrajectory } from './models';
+import { type AgentType, type CascadeAgent, buildCascadeAgents, CASCADE_CONFIG, cascadeTrajectory } from './models';
 
-const N = 180;
-const SEED = 12345;
+const { n: N, seed: SEED } = CASCADE_CONFIG;
 
 // 유형은 칸 색으로만 구분한다. 격자의 위치는 임계값 순서를 뜻하므로,
 // 유형을 공간으로 묶으면 임계값 축이 깨진다.
@@ -32,8 +31,8 @@ const TYPE_COLOR: Record<AgentType, { on: string; off: string }> = {
 };
 
 export function AdoptionCascade() {
-  const [meanThreshold, setMeanThreshold] = useState(0.3);
-  const [seedCount, setSeedCount] = useState(6);
+  const [meanThreshold, setMeanThreshold] = useState(CASCADE_CONFIG.defaultThreshold);
+  const [seedCount, setSeedCount] = useState(CASCADE_CONFIG.defaultSeedCount);
   const [speedMs, setSpeedMs] = useState(600);
 
   const agents = useMemo(() => buildCascadeAgents(N, meanThreshold, SEED), [meanThreshold]);
@@ -52,9 +51,9 @@ export function AdoptionCascade() {
           hint='전체의 몇 %가 사야 나도 따라 사는지. 낮출수록 눈치를 덜 보고 일찍 동참해 더 잘 번진다. 개인·기업·국가의 구성비는 그대로 두고 임계값만 함께 움직인다.'
           value={meanThreshold}
           onChange={setMeanThreshold}
-          min={0.1}
-          max={0.6}
-          step={0.01}
+          min={CASCADE_CONFIG.minThreshold}
+          max={CASCADE_CONFIG.maxThreshold}
+          step={CASCADE_CONFIG.thresholdStep}
           format={(v) => formatPct(v * 100, 0)}
         />
         <ControlSlider
@@ -63,8 +62,9 @@ export function AdoptionCascade() {
           hint='아무도 안 사도 맨 먼저 움직이는 사람들. 임계값이 가장 낮아 격자 맨 왼쪽에 있다.'
           value={seedCount}
           onChange={setSeedCount}
-          min={1}
-          max={30}
+          min={CASCADE_CONFIG.minSeedCount}
+          max={CASCADE_CONFIG.maxSeedCount}
+          step={CASCADE_CONFIG.seedCountStep}
           format={(v) => `${v}명`}
         />
       </Panel>
