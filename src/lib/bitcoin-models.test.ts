@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   daysSinceGenesis,
   dailyIssuanceBtc,
+  subsidyAtDate,
+  subsidyAtEra,
   powerLawPrice,
   generateModelDates,
   mayerMultiple,
@@ -160,5 +162,25 @@ describe('비정상 가격의 실현 변동성', () => {
   it('유한 양수의 비율이 overflow해도 로그 차이는 유한하다', () => {
     const out = rollingVolatility(series([Number.MIN_VALUE, Number.MAX_VALUE, Number.MIN_VALUE]), 2);
     expect(Number.isFinite(out[0].value)).toBe(true);
+  });
+});
+
+describe('공용 보조금 전환', () => {
+  it.each([
+    ['2024-04-19', 3, 6.25],
+    ['2024-04-19T23:59:59.999Z', 3, 6.25],
+    ['2024-04-20', 4, 3.125],
+    ['2026-11-17', 4, 3.125],
+    ['2028-04-12', 4, 3.125],
+    ['2028-04-13', 5, 1.5625],
+  ])('%s의 시대와 보조금을 같은 UTC 경계로 전환한다', (date, era, subsidy) => {
+    expect(subsidyAtDate(date)).toEqual({ era, subsidy });
+    expect(dailyIssuanceBtc(date)).toBe(subsidy * 144);
+  });
+
+  it('사토시 내림과 제네시스 이전 기본값을 유지한다', () => {
+    expect([31, 32, 33].map(subsidyAtEra)).toEqual([2e-8, 1e-8, 0]);
+    expect(subsidyAtEra(-1)).toBe(50);
+    expect(subsidyAtDate('2008-01-01')).toEqual({ era: 0, subsidy: 50 });
   });
 });

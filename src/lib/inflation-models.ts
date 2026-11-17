@@ -6,7 +6,9 @@
  * 차트용 곡선만 시작연도=base로 정규화한다.
  */
 
-export type Point = { time: string; value: number };
+import type { SeriesPoint } from './series';
+
+export type Point = SeriesPoint;
 
 /**
  * 해당 연도 시점의 관측값. 시계열이 그 연도를 포함하지 않으면(데이터가 그 이후
