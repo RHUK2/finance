@@ -117,6 +117,30 @@ test('사본이 기준과 다르면 건드리지 않고 2로 끝난다', (t) => 
   assert.equal(readFileSync(join(wt, '.scratch', 'marker'), 'utf8'), 'local');
 });
 
+for (const [marker, args] of [
+  ['local', ['--force']],
+  ['base', []],
+]) {
+  test(`실제 사본(${marker})을 기준 링크로 바꾼다 (${args[0] ?? '기본'})`, (t) => {
+    const root = sandbox(t);
+    const base = repo(join(root, 'finance'), 'base');
+    const wt = worktree(base, join(root, 'finance-topic'));
+    const copy = join(wt, '.scratch');
+    mkdirSync(copy);
+    writeFileSync(join(copy, 'marker'), marker);
+    assert.equal(lstatSync(copy).isSymbolicLink(), false);
+
+    const run = link(wt, {}, args);
+
+    assert.equal(run.status, 0, run.stderr);
+    assert.equal(lstatSync(copy).isSymbolicLink(), true);
+    assert.equal(readlinkSync(copy), join(base, '.scratch'));
+    assert.equal(readFileSync(join(copy, 'marker'), 'utf8'), 'base');
+    assert.equal(lstatSync(join(base, '.scratch')).isSymbolicLink(), false);
+    assert.equal(readFileSync(join(base, '.scratch', 'marker'), 'utf8'), 'base');
+  });
+}
+
 test('다른 곳을 가리키는 링크는 이미 링크로 넘기지 않고 2로 끝난다', (t) => {
   const root = sandbox(t);
   const base = repo(join(root, 'finance'), 'base');

@@ -1,11 +1,20 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { BASE_PORT, resolvePort } from './worktree-ports.mjs';
+import { BASE_PORT, SLOT_COUNT, preferredSlot, resolvePort } from './worktree-ports.mjs';
 
 function git(args, cwd) {
   return execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
@@ -25,7 +34,7 @@ function repo(t, prefix = 'finance-ports-') {
 }
 
 function worktree(base, name) {
-  const path = join(base, '..', `${name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+  const path = join(base, name);
   git(['worktree', 'add', '-q', '-b', name, path], base);
   return realpathSync(path);
 }
@@ -114,6 +123,115 @@ test('범위를 벗어난 FINANCE_PORT_SLOT은 거부한다', (t) => {
 
   assert.throws(() => resolvePort(base), /FINANCE_PORT_SLOT/);
 });
+
+for (const saved of [-1, SLOT_COUNT, 1.5, '2', null, 0]) {
+  test(`워크트리의 잘못된 슬롯 ${JSON.stringify(saved)}은 다시 배정한다`, (t) => {
+    env(t, 'FINANCE_PORT_SLOT', undefined);
+    const base = repo(t);
+    const wt = worktree(base, 'invalid');
+    const registryPath = join(base, '.worktree-ports.json');
+    writeFileSync(registryPath, JSON.stringify({ [base]: 0, [wt]: saved }));
+
+    const { slot } = resolvePort(wt);
+
+    assert.ok(Number.isInteger(slot) && slot > 0 && slot < SLOT_COUNT);
+    assert.equal(JSON.parse(readFileSync(registryPath, 'utf8'))[wt], slot);
+    assert.equal(resolvePort(base).slot, 0);
+  });
+}
+
+test('다른 워크트리와 중복된 슬롯은 점유하지 않은 슬롯으로 다시 배정한다', (t) => {
+  env(t, 'FINANCE_PORT_SLOT', undefined);
+  const base = repo(t);
+  const wt = worktree(base, 'duplicate');
+  const other = worktree(base, 'other');
+  const registryPath = join(base, '.worktree-ports.json');
+  writeFileSync(registryPath, JSON.stringify({ [base]: 0, [wt]: 1, [other]: 1 }));
+
+  const { slot } = resolvePort(wt);
+
+  assert.ok(slot > 1 && slot < SLOT_COUNT);
+  assert.equal(resolvePort(other).slot, 1);
+  assert.equal(JSON.parse(readFileSync(registryPath, 'utf8'))[wt], slot);
+});
+
+test('워크트리에 0이 적혀 있어도 기준 체크아웃은 0을 유지한다', (t) => {
+  env(t, 'FINANCE_PORT_SLOT', undefined);
+  const base = repo(t);
+  const wt = worktree(base, 'zero');
+  writeFileSync(join(base, '.worktree-ports.json'), JSON.stringify({ [wt]: 0 }));
+
+  assert.equal(resolvePort(base).slot, 0);
+  assert.ok(resolvePort(wt).slot > 0);
+});
+
+test('선호 슬롯이 점유되면 다음 빈 슬롯으로 밀린다', (t) => {
+  env(t, 'FINANCE_PORT_SLOT', undefined);
+  const base = repo(t);
+  const wt = worktree(base, 'collision');
+  const other = worktree(base, 'occupant');
+  const wanted = preferredSlot('collision');
+  assert.notEqual(wanted, 0, '충돌 fixture는 기준 체크아웃 이외의 슬롯을 사용한다');
+  writeFileSync(join(base, '.worktree-ports.json'), JSON.stringify({ [base]: 0, [other]: wanted }));
+  const next = (wanted + 1) % SLOT_COUNT || 1;
+
+  assert.equal(resolvePort(wt).slot, next);
+  assert.equal(resolvePort(other).slot, wanted);
+});
+
+test('모든 슬롯이 점유되면 장부를 보존하고 잠금을 해제하며 오류를 낸다', (t) => {
+  env(t, 'FINANCE_PORT_SLOT', undefined);
+  const base = repo(t);
+  const wt = worktree(base, 'overflow');
+  const registryPath = join(base, '.worktree-ports.json');
+  const registry = { [base]: 0 };
+  for (let slot = 1; slot < SLOT_COUNT; slot += 1) {
+    const path = join(base, `occupied-${slot}`);
+    mkdirSync(path);
+    registry[path] = slot;
+  }
+  const contents = JSON.stringify(registry);
+  writeFileSync(registryPath, contents);
+
+  assert.throws(() => resolvePort(wt), /빈 포트 슬롯이 없다/);
+  assert.equal(readFileSync(registryPath, 'utf8'), contents);
+  assert.equal(existsSync(`${registryPath}.lock`), false);
+});
+
+test('잠금 대기 시간이 초과되면 안내하고 기존 잠금은 지우지 않는다', (t) => {
+  env(t, 'FINANCE_PORT_SLOT', undefined);
+  const base = repo(t);
+  const registryPath = join(base, '.worktree-ports.json');
+  const lockPath = `${registryPath}.lock`;
+  mkdirSync(lockPath);
+
+  assert.throws(
+    () => resolvePort(base),
+    (error) => {
+      assert.match(error.message, /포트 장부 잠금 대기 시간 초과/);
+      assert.ok(error.message.includes(lockPath));
+      return true;
+    },
+  );
+  assert.equal(existsSync(lockPath), true);
+  assert.equal(existsSync(registryPath), false);
+});
+
+for (const contents of ['{broken', '[]', 'null', '42']) {
+  test(`손상되거나 객체가 아닌 장부를 복구한다 (${contents})`, (t) => {
+    env(t, 'FINANCE_PORT_SLOT', undefined);
+    const base = repo(t);
+    const wt = worktree(base, 'recovery');
+    const registryPath = join(base, '.worktree-ports.json');
+    writeFileSync(registryPath, contents);
+
+    const { slot } = resolvePort(wt);
+
+    assert.ok(Number.isInteger(slot) && slot > 0 && slot < SLOT_COUNT);
+    assert.deepEqual(JSON.parse(readFileSync(registryPath, 'utf8')), { [base]: 0, [wt]: slot });
+    assert.equal(existsSync(`${registryPath}.lock`), false);
+  });
+}
 
 test('CLI는 경로에 한글·공백이 있어도 포트를 출력한다', (t) => {
   env(t, 'FINANCE_PORT_SLOT', undefined);

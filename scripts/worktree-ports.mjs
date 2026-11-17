@@ -12,6 +12,7 @@
  *   워크트리는 이름의 해시로 1번 이후를 고른다. 같은 워크트리는 언제 띄워도 같은 주소라
  *   북마크가 산다. 이미 다른 워크트리가 쓰는 슬롯이면 다음 빈 슬롯으로 밀린다. 한 번
  *   정해진 슬롯은 기준 체크아웃의 .worktree-ports.json에 적혀 고정된다(gitignore).
+ *   무효하거나 중복된 슬롯 배정은 다시 고른다.
  *   사라진 워크트리의 항목은 읽을 때마다 정리되어 슬롯이 회수된다.
  *
  * 수동 지정:
@@ -24,7 +25,7 @@ import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const BASE_PORT = 3000;
-const SLOT_COUNT = 10;
+export const SLOT_COUNT = 10;
 
 const REGISTRY_NAME = '.worktree-ports.json';
 
@@ -54,7 +55,10 @@ function readRegistry(path) {
 
   try {
     const parsed = JSON.parse(readFileSync(path, 'utf8'));
-    return parsed && typeof parsed === 'object' ? parsed : {};
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter(([, slot]) => Number.isInteger(slot) && slot >= 0 && slot < SLOT_COUNT),
+    );
   } catch {
     // 손상된 장부는 버리고 다시 만든다. 슬롯은 언제든 해시에서 다시 뽑을 수 있다.
     return {};
@@ -70,7 +74,7 @@ function writeRegistry(path, registry) {
   renameSync(tmp, path);
 }
 
-function preferredSlot(name) {
+export function preferredSlot(name) {
   const digest = createHash('sha1').update(name).digest();
   return digest.readUInt32BE(0) % SLOT_COUNT;
 }
@@ -111,12 +115,16 @@ function claimSlot(root, base, name, registryPath) {
   // 가리키게 하려는 것이다. 워크트리는 1번부터 가져간다.
   registry[base] = 0;
 
-  if (typeof registry[root] === 'number') {
+  const saved = registry[root];
+  const duplicated = Object.entries(registry).some(([path, slot]) => path !== root && slot === saved);
+  if (saved !== undefined && (root === base || (saved !== 0 && !duplicated))) {
     writeRegistry(registryPath, registry);
     return registry[root];
   }
 
-  const taken = new Set(Object.values(registry));
+  // 잘못된 기존 배정은 자기 슬롯을 점유하지 않은 채 다시 고른다.
+  delete registry[root];
+  const taken = new Set([0, ...Object.values(registry)]);
   const wanted = preferredSlot(name);
 
   for (let i = 0; i < SLOT_COUNT; i += 1) {
