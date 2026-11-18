@@ -133,12 +133,50 @@ it('실패 후 60초 동안 신선도·데이터를 유지하며 재시도를 �
   expect(await fake.exists('lock:market')).toBe(0);
 });
 
-it.each([false, true])('만료된 옛 보유자의 완료(실패=%s)는 새 값·새 락을 건드리지 않는다', async (fail) => {
+it('외부 호출이 20초 안에 끝나지 않으면 옛 값을 반환하고 재시도를 억제한다', async () => {
+  await seed();
+  const before = await fake.get('cache:market');
+  const provider = deferred();
+  const pending = cached(key, () => provider.promise);
+  const result = expect(pending).resolves.toBe('old');
+  await tick();
+  await vi.advanceTimersByTimeAsync(19_999);
+  expect(await fake.get('cache:market')).toEqual(before);
+  expect(await fake.exists('lock:market')).toBe(1);
+  await vi.advanceTimersByTimeAsync(1);
+  await result;
+  const stale = { ...(before as object), retryAfter: Date.now() + 60_000 };
+  expect(await fake.get('cache:market')).toEqual(stale);
+  expect(await fake.exists('lock:market')).toBe(0);
+  expect(console.error).toHaveBeenCalledWith(
+    '[cache] market: 갱신 실패(Error: market: 외부 호출 시간 초과). 마지막으로 저장된 값을 돌려준다',
+  );
+  provider.resolve('late');
+  await tick();
+  expect(await fake.get('cache:market')).toEqual(stale);
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+it('콜드 외부 호출이 20초 안에 끝나지 않으면 실패하고 락을 해제한다', async () => {
+  const provider = deferred();
+  const pending = cached(key, () => provider.promise);
+  const result = expect(pending).rejects.toThrow('market: 외부 호출 시간 초과');
+  await vi.advanceTimersByTimeAsync(20_000);
+  await result;
+  expect(await fake.get('cache:market')).toBeNull();
+  expect(await fake.exists('lock:market')).toBe(0);
+  provider.reject(new Error('late failure'));
+  await tick();
+  expect(await fake.get('cache:market')).toBeNull();
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+it.each([false, true])('소유권을 잃은 옛 보유자의 완료(실패=%s)는 새 값·새 락을 건드리지 않는다', async (fail) => {
   await seed();
   const old = deferred();
   const pending = cached(key, () => old.promise);
   await tick();
-  await vi.advanceTimersByTimeAsync(30_000);
+  fake.values.delete('lock:market');
   expect(await cached(key, async () => 'new')).toBe('new');
   const latest = await fake.get('cache:market');
   await fake.set('lock:market', 'next-owner', { ex: 30 });

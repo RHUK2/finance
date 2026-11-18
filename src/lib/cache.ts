@@ -14,6 +14,7 @@ import { cacheMs, cacheShape, type EndpointKey } from './cache-config';
  * 동작(만료 시 갱신까지 블로킹):
  * - 신선하면 캐시값 즉시 반환
  * - 만료/미스 → 락(SET NX)을 획득한 한 요청만 외부 API 호출 후 캐시 기록
+ * - 외부 호출은 20초까지만 기다리고 시간 초과는 갱신 실패로 처리한다.
  * - 락에 실패한 동시 요청은 갱신 완료까지 폴링 대기(스탬피드 차단)
  * - 갱신이 실패하면 마지막 값을 반환하고 60초 동안 재시도를 억제한다.
  *
@@ -36,6 +37,8 @@ function redis(): Redis {
 type Entry<T> = { v?: number; freshUntil: number; retryAfter?: number; data: T };
 
 const LOCK_TTL = 30; // 락 보유 상한(초). 외부 호출이 더 길면 자동 만료.
+// fetchJson의 15초보다 길고 LOCK_TTL(30초)보다 짧아야 보유자가 락 만료 전에 끝난다.
+const FETCH_TIMEOUT = 20_000; // 외부 호출 대기 상한(ms).
 const WAIT_TIMEOUT = 9000; // 다른 요청의 갱신을 기다리는 상한(ms).
 const WAIT_INTERVAL = 300; // 폴링 간격(ms).
 const RETRY_DELAY = 60_000; // 갱신 실패 뒤 stale을 즉시 반환하는 기간(ms).
@@ -106,8 +109,15 @@ export async function cached<T>(key: EndpointKey, fetcher: () => Promise<T>): Pr
       const latest = await read();
       if (latest && reusable(latest)) return latest.data;
       let data: T;
+      let timer: ReturnType<typeof setTimeout> | undefined;
       try {
-        data = await fetcher();
+        // race가 늦은 성공 값은 버리고 늦은 거부도 처리하므로 캐시 기록으로 이어지지 않는다.
+        data = await Promise.race([
+          fetcher(),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error(`${key}: 외부 호출 시간 초과`)), FETCH_TIMEOUT);
+          }),
+        ]);
       } catch (err) {
         // 갱신 실패 시 stale이라도 있으면 반환(외부 API 일시 장애 대비).
         const stale = latest ?? entry;
@@ -117,6 +127,8 @@ export async function cached<T>(key: EndpointKey, fetcher: () => Promise<T>): Pr
           return stale.data;
         }
         throw err;
+      } finally {
+        clearTimeout(timer);
       }
       await write(token, { v: shape, freshUntil: Date.now() + ttlMs, data });
       return data;
