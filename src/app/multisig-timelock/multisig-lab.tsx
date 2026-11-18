@@ -130,7 +130,7 @@ export function MultisigLab() {
           </div>
           <div className='rounded-md bg-muted p-2'>
             <span className='mr-2 text-muted-foreground'>scriptSig (풀이)</span>
-            <div className='mt-1 break-all'>{validCount === 0 ? `${scriptSig}(서명 없음)` : scriptSig}</div>
+            <div className='mt-1 break-all'>{validCount === 0 ? `${scriptSig.trimEnd()} (서명 없음)` : scriptSig}</div>
           </div>
         </div>
         {validCount > m && (
