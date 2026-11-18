@@ -71,3 +71,13 @@ describe('fetchYahooSeries', () => {
     });
   });
 });
+
+// 합성 입력으로 현재 한계를 기록한다. 실제 Yahoo 응답에서 이 타임스탬프를 확인한 것은 아니다.
+it('UTC 자정 전 저녁 봉은 정규 봉과 같은 날짜가 되어 뒤의 값만 남는다', () => {
+  const rows = [
+    { date: '2026-09-30T13:30:00Z', value: 100 },
+    { date: '2026-09-30T22:30:00Z', value: 101 },
+  ].map(({ date, value }) => ({ time: barDate(new Date(date), 'America/New_York'), value }));
+  expect(rows.map((row) => row.time)).toEqual(['2026-09-30', '2026-09-30']);
+  expect(keepLastPerDate(rows)).toEqual([{ time: '2026-09-30', value: 101 }]);
+});
