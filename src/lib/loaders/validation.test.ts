@@ -364,22 +364,33 @@ it.each([
   },
 );
 
-it.each([undefined, null, 20, '', '   '])('공포지수의 잘못된 분류 %s를 거른다', async (classification) => {
-  const valid = { timestamp: '1704153600', value: '100', value_classification: 'Extreme Greed' };
-  const broken = { timestamp: '1704067200', value: '50', value_classification: classification };
-  respond({ data: [broken, valid] });
-  expect(await loadFearGreed()).toMatchObject({
-    value: 100,
-    classification: 'Extreme Greed',
-    history: [{ time: '2024-01-02', value: 100 }],
-  });
-  respond({ data: [broken] });
-  await expect(loadFearGreed()).rejects.toThrow('빈 시계열');
-  respond({
-    data: [
-      { ...valid, timestamp: '1704067200' },
-      { ...broken, timestamp: '1704153600' },
-    ],
-  });
-  await expect(loadFearGreed()).rejects.toThrow('No valid fear & greed data');
-});
+it.each([undefined, null, 20, '', '   '])(
+  '공포지수의 과거 분류 %s는 허용하고 최신 분류는 검증한다',
+  async (classification) => {
+    const valid = { timestamp: '1704153600', value: '100', value_classification: 'Extreme Greed' };
+    const broken = { timestamp: '1704067200', value: '50', value_classification: classification };
+    for (const data of [
+      [broken, valid],
+      [valid, broken],
+    ]) {
+      respond({ data });
+      expect(await loadFearGreed()).toMatchObject({
+        value: 100,
+        classification: 'Extreme Greed',
+        history: [
+          { time: '2024-01-01', value: 50 },
+          { time: '2024-01-02', value: 100 },
+        ],
+      });
+    }
+    respond({ data: [broken] });
+    await expect(loadFearGreed()).rejects.toThrow('No valid fear & greed data');
+    respond({
+      data: [
+        { ...valid, timestamp: '1704067200' },
+        { ...broken, timestamp: '1704153600' },
+      ],
+    });
+    await expect(loadFearGreed()).rejects.toThrow('No valid fear & greed data');
+  },
+);
