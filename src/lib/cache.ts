@@ -39,6 +39,7 @@ type Entry<T> = { v?: number; freshUntil: number; retryAfter?: number; data: T }
 const LOCK_TTL = 30; // 락 보유 상한(초). 외부 호출이 더 길면 자동 만료.
 // fetchJson의 15초보다 길고 LOCK_TTL(30초)보다 짧아야 보유자가 락 만료 전에 끝난다.
 const FETCH_TIMEOUT = 20_000; // 외부 호출 대기 상한(ms).
+// 콜드일 때 대기자는 보유자의 외부 호출 시간 초과(FETCH_TIMEOUT)보다 먼저 실패할 수 있다.
 const WAIT_TIMEOUT = 9000; // 다른 요청의 갱신을 기다리는 상한(ms).
 const WAIT_INTERVAL = 300; // 폴링 간격(ms).
 const RETRY_DELAY = 60_000; // 갱신 실패 뒤 stale을 즉시 반환하는 기간(ms).

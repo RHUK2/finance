@@ -98,6 +98,7 @@ it('갱신 실패 기록은 락 획득 뒤 다시 읽은 항목에 얹는다', a
     retryAfter: Date.now() + 60_000,
   });
   expect(await fake.exists('lock:market')).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
 });
 
 it('락 획득 뒤 형태 버전이 달라져도 갱신 실패 시 처음 읽은 값을 반환하고 기록한다', async () => {
@@ -131,6 +132,7 @@ it('실패 후 60초 동안 신선도·데이터를 유지하며 재시도를 �
     data: 'new',
   });
   expect(await fake.exists('lock:market')).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
 });
 
 it('외부 호출이 20초 안에 끝나지 않으면 옛 값을 반환하고 재시도를 억제한다', async () => {
