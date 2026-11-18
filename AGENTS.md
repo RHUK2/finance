@@ -20,11 +20,11 @@ lint 빚을 동결해 두고 갚는 방법은 `eslint.config.mjs`가 갖는다. 
 
 ## Agent skills
 
-| 스킬          | 이 레포의 대응                                  | 정본                           |
-| ------------- | ----------------------------------------------- | ------------------------------ |
-| Issue tracker | 로컬 마크다운 `.scratch/<feature>/` (gitignore) | `docs/agents/issue-tracker.md` |
-| Triage labels | 기본 다섯 라벨을 그대로 쓴다                    | `docs/agents/triage-labels.md` |
-| Domain docs   | 단일 컨텍스트. 루트 `CONTEXT.md` + `docs/adr/`  | `docs/agents/domain.md`        |
+| 스킬          | 이 레포의 대응                                      | 정본                           |
+| ------------- | --------------------------------------------------- | ------------------------------ |
+| Issue tracker | GitHub Issues (`gh` CLI). 작업 산출물은 `.scratch/` | `docs/agents/issue-tracker.md` |
+| Triage labels | 기본 다섯 라벨을 그대로 쓴다                        | `docs/agents/triage-labels.md` |
+| Domain docs   | 단일 컨텍스트. 루트 `CONTEXT.md` + `docs/adr/`      | `docs/agents/domain.md`        |
 
 <!-- BEGIN:nextjs-agent-rules -->
 
