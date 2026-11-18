@@ -302,7 +302,7 @@ export type AttackInput = {
 const J_PER_TH = 15; // 현행 주력 세대 ASIC 효율 ≈ 15 J/TH(S21 Pro급) → 15 W per TH/s
 const BLOCKS_PER_HOUR = 60 / TARGET_BLOCK_MINUTES;
 const HOURS_PER_YEAR = 24 * 365;
-const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불 규모(예시 상한)
+export const DOUBLE_SPEND_BTC = 5000; // 현실적으로 노릴 수 있는 이중지불 규모(예시 상한)
 
 // ASIC 채굴기의 실효 수명. 신형이 나오면 효율에서 밀려 채산성이 사라지는 시점까지를 본다.
 // 회수 기간이 이 값을 넘으면 "정직하게 채굴하면 장비값을 회수하고 그 뒤로 계속 번다"는

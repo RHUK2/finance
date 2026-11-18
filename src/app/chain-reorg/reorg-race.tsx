@@ -6,11 +6,8 @@ import { GitFork, ShieldOff } from 'lucide-react';
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, RoundControls, SectionIntro, StatusBanner } from '@/components/simulation';
 import { useRoundEngine } from '@/hooks/use-round-engine';
+import { REORG_MAX_ROUNDS as MAX_ROUNDS, reorgRaceStatus, stepReorgRace } from '@/lib/chain-concept';
 import { cn, mulberry32 } from '@/lib/utils';
-
-// 이 라운드까지 못 따라잡으면 멈춘다. 절반 미만이면 이 시점을 사실상 안전으로 읽지만,
-// 절반 이상이면 시간이 걸릴 뿐 결국 따라잡으므로(chain-concept의 q ≥ p 분기) 안전 판정을 내지 않는다.
-const MAX_ROUNDS = 60;
 
 export function ReorgRace() {
   const [attackPct, setAttackPct] = useState(20);
@@ -25,24 +22,17 @@ export function ReorgRace() {
   const q = attackPct / 100;
   const majority = q >= 0.5;
   const honestTotal = confirmations + honestExtra;
-  const caughtUp = attackerBlocks >= honestTotal;
-  const safe = round >= MAX_ROUNDS && !caughtUp;
-  const finished = caughtUp || safe;
+  const state = { round, honestBlocks: honestTotal, attackerBlocks };
+  const { caughtUp, timedOut: safe, finished } = reorgRaceStatus(state);
 
   function step(): boolean {
     if (finished) return false;
     const rng = mulberry32(seed * 1_000_003 + round);
-    const attackerWinsRound = rng() < q;
-
-    const nextAttacker = attackerBlocks + (attackerWinsRound ? 1 : 0);
-    const nextHonest = honestTotal + (attackerWinsRound ? 0 : 1);
-    const nextRound = round + 1;
-
-    setAttackerBlocks(nextAttacker);
-    setHonestExtra(nextHonest - confirmations);
-    setRound(nextRound);
-
-    return nextAttacker < nextHonest && nextRound < MAX_ROUNDS;
+    const next = stepReorgRace(state, q, rng());
+    setAttackerBlocks(next.attackerBlocks);
+    setHonestExtra(next.honestBlocks - confirmations);
+    setRound(next.round);
+    return !reorgRaceStatus(next).finished;
   }
 
   const engine = useRoundEngine(step, speedMs);

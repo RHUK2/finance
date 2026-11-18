@@ -10,10 +10,8 @@ import { Panel } from '@/components/panel';
 import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 import { BTC_COLOR, formatPct, formatUsd } from '@/lib/utils';
 
+import { formatBtc } from './format';
 import { BASE, BASE_ANNUAL, blockRevenue, eraStartYear, LAST_SUBSIDY_ERA, requiredFee } from './models';
-
-const fmtFee = (n: number) =>
-  n >= 0.01 ? `${n.toFixed(2)} BTC` : `${Math.round(n * 1e8).toLocaleString('ko-KR')} sat`;
 
 export function FeeGap() {
   const [era, setEra] = useState(10);
@@ -67,8 +65,8 @@ export function FeeGap() {
           min={0.001}
           max={10}
           scale='log'
-          format={fmtFee}
-          hint={`기준점(${BTC_PRICE_BASELINE.asOf} 언저리의 대략적인 시장, BTC ${formatUsd(BASE.btcPrice)})의 수수료는 ${fmtFee(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배 가까이 오르기도 하지만 평시 수준은 이 언저리다.`}
+          format={formatBtc}
+          hint={`기준점(${BTC_PRICE_BASELINE.asOf} 언저리의 대략적인 시장, BTC ${formatUsd(BASE.btcPrice)})의 수수료는 ${formatBtc(BASE.feePerBlock)}다. 혼잡할 때 잠깐 그 열 배 가까이 오르기도 하지만 평시 수준은 이 언저리다.`}
         />
       </Panel>
 
@@ -76,13 +74,13 @@ export function FeeGap() {
         <div className='flex items-baseline justify-between'>
           <span className='text-sm font-medium'>블록 보상의 구성</span>
           <span className='text-xs text-muted-foreground tabular-nums'>
-            {fmtFee(r.totalBtc)} · {formatUsd(r.perBlockUsd)}
+            {formatBtc(r.totalBtc)} · {formatUsd(r.perBlockUsd)}
           </span>
         </div>
         <StackedBar
           segments={[
-            { label: `보조금 ${fmtFee(r.subsidy)}`, value: r.subsidy, className: 'bg-series-2' },
-            { label: `수수료 ${fmtFee(feePerBlock)}`, value: feePerBlock, className: 'bg-series-3' },
+            { label: `보조금 ${formatBtc(r.subsidy)}`, value: r.subsidy, className: 'bg-series-2' },
+            { label: `수수료 ${formatBtc(feePerBlock)}`, value: feePerBlock, className: 'bg-series-3' },
           ]}
           total={r.totalBtc}
         />
@@ -107,7 +105,7 @@ export function FeeGap() {
         />
         <Metric
           label='필요한 블록당 수수료'
-          value={fmtFee(need)}
+          value={formatBtc(need)}
           tone={need <= feePerBlock ? 'good' : 'bad'}
           sub={`기준 수수료의 ${needMultiple >= 10 ? Math.round(needMultiple) : needMultiple.toFixed(1)}배`}
         />
@@ -120,7 +118,7 @@ export function FeeGap() {
         <span className='leading-relaxed font-normal'>
           {enough
             ? `지금 조건이면 보안 예산이 기준점보다 크다. 보조금이 줄어든 몫을 가격과 수수료가 함께 메웠다.`
-            : `지금 조건이면 보안 예산이 기준점에 못 미친다. 같은 수준을 지키려면 블록당 수수료가 ${fmtFee(need)}여야 한다.`}
+            : `지금 조건이면 보안 예산이 기준점에 못 미친다. 같은 수준을 지키려면 블록당 수수료가 ${formatBtc(need)}여야 한다.`}
         </span>
       </StatusBanner>
 

@@ -122,7 +122,7 @@ function VolSim({
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
-        <Metric label='성공 확률 p' value={formatPct(p * 100, 0)} tone='accent' />
+        <Metric label='성공 확률 p' value={formatPct(p * 100, 1)} tone='accent' />
         <Metric label='현재 가격' value={formatUsd(p * WIN_PRICE)} />
         <Metric
           label={`최근 실현 변동성 (${VOL_WINDOW}라운드)`}

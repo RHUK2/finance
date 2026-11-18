@@ -7,7 +7,7 @@ import { Bomb, Crown, HeartPulse, ShieldAlert, ShieldCheck, Zap } from 'lucide-r
 import { Panel } from '@/components/panel';
 import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { ratioLabel } from '@/lib/bcra';
-import { cn, formatUsd } from '@/lib/utils';
+import { formatUsd } from '@/lib/utils';
 
 import { powerCapture } from './models';
 
@@ -84,24 +84,22 @@ export function AbstractVsPhysical() {
         />
       </div>
 
-      <Panel tone={r.physical.captured ? 'bad' : 'good'} className='flex-row items-start gap-3'>
-        <ShieldCheck className={cn('size-5 shrink-0', r.physical.captured ? 'text-bad' : 'text-good')} />
-        <p className='text-sm/relaxed'>
-          추상 권력의 탈취 비용은 자산 가치가 아무리 커져도 함께 오르지 않는다. 그래서 고가치 자산일수록 BCRA가 치솟아{' '}
-          <b>늘 탈취에 노출</b>된다. 반면 물리 권력은 와트를 부과해 탈취 비용을 자산 가치 위로 끌어올릴 수 있다.{' '}
-          {r.physical.captured ? (
-            <>
-              지금은 물리 권력 벽이 자원 가치보다 낮아 여전히 탈취된다. 벽을 가치 위로 올려 보면 BCRA가 1 미만으로
-              떨어진다.
-            </>
-          ) : (
-            <>
-              지금은 물리 권력 벽이 자원 가치를 넘어 BCRA가 1 미만이다. 합리적 약탈자라면 공격을 포기한다. 이것이
-              소프트워가 말하는 탈취 불가능성이다.
-            </>
-          )}
-        </p>
-      </Panel>
+      <StatusBanner
+        tone={r.physical.captured ? 'bad' : 'good'}
+        icon={r.physical.captured ? <ShieldAlert className='size-5' /> : <ShieldCheck className='size-5' />}
+        detail={
+          <>
+            {r.abstract.captured
+              ? '지금은 추상 권력의 탈취 비용이 자원 가치를 넘지 못해 탈취된다.'
+              : '지금은 추상 권력이 버틴다. 다만 자원 가치가 커져도 탈취 비용은 함께 오르지 않는다.'}{' '}
+            {r.physical.captured
+              ? `물리 권력 벽${r.abstract.captured ? '도' : '은'} 자원 가치를 넘지 못한다. 벽을 가치 위로 올리면 BCRA가 1 미만으로 떨어진다.`
+              : '물리 권력 벽은 자원 가치를 넘어 BCRA가 1 미만이다. 합리적 약탈자라면 공격을 포기한다.'}
+          </>
+        }
+      >
+        {r.physical.captured ? '지금은 물리 권력이 탈취된다' : '지금은 물리 권력이 방어된다'}
+      </StatusBanner>
 
       <Panel className='gap-3'>
         <SectionIntro title='같은 벽, 다른 대가'>

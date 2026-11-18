@@ -76,7 +76,11 @@ export function OnchainComparison() {
         <Metric label='온체인 수수료 총합' value={formatSats(onchainFee)} tone={onchainTone} />
         {/* 채널 안 결제에는 중계 노드 라우팅 수수료가 따로 붙는다. 여기서 비교하는 건 온체인 수수료뿐이다. */}
         <Metric label='라이트닝 온체인 수수료' value={formatSats(lightningFee)} tone={lightningTone} />
-        <Metric label='절약액' value={formatSats(Math.max(0, savings))} tone='accent' />
+        <Metric
+          label={savings < 0 ? '추가 비용' : '절약액'}
+          value={formatSats(Math.abs(savings))}
+          tone={savings < 0 ? 'bad' : savings > 0 ? 'good' : undefined}
+        />
       </div>
 
       <ExplainCard

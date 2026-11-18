@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  REORG_MAX_ROUNDS,
+  REVERSAL_RISK_THRESHOLD,
+  probabilityTone,
+  reorgRaceStatus,
+  stepReorgRace,
   confirmationLimitProbability,
   doubleSpendProbability,
   formatProbability,
@@ -73,5 +78,63 @@ describe('confirmationLimitProbability', () => {
     [0.51, 1],
   ])('공격자 비중 %d의 확인 수 극한은 %d다', (q, expected) => {
     expect(confirmationLimitProbability(q)).toBe(expected);
+  });
+});
+
+describe('경주의 전이와 종료', () => {
+  it('다음 블록 한 개만 늘리고 난수 경계는 정직한 체인으로 보낸다', () => {
+    const start = { round: 0, honestBlocks: 3, attackerBlocks: 0 };
+    expect(stepReorgRace(start, 0.2, 0.19)).toEqual({ round: 1, honestBlocks: 3, attackerBlocks: 1 });
+    expect(stepReorgRace(start, 0.2, 0.2)).toEqual({ round: 1, honestBlocks: 4, attackerBlocks: 0 });
+  });
+
+  it('같은 길이에 도달하면 성공으로 멈춘다', () => {
+    const next = stepReorgRace({ round: 2, honestBlocks: 3, attackerBlocks: 2 }, 0.2, 0);
+    expect(reorgRaceStatus(next)).toEqual({ caughtUp: true, timedOut: false, finished: true });
+    expect(stepReorgRace(next, 0.2, 0.9)).toBe(next);
+  });
+
+  it('마지막 라운드의 따라잡기를 시간 초과보다 먼저 판정한다', () => {
+    const start = { round: REORG_MAX_ROUNDS - 1, honestBlocks: 3, attackerBlocks: 2 };
+    expect(reorgRaceStatus(stepReorgRace(start, 0.5, 0)).caughtUp).toBe(true);
+    const timeout = stepReorgRace(start, 0.5, 0.9);
+    expect(reorgRaceStatus(timeout)).toEqual({ caughtUp: false, timedOut: true, finished: true });
+    expect(stepReorgRace(timeout, 0.5, 0)).toBe(timeout);
+  });
+
+  it('상품 인도 뒤 시작하는 경주는 백서의 선행 채굴을 포함하지 않는다', () => {
+    // 유한 경주의 성공 질량을 전수 합산한다. 확인 3개 격차에서 출발하므로
+    // q/p의 세제곱에 접근하고, 선행 채굴을 포함한 백서의 확률보다 작다.
+    const q = 0.2;
+    let active = new Map([[3, 1]]);
+    let success = 0;
+    for (let round = 0; round < REORG_MAX_ROUNDS; round++) {
+      const next = new Map<number, number>();
+      for (const [gap, mass] of active) {
+        const state = { round, honestBlocks: gap, attackerBlocks: 0 };
+        for (const [random, weight] of [
+          [0, q],
+          [0.9, 1 - q],
+        ]) {
+          const result = stepReorgRace(state, q, random);
+          if (reorgRaceStatus(result).caughtUp) success += mass * weight;
+          else {
+            const nextGap = result.honestBlocks - result.attackerBlocks;
+            next.set(nextGap, (next.get(nextGap) ?? 0) + mass * weight);
+          }
+        }
+      }
+      active = next;
+    }
+    expect(success).toBeCloseTo((q / (1 - q)) ** 3, 8);
+    expect(success).toBeLessThan(reversalProbability(q, 3));
+  });
+});
+
+describe('확률 판정 경계', () => {
+  it('1% 경계의 양쪽을 같은 기준으로 판정한다', () => {
+    expect(probabilityTone(REVERSAL_RISK_THRESHOLD - 0.00001)).toBe('good');
+    expect(probabilityTone(REVERSAL_RISK_THRESHOLD)).toBe('bad');
+    expect(probabilityTone(0.03)).toBe('bad');
   });
 });

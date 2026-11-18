@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { subsidyAtEra } from '@/lib/bitcoin-models';
 
+import { formatBtc } from './format';
+
 // 현재 시대는 모듈 초기화 때 정해지므로 import 전에 기준 날짜를 고정한다.
 vi.useFakeTimers();
 vi.setSystemTime(new Date('2026-08-01T00:00:00.000Z'));
@@ -18,6 +20,17 @@ const {
   LAST_SUBSIDY_ERA,
 } = await import('./models');
 vi.useRealTimers();
+
+describe('BTC 표기', () => {
+  it.each([
+    [0.99994, '0.9999 BTC'],
+    [0.99996, '1 BTC'],
+    [1, '1 BTC'],
+    [1.00001, '1.00001 BTC'],
+  ])('%s BTC를 %s로 표시한다', (value, label) => {
+    expect(formatBtc(value)).toBe(label);
+  });
+});
 
 // 발행 스케줄은 프로토콜이 정한다. 사토시 정수 나눗셈이라 50 BTC = 5e9 sat을 33번 자르면 0이다.
 describe('보조금', () => {

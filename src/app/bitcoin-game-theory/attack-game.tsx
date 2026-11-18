@@ -10,7 +10,7 @@ import { bcra, ratioLabel, deterred } from '@/lib/bcra';
 import { BTC_PRICE_BASELINE } from '@/lib/market-baselines';
 import { BTC_COLOR, formatUsd } from '@/lib/utils';
 
-import { attack51, HARDWARE_LIFE_YEARS } from './models';
+import { attack51, DOUBLE_SPEND_BTC, HARDWARE_LIFE_YEARS } from './models';
 
 // BTC 가격·해시레이트 기본값의 기준 시점. 해시레이트도 BTC 기준 시세와 같은 시점에 맞춘다.
 // 화면 힌트에 함께 적는다(docs/fact-check-log.md 재확인 표).
@@ -113,7 +113,13 @@ export function AttackGame() {
           className='bg-series-1'
           sub={`장비 ${formatUsd(r.hardwareCost)} · 전기 ${formatUsd(r.energyCost)}`}
         />
-        <CostBar label='이중지불 이득 (최대 추정)' value={r.doubleSpendGain} max={max} className='bg-series-2' />
+        <CostBar
+          label='이중지불 이득 (최대 추정)'
+          value={r.doubleSpendGain}
+          max={max}
+          className='bg-series-2'
+          sub={`${DOUBLE_SPEND_BTC.toLocaleString('ko-KR')} BTC를 되돌린다고 가정`}
+        />
       </Panel>
 
       <div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>

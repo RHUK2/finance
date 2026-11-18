@@ -6,7 +6,12 @@ import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 import { Panel } from '@/components/panel';
 import { ControlSlider, ExplainCard, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
 import { cn } from '@/lib/utils';
-import { confirmationLimitProbability, formatProbability, reversalProbability } from '@/lib/chain-concept';
+import {
+  confirmationLimitProbability,
+  formatProbability,
+  probabilityTone,
+  reversalProbability,
+} from '@/lib/chain-concept';
 
 const COMPARE_PRESETS = [10, 30, 45, 51, 60] as const;
 
@@ -53,7 +58,7 @@ export function AttackScope() {
         </StatusBanner>
 
         <div className='grid grid-cols-2 gap-3'>
-          <Metric label='확인 6개 시 확률' value={formatProbability(atSix)} tone={atSix > 0.05 ? 'bad' : 'good'} />
+          <Metric label='확인 6개 시 확률' value={formatProbability(atSix)} tone={probabilityTone(atSix)} />
           <Metric
             label='확인 수 → 무한대의 확률'
             value={formatProbability(eventually)}
