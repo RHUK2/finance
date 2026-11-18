@@ -37,7 +37,7 @@ export function BitcoinQuantumView() {
 
   const sim = useMemo(() => {
     // 공개키가 아직 서명으로 노출된 적 없는 해시 주소(P2PKH·P2WPKH 미사용)는 현재 위협 모델에서 안전으로 취급.
-    // P2PK·P2TR은 출력에 공개키를 그대로 담아 받는 순간 노출되므로 노출 쪽 선택지에 든다(CONTEXT.md 「공개키 노출」).
+    // P2PK·P2TR은 출력에 공개키를 그대로 담아 받는 순간 노출되므로 노출 쪽 선택지에 든다(GLOSSARY.md 「공개키 노출」).
     const exposed = addressReused;
     const risk = exposed ? riskOf(qubitProgress) : { level: '안전', tone: 'good' as const, icon: ShieldCheck };
     return { exposed, risk };
