@@ -159,7 +159,8 @@ export function DepositPriority() {
 
       <Panel>
         <span className='text-xs text-muted-foreground'>
-          낙찰가 {formatEok(salePrice)}이 {tenantFirst ? '임차인 → 은행' : '은행 → 임차인'} 순서로 배분된다
+          낙찰가 {formatEok(salePrice)} 중 채권액 한도에서{' '}
+          {canClaim ? `${tenantFirst ? '임차인 → 은행' : '은행 → 임차인'} 순서로 배분된다` : '은행에만 배분된다'}
         </span>
         <CostBar
           label='임차인 배당'

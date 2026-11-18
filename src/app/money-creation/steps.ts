@@ -44,7 +44,7 @@ export function buildSteps(r: number): Step[] {
   const Mmax = round(B / r); // 최대 통화량(본원통화 × 1/r)
   const loanTotal = Mmax - B; // 누적 대출 총액
   const pct = Math.round(r * 100);
-  const mult = (1 / r).toFixed(1);
+  const mult = (Mmax / B).toFixed(1);
 
   return [
     {

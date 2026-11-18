@@ -111,6 +111,8 @@ export type ExitCountry = {
   note: string;
 };
 
+export const EXIT_DEFAULTS = { network: 35, sanction: 60 } as const;
+
 export const EXIT_COUNTRIES: ExitCountry[] = [
   {
     id: 'saudi',
@@ -137,7 +139,7 @@ export const EXIT_COUNTRIES: ExitCountry[] = [
     tradeFreedom: 'mid',
     securityIndependence: 'high',
     lowTreasuryExposure: 'low',
-    note: '기준선 바로 아래에 걸려 있다. 안보는 자립했고 위안화 결제 경로도 만들었지만 미국채를 여전히 대량으로 들고 있어 동결 위험이 비용에 그대로 남는다. 대체망 성숙도를 올리면 곧바로 기준선을 넘는데, 실제로 이 나라가 결제망 구축에 들이는 노력이 그 슬라이더를 스스로 미는 일이다.',
+    note: '안보는 자립했고 위안화 결제 경로도 만들었지만 미국채를 여전히 대량으로 들고 있어 동결 위험이 비용에 남는다.',
   },
   {
     id: 'iraq',
@@ -146,7 +148,7 @@ export const EXIT_COUNTRIES: ExitCountry[] = [
     tradeFreedom: 'low',
     securityIndependence: 'low',
     lowTreasuryExposure: 'high',
-    note: '보유 자산이 적어 동결 비용은 낮았지만 무역과 안보가 모두 묶여 이탈 비율이 기준선을 한참 밑돌았다. 그런데도 2000년에 석유 대금을 유로로 받겠다고 했고 2003년에 전쟁이 있었다. 이 표가 계산하는 것은 무엇이 합리인가지 무엇이 일어나는가가 아니다. 계산이 말리는데도 움직인 사례가 남긴 것은 다른 나라들의 이탈 비용을 올린 선례였고, 그래서 이탈은 캐스케이드가 아니다.',
+    note: '보유 자산이 적어 동결 위험은 낮았지만 무역과 안보가 모두 묶여 있었다. 2000년에 석유 대금을 유로로 받겠다고 했고 2003년에 전쟁이 있었다. 시도는 응징으로 끝났고 다른 나라의 이탈 비용을 올렸다.',
   },
 ];
 
@@ -205,6 +207,16 @@ export function exitLedger(country: ExitCountry, network: number, sanction: numb
     ratio,
     exits: ratio >= 1,
   };
+}
+
+// 기본 상태의 이득을 고정하고 결제 마비 비용만 줄였을 때 기준선을 넘는 첫 슬라이더 값.
+export function paymentReliefThreshold(country: ExitCountry): number | null {
+  const sanction = EXIT_DEFAULTS.sanction / 100;
+  const benefit = exitLedger(country, EXIT_DEFAULTS.network / 100, sanction).benefit;
+  for (let network = 0; network <= 100; network++) {
+    if (benefit >= exitLedger(country, network / 100, sanction).cost) return network;
+  }
+  return null;
 }
 
 // ─────────────────────────────────────────────────────────────

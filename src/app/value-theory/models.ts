@@ -1,3 +1,5 @@
+import { formatEokFromMan, formatWon } from '@/lib/utils';
+
 // 가치론 페이지의 순수 계산 모델. 한 페이지에서만 쓰이므로 src/lib이 아니라 여기 둔다
 // (CLAUDE.md "설명 페이지의 모델 배치").
 //
@@ -38,3 +40,7 @@ export function waterTotalWon(cups: number, decay: number): number {
 }
 
 export const MAX_CUPS = 20;
+
+// 1억 미만은 원 단위로 정밀도를 유지하고, 양수인 1원 미만을 0원으로 반올림하지 않는다.
+export const formatValue = (won: number) =>
+  won > 0 && won < 1 ? '1원 미만' : won >= 1e8 ? formatEokFromMan(won / 1e4) : formatWon(won);

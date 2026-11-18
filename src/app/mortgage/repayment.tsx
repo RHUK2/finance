@@ -15,7 +15,7 @@ import {
   StatusBanner,
 } from '@/components/simulation';
 import { Panel } from '@/components/panel';
-import { byYear, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage-models';
+import { byYear, REGULATION, REPAY_LABEL, REPAY_METHODS, schedule, type RepayMethod } from '@/lib/mortgage-models';
 import { cn, formatEokFromMan, formatMan, formatPct } from '@/lib/utils';
 
 export function Repayment() {
@@ -131,8 +131,8 @@ export function Repayment() {
             막대 하나가 1년이고, 높이는 그해에 낸 돈의 합이다. 가장 높은 막대가{' '}
             {peak >= 10000 ? formatEokFromMan(peak) : formatMan(peak)}
             {method === 'bullet'
-              ? `인 ${years}년차인데, 여기에만 원금 전액이 몰려 있어 앞의 막대들이 낮아 보인다. 그 막대들은 이자만 낸 해다`
-              : ''}
+              ? `인 ${years}년차인데, 여기에만 원금 전액이 몰려 있어 앞의 막대들이 낮아 보인다. 그 막대들은 이자만 낸 해다.`
+              : '이다.'}
           </span>
         </div>
         <div className='flex h-40 items-end gap-0.5'>
@@ -214,9 +214,9 @@ export function Repayment() {
             </p>
             <p className='mt-2'>
               그래서 대출 초기의 중도상환은 효과가 크다. 갚은 금액만큼의 잔액이 남은 기간 내내 이자를 낳지 않기
-              때문이다. 반대로 만기가 얼마 남지 않은 시점의 중도상환은 아낄 이자가 별로 없다. 중도상환수수료는 법으로
-              대출 실행 후 3년 안에만 붙을 수 있는데, 이 구간의 상환이 은행의 이자 수익을 가장 많이 깎는 시기이기도
-              하다.
+              때문이다. 반대로 만기가 얼마 남지 않은 시점의 중도상환은 아낄 이자가 별로 없다. 중도상환수수료는
+              원칙적으로 금지되지만, 대출일부터 {REGULATION.prepaymentFeeYears}년 이내 상환에는 예외적으로 붙을 수 있다
+              ({REGULATION.prepaymentFeeNote}). 이 구간의 상환이 은행의 이자 수익을 가장 많이 깎는 시기이기도 하다.
             </p>
             <p className='mt-2'>
               만기 연장이 늘 유리한 것도 아니다. 만기를 늘리면 월 상환액이 줄고 DSR 한도가 늘어 더 큰 집을 살 수 있게

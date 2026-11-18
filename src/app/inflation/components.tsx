@@ -1,7 +1,7 @@
 'use client';
 
 import { TONE_TEXT } from '@/components/tone';
-import { cn, formatMan, formatWon } from '@/lib/utils';
+import { cn, formatMan, formatUsdPrice, formatWon } from '@/lib/utils';
 
 export type Currency = '$' | '₩';
 
@@ -10,13 +10,12 @@ export type Currency = '$' | '₩';
  * 이 함수가 하는 일은 통화와 단위를 보고 어느 것을 쓸지 고르는 것뿐이다.
  * krwInMan=true면 만원 단위로 표기한다(큰 금액의 자릿수를 줄여 가독성↑).
  *
- * 달러 쪽만 여기 남아 있는 것은 utils의 formatUsd가 `$1.2K`처럼 접미사로 줄이는
- * 컴팩트 표기라, 자릿수를 그대로 보여야 하는 이 페이지에 맞지 않기 때문이다.
- * 음수 부호 "−"(U+2212)는 formatSigned가 세운 컨벤션을 따른다.
+ * 달러는 formatUsdPrice에 위임해 자릿수를 그대로 보여 주고 소수 자릿수를 고정한다.
+ * 음수 부호 "−"(U+2212)와 반올림된 0의 부호 처리는 공용 포맷터를 따른다.
  */
-export function makeMoneyFmt(currency: Currency, krwInMan = false) {
+export function makeMoneyFmt(currency: Currency, krwInMan = false, decimals = 0) {
   if (currency === '$') {
-    return (n: number) => `${n < 0 ? '−' : ''}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
+    return (n: number) => formatUsdPrice(n, decimals);
   }
   return krwInMan ? (n: number) => formatMan(n / 10000) : formatWon;
 }

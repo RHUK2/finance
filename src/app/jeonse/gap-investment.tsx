@@ -19,20 +19,26 @@ export function GapInvestment() {
   const [change, setChange] = useState(10);
 
   const { deposit, gap, leverage, newPrice, profit, roe } = gapInvestment(price, ratio, change);
-  const barMax = Math.max(price, 1);
+  const barMax = Math.max(price, newPrice, 1);
 
   const banner =
-    profit >= 0
+    change === 0
       ? {
-          tone: 'good' as const,
-          icon: <ArrowUpRight className='size-4 shrink-0' />,
-          text: `집값이 ${formatPct(change)} 오르는 동안 자기 돈 ${formatEok(gap)}은 ${formatPct(roe)} 불었다. 보증금이 이자도 분할 상환도 없는 레버리지로 작동해 수익률을 ${leverage.toFixed(1)}배로 키운다.`,
+          tone: 'accent' as const,
+          icon: <TrendingUp className='size-4 shrink-0' />,
+          text: '집값이 그대로면 시세 손익과 자기자본 수익률도 0이다. 보증금은 계약이 끝나면 전액 돌려줘야 한다.',
         }
-      : {
-          tone: 'bad' as const,
-          icon: <ArrowDownRight className='size-4 shrink-0' />,
-          text: `집값이 ${formatPct(Math.abs(change))} 빠지자 자기 돈은 ${formatPct(roe)} 줄었다. 보증금은 시세와 무관하게 전액 그대로 돌려줘야 하므로 하락은 온전히 자기 자본에서만 깎인다.`,
-        };
+      : profit > 0
+        ? {
+            tone: 'good' as const,
+            icon: <ArrowUpRight className='size-4 shrink-0' />,
+            text: `집값이 ${formatPct(change)} 오르는 동안 자기 돈 ${formatEok(gap)}은 ${formatPct(roe)} 불었다. 보증금이 이자도 분할 상환도 없는 레버리지로 작동해 수익률을 ${leverage.toFixed(1)}배로 키운다.`,
+          }
+        : {
+            tone: 'bad' as const,
+            icon: <ArrowDownRight className='size-4 shrink-0' />,
+            text: `집값이 ${formatPct(Math.abs(change))} 빠지자 자기 돈은 ${formatPct(roe)} 줄었다. 보증금은 시세와 무관하게 전액 그대로 돌려줘야 하므로 하락은 온전히 자기 자본에서만 깎인다.`,
+          };
 
   return (
     <div className='flex flex-col gap-4'>
@@ -84,7 +90,7 @@ export function GapInvestment() {
           label='자기자본 수익률'
           value={formatPct(roe)}
           sub={`시세 손익 ${signedEok(profit)}`}
-          tone={roe >= 0 ? 'good' : 'bad'}
+          tone={roe === 0 ? undefined : roe > 0 ? 'good' : 'bad'}
         />
       </div>
 
@@ -108,8 +114,8 @@ export function GapInvestment() {
         <CostBar
           label='1년 뒤 매매가'
           value={Math.max(0, newPrice)}
-          max={Math.max(barMax, newPrice)}
-          className={profit >= 0 ? 'bg-good-surface' : 'bg-bad-surface'}
+          max={barMax}
+          className={profit === 0 ? 'bg-series-3' : profit > 0 ? 'bg-good-surface' : 'bg-bad-surface'}
           format={formatEok}
           sub={`처음 ${formatEok(price)}에서 ${signedEok(profit)}`}
         />
