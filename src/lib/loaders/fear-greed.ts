@@ -33,7 +33,16 @@ async function fetchFearGreed(): Promise<FearGreedData> {
   }
   const points = dedupeByTime(
     rows
-      .filter((row) => typeof row.value === 'string' && row.value.trim() !== '' && Number.isFinite(Number(row.value)))
+      .filter(
+        (row) =>
+          typeof row.value === 'string' &&
+          row.value.trim() !== '' &&
+          Number.isFinite(Number(row.value)) &&
+          Number(row.value) >= 0 &&
+          Number(row.value) <= 100 &&
+          typeof row.value_classification === 'string' &&
+          row.value_classification.trim() !== '',
+      )
       .map((row) => ({
         time: new Date(Number(row.timestamp) * 1000).toISOString().slice(0, 10),
         value: Number(row.value),
