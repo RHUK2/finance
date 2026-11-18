@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ASSETS,
   BREAKEVEN,
   REDEEM,
   firmValue,
@@ -62,10 +63,13 @@ describe('자본구조', () => {
 });
 
 describe('매각 대금과 장부가 비교 문구', () => {
+  const difference = 25;
+  const differencePct = Math.round((difference / ASSETS) * 100);
+
   it.each([
-    [975, '장부가 대비 3% 할인된 값이다'],
-    [1000, '장부가와 같다'],
-    [1025, '장부가 대비 3% 웃돈이 붙은 값이다'],
+    [ASSETS - difference, `장부가 대비 ${differencePct}% 할인된 값이다`],
+    [ASSETS, '장부가와 같다'],
+    [ASSETS + difference, `장부가 대비 ${differencePct}% 웃돈이 붙은 값이다`],
   ])('%s억에서 할인·동률·웃돈을 구분한다', (proceeds, text) => {
     expect(saleProceedsNote(proceeds)).toBe(text);
   });

@@ -8,7 +8,7 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBan
 import { Panel } from '@/components/panel';
 import { cn, formatEok, formatPct } from '@/lib/utils';
 
-import { ASSETS, DEFAULT_DEBT_RATIO, DEFAULT_RATE, leverage, netIncome, TAX_RATE, TAX_RATE_NOTE } from './models';
+import { ASSETS, DEFAULT_DEBT_RATIO, DEFAULT_RATE, leverage, netIncome, TAX_RATE } from './models';
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -96,7 +96,7 @@ export function Leverage() {
           max={12}
           step={0.5}
           format={(v) => formatPct(v, 1)}
-          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''} 쓴 세율은 ${TAX_RATE_NOTE}이다.`}
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''}`}
         />
         <ControlSlider
           icon={<Coins className='size-4 text-series-1' />}
