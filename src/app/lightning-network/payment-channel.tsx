@@ -8,6 +8,7 @@ import { Panel } from '@/components/panel';
 import {
   ControlSlider,
   ExplainCard,
+  Field,
   Metric,
   SectionIntro,
   SegmentedControl,
@@ -68,16 +69,18 @@ export function PaymentChannel() {
           대비가 남지 않는다(CLAUDE.md 「지금 조건에서 결과를 못 바꾸는 컨트롤」). 잔액이
           모자랄 때 송금 버튼을 막는 것도 같은 이유다.
         */}
-        <div className='grid grid-cols-2 gap-3'>
-          <SegmentedControl
-            options={[
-              { value: 'toBob', label: 'Alice → Bob' },
-              { value: 'toAlice', label: 'Bob → Alice' },
-            ]}
-            value={direction}
-            onChange={setDirection}
-            disabled={closed}
-          />
+        <div className='grid grid-cols-2 items-end gap-3'>
+          <Field label='송금 방향'>
+            <SegmentedControl
+              options={[
+                { value: 'toBob', label: 'Alice → Bob' },
+                { value: 'toAlice', label: 'Bob → Alice' },
+              ]}
+              value={direction}
+              onChange={setDirection}
+              disabled={closed}
+            />
+          </Field>
           <Button onClick={pay} disabled={closed || insufficient}>
             <ArrowLeftRight className='size-4' />
             오프체인 송금

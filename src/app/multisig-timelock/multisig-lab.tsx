@@ -5,7 +5,15 @@ import { CircleCheck, CircleX } from 'lucide-react';
 
 import { Panel } from '@/components/panel';
 import { Button } from '@/components/ui/button';
-import { ControlSlider, ExplainCard, Field, Metric, SectionIntro, StatusBanner } from '@/components/simulation';
+import {
+  ControlSlider,
+  ExplainCard,
+  Field,
+  Metric,
+  SectionIntro,
+  StatusBanner,
+  useFieldLabelId,
+} from '@/components/simulation';
 import { cn, shortHex } from '@/lib/utils';
 import { illustrativePubKey } from '@/lib/script-concept';
 
@@ -18,6 +26,15 @@ function keyLabel(i: number) {
 }
 
 const SIGNER_GROUP_LABEL = '서명자별 서명 여부 (눌러서 토글)';
+
+function SignerGroup({ children }: { children: React.ReactNode }) {
+  const labelId = useFieldLabelId();
+  return (
+    <div role='group' aria-labelledby={labelId} className='flex flex-wrap gap-2'>
+      {children}
+    </div>
+  );
+}
 
 export function MultisigLab() {
   const [n, setN] = useState(3);
@@ -71,8 +88,7 @@ export function MultisigLab() {
         />
 
         <Field label={SIGNER_GROUP_LABEL}>
-          {/* Field의 라벨은 입력 하나에 붙는다. 버튼 묶음은 스스로 group 이름을 가진다. */}
-          <div role='group' aria-label={SIGNER_GROUP_LABEL} className='flex flex-wrap gap-2'>
+          <SignerGroup>
             {Array.from({ length: n }, (_, i) => (
               <Button
                 key={i}
@@ -90,7 +106,7 @@ export function MultisigLab() {
                 <span className='font-medium'>서명자 {keyLabel(i)}</span>
               </Button>
             ))}
-          </div>
+          </SignerGroup>
         </Field>
       </Panel>
 
@@ -114,7 +130,7 @@ export function MultisigLab() {
           </div>
           <div className='rounded-md bg-muted p-2'>
             <span className='mr-2 text-muted-foreground'>scriptSig (풀이)</span>
-            <div className='mt-1 break-all'>{scriptSig || '(서명 없음)'}</div>
+            <div className='mt-1 break-all'>{validCount === 0 ? `${scriptSig}(서명 없음)` : scriptSig}</div>
           </div>
         </div>
         {validCount > m && (
