@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { BREAKEVEN, REDEEM, firmValue, hybrid, leverage, netIncome, taxShield, waterfall } from './models';
+import {
+  BREAKEVEN,
+  REDEEM,
+  firmValue,
+  hybrid,
+  leverage,
+  netIncome,
+  taxShield,
+  waterfall,
+  saleProceedsNote,
+} from './models';
 
 describe('자본구조', () => {
   it('무차입 ROE는 세후 ROA와 같고 적자에는 과세하지 않는다', () => {
@@ -48,5 +58,15 @@ describe('자본구조', () => {
       const r = hybrid(value);
       expect(r.holder + r.existing).toBeCloseTo(value);
     }
+  });
+});
+
+describe('매각 대금과 장부가 비교 문구', () => {
+  it.each([
+    [975, '장부가 대비 3% 할인된 값이다'],
+    [1000, '장부가와 같다'],
+    [1025, '장부가 대비 3% 웃돈이 붙은 값이다'],
+  ])('%s억에서 할인·동률·웃돈을 구분한다', (proceeds, text) => {
+    expect(saleProceedsNote(proceeds)).toBe(text);
   });
 });

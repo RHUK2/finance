@@ -1,3 +1,5 @@
+import { formatPct } from '@/lib/utils';
+
 // 자본구조 페이지의 공용 수치. 탭마다 따로 적으면 예시 회사의 조건이 탭 사이에서
 // 어긋난다(CLAUDE.md "규제·법률·세율 수치").
 
@@ -115,4 +117,13 @@ export function hybrid(value: number) {
   const price = converts ? priceConverted : priceRedeemed;
 
   return { convValue, converts, holder, existing, priceConverted, priceRedeemed, price };
+}
+
+export function saleProceedsNote(proceeds: number) {
+  const discount = ((ASSETS - proceeds) / ASSETS) * 100;
+  return discount > 0
+    ? `장부가 대비 ${formatPct(discount, 0)} 할인된 값이다`
+    : discount < 0
+      ? `장부가 대비 ${formatPct(-discount, 0)} 웃돈이 붙은 값이다`
+      : '장부가와 같다';
 }
