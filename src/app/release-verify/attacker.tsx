@@ -20,9 +20,9 @@ const ATTACK_ICON: Record<AttackId, LucideIcon> = {
 const ROWS = ATTACK_ROWS.map((r) => ({ ...r, icon: ATTACK_ICON[r.id] }));
 
 export function Attacker() {
-  const [selected, setSelected] = useState('web');
+  const [selected, setSelected] = useState<AttackId>('web');
   const detail = ATTACK_DETAIL[selected];
-  const unreachable = selected === 'dev' || selected === 'fake';
+  const unreachable = ATTACK_ROWS.find((row) => row.id === selected)?.marks.every((mark) => mark === 'no');
 
   return (
     <div className='flex flex-col gap-4'>
@@ -38,7 +38,10 @@ export function Attacker() {
         headers={ATTACK_HEADERS}
         rows={ROWS}
         selected={selected}
-        onSelect={setSelected}
+        onSelect={(id) => {
+          const row = ATTACK_ROWS.find((row) => row.id === id);
+          if (row) setSelected(row.id);
+        }}
       />
 
       <Panel className='gap-2'>

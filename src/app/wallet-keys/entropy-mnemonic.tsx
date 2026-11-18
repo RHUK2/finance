@@ -129,7 +129,7 @@ export function EntropyMnemonic({
         }
       />
 
-      <div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
         <Metric label='엔트로피 (ENT)' value={`${bd.entropy} bit`} />
         <Metric label='체크섬 (CS)' value={`${bd.checksum} bit`} sub='ENT ÷ 32' />
         <Metric label='총 비트' value={`${bd.total} bit`} sub='ENT + CS' />

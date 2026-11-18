@@ -78,7 +78,7 @@ export function FiniteField() {
         />
         <ControlSlider
           label='Q의 x좌표'
-          hint='P와 Q가 붙을수록 직선은 접선에 가까워진다. 두 범위를 떨어뜨려 둔 것이 그래서다.'
+          hint='P와 Q가 붙을수록 직선은 접선에 가까워진다.'
           value={qxInput}
           onChange={setQxInput}
           min={REAL_QX_RANGE.min}

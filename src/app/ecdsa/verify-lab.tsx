@@ -9,7 +9,18 @@ import { Panel } from '@/components/panel';
 
 import { CalcLine } from './calc-line';
 import { CurveGrid, type GridMark } from './curve-grid';
-import { MULTIPLES_OF_G, N, type Pt, fmtPt, mod, mulPt, verificationCaption, sign, verify } from './models';
+import {
+  MULTIPLES_OF_G,
+  N,
+  type Pt,
+  fmtPt,
+  mod,
+  mulPt,
+  verificationCaption,
+  sign,
+  tamperSignatureS,
+  verify,
+} from './models';
 
 type Tamper = 'none' | 'z' | 's';
 
@@ -27,7 +38,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
 
   // 검증자에게 넘어가는 값만 골라 쓴다. 개인키 d와 일회용 비밀값 k는 여기 없다.
   const zSeen = tamper === 'z' ? mod(z + 1, N) : z;
-  const sSeen = tamper === 's' ? mod(sig.s + 1, N) : sig.s;
+  const sSeen = tamper === 's' ? tamperSignatureS(sig.s) : sig.s;
   const res = useMemo(() => verify(Q, zSeen, sig.r, sSeen), [Q, zSeen, sig.r, sSeen]);
 
   return (
@@ -44,7 +55,7 @@ export function VerifyLab({ d, z, k }: { d: number; z: number; k: number }) {
           <Eye className='size-4 text-series-1' />
           검증자가 아는 값
         </span>
-        <div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
+        <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
           <Metric label='공개키 Q' value={fmtPt(Q)} />
           <Metric label='메시지 해시 z' value={`${zSeen}`} tone={tamper === 'z' ? 'bad' : undefined} />
           <Metric label='서명 r' value={`${sig.r}`} />
