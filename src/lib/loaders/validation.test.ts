@@ -62,16 +62,62 @@ it('공포지수를 정렬·중복 제거하고 최신 관측의 분류를 쓴�
     ],
   });
   respond({ data: [row('1704067200', 'bad')] });
-  await expect(loadFearGreed()).rejects.toThrow('No valid');
+  await expect(loadFearGreed()).rejects.toThrow('빈 시계열');
 });
 
+it.each([null, 50, '', '   ', 'NaN', 'Infinity', 'bad'])(
+  '공포지수의 비숫자 값 %s를 거르고 유효한 최신 관측과 분류를 함께 반환한다',
+  async (value) => {
+    const valid = { timestamp: '1704153600', value: '0', value_classification: 'Extreme Fear' };
+    const broken = { timestamp: '1704067200', value, value_classification: 'Greed' };
+    for (const data of [
+      [broken, valid],
+      [valid, broken],
+    ]) {
+      respond({ data });
+      expect(await loadFearGreed()).toMatchObject({
+        value: 0,
+        classification: 'Extreme Fear',
+        history: [{ time: '2024-01-02', value: 0 }],
+      });
+    }
+    respond({ data: [broken] });
+    await expect(loadFearGreed()).rejects.toThrow('빈 시계열');
+  },
+);
+
+it('공포지수의 같은 날짜에 비숫자 행과 정상 행이 있으면 정상 행을 보존한다', async () => {
+  const broken = { timestamp: '1704153600', value: 'bad', value_classification: 'Greed' };
+  const valid = { timestamp: '1704153601', value: '30', value_classification: 'Fear' };
+  for (const data of [
+    [broken, valid],
+    [valid, broken],
+  ]) {
+    respond({ data });
+    expect(await loadFearGreed()).toMatchObject({
+      value: 30,
+      classification: 'Fear',
+      history: [{ time: '2024-01-02', value: 30 }],
+    });
+  }
+});
+
+it.each([null, 50, '', '   ', 'NaN', 'Infinity', 'bad'])(
+  '공포지수의 최신 날짜 값 %s가 비숫자이면 갱신을 거부한다',
+  async (value) => {
+    const valid = { timestamp: '1704067200', value: '0', value_classification: 'Extreme Fear' };
+    const broken = { timestamp: '1704153600', value, value_classification: 'Greed' };
+    for (const data of [
+      [broken, valid],
+      [valid, broken],
+    ]) {
+      respond({ data });
+      await expect(loadFearGreed()).rejects.toThrow('No valid fear & greed data');
+    }
+  },
+);
+
 it.each([
-  { value: null },
-  { value: 50 },
-  { value: '' },
-  { value: '   ' },
-  { value: 'NaN' },
-  { value: 'Infinity' },
   { timestamp: '' },
   { timestamp: null },
   { timestamp: '0' },
@@ -79,9 +125,9 @@ it.each([
   { timestamp: 'bad' },
   { timestamp: 'Infinity' },
   { timestamp: '1e20' },
-])('공포지수의 잘못된 행 %j가 하나라도 있으면 전체 갱신을 거부한다', async (invalid) => {
+])('공포지수의 잘못된 날짜 %j가 하나라도 있으면 전체 갱신을 거부한다', async (invalid) => {
   const valid = { timestamp: '1704067200', value: '20', value_classification: 'Fear' };
-  const broken = { ...valid, timestamp: '1704153600', ...invalid };
+  const broken = { ...valid, ...invalid };
   for (const data of [
     [broken, valid],
     [valid, broken],
