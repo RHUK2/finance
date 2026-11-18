@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { barDate, keepLastPerDate } from './yahoo';
+import { barDate, fetchYahooSeries, keepLastPerDate, yf } from './yahoo';
 
 // 2026-09-30~10-02에 야후 chart()가 실제로 준 일봉 타임스탬프.
 describe('barDate', () => {
@@ -46,5 +46,28 @@ describe('keepLastPerDate', () => {
       { time: '2026-10-02', value: 2 },
     ];
     expect(keepLastPerDate(rows)).toEqual(rows);
+  });
+});
+
+afterEach(() => vi.restoreAllMocks());
+
+describe('fetchYahooSeries', () => {
+  it.each([
+    ['USX', 4.1234],
+    ['USD', 412.34],
+  ])('통화 %s의 호가 단위와 자릿수를 맞춘다', async (currency, expected) => {
+    vi.spyOn(yf, 'chart').mockResolvedValue({
+      meta: { currency, exchangeTimezoneName: 'America/Chicago' },
+      quotes: [
+        { date: new Date('2026-10-01T00:00:00Z'), close: null },
+        { date: new Date('2026-10-02T00:00:00Z'), close: 412.34375 },
+      ],
+    } as never);
+    const result = await fetchYahooSeries([{ key: 'corn', symbol: 'ZC=F' }]);
+    expect(result.corn).toEqual({
+      history: [{ time: '2026-10-02', value: expected }],
+      current: expected,
+      changePercent: null,
+    });
   });
 });

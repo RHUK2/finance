@@ -11,6 +11,20 @@ export function useCountUp(target: number, duration = 500) {
     const from = fromRef.current;
     if (from === target) return;
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || duration <= 0) {
+      let active = true;
+      // 동작 줄이기에서도 최종값은 반영한다. 언마운트·목표 교체 시 예약된 반영을 버린다.
+      queueMicrotask(() => {
+        if (active) {
+          fromRef.current = target;
+          setValue(target);
+        }
+      });
+      return () => {
+        active = false;
+      };
+    }
+
     const startTime = performance.now();
     let raf = 0;
     function step(now: number) {

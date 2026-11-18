@@ -53,10 +53,17 @@ const WRITE_ENTRY =
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // 로그에는 키 이름과 오류 종류만 남긴다. 제공처 URL에 API 키가 들어 있으므로
-// (FRED는 쿼리, ECOS는 경로) 메시지 안의 URL은 지운다.
-function describeError(err: unknown): string {
+// (FRED는 쿼리, ECOS는 경로) 메시지 안의 URL은 지운다. 원인은 짧은 코드만 남긴다.
+export function describeError(err: unknown): string {
   if (!(err instanceof Error)) return typeof err;
-  return `${err.name}: ${err.message.replace(/https?:\/\/\S+/g, '<url>')}`;
+  const cause = err.cause;
+  const code = cause && typeof cause === 'object' && 'code' in cause ? cause.code : undefined;
+  // URL·원인 메시지·개행이 코드에 섞였으면 버린다. 원본 cause 객체는 로그에 넘기지 않는다.
+  const detail =
+    typeof code === 'string' && code.length > 0 && code.length <= 64 && !/[^A-Z0-9_]/.test(code)
+      ? ` (cause.code: ${code})`
+      : '';
+  return `${err.name}: ${err.message.replace(/https?:\/\/\S+/g, '<url>')}${detail}`;
 }
 
 function logStale(key: EndpointKey, reason: string) {

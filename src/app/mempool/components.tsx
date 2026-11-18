@@ -132,19 +132,26 @@ export function BlockTimeline({
   /** 셋 중 비어 있는 것이 요청 실패로 비었다 */
   error?: boolean;
 }) {
-  const { ref, handlers, maskStyle } = useScrollDrag();
+  const { ref, elRef, handlers, maskStyle } = useScrollDrag();
 
   // 축의 기준점은 "지금"이다. 데이터가 들어오면 그 칸이 보이는 자리로 한 번 밀어 준다.
   // 이후 폴링으로 값이 갱신될 때 사용자가 움직여 둔 스크롤 위치를 빼앗지 않도록 한 번만 한다.
   const nowRef = useRef<HTMLDivElement>(null);
   const centered = useRef(false);
   useEffect(() => {
-    if (centered.current || !nowRef.current) return;
+    if (centered.current || !nowRef.current || !elRef.current) return;
     centered.current = true;
-    nowRef.current.scrollIntoView({ block: 'nearest', inline: 'center' });
+    const box = elRef.current;
+    const card = nowRef.current;
+    box.scrollLeft +=
+      card.getBoundingClientRect().left -
+      box.getBoundingClientRect().left -
+      box.clientLeft +
+      card.offsetWidth / 2 -
+      box.clientWidth / 2;
     // "지금" 칸은 셋이 다 와야 그려진다. mempool만 보면 다른 둘이 늦게 온 경우 그 칸이 생긴 뒤에
     // effect가 돌지 않고, 다음 폴링에서야 뒤늦게 밀려 사용자가 옮겨 둔 위치를 빼앗는다.
-  }, [mempool, pending, confirmed]);
+  }, [mempool, pending, confirmed, elRef]);
 
   if (!mempool || !pending || !confirmed) {
     return error ? <LoadFailed className='h-[188px]' /> : <Skeleton className='h-[188px] w-full' />;

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { cached } from './cache';
+import { cached, describeError } from './cache';
 import { cacheMs, cacheShape } from './cache-config';
 
 const fake = vi.hoisted(() => {
@@ -212,4 +212,44 @@ it.each([false, true])('기록 오류에도 성공 값 또는 stale(%s)을 반�
     : async () => 'new';
   expect(await cached(key, fetcher)).toBe(fail ? 'old' : 'new');
   expect(await fake.exists('lock:market')).toBe(0);
+});
+
+it.each(['ENOTFOUND', 'ETIMEDOUT', 'UND_ERR_CONNECT_TIMEOUT'])(
+  '오류 요약에는 URL을 지우고 원인 코드 %s만 덧붙인다',
+  (code) => {
+    const cause = Object.assign(new Error('cause https://provider.test/private-key'), { code });
+    const error = new TypeError('fetch failed https://provider.test/?api_key=secret', { cause });
+    expect(describeError(error)).toBe(`TypeError: fetch failed <url> (cause.code: ${code})`);
+  },
+);
+
+it.each([
+  undefined,
+  null,
+  'ENOTFOUND',
+  { message: 'private cause' },
+  { code: 500 },
+  { code: 'https://provider.test/secret' },
+  { code: 'ENOTFOUND private message' },
+  { code: 'ENOTFOUND\n' },
+  { code: 'E'.repeat(65) },
+])('코드가 없는 원인 또는 안전하지 않은 코드는 요약에 넣지 않는다: %j', (cause) => {
+  expect(describeError(new Error('fetch failed', { cause }))).toBe('Error: fetch failed');
+});
+
+it.each(['https://provider.test/secret', null, undefined, 42])(
+  'Error가 아닌 값의 원문은 출력하지 않는다: %j',
+  (value) => {
+    expect(describeError(value)).toBe(typeof value);
+  },
+);
+
+it('캐시 갱신 실패 로그에도 안전한 원인 코드만 남긴다', async () => {
+  await seed();
+  const cause = Object.assign(new Error('https://provider.test/private-cause'), { code: 'ENOTFOUND' });
+  const fetcher = vi.fn().mockRejectedValue(new TypeError('fetch failed https://provider.test/secret', { cause }));
+  expect(await cached(key, fetcher)).toBe('old');
+  expect(console.error).toHaveBeenCalledWith(
+    '[cache] market: 갱신 실패(TypeError: fetch failed <url> (cause.code: ENOTFOUND)). 마지막으로 저장된 값을 돌려준다',
+  );
 });

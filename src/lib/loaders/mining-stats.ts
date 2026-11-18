@@ -42,7 +42,7 @@ async function fetchMiningStats(): Promise<MiningStatsData> {
   const latestHashrate = hashrates[hashrates.length - 1].avgHashrate;
   const oldestHashrate = hashrates[0].avgHashrate;
   const hashrateEHs = Number((latestHashrate / 1e18).toFixed(2));
-  const hashrateChangePct = pctChange(latestHashrate, oldestHashrate);
+  const hashrateChangePct = pctChange(latestHashrate, oldestHashrate)!; // 검증한 해시레이트는 모두 양수다.
 
   const epoch = Math.floor(blockHeight / BLOCKS_PER_HALVING);
   // 보조금과 다음 반감기까지 남은 블록은 모두 실측 높이를 따른다.
