@@ -18,6 +18,14 @@ export const TAX_RATE_NOTE = '예시 단일 세율, 법정 누진세율 아님';
 
 // 단위는 억원. 총자산을 1,000억으로 고정하고 그 안에서 부채와 자본의 비율만 바꾼다.
 export const ASSETS = 1000;
+export const DEFAULT_RATE = 5;
+export const DEFAULT_DEBT_RATIO = 40;
+
+export const REGULATION = {
+  priorityWageMonths: 3,
+  priorityRetirementYears: 3,
+  priorityNote: '근로기준법 제38조 제2항·근로자퇴직급여 보장법 제12조 제2항, 2026.11.18 확인',
+} as const;
 
 // 이익이 날 때만 법인세를 매긴다. 결손금 이월공제는 넣지 않은 단순화다.
 export function netIncome(ebit: number, interest: number, taxRate = TAX_RATE) {

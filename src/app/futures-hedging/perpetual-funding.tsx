@@ -72,7 +72,7 @@ export function PerpetualFunding() {
       </div>
 
       <Panel className='gap-3'>
-        <span className='text-sm font-semibold'>베이시스가 0으로 가는 두 가지 방법</span>
+        <span className='text-sm font-semibold'>베이시스가 가는 두 가지 길</span>
         <Sparkline values={dated} label='만기물' className='text-series-1' min={0} max={3.3} heightClass='h-12' />
         <Sparkline values={perpetual} label='무기한물' className='text-series-2' min={0} max={3.3} heightClass='h-12' />
         <p className='text-xs text-muted-foreground'>

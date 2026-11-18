@@ -26,9 +26,9 @@ const PRICE_FLOOR = 70;
 // 증거금 배수 구간별 색. 홀더의 딜레마와 같은 읽는 법이다.
 // 위치는 청산 낙폭 순, 색은 배수 구간.
 function bandColor(multiple: number, liquidated: boolean): string {
-  if (multiple >= 15) return liquidated ? 'bg-bad-surface' : 'bg-series-1/40';
+  if (multiple >= 15) return liquidated ? 'bg-bad-surface/40' : 'bg-series-1/40';
   if (multiple >= 6) return liquidated ? 'bg-bad-surface/70' : 'bg-series-1/70';
-  return liquidated ? 'bg-bad-surface/40' : 'bg-series-1';
+  return liquidated ? 'bg-bad-surface' : 'bg-series-1';
 }
 
 export function LiquidationCascade() {

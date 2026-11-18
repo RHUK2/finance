@@ -80,7 +80,7 @@ export function Duration() {
         <Metric
           label='실제 가격 변화'
           value={formatPct(shock.actualPct, 1, { plus: true })}
-          tone={shock.actualPct >= 0 ? 'good' : 'bad'}
+          tone={shock.actualPct > 0 ? 'good' : shock.actualPct < 0 ? 'bad' : undefined}
           sub={`${formatWon(shock.before)} → ${formatWon(shock.after)}`}
         />
         <Metric
@@ -116,7 +116,7 @@ export function Duration() {
             label={`${l.years}년물`}
             value={l.loss}
             max={maxLoss}
-            className={delta >= 0 ? 'bg-bad-surface' : 'bg-good-surface'}
+            className={delta > 0 ? 'bg-bad-surface' : delta < 0 ? 'bg-good-surface' : 'bg-muted-foreground/30'}
             format={(v) => formatPct(v, 1)}
           />
         ))}

@@ -8,7 +8,7 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBan
 import { Panel } from '@/components/panel';
 import { cn, formatEok, formatPct } from '@/lib/utils';
 
-import { ASSETS, leverage, netIncome, TAX_RATE, TAX_RATE_NOTE } from './models';
+import { ASSETS, DEFAULT_DEBT_RATIO, DEFAULT_RATE, leverage, netIncome, TAX_RATE, TAX_RATE_NOTE } from './models';
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -18,8 +18,8 @@ const SCENARIOS = [
 ];
 
 export function Leverage() {
-  const [debtRatio, setDebtRatio] = useState(40);
-  const [rate, setRate] = useState(5);
+  const [debtRatio, setDebtRatio] = useState(DEFAULT_DEBT_RATIO);
+  const [rate, setRate] = useState(DEFAULT_RATE);
   const [ebit, setEbit] = useState(100);
 
   const { debt, equity, interest, net, roa, roe, afterTaxRate, coverage, realizedRate } = leverage(
@@ -72,7 +72,8 @@ export function Leverage() {
       <SectionIntro title='같은 자산, 다른 조달'>
         회사가 굴리는 자산 1,000억은 그대로 두고 그 돈을 어디서 가져왔는지만 바꿔 보자. 빌려 온 돈에는 실적과 무관하게
         정해진 이자를 줘야 하고, 주주가 낸 돈에는 약속된 대가가 없다. 이 비대칭이 자본구조를 고르는 이유의 거의 전부다.
-        부채 비중을 움직이면 주주가 가져가는 몫이 어떻게 증폭되는지 보인다.
+        부채 비중을 움직이면 주주가 가져가는 몫이 어떻게 증폭되는지 보인다. 법인세는 이익이 날 때만 단일 세율로 매기며,
+        결손금 이월공제와 이자 손금산입 한도는 반영하지 않는다.
       </SectionIntro>
 
       <Panel className='gap-5'>

@@ -10,7 +10,8 @@ import { formatPct, formatUsdPrice } from '@/lib/utils';
 
 import { FUTURES_PRICE, PRODUCER_BARRELS, REFINER_BARRELS, SPOT_NOW, hedgeLedger } from './models';
 
-const mb = (n: number) => `${(n / 1_000_000).toFixed(2)}M 배럴`;
+const mb = (n: number) =>
+  n > 0 && n < 10_000 ? `${Math.round(n).toLocaleString('ko-KR')} 배럴` : `${(n / 1_000_000).toFixed(2)}M 배럴`;
 
 export function HedgeLedger() {
   const [settle, setSettle] = useState(60);
@@ -35,7 +36,7 @@ export function HedgeLedger() {
         <ControlSlider
           icon={<Fuel className='size-4 text-series-3' />}
           label='만기 시점 유가'
-          hint='3개월 뒤 원유 현물이 실제로 얼마가 됐는지. 계약가보다 낮으면 산유국이 현물에서 손해를 보고 선물에서 그만큼 번다.'
+          hint='3개월 뒤 원유 현물이 실제로 얼마가 됐는지. 잠근 선물가보다 낮으면 산유국이 체결된 선물에서 번다.'
           value={settle}
           onChange={setSettle}
           min={40}
@@ -76,7 +77,7 @@ export function HedgeLedger() {
         />
         <Metric
           label='헤지 체결률'
-          value={formatPct(l.fillRate * 100, 0)}
+          value={formatPct(l.fillRate * 100, 1)}
           tone={l.fillRate > 0.9 ? 'good' : l.fillRate < 0.8 ? 'bad' : undefined}
           sub={l.unfilled > 0 ? `${mb(l.unfilled)}이 상대를 못 찾음` : '넘기려 한 물량이 모두 체결됨'}
         />

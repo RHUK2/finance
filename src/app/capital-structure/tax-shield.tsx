@@ -16,16 +16,25 @@ import {
 import { Panel } from '@/components/panel';
 import { cn, formatEok } from '@/lib/utils';
 
-import { ASSETS, distressCost, firmValue, shieldValue, taxShield, TAX_RATE } from './models';
+import {
+  ASSETS,
+  DEFAULT_DEBT_RATIO,
+  DEFAULT_RATE,
+  distressCost,
+  firmValue,
+  shieldValue,
+  taxShield,
+  TAX_RATE,
+} from './models';
 
 // 단위는 억원. 세금 방패만 떼어 보기 위해 영업이익과 이자율은 고정한다.
 const EBIT = 150;
-const RATE = 5;
+const RATE = DEFAULT_RATE;
 
 const STEPS = Array.from({ length: 19 }, (_, i) => i * 5);
 
 export function TaxShield() {
-  const [debtRatio, setDebtRatio] = useState(40);
+  const [debtRatio, setDebtRatio] = useState(DEFAULT_DEBT_RATIO);
   const [taxRate, setTaxRate] = useState(TAX_RATE);
 
   const { debt, interest, tax, net, annualShield } = taxShield(debtRatio, taxRate, EBIT, RATE);
@@ -48,7 +57,8 @@ export function TaxShield() {
       <SectionIntro title='이자는 비용이고 배당은 아니다'>
         회사가 번 돈은 채권자, 정부, 주주 세 곳으로 갈라진다. 그런데 이자는 손금으로 인정돼 과세 대상을 줄이는 반면
         배당은 세금을 낸 뒤의 돈에서 나간다. 같은 자금을 빌려서 조달하느냐 주식으로 조달하느냐에 따라 정부 몫이
-        달라진다는 뜻이다. 세법이 부채에 얹어 준 이 보조금을 세금 방패라고 부른다.
+        달라진다는 뜻이다. 세법이 부채에 얹어 준 이 보조금을 세금 방패라고 부른다. 법인세는 이익이 날 때만 단일 세율로
+        매기며, 결손금 이월공제와 이자 손금산입 한도는 반영하지 않는다.
       </SectionIntro>
 
       <Panel className='gap-5'>
@@ -136,7 +146,7 @@ export function TaxShield() {
         <Metric
           label='무차입 대비 증감'
           value={formatEok(current - ASSETS, 0)}
-          tone={current > ASSETS ? 'good' : 'bad'}
+          tone={current > ASSETS ? 'good' : current < ASSETS ? 'bad' : undefined}
           sub={`방패 ${formatEok(pv, 0)}에서 곤경비용 ${formatEok(distress, 0)}을 뺀 값`}
         />
       </div>
