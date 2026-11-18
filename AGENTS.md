@@ -7,7 +7,7 @@
 | 대상                          | 정본                               |
 | ----------------------------- | ---------------------------------- |
 | 코드 규약·아키텍처            | `CLAUDE.md`                        |
-| 용어                          | `CONTEXT.md`                       |
+| 용어                          | `GLOSSARY.md`                      |
 | 모델·구조 판단과 그 근거      | `docs/adr/`                        |
 | 원문과 대조한 수치·연도       | `docs/fact-check-log.md`           |
 | 명령어                        | `package.json`의 `scripts`         |
@@ -24,7 +24,7 @@ lint 빚을 동결해 두고 갚는 방법은 `eslint.config.mjs`가 갖는다. 
 | ------------- | --------------------------------------------------- | ------------------------------ |
 | Issue tracker | GitHub Issues (`gh` CLI). 작업 산출물은 `.scratch/` | `docs/agents/issue-tracker.md` |
 | Triage labels | 기본 다섯 라벨을 그대로 쓴다                        | `docs/agents/triage-labels.md` |
-| Domain docs   | 단일 컨텍스트. 루트 `CONTEXT.md` + `docs/adr/`      | `docs/agents/domain.md`        |
+| Domain docs   | 단일 컨텍스트. 루트 `GLOSSARY.md` + `docs/adr/`     | `docs/agents/domain.md`        |
 
 <!-- BEGIN:nextjs-agent-rules -->
 

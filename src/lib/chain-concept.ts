@@ -2,7 +2,7 @@
 // ⚠️ doubleSpendProbability는 비트코인 백서 11장의 공식을 그대로 구현한 실제 수식이다(근사/가짜 값 아님).
 // q(공격자 해시레이트 비중)가 z블록만큼 뒤처진 상태에서 정직한 체인을 끝내 따라잡을 확률을 구한다.
 // 백서의 z는 트랜잭션이 담긴 블록 뒤에 이어진 블록 수다. 화면의 확인 수는 담긴 블록을 1확인으로 세므로
-// (CONTEXT.md 「확인 수」) z = 확인 수 − 1이다. 화면은 확인 수를 받는 reversalProbability를 부른다.
+// (GLOSSARY.md 「확인 수」) z = 확인 수 − 1이다. 화면은 확인 수를 받는 reversalProbability를 부른다.
 
 import { clamp01, formatPct } from './utils';
 
