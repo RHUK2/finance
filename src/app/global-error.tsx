@@ -22,6 +22,11 @@ export default function GlobalError({ retry }: { error: Error & { digest?: strin
             <Button variant='outline' size='sm' onClick={() => retry()}>
               다시 시도
             </Button>
+            {/* 루트 오류에서 문서를 새로 받도록 일반 링크를 사용한다. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href='/' className='text-sm underline underline-offset-4'>
+              홈으로 이동하십시오.
+            </a>
           </main>
         </ThemeProvider>
       </body>
