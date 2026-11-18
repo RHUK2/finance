@@ -162,7 +162,15 @@ export function LimitedLiability() {
           label={`${V.person} 개인 재산 손실`}
           value={formatEok(personalBurden, 0)}
           tone={personalBurden > 0 ? 'bad' : 'good'}
-          sub={personalBurden > 0 ? '벽이 뚫렸다' : '회사 밖으로 번지지 않는다'}
+          sub={
+            isCorp
+              ? personalBurden > 0
+                ? '벽이 뚫렸다'
+                : '회사 밖으로 번지지 않는다'
+              : personalBurden > 0
+                ? '사업주 개인 재산으로 갚는다'
+                : '이번에는 빚을 사업 재산으로 모두 갚았다'
+          }
         />
       </div>
 

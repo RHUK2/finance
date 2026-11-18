@@ -77,7 +77,6 @@ export function BondAnatomy() {
         <Metric
           label='채권 가격'
           value={formatWon(price)}
-          tone={state === 'par' ? undefined : state === 'premium' ? 'good' : 'bad'}
           sub={state === 'par' ? `액면 ${formatWon(FACE)}과 같음` : `액면 대비 ${formatPct(gapPct, 1, { plus: true })}`}
         />
         <Metric label='연 이자' value={formatWon(coupon)} sub={`표면금리 ${formatPct(couponRate * 100, 2)}`} />
@@ -85,7 +84,6 @@ export function BondAnatomy() {
       </div>
 
       <StatusBanner
-        tone={state === 'par' ? undefined : state === 'premium' ? 'good' : 'bad'}
         icon={
           state === 'par' ? (
             <Equal className='size-4 shrink-0' />

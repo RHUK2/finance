@@ -8,10 +8,7 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
-import { waterfall } from './models';
-
-// 단위는 억원. 장부상 자산 1,000억짜리 회사가 청산에 들어갔다고 하자.
-const BOOK_ASSETS = 1000;
+import { ASSETS, REGULATION, waterfall } from './models';
 
 type Tier = {
   id: string;
@@ -31,7 +28,7 @@ const TIERS: Tier[] = [
     claim: 40,
     icon: HardHat,
     className: 'bg-series-4',
-    note: '최종 3개월분 임금과 최종 3년분 퇴직급여, 재해보상금은 담보권보다도 앞선다. 사람의 생계가 걸린 채권이라 법이 순위를 따로 끌어올려 뒀다.',
+    note: `최종 ${REGULATION.priorityWageMonths}개월분 임금과 최종 ${REGULATION.priorityRetirementYears}년간의 퇴직급여등, 재해보상금은 담보권보다도 앞선다. 사람의 생계가 걸린 채권이라 법이 순위를 따로 끌어올려 뒀다. 기준: ${REGULATION.priorityNote}.`,
   },
   {
     id: 'secured',
@@ -90,14 +87,14 @@ export function Waterfall() {
   const debtPaid = rows.filter((r) => r.kind === 'debt').reduce((s, r) => s + r.paid, 0);
   const common = rows[rows.length - 1];
   const focus = fulcrum ?? common;
-  const discount = ((BOOK_ASSETS - proceeds) / BOOK_ASSETS) * 100;
+  const discount = ((ASSETS - proceeds) / ASSETS) * 100;
 
   return (
     <div className='flex flex-col gap-4'>
       <SectionIntro title='물은 위에서부터 채워진다'>
         회사가 문을 닫고 자산을 모두 팔았다. 그 돈은 정해진 순서대로 흘러간다. 앞 계층의 청구권이 100% 채워지기 전까지는
         다음 계층에 한 푼도 가지 않는다. 이 순서를 아는 것이 자본구조를 이해하는 일의 절반이다. 매각 대금을 움직여 어느
-        층에서 물이 끊기는지 보자.
+        층에서 물이 끊기는지 보자. 여기서는 자산을 한 덩어리로 놓고 위에서부터 채우는 방식으로 단순화했다.
       </SectionIntro>
 
       <Panel>
@@ -110,7 +107,7 @@ export function Waterfall() {
           max={1100}
           step={25}
           format={(v) => formatEok(v, 0)}
-          hint={`장부상 자산은 ${formatEok(BOOK_ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금은 장부가 대비 ${discount > 0 ? `${formatPct(discount, 0)} 할인` : `${formatPct(-discount, 0)} 웃돈`}이다.`}
+          hint={`장부상 자산은 ${formatEok(ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금 매각 대금은 ${discount > 0 ? `장부가 대비 ${formatPct(discount, 0)} 할인된 값이다` : discount < 0 ? `장부가 대비 ${formatPct(-discount, 0)} 웃돈이 붙은 값이다` : '장부가와 같다'}.`}
         />
       </Panel>
 
@@ -206,9 +203,8 @@ export function Waterfall() {
               출자전환이 대표적이다. 채권자가 원금을 포기하는 대신 회생한 회사의 지분을 받는 거래다.
             </p>
             <p className='mt-2'>
-              여기 계산은 순서가 어떻게 작동하는지 보이려고 자산을 한 덩어리로 놓고 위에서부터 채웠다. 실제 파산
-              절차에서 담보권자는 절차 밖에서 담보물을 처분해 회수하고, 절차 비용과 조세채권도 앞자리를 차지한다. 회생
-              절차라면 계층별 동의 요건과 인가 기준이 따로 있어 순위표만으로 결과가 정해지지도 않는다.
+              실제 파산 절차에서는 담보권자가 절차 밖에서 담보물을 처분해 회수하고, 절차 비용과 조세채권도 앞자리를
+              차지한다. 회생 절차라면 계층별 동의 요건과 인가 기준이 따로 있어 순위표만으로 결과가 정해지지도 않는다.
             </p>
           </>
         }
