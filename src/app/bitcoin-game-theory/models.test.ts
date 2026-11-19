@@ -149,6 +149,12 @@ describe('채택 캐스케이드 궤적', () => {
 });
 
 describe('홀더 궤적', () => {
+  it('충격 흡수와 붕괴의 매도 비중 임계값은 10%와 50%다', () => {
+    // 상수를 읽는 다른 테스트는 임계값 변경을 잡지 못하므로 값을 고정한다.
+    expect(SURVIVE_SELL_SHARE).toBe(0.1);
+    expect(COLLAPSE_SELL_SHARE).toBe(0.5);
+  });
+
   it('슬라이더 전 구간에서 정렬·접두 매도·가격 하락·차트 하한과 수렴을 지킨다', () => {
     const c = HODL_CONFIG;
     const steps = Math.round((c.maxConviction - c.minConviction) / c.convictionStep);
