@@ -7,7 +7,7 @@ import { AttackCost } from './attack-cost';
 import { FeeGap } from './fee-gap';
 import { IssuanceSchedule } from './issuance-schedule';
 
-export function SecurityBudgetView() {
+export function SecurityBudgetView({ currentEra }: { currentEra: number }) {
   return (
     <ExplainerPage
       title='보조금이 0이 되면 무엇이 비트코인을 지키는가'
@@ -29,7 +29,7 @@ export function SecurityBudgetView() {
       <SimTabs
         defaultValue='issuance'
         tabs={[
-          { value: 'issuance', label: '발행 스케줄', node: <IssuanceSchedule /> },
+          { value: 'issuance', label: '발행 스케줄', node: <IssuanceSchedule currentEra={currentEra} /> },
           { value: 'fee', label: '수수료의 몫', node: <FeeGap /> },
           { value: 'attack', label: '공격 비용', node: <AttackCost /> },
         ]}
