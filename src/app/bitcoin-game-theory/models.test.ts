@@ -200,3 +200,16 @@ describe('홀더 궤적', () => {
     expect(frames[1].state.newSellers).toBe(0);
   });
 });
+
+// M-136: 매도자 10% 이하라도 추가 매도로 가격이 첫 충격선 아래로 내려간다.
+it('소수 매도에 그친 고정 시드에서도 첫 충격선보다 더 하락할 수 있다', () => {
+  const c = HODL_CONFIG;
+  const holders = buildHolders(c.n, 0.55, c.seed);
+  const frames = hodlTrajectory(holders, c.shock);
+  const last = frames.at(-1)!.state;
+  const soldCount = last.sold.filter(Boolean).length;
+  expect(soldCount).toBeGreaterThan(0);
+  expect(soldCount).toBeLessThanOrEqual(c.n * 0.1);
+  expect(last.price).toBeLessThan(100 * (1 - c.shock));
+  expect(frames.slice(2).some(({ state }) => state.newSellers > 0)).toBe(true);
+});

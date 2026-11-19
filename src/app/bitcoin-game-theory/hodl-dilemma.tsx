@@ -150,7 +150,7 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
                 }
               : {
                   tone: 'good',
-                  text: '💎 다이아몬드손이 충격을 흡수했다. 확신이 강한 보유자가 던지지 않으니 매도가 더 번지지 않고 첫 충격 선에서 멈췄다.',
+                  text: '💎 다이아몬드손이 충격을 흡수했다. 매도 비중이 10% 이하에 머물렀고, 남은 보유자의 확신도가 누적 낙폭보다 높아 연쇄가 멈췄다.',
                 }
           : undefined
       }
