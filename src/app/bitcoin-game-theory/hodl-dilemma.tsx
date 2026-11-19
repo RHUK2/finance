@@ -150,7 +150,7 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
                 }
               : {
                   tone: 'good',
-                  text: '💎 다이아몬드손이 충격을 흡수했다. 매도 비중이 10% 이하에 머물렀고, 남은 보유자의 확신도가 누적 낙폭보다 높아 연쇄가 멈췄다.',
+                  text: '💎 매도 비중이 10% 이하에 머물러 소수 매도로 끝났다. 가격은 첫 충격 이후에도 더 내려갈 수 있지만, 보유자의 90% 이상이 버텼다.',
                 }
           : undefined
       }

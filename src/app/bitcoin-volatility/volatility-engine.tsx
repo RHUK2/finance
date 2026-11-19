@@ -127,7 +127,6 @@ function VolSim({
         <Metric
           label={`최근 실현 변동성 (${VOL_WINDOW}라운드)`}
           value={round < 2 ? null : formatPct(vol, 1)}
-          tone={round < 2 ? undefined : vol > 8 ? 'bad' : 'good'}
           sub={round < 2 ? '라운드가 쌓여야 계산된다' : undefined}
         />
       </div>
