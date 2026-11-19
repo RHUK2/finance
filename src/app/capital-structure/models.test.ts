@@ -13,6 +13,15 @@ import {
 } from './models';
 
 describe('자본구조', () => {
+  it.each([
+    [-50, -70],
+    [0, -20],
+    [10, -10],
+    [20, 0],
+    [30, 8],
+  ])('영업이익 %s억에서 이자 20억 차감 후 양의 이익에만 과세한다', (ebit, expected) => {
+    expect(netIncome(ebit, 20)).toBe(expected);
+  });
   it('무차입 ROE는 세후 ROA와 같고 적자에는 과세하지 않는다', () => {
     for (const ebit of [-50, 0, 100, 200]) {
       const r = leverage(0, 5, ebit);
