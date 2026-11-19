@@ -21,6 +21,10 @@ import { multisigScriptSig } from './models';
 
 const MAX_N = 5;
 
+export function formatMultisigScriptSig(scriptSig: string, validCount: number): string {
+  return validCount === 0 ? `${scriptSig.trimEnd()} (서명 없음)` : scriptSig;
+}
+
 function keyLabel(i: number) {
   return String.fromCharCode('A'.charCodeAt(0) + i); // 서명자 A, B, C ...
 }
@@ -130,7 +134,7 @@ export function MultisigLab() {
           </div>
           <div className='rounded-md bg-muted p-2'>
             <span className='mr-2 text-muted-foreground'>scriptSig (풀이)</span>
-            <div className='mt-1 break-all'>{validCount === 0 ? `${scriptSig.trimEnd()} (서명 없음)` : scriptSig}</div>
+            <div className='mt-1 break-all'>{formatMultisigScriptSig(scriptSig, validCount)}</div>
           </div>
         </div>
         {validCount > m && (

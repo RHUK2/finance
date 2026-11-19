@@ -8,8 +8,13 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro } from '@/components/s
 import { anonymityChance } from '@/lib/privacy-concept';
 import { formatPct, mulberry32 } from '@/lib/utils';
 
-export function CoinJoin() {
-  const [participants, setParticipants] = useState(5);
+// h-8과 gap-1.5의 픽셀 값. 정적 Tailwind 클래스와의 일치는 회귀 테스트가 검사한다.
+export const COINJOIN_ROW_HEIGHT = 32;
+export const COINJOIN_ROW_GAP = 6;
+export const COINJOIN_ROW_STRIDE = COINJOIN_ROW_HEIGHT + COINJOIN_ROW_GAP;
+
+export function CoinJoin({ initialParticipants = 5 }: { initialParticipants?: number }) {
+  const [participants, setParticipants] = useState(initialParticipants);
 
   const permutation = useMemo(() => {
     const rng = mulberry32(participants * 97 + 13);
@@ -57,16 +62,16 @@ export function CoinJoin() {
           </div>
 
           <svg
-            viewBox={`0 0 100 ${participants * 38 - 6}`}
-            height={participants * 38 - 6}
+            viewBox={`0 0 100 ${participants * COINJOIN_ROW_STRIDE - COINJOIN_ROW_GAP}`}
+            height={participants * COINJOIN_ROW_STRIDE - COINJOIN_ROW_GAP}
             className='w-24 shrink-0 self-end'
             preserveAspectRatio='none'
             role='img'
             aria-label={`참가자 ${participants}명의 입력과 출력을 섞어 잇는 선`}
           >
             {permutation.map((to, from) => {
-              const y1 = 16 + from * 38;
-              const y2 = 16 + to * 38;
+              const y1 = COINJOIN_ROW_HEIGHT / 2 + from * COINJOIN_ROW_STRIDE;
+              const y2 = COINJOIN_ROW_HEIGHT / 2 + to * COINJOIN_ROW_STRIDE;
               return (
                 <line
                   key={from}
