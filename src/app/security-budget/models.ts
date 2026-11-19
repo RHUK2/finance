@@ -73,6 +73,16 @@ export function blockRevenue({ era, btcPrice, feePerBlock }: RevenueInput) {
   return { subsidy, totalBtc, perBlockUsd, annualUsd, feeShare };
 }
 
+// asOf는 'YYYY년 M월' 형식이다. 월 단위 기준점은 그달 1일 UTC로 해석한다.
+const baselineDateMatch = /^(\d{4})년 (\d{1,2})월$/.exec(BTC_PRICE_BASELINE.asOf);
+if (!baselineDateMatch || Number(baselineDateMatch[2]) < 1 || Number(baselineDateMatch[2]) > 12) {
+  throw new Error(
+    `BTC_PRICE_BASELINE.asOf 값 ${JSON.stringify(BTC_PRICE_BASELINE.asOf)}: 기대 형식은 'YYYY년 M월' (월 1~12)입니다.`,
+  );
+}
+const baselineYear = Number(baselineDateMatch[1]);
+const baselineMonth = Number(baselineDateMatch[2]);
+
 /**
  * 기준점. 기준 시점(BTC_PRICE_BASELINE.asOf)의 대략적인 시장 상황이고, 수수료의 몫 탭의 모든
  * '지금 대비'와 공격 비용 탭의 출발점이 이 한 점에서 나온다. 정확한 실측값이 아니라 비교의 원점이다.
@@ -80,8 +90,7 @@ export function blockRevenue({ era, btcPrice, feePerBlock }: RevenueInput) {
  * 반올림한 값이다. 6개월 최대가 약 0.13~0.2 BTC라 화면 힌트의 "혼잡하면 열 배 가까이"가 여기서 나온다.
  */
 export const BASE = {
-  // BTC_PRICE_BASELINE.asOf(2026년 8월)의 시대를 쓰며 현재 날짜를 따르지 않는다.
-  era: subsidyAtDate('2026-08-01').era,
+  era: subsidyAtDate(new Date(Date.UTC(baselineYear, baselineMonth - 1, 1))).era,
   btcPrice: BTC_PRICE_BASELINE.value,
   feePerBlock: 0.02,
 };

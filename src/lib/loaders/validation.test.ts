@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { subsidyAtEra } from '@/lib/bitcoin-models';
 import { fetchFredSeries } from '@/lib/fred';
 
 import { loadFearGreed } from './fear-greed';
@@ -320,25 +319,6 @@ it('CoinMetrics의 다음 페이지 data가 비면 이미 받은 시계열도 �
   const result = await loadMvrv();
   expect(result.zScore).toHaveLength(1);
   expect(Number.isFinite(result.zScore[0].value)).toBe(true);
-});
-
-it.each([
-  ['2024-04-19', 3, 6.25],
-  ['2024-04-20', 4, 3.125],
-  ['2028-04-12', 4, 3.125],
-  ['2028-04-13', 5, 1.5625],
-] as const)('%s에 보안 예산·게임이론의 보조금이 달력 기준으로 일치한다', async (date, era, subsidy) => {
-  vi.useFakeTimers();
-  vi.setSystemTime(new Date(date));
-  vi.resetModules();
-  const { CURRENT_ERA } = await import('@/app/security-budget/models');
-  const { attack51 } = await import('@/app/bitcoin-game-theory/models');
-  expect(CURRENT_ERA).toBe(era);
-  expect(subsidyAtEra(CURRENT_ERA)).toBe(subsidy);
-  expect(
-    attack51({ btcPrice: 100000, networkHashrate: 1000, attackHours: 1, hardwareCostPerTH: 20, electricity: 0.025 })
-      .honestRevenue,
-  ).toBe(subsidy * 6 * 8760 * 0.5 * 100000);
 });
 
 // 추정일보다 실제 반감기가 빠르거나 늦어도 카드의 보조금·잔여 블록·예상일은 같은 높이를 따른다.

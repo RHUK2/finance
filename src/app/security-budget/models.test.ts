@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { subsidyAtEra } from '@/lib/bitcoin-models';
 
@@ -20,6 +20,7 @@ const {
   LAST_SUBSIDY_ERA,
 } = await import('./models');
 vi.useRealTimers();
+afterEach(() => vi.useRealTimers());
 
 describe('BTC 표기', () => {
   it.each([
@@ -133,4 +134,60 @@ describe('보안 예산과 공격 비용', () => {
     expect(attackCost(BASE_ANNUAL, 0)).toBe(0);
     expect(attackCost(0, 24)).toBe(0);
   });
+});
+
+it.each(['2026', '', 'August 2026', '2026년', '2026년 0월', '2026년 13월', '2026년 8월 추가'])(
+  '잘못된 시장 기준월 %j는 모듈 로드 시 오류를 던진다',
+  async (asOf) => {
+    vi.resetModules();
+    vi.doMock('@/lib/market-baselines', () => ({
+      BTC_PRICE_BASELINE: { value: 100_000, asOf },
+    }));
+    try {
+      await expect(import('./models')).rejects.toThrow(
+        `BTC_PRICE_BASELINE.asOf 값 ${JSON.stringify(asOf)}: 기대 형식은 'YYYY년 M월' (월 1~12)입니다.`,
+      );
+    } finally {
+      vi.doUnmock('@/lib/market-baselines');
+      vi.resetModules();
+    }
+  },
+);
+
+it.each([
+  ['2026년 8월', 4, 3.125],
+  ['2028년 5월', 5, 1.5625],
+] as const)('시장 기준월 %s의 기준 가격과 보조금은 같은 시점을 쓴다', async (asOf, era, subsidy) => {
+  vi.resetModules();
+  vi.doMock('@/lib/market-baselines', () => ({
+    BTC_PRICE_BASELINE: { value: 100_000, asOf },
+  }));
+  try {
+    const { BASE, BASE_ANNUAL } = await import('./models');
+    expect(BASE.era).toBe(era);
+    expect(BASE.btcPrice).toBe(100_000);
+    expect(BASE_ANNUAL).toBe((subsidy + BASE.feePerBlock) * 100_000 * BLOCKS_PER_YEAR);
+  } finally {
+    vi.doUnmock('@/lib/market-baselines');
+    vi.resetModules();
+  }
+});
+
+it.each([
+  ['2024-04-19', 3, 6.25],
+  ['2024-04-20', 4, 3.125],
+  ['2028-04-12', 4, 3.125],
+  ['2028-04-13', 5, 1.5625],
+] as const)('%s에 보안 예산·게임이론의 보조금이 달력 기준으로 일치한다', async (date, era, subsidy) => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date(date));
+  vi.resetModules();
+  const { CURRENT_ERA } = await import('@/app/security-budget/models');
+  const { attack51 } = await import('@/app/bitcoin-game-theory/models');
+  expect(CURRENT_ERA).toBe(era);
+  expect(subsidyAtEra(CURRENT_ERA)).toBe(subsidy);
+  expect(
+    attack51({ btcPrice: 100000, networkHashrate: 1000, attackHours: 1, hardwareCostPerTH: 20, electricity: 0.025 })
+      .honestRevenue,
+  ).toBe(subsidy * 6 * 8760 * 0.5 * 100000);
 });
