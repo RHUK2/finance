@@ -16,8 +16,6 @@ import { formatPct } from '@/lib/utils';
  */
 export const TAX_RATE = 20;
 
-export const TAX_RATE_NOTE = '예시 단일 세율, 법정 누진세율 아님';
-
 // 단위는 억원. 총자산을 1,000억으로 고정하고 그 안에서 부채와 자본의 비율만 바꾼다.
 export const ASSETS = 1000;
 export const DEFAULT_RATE = 5;

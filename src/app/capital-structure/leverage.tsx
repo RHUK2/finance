@@ -96,7 +96,7 @@ export function Leverage() {
           max={12}
           step={0.5}
           format={(v) => formatPct(v, 1)}
-          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''}`}
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다. 이자를 뺀 뒤 이익이 나지 않으면 법인세는 0으로 계산한다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''}`}
         />
         <ControlSlider
           icon={<Coins className='size-4 text-series-1' />}
