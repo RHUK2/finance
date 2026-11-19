@@ -8,7 +8,7 @@ import { ControlSlider, CostBar, ExplainCard, Metric, SectionIntro, StatusBanner
 import { Panel } from '@/components/panel';
 import { formatEok, formatPct } from '@/lib/utils';
 
-import { ASSETS, REGULATION, waterfall } from './models';
+import { ASSETS, REGULATION, saleProceedsNote, waterfall } from './models';
 
 type Tier = {
   id: string;
@@ -87,7 +87,6 @@ export function Waterfall() {
   const debtPaid = rows.filter((r) => r.kind === 'debt').reduce((s, r) => s + r.paid, 0);
   const common = rows[rows.length - 1];
   const focus = fulcrum ?? common;
-  const discount = ((ASSETS - proceeds) / ASSETS) * 100;
 
   return (
     <div className='flex flex-col gap-4'>
@@ -107,7 +106,7 @@ export function Waterfall() {
           max={1100}
           step={25}
           format={(v) => formatEok(v, 0)}
-          hint={`장부상 자산은 ${formatEok(ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금 매각 대금은 ${discount > 0 ? `장부가 대비 ${formatPct(discount, 0)} 할인된 값이다` : discount < 0 ? `장부가 대비 ${formatPct(-discount, 0)} 웃돈이 붙은 값이다` : '장부가와 같다'}.`}
+          hint={`장부상 자산은 ${formatEok(ASSETS, 0)}이지만 급히 처분하면 그만큼 못 받는 경우가 많다. 지금 매각 대금은 ${saleProceedsNote(proceeds)}.`}
         />
       </Panel>
 

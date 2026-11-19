@@ -13,6 +13,8 @@ import {
   fundingCost,
   FUTURES_PRICE,
   hedgeLedger,
+  formatBarrels,
+  hedgeFillNote,
   PRODUCER_BARRELS,
   REFINER_BARRELS,
 } from './models';
@@ -224,5 +226,24 @@ describe('basisCurves', () => {
       expect(high.dated).toEqual(low.dated);
       high.perpetual.forEach((v, i) => expect(v).toBeGreaterThan(low.perpetual[i]));
     }
+  });
+});
+
+describe('헤지 물량 표기 경계', () => {
+  it.each([
+    [0, '0.00M 배럴'],
+    [7400, '7,400 배럴'],
+    [9999, '9,999 배럴'],
+    [10000, '0.01M 배럴'],
+    [600000, '0.60M 배럴'],
+  ])('%s 배럴의 정밀도를 유지한다', (barrels, text) => {
+    expect(formatBarrels(barrels)).toBe(text);
+  });
+  it('체결 완료와 양수 미체결을 구분한다', () => {
+    expect(hedgeFillNote(0)).toBe('넘기려 한 물량이 모두 체결됨');
+    const l = hedgeLedger(0.65, 60, 0.6);
+    expect(l.unfilled).toBeGreaterThan(0);
+    expect(l.unfilled).toBeLessThan(10000);
+    expect(hedgeFillNote(l.unfilled)).toBe('7,330 배럴이 상대를 못 찾음');
   });
 });

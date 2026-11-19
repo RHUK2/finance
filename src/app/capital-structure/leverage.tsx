@@ -8,7 +8,7 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBan
 import { Panel } from '@/components/panel';
 import { cn, formatEok, formatPct } from '@/lib/utils';
 
-import { ASSETS, DEFAULT_DEBT_RATIO, DEFAULT_RATE, leverage, netIncome, TAX_RATE, TAX_RATE_NOTE } from './models';
+import { ASSETS, DEFAULT_DEBT_RATIO, DEFAULT_RATE, leverage, netIncome, TAX_RATE } from './models';
 
 // 같은 자본구조를 세 업황에 넣어 보면 레버리지가 무엇을 하는지 드러난다.
 const SCENARIOS = [
@@ -72,8 +72,7 @@ export function Leverage() {
       <SectionIntro title='같은 자산, 다른 조달'>
         회사가 굴리는 자산 1,000억은 그대로 두고 그 돈을 어디서 가져왔는지만 바꿔 보자. 빌려 온 돈에는 실적과 무관하게
         정해진 이자를 줘야 하고, 주주가 낸 돈에는 약속된 대가가 없다. 이 비대칭이 자본구조를 고르는 이유의 거의 전부다.
-        부채 비중을 움직이면 주주가 가져가는 몫이 어떻게 증폭되는지 보인다. 법인세는 이익이 날 때만 단일 세율로 매기며,
-        결손금 이월공제와 이자 손금산입 한도는 반영하지 않는다.
+        부채 비중을 움직이면 주주가 가져가는 몫이 어떻게 증폭되는지 보인다.
       </SectionIntro>
 
       <Panel className='gap-5'>
@@ -97,7 +96,7 @@ export function Leverage() {
           max={12}
           step={0.5}
           format={(v) => formatPct(v, 1)}
-          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''} 쓴 세율은 ${TAX_RATE_NOTE}이다.`}
+          hint={`부채가 늘수록 채권자가 요구하는 금리도 함께 오르지만, 여기서는 둘을 따로 움직여 각각의 효과를 본다. 이자는 손금이라 이익이 나는 만큼 법인세율 ${TAX_RATE}%의 실부담이 깎이고, 지금 회사가 실제로 지는 값은 ${formatPct(realizedRate)}다.${realizedRate > afterTaxRate + EPS ? ' 영업이익이 이자보다 작아 깎을 이익이 모자란 만큼 덜 깎였다.' : ''}`}
         />
         <ControlSlider
           icon={<Coins className='size-4 text-series-1' />}

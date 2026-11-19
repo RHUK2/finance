@@ -17,9 +17,7 @@ import {
 import { Panel } from '@/components/panel';
 import { formatEok } from '@/lib/utils';
 
-// 단위는 억원. 교육용 예시 수치.
-const CAPITAL = 50; // 주주가 낸 출자금 총액 (개인사업자라면 사업에 넣은 자기 자본)
-const PERSONAL = 30; // 대표 개인 재산
+import { CAPITAL, PERSONAL, limitedLiability } from './models';
 
 const PIERCE_CASES = [
   '회사 통장과 개인 통장을 구분 없이 섞어 썼다',
@@ -34,14 +32,15 @@ export function LimitedLiability() {
   const [isCorp, setIsCorp] = useState(true);
   const [pierced, setPierced] = useState(false);
 
-  const veilBroken = !isCorp || pierced;
-
-  const shortfall = Math.max(0, debts - assets);
-  const personalBurden = veilBroken ? Math.min(shortfall, PERSONAL) : 0;
-  const creditorRecovered = Math.min(assets, debts) + personalBurden;
-  const creditorLoss = shortfall - personalBurden;
-  const shareholderRecovered = Math.max(0, assets - debts);
-  const shareholderLoss = Math.max(0, CAPITAL - shareholderRecovered);
+  const {
+    shortfall,
+    personalBurden,
+    creditorRecovered,
+    creditorLoss,
+    shareholderRecovered,
+    shareholderLoss,
+    personalLossNote,
+  } = limitedLiability(assets, debts, isCorp, pierced);
 
   const barMax = Math.max(debts, CAPITAL, PERSONAL, 1);
 
@@ -162,15 +161,7 @@ export function LimitedLiability() {
           label={`${V.person} 개인 재산 손실`}
           value={formatEok(personalBurden, 0)}
           tone={personalBurden > 0 ? 'bad' : 'good'}
-          sub={
-            isCorp
-              ? personalBurden > 0
-                ? '벽이 뚫렸다'
-                : '회사 밖으로 번지지 않는다'
-              : personalBurden > 0
-                ? '사업주 개인 재산으로 갚는다'
-                : '이번에는 빚을 사업 재산으로 모두 갚았다'
-          }
+          sub={personalLossNote}
         />
       </div>
 

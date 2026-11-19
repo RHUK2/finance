@@ -8,10 +8,15 @@ import { ControlSlider, ExplainCard, Metric, SectionIntro, StackedBar, StatusBan
 import { Panel } from '@/components/panel';
 import { formatPct, formatUsdPrice } from '@/lib/utils';
 
-import { FUTURES_PRICE, PRODUCER_BARRELS, REFINER_BARRELS, SPOT_NOW, hedgeLedger } from './models';
-
-const mb = (n: number) =>
-  n > 0 && n < 10_000 ? `${Math.round(n).toLocaleString('ko-KR')} 배럴` : `${(n / 1_000_000).toFixed(2)}M 배럴`;
+import {
+  FUTURES_PRICE,
+  PRODUCER_BARRELS,
+  REFINER_BARRELS,
+  SPOT_NOW,
+  formatBarrels,
+  hedgeFillNote,
+  hedgeLedger,
+} from './models';
 
 export function HedgeLedger() {
   const [settle, setSettle] = useState(60);
@@ -27,9 +32,9 @@ export function HedgeLedger() {
     <div className='flex flex-col gap-4'>
       <SectionIntro title='헤저는 가격을 맞히려 하지 않는다'>
         지금 원유 현물은 배럴당 {formatUsdPrice(SPOT_NOW)}, 3개월물 계약가는 {formatUsdPrice(FUTURES_PRICE)}다. 산유국은
-        3개월 뒤 {mb(PRODUCER_BARRELS)}을 팔 예정이고 정유사는 {mb(REFINER_BARRELS)}을 살 예정이다. 만기 가격을 어디로
-        밀어 보든 산유국의 실효 판매단가가 거의 움직이지 않는 걸 확인하고, 그다음 그 안 움직임이 어디서 왔는지를 보자.
-        가격 위험은 지워진 게 아니라 정유사와 투기자의 장부로 넘어가 있다.
+        3개월 뒤 {formatBarrels(PRODUCER_BARRELS)}을 팔 예정이고 정유사는 {formatBarrels(REFINER_BARRELS)}을 살
+        예정이다. 만기 가격을 어디로 밀어 보든 산유국의 실효 판매단가가 거의 움직이지 않는 걸 확인하고, 그다음 그 안
+        움직임이 어디서 왔는지를 보자. 가격 위험은 지워진 게 아니라 정유사와 투기자의 장부로 넘어가 있다.
       </SectionIntro>
 
       <Panel>
@@ -79,7 +84,7 @@ export function HedgeLedger() {
           label='헤지 체결률'
           value={formatPct(l.fillRate * 100, 1)}
           tone={l.fillRate > 0.9 ? 'good' : l.fillRate < 0.8 ? 'bad' : undefined}
-          sub={l.unfilled > 0 ? `${mb(l.unfilled)}이 상대를 못 찾음` : '넘기려 한 물량이 모두 체결됨'}
+          sub={hedgeFillNote(l.unfilled)}
         />
         <Metric
           label='쏠림 가산폭'
@@ -90,22 +95,26 @@ export function HedgeLedger() {
       </div>
 
       <Panel className='gap-3'>
-        <span className='text-sm font-semibold'>{mb(PRODUCER_BARRELS)}에 붙은 가격 위험은 어디로 갔나</span>
+        <span className='text-sm font-semibold'>{formatBarrels(PRODUCER_BARRELS)}에 붙은 가격 위험은 어디로 갔나</span>
         <StackedBar
           total={PRODUCER_BARRELS}
           segments={[
             {
-              label: `산유국이 계속 짐 ${mb(PRODUCER_BARRELS - l.matched - l.toSpeculators)}`,
+              label: `산유국이 계속 짐 ${formatBarrels(PRODUCER_BARRELS - l.matched - l.toSpeculators)}`,
               value: PRODUCER_BARRELS - l.matched - l.toSpeculators,
               className: 'bg-series-3',
             },
-            { label: `정유사가 받음 ${mb(l.matched)}`, value: l.matched, className: 'bg-series-1' },
-            { label: `투기자가 받음 ${mb(l.toSpeculators)}`, value: l.toSpeculators, className: 'bg-series-2' },
+            { label: `정유사가 받음 ${formatBarrels(l.matched)}`, value: l.matched, className: 'bg-series-1' },
+            {
+              label: `투기자가 받음 ${formatBarrels(l.toSpeculators)}`,
+              value: l.toSpeculators,
+              className: 'bg-series-2',
+            },
           ]}
         />
         <p className='text-xs text-muted-foreground'>
           헤지 비율을 올리면 산유국이 계속 지는 몫이 줄고 정유사·투기자가 받는 몫이 늘어난다. 총량은 그대로다. 정유사
-          몫이 {mb(REFINER_BARRELS)}
+          몫이 {formatBarrels(REFINER_BARRELS)}
           에서 멈추는 것은 그게 정유사가 실제로 사려는 전부이기 때문이고, 그 위로 넘어가는 물량은 전부 투기자를 거쳐야
           한다.
         </p>
@@ -117,7 +126,7 @@ export function HedgeLedger() {
         {hedged === 0
           ? `헤지를 하지 않아 산유국은 만기 유가 ${formatUsdPrice(settle)}를 그대로 받는다. 가격 위험이 전부 산유국 장부에 남아 있다.`
           : l.fillRate < 0.8
-            ? `투기자가 부족해 ${mb(l.unfilled)}이 상대를 찾지 못했다. 그 물량의 위험은 산유국에 그대로 남아 실효 단가가 ${formatUsdPrice(l.producerEffective)}로 흔들린다.`
+            ? `투기자가 부족해 ${formatBarrels(l.unfilled)}이 상대를 찾지 못했다. 그 물량의 위험은 산유국에 그대로 남아 실효 단가가 ${formatUsdPrice(l.producerEffective)}로 흔들린다.`
             : gain > 0.005
               ? `만기 유가는 잠근 선물가 ${formatUsdPrice(l.effectiveFutures)}보다 낮은 ${formatUsdPrice(settle)}지만 산유국은 ${formatUsdPrice(l.producerEffective)}에 판 효과를 얻었다. 선물 상대방이 지급한 차액을 팔 물량 전체로 나누면 헤지를 안 했을 때보다 배럴당 ${formatUsdPrice(gain)}의 이익이다.`
               : gain < -0.005

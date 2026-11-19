@@ -257,3 +257,14 @@ export function basisCurves(longShare: number, steps = 60): { dated: number[]; p
 
   return { dated, perpetual };
 }
+
+// 작은 미체결 물량이 0.00M으로 사라지지 않도록 기존 표기 경계를 유지한다.
+export function formatBarrels(barrels: number) {
+  return barrels > 0 && barrels < 10_000
+    ? `${Math.round(barrels).toLocaleString('ko-KR')} 배럴`
+    : `${(barrels / 1_000_000).toFixed(2)}M 배럴`;
+}
+
+export function hedgeFillNote(unfilled: number) {
+  return unfilled > 0 ? `${formatBarrels(unfilled)}이 상대를 못 찾음` : '넘기려 한 물량이 모두 체결됨';
+}

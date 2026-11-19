@@ -86,3 +86,43 @@ describe('전세 모델', () => {
     expect(r.roe).toBeCloseTo(change * 5);
   });
 });
+
+describe('대항력과 확정일자를 근저당의 같은 쪽에 두는 가정', () => {
+  it.each([
+    [true, { hasOpposing: true, tenantFirst: true, distributed: 3, bankPaid: 0, assumed: 1, lost: 0 }],
+    [false, { hasOpposing: false, tenantFirst: false, distributed: 1, bankPaid: 2, assumed: 0, lost: 3 }],
+  ] as const)('senior=%s가 대항력·배당 순위·잔액 인수에 함께 적용된다', (senior, expected) => {
+    expect(depositPriority(4, 2, 3, senior, true, true)).toMatchObject({ canClaim: true, ...expected });
+  });
+
+  it('확정일자를 끄면 배당 자격만 사라지고 선순위 대항력은 남는다', () => {
+    expect(depositPriority(4, 2, 3, true, true, false)).toMatchObject({
+      hasOpposing: true,
+      canClaim: false,
+      tenantFirst: false,
+      distributed: 0,
+      bankPaid: 2,
+      assumed: 4,
+      lost: 0,
+    });
+    expect(depositPriority(4, 2, 3, false, true, false)).toMatchObject({
+      hasOpposing: false,
+      canClaim: false,
+      tenantFirst: false,
+      distributed: 0,
+      assumed: 0,
+      lost: 4,
+    });
+  });
+
+  it.each([true, false])('전입·점유가 없으면 senior=%s와 확정일자만으로 권리가 생기지 않는다', (senior) => {
+    expect(depositPriority(4, 2, 3, senior, false, true)).toMatchObject({
+      hasOpposing: false,
+      canClaim: false,
+      tenantFirst: false,
+      distributed: 0,
+      assumed: 0,
+      lost: 4,
+    });
+  });
+});
