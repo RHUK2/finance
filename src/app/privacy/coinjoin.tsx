@@ -57,15 +57,16 @@ export function CoinJoin() {
           </div>
 
           <svg
-            viewBox={`0 0 100 ${participants * 40}`}
-            className='w-24 shrink-0'
+            viewBox={`0 0 100 ${participants * 38 - 6}`}
+            height={participants * 38 - 6}
+            className='w-24 shrink-0 self-end'
             preserveAspectRatio='none'
             role='img'
             aria-label={`참가자 ${participants}명의 입력과 출력을 섞어 잇는 선`}
           >
             {permutation.map((to, from) => {
-              const y1 = 20 + from * 40;
-              const y2 = 20 + to * 40;
+              const y1 = 16 + from * 38;
+              const y2 = 16 + to * 38;
               return (
                 <line
                   key={from}

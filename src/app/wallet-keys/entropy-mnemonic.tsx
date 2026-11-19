@@ -79,7 +79,9 @@ export function EntropyMnemonic({
             <Select
               items={entropyItems}
               value={String(bits)}
-              onValueChange={(v) => onChangeBits(Number(v) as EntropyBits)}
+              onValueChange={(v) => {
+                if (v) onChangeBits(Number(v) as EntropyBits);
+              }}
             >
               <SelectTrigger className='w-44'>
                 <SelectValue />
