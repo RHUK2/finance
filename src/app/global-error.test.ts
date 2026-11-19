@@ -34,6 +34,7 @@ it('renders root recovery even when shared navigation throws', () => {
   expect(html).toContain('다시 시도');
   expect(html).toContain('<html');
   expect(html).toContain('<body');
+  expect(html).toMatch(/<a\b[^>]*href="\/"[^>]*>/);
 });
 
 it('calls retry when the recovery button is clicked', () => {
