@@ -201,6 +201,10 @@ export const HODL_CONFIG = {
   convictionStep: 0.01,
 };
 
+// 연쇄 종료 시 매도 비중으로 결과를 나누는 기준. 화면 문구도 이 비율을 쓴다.
+export const SURVIVE_SELL_SHARE = 0.1;
+export const COLLAPSE_SELL_SHARE = 0.5;
+
 const START_PRICE = 100;
 const SELL_IMPACT = 0.5; // 한 라운드 전량 매도 시 -50%
 

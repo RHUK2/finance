@@ -8,6 +8,8 @@ import {
   buildCascadeAgents,
   buildHolders,
   CASCADE_CONFIG,
+  COLLAPSE_SELL_SHARE,
+  SURVIVE_SELL_SHARE,
   cascadeTrajectory,
   HODL_CONFIG,
   hodlTrajectory,
@@ -186,7 +188,7 @@ describe('홀더 궤적', () => {
       const last = hodlTrajectory(holders, c.shock).at(-1)!.state;
       const soldCount = last.sold.filter(Boolean).length;
       // 화면의 가운데 결과: 붕괴(50% 초과)도 충격 흡수(10% 이하)도 아니다.
-      if (soldCount > c.n * 0.1 && soldCount <= c.n * 0.5) partialSteps.push(step);
+      if (soldCount > c.n * SURVIVE_SELL_SHARE && soldCount <= c.n * COLLAPSE_SELL_SHARE) partialSteps.push(step);
     }
     expect(partialSteps.some((step, i) => i > 0 && step === partialSteps[i - 1] + 1)).toBe(true);
   });
@@ -208,7 +210,7 @@ describe('홀더 궤적', () => {
     const last = frames.at(-1)!.state;
     const soldCount = last.sold.filter(Boolean).length;
     expect(soldCount).toBeGreaterThan(0);
-    expect(soldCount).toBeLessThanOrEqual(c.n * 0.1);
+    expect(soldCount).toBeLessThanOrEqual(c.n * SURVIVE_SELL_SHARE);
     expect(last.price).toBeLessThan(100 * (1 - c.shock));
     // 0번은 초기 상태, 1번은 외생 충격 라운드다. 2번부터 후속 라운드의 추가 매도를 확인한다.
     expect(frames.slice(2).some(({ state }) => state.newSellers > 0)).toBe(true);
