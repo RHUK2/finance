@@ -33,7 +33,14 @@ async function fetchFearGreed(): Promise<FearGreedData> {
   }
   const points = dedupeByTime(
     rows
-      .filter((row) => typeof row.value === 'string' && row.value.trim() !== '' && Number.isFinite(Number(row.value)))
+      .filter(
+        (row) =>
+          typeof row.value === 'string' &&
+          row.value.trim() !== '' &&
+          Number.isFinite(Number(row.value)) &&
+          Number(row.value) >= 0 &&
+          Number(row.value) <= 100,
+      )
       .map((row) => ({
         time: new Date(Number(row.timestamp) * 1000).toISOString().slice(0, 10),
         value: Number(row.value),
@@ -46,12 +53,16 @@ async function fetchFearGreed(): Promise<FearGreedData> {
   if (rows.some((row) => new Date(Number(row.timestamp) * 1000).toISOString().slice(0, 10) > latestTime)) {
     throw new Error('No valid fear & greed data');
   }
+  const latest = points[points.length - 1];
+  if (typeof latest.classification !== 'string' || latest.classification.trim() === '') {
+    throw new Error('No valid fear & greed data');
+  }
   const history = points.map(({ time, value }) => ({ time, value }));
 
   return {
     fetchedAt: new Date().toISOString(),
     value: history[history.length - 1].value,
-    classification: points[points.length - 1].classification,
+    classification: latest.classification,
     history,
   };
 }

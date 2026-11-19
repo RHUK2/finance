@@ -17,7 +17,7 @@ export function logValueToTick(value: number, min: number, max: number): number 
   return Math.round((LOG_TICKS * Math.log(value / min)) / Math.log(max / min));
 }
 
-// 유효숫자 4자리 반올림으로 눈금이 겹치지 않도록 max/min이 충분히 커야 한다(상대 눈금 간격 > 5e-4).
+// 유효숫자 4자리 반올림으로 눈금이 겹치지 않도록 max/min이 충분히 커야 한다(상대 눈금 간격 > 1e-3, max/min 약 1.3 이상).
 export function logTickToValue(tick: number, min: number, max: number): number {
   if (tick <= 0) return min;
   if (tick >= LOG_TICKS) return max;

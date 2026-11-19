@@ -6,7 +6,11 @@ import { cacheMs, type EndpointKey } from '@/lib/cache-config';
 // 서버 전용 로더 표는 타입만 참조한다. `import type`이라 서버 코드는 따라오지 않는다.
 import type { LOADERS } from '@/lib/loaders';
 
-type EndpointData<K extends EndpointKey> = Awaited<ReturnType<(typeof LOADERS)[K]>>;
+// 객체의 선택 필드는 허용하되 Date·Map·함수 등 JSON으로 전달할 수 없는 값은 막는다.
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue | undefined };
+export type JsonEndpointData<T extends JsonValue> = T;
+
+type EndpointData<K extends EndpointKey> = JsonEndpointData<Awaited<ReturnType<(typeof LOADERS)[K]>>>;
 
 // HTTP 실패 응답을 오류로 조립한다. JSON이 아니어도 키·상태 코드는 유지한다.
 export async function responseError(key: EndpointKey, res: Response): Promise<Error> {

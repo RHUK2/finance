@@ -65,7 +65,7 @@ it('공포지수를 정렬·중복 제거하고 최신 관측의 분류를 쓴�
   await expect(loadFearGreed()).rejects.toThrow('빈 시계열');
 });
 
-it.each([null, 50, '', '   ', 'NaN', 'Infinity', 'bad'])(
+it.each([null, 50, '', '   ', 'NaN', 'Infinity', 'bad', '1e3', '-5', '100.1'])(
   '공포지수의 비숫자 값 %s를 거르고 유효한 최신 관측과 분류를 함께 반환한다',
   async (value) => {
     const valid = { timestamp: '1704153600', value: '0', value_classification: 'Extreme Fear' };
@@ -102,7 +102,7 @@ it('공포지수의 같은 날짜에 비숫자 행과 정상 행이 있으면 �
   }
 });
 
-it.each([null, 50, '', '   ', 'NaN', 'Infinity', 'bad'])(
+it.each([null, 50, '', '   ', 'NaN', 'Infinity', 'bad', '1e3', '-5', '100.1'])(
   '공포지수의 최신 날짜 값 %s가 비숫자이면 갱신을 거부한다',
   async (value) => {
     const valid = { timestamp: '1704067200', value: '0', value_classification: 'Extreme Fear' };
@@ -361,5 +361,36 @@ it.each([
       remainingHalvingBlocks,
       estimatedHalvingDate,
     });
+  },
+);
+
+it.each([undefined, null, 20, '', '   '])(
+  '공포지수의 과거 분류 %s는 허용하고 최신 분류는 검증한다',
+  async (classification) => {
+    const valid = { timestamp: '1704153600', value: '100', value_classification: 'Extreme Greed' };
+    const broken = { timestamp: '1704067200', value: '50', value_classification: classification };
+    for (const data of [
+      [broken, valid],
+      [valid, broken],
+    ]) {
+      respond({ data });
+      expect(await loadFearGreed()).toMatchObject({
+        value: 100,
+        classification: 'Extreme Greed',
+        history: [
+          { time: '2024-01-01', value: 50 },
+          { time: '2024-01-02', value: 100 },
+        ],
+      });
+    }
+    respond({ data: [broken] });
+    await expect(loadFearGreed()).rejects.toThrow('No valid fear & greed data');
+    respond({
+      data: [
+        { ...valid, timestamp: '1704067200' },
+        { ...broken, timestamp: '1704153600' },
+      ],
+    });
+    await expect(loadFearGreed()).rejects.toThrow('No valid fear & greed data');
   },
 );
