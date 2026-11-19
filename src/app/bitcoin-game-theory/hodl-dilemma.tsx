@@ -17,7 +17,15 @@ import { Panel } from '@/components/panel';
 import { useTrajectoryPlayer } from '@/hooks/use-round-engine';
 import { formatPct } from '@/lib/utils';
 
-import { type Holder, type HolderBand, buildHolders, HODL_CONFIG, hodlTrajectory } from './models';
+import {
+  type Holder,
+  type HolderBand,
+  buildHolders,
+  COLLAPSE_SELL_SHARE,
+  HODL_CONFIG,
+  hodlTrajectory,
+  SURVIVE_SELL_SHARE,
+} from './models';
 
 const { n: N, seed: SEED, shock: SHOCK, priceFloor: PRICE_FLOOR } = HODL_CONFIG;
 
@@ -80,8 +88,8 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
   const states = holders.map((h, i) => BAND_COLOR[h.band][state.sold[i] ? 'sold' : 'holding']);
   const curve = useMemo(() => frames.map((f) => f.state.price), [frames]);
 
-  const collapsed = done && soldCount > N * 0.5;
-  const survived = done && soldCount <= N * 0.1;
+  const collapsed = done && soldCount > N * COLLAPSE_SELL_SHARE;
+  const survived = done && soldCount <= N * SURVIVE_SELL_SHARE;
   const partial = done && !collapsed && !survived;
 
   return (
@@ -150,7 +158,7 @@ function HodlSim({ holders, speedMs, onSpeed }: { holders: Holder[]; speedMs: nu
                 }
               : {
                   tone: 'good',
-                  text: '💎 매도 비중이 10% 이하에 머물러 소수 매도로 끝났다. 가격은 첫 충격 이후에도 더 내려갈 수 있지만, 보유자의 90% 이상이 버텼다.',
+                  text: `💎 매도 비중이 ${formatPct(SURVIVE_SELL_SHARE * 100, 0)} 이하에 머물러 소수 매도로 끝났다. 가격은 첫 충격 이후에도 더 내려갈 수 있지만, 보유자의 ${formatPct((1 - SURVIVE_SELL_SHARE) * 100, 0)} 이상이 버텼다.`,
                 }
           : undefined
       }

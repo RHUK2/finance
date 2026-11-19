@@ -1,3 +1,6 @@
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { subsidyAtEra } from '@/lib/bitcoin-models';
@@ -190,4 +193,18 @@ it.each([
     attack51({ btcPrice: 100000, networkHashrate: 1000, attackHours: 1, hardwareCostPerTH: 20, electricity: 0.025 })
       .honestRevenue,
   ).toBe(subsidy * 6 * 8760 * 0.5 * 100000);
+});
+
+it('반감기 뒤에도 발행 스케줄 초기 화면은 서버가 전달한 시대를 쓴다', async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2028-04-13T00:00:00.000Z'));
+  vi.resetModules();
+  const { CURRENT_ERA: clientEra } = await import('./models');
+  const { IssuanceSchedule } = await import('./issuance-schedule');
+  expect(clientEra).toBe(5);
+  const html = renderToStaticMarkup(createElement(IssuanceSchedule, { currentEra: 4 }));
+  expect(html).toContain('4번째 · 2024년~');
+  expect(html).toContain('지금은 2024년 반감기 이후 시대다.');
+  expect(html).toContain('3.125 BTC');
+  expect(html).not.toContain('1.5625 BTC');
 });

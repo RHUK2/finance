@@ -11,12 +11,12 @@ import { MAX_SUPPLY_BTC, subsidyAtEra } from '@/lib/bitcoin-models';
 import { formatPct } from '@/lib/utils';
 
 import { formatBtc } from './format';
-import { BLOCKS_PER_YEAR, CURRENT_ERA, cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA } from './models';
+import { BLOCKS_PER_YEAR, cumulativeSupply, eraStartYear, LAST_SUBSIDY_ERA } from './models';
 
 const fmtSupply = (n: number) => `${Math.round(n).toLocaleString('ko-KR')} BTC`;
 
-export function IssuanceSchedule() {
-  const [era, setEra] = useState(CURRENT_ERA);
+export function IssuanceSchedule({ currentEra }: { currentEra: number }) {
+  const [era, setEra] = useState(currentEra);
 
   const eras = useMemo(() => Array.from({ length: LAST_SUBSIDY_ERA + 2 }, (_, i) => i), []);
   const subsidies = useMemo(() => eras.map((e) => subsidyAtEra(e)), [eras]);
@@ -46,7 +46,7 @@ export function IssuanceSchedule() {
           max={LAST_SUBSIDY_ERA + 1}
           step={1}
           format={(v) => `${v}번째 · ${eraStartYear(v)}년~`}
-          hint={era === CURRENT_ERA ? `지금은 ${eraStartYear(CURRENT_ERA)}년 반감기 이후 시대다.` : undefined}
+          hint={era === currentEra ? `지금은 ${eraStartYear(currentEra)}년 반감기 이후 시대다.` : undefined}
         />
       </Panel>
 
